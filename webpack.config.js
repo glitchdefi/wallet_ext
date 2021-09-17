@@ -11,6 +11,7 @@ const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 var alias = {
   'react-dom': '@hot-loader/react-dom',
+  'utils/redux-injectors': path.join(__dirname, 'src', 'utils', 'redux-injectors.ts')
 };
 
 // load the secrets
