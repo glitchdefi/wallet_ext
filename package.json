@@ -1,6 +1,6 @@
 {
-  "name": "glch-wallet",
-  "version": "4.0.1",
+  "name": "glch-wallet-extension",
+  "version": "0.0.1",
   "description": "GLCH Wallet Base",
   "license": "MIT",
   "scripts": {
@@ -29,6 +29,7 @@
     "@babel/preset-env": "^7.12.17",
     "@babel/preset-react": "^7.12.13",
     "@types/react-router": "^5.1.16",
+    "@types/styled-components": "^5.1.14",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "babel-preset-react-app": "^10.0.0",
