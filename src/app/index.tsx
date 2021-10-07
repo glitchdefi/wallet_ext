@@ -13,6 +13,9 @@ import { Page } from './layouts/Page';
 import { WelcomePage } from './pages/Welcome';
 import { ImportWalletPage } from './pages/ImportWallet';
 
+// Initialize languages
+import '../locales/i18n';
+
 const history = createMemoryHistory();
 const store = configureAppStore();
 
