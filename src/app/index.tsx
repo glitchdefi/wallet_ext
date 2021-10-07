@@ -6,6 +6,8 @@ import { createMemoryHistory } from 'history';
 
 import { configureAppStore } from '../store/configureStore';
 
+import { GlobalStyles } from '../theme/GlobalStyle';
+
 // Components
 import { Page } from './layouts/Page';
 
@@ -23,6 +25,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <Router history={history}>
+        <GlobalStyles />
         <Page>
           <Switch>
             <Route exact path="/" component={WelcomePage} />
