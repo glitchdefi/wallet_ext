@@ -5,29 +5,58 @@ import { useTranslation } from 'react-i18next';
 import logo from '../../../assets/img/gl_logo.png';
 import { messages } from './message';
 
+// Theme
+import { colors } from '../../../theme/colors';
+
 // Components
 import { Text } from '../../components/Text';
+import { Button, ButtonShadow } from '../../components/Button';
+import { Box, Flex } from '../../components/Box';
+import { NeedHelpContact } from '../../components/Footer';
 
 function Welcome(): JSX.Element {
   const { t } = useTranslation();
 
   return (
     <Container>
-      <img src={logo} width="200px" />
-      <Text mt="12px" color="white" fontSize="20px" bold>
-        {t(messages.title())}
-      </Text>
+      <Flex mt="48px" alignItems="center" flexDirection="column" px="32px">
+        <img src={logo} width="200px" />
+        <TextGradient mt="12px" bold>
+          {t(messages.title())}
+        </TextGradient>
+
+        <ButtonShadow mt="72px" width="100%">
+          {t(messages.createWallet())}
+        </ButtonShadow>
+        <Button mt="24px" width="100%" variant="secondary">
+          {t(messages.importWallet())}
+        </Button>
+
+        <Box pb="24px" mt="100px">
+          <NeedHelpContact />
+        </Box>
+      </Flex>
     </Container>
   );
 }
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
   width: 100%;
   height: 100%;
   background: #333;
-  align-items: center;
+`;
+
+const TextGradient = styled(Text)`
+  font-size: 20px;
+  background-image: linear-gradient(
+    45deg,
+    ${colors.shadow2} 20%,
+    ${colors.shadow1} 80%
+  );
+  -webkit-background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 32px;
 `;
 
 export default Welcome;

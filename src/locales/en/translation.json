@@ -1,4 +1,10 @@
 {
+    "common": {
+        "create_wallet": "Create Wallet",
+        "import_wallet": "Import Wallet",
+        "need_help_contact": "Need help? Contact",
+        "glitch_finance_support": "Glitch Finance Support"
+    },
     "homePage": {
         "a_crypto_wallet_for_defi": "A crypto wallet for DeFi"
     },

@@ -33,6 +33,7 @@
     "@babel/preset-env": "^7.12.17",
     "@babel/preset-react": "^7.12.13",
     "@types/react-router": "^5.1.16",
+    "@types/react-router-dom": "^5.3.1",
     "@types/styled-components": "^5.1.14",
     "@types/styled-system": "^5.1.13",
     "babel-eslint": "^10.1.0",

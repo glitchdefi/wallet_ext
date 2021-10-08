@@ -8,7 +8,6 @@ import { translations } from '../../../locales/translations';
 import { _t } from '../../../utils/message';
 
 export const messages = {
-  title: () => _t(translations.homePage.a_crypto_wallet_for_defi),
-  createWallet: () => _t(translations.common.create_wallet),
-  importWallet: () => _t(translations.common.import_wallet),
+  needHelpContact: () => _t(translations.common.need_help_contact),
+  glchFinanceSupport: () => _t(translations.common.glitch_finance_support),
 };
