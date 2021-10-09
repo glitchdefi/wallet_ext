@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import logo from '../../../assets/img/gl_logo.png';
 import { messages } from './message';
+import { Routes } from '../../../constants/routes';
 
 // Theme
 import { colors } from '../../../theme/colors';
@@ -16,6 +18,7 @@ import { NeedHelpContact } from '../../components/Footer';
 
 function Welcome(): JSX.Element {
   const { t } = useTranslation();
+  const history = useHistory();
 
   return (
     <Container>
@@ -25,10 +28,23 @@ function Welcome(): JSX.Element {
           {t(messages.title())}
         </TextGradient>
 
-        <ButtonShadow mt="72px" width="100%">
+        <ButtonShadow
+          mt="72px"
+          width="100%"
+          onClick={() =>
+            history.push(Routes.internetWarning, { route: Routes.createWallet })
+          }
+        >
           {t(messages.createWallet())}
         </ButtonShadow>
-        <Button mt="24px" width="100%" variant="secondary">
+        <Button
+          mt="24px"
+          width="100%"
+          variant="secondary"
+          onClick={() =>
+            history.push(Routes.internetWarning, { route: Routes.importWallet })
+          }
+        >
           {t(messages.importWallet())}
         </Button>
 

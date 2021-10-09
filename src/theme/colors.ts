@@ -3,6 +3,8 @@ export const colors = {
   red: '#A61D24',
   white: '#FFFFFF',
 
+  orange: '#D87A16',
+
   shadow1: '#F100F5',
   shadow2: '#00FFFF',
 
@@ -12,5 +14,6 @@ export const colors = {
   gray3: '#E4ECEF',
   gray4: '#395660',
   gray6: '#A7C1CA',
+  gray7: '#C1D4DA',
   gray9: '#E5ECEF',
 };
