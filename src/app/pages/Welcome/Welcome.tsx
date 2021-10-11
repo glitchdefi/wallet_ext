@@ -59,7 +59,6 @@ function Welcome(): JSX.Element {
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  background: #333;
 `;
 
 const TextGradient = styled(Text)`

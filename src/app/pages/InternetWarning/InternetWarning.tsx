@@ -20,7 +20,7 @@ function InternetWarning() {
   const location = useLocation<{ route: string }>();
   const { state } = location;
 
-  const isRedirectCreateWallet = state?.route === Routes.createWallet;
+  const isRedirectCreateWallet = state.route === Routes.createWallet;
   const descType = isRedirectCreateWallet
     ? t(messages.createANew())
     : t(messages.importA());
@@ -41,7 +41,11 @@ function InternetWarning() {
           {t(messages.desc(), { type: descType })}
         </Text>
 
-        <ButtonShadow mt="32px" width="50%">
+        <ButtonShadow
+          mt="32px"
+          width="50%"
+          onClick={() => history.push(state.route)}
+        >
           {t(messages.ok())}
         </ButtonShadow>
       </Box>

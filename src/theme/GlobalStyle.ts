@@ -5,5 +5,6 @@ export const GlobalStyles = createGlobalStyle`
         margin: 0;
         padding: 0;
         font-family: IBM Plex Mono, monospace !important;
+        background-color: #07111f;
     }
 `;

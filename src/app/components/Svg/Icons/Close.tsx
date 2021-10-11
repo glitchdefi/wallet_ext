@@ -1,7 +1,8 @@
 import React from 'react';
 import Svg from '../Svg';
+import { SvgProps } from '../types';
 
-function Icon({ ...rest }) {
+function Icon({ ...rest }: SvgProps) {
   return (
     <Svg viewBox="0 0 16 16" fill="none" {...rest}>
       <path

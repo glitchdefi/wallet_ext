@@ -3,8 +3,8 @@ import { space, typography, layout } from 'styled-system';
 import { TextProps } from './types';
 import { colors } from '../../../theme/colors';
 
-const getFontSize = ({ fontSize, small }: TextProps) => {
-  return small ? '14px' : fontSize || '16px';
+const getFontSize = ({ fontSize, large }: TextProps) => {
+  return large ? '16px' : fontSize || '14px';
 };
 
 const Text = styled.div<TextProps>`
@@ -13,6 +13,7 @@ const Text = styled.div<TextProps>`
   font-weight: ${({ bold }) => (bold ? 600 : 400)};
   line-height: 1.5;
   font-feature-settings: 'zero' on;
+  text-decoration: none;
   ${({ textTransform }) => textTransform && `text-transform: ${textTransform};`}
   ${({ ellipsis }) =>
     ellipsis &&
@@ -26,7 +27,7 @@ const Text = styled.div<TextProps>`
 
 Text.defaultProps = {
   color: colors.gray9,
-  small: false,
+  large: false,
   ellipsis: false,
 };
 
