@@ -3,6 +3,7 @@ export const colors = {
   secondary: '#F100F5',
   red: '#A61D24',
   white: '#FFFFFF',
+  green: '#49AA19',
 
   orange: '#D87A16',
 
