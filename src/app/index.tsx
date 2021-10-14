@@ -31,17 +31,13 @@ const App = () => {
         <GlobalStyles />
         <Page>
           <Switch>
-            {/* <Route exact path="/" component={WelcomePage} />
+            <Route exact path="/" component={WelcomePage} />
             <Route
               path={Routes.internetWarning}
               component={InternetWarningPage}
             />
-            <Route path={Routes.importWallet} component={ImportWalletPage} /> */}
-            <Route
-              path="/"
-              // path={Routes.createWallet}
-              component={CreateWalletPage}
-            />
+            <Route path={Routes.importWallet} component={ImportWalletPage} />
+            <Route path={Routes.createWallet} component={CreateWalletPage} />
           </Switch>
         </Page>
       </Router>

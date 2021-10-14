@@ -12,6 +12,7 @@ import { StepProgressLayout } from '../../components/StepProgressLayout';
 import { MessageBox } from '../../components/MessageBox';
 import { PasswordRulesTooltip } from './components/PasswordRulesTooltip';
 import { MnemonicPhraseStep } from './components/CreateStep/MnemonicPhraseStep';
+import { CreatePasswordStep } from './components/CreateStep/CreatePasswordStep';
 
 function CreateWallet(): JSX.Element {
   const history = useHistory();
@@ -25,7 +26,8 @@ function CreateWallet(): JSX.Element {
       stepDescription="Protect your wallet with a password"
       onBack={() => history.push('/')}
     >
-      <MnemonicPhraseStep />
+      <CreatePasswordStep />
+      {/* <MnemonicPhraseStep /> */}
     </StepProgressLayout>
   );
 }
