@@ -1,10 +1,7 @@
-interface Transactions {
-    id: number;
-    name: string;
-  }
-  
-  export interface Wallet {
-    transactions: Transactions[];
-    balance: number;
-  }
-  
+export interface WalletState {
+  isInitialized?: boolean;
+  isUnlocked?: boolean;
+  accounts?: object;
+  selectedAddress?: any;
+  identities?: object;
+}

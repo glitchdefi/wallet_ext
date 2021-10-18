@@ -1,6 +1,8 @@
-import { UserState } from './UserState';
-import { Wallet } from './WalletState';
+import { SettingState } from './SettingsState';
+import { WalletState } from './WalletState';
+import { TransactionsState } from './TransactionsState';
 export interface RootState {
-  user: UserState;
-  wallet: Wallet;
+  wallet?: WalletState;
+  transactions?: TransactionsState;
+  settings?: SettingState;
 }

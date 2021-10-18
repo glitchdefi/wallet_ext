@@ -5,10 +5,11 @@ import {
 } from '@reduxjs/toolkit';
 import { createInjectorsEnhancer } from 'redux-injectors';
 import createSagaMiddleware from 'redux-saga';
+import { RootState } from 'types/RootState';
 
 import { createReducer } from './reducers';
 
-export function configureAppStore() {
+export function configureAppStore(initialState?: RootState) {
   const reduxSagaMonitorOptions = {};
   const sagaMiddleware = createSagaMiddleware(reduxSagaMonitorOptions);
   const { run: runSaga } = sagaMiddleware;
@@ -25,6 +26,7 @@ export function configureAppStore() {
 
   const store = configureStore({
     reducer: createReducer(),
+    preloadedState: initialState,
     middleware: [...getDefaultMiddleware(), ...middlewares],
     devTools:
       /* istanbul ignore next line */

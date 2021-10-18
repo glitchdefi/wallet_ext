@@ -4,7 +4,7 @@ import HDKey from 'hdkey';
 import web3Utils from 'web3-utils';
 import BN from 'bn.js';
 import { GlitchWeb3 as GlitchWeb3Base } from '@glitchdefi/web3';
-import { GlitchNetwork } from '../../constants/networks';
+import { GlitchNetwork } from '../../../constants/networks';
 
 class GlitchWeb3 {
   public glitchWeb3: GlitchWeb3Base;

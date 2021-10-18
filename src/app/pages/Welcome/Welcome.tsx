@@ -15,19 +15,10 @@ import { Text } from '../../components/Text';
 import { Button, ButtonShadow } from '../../components/Button';
 import { Box, Flex } from '../../components/Box';
 import { NeedHelpContact } from '../../components/Footer';
-import {
-  useLoginActionHandlers,
-  useUserSelector,
-  useUserSlice,
-} from '../../../state/user/hooks';
 
 function Welcome(): JSX.Element {
   const { t } = useTranslation();
   const history = useHistory();
-  useUserSlice();
-  useUserSelector();
-
-  const { onLogin } = useLoginActionHandlers();
 
   return (
     <Container>
@@ -40,9 +31,8 @@ function Welcome(): JSX.Element {
         <ButtonShadow
           mt="72px"
           width="100%"
-          onClick={
-            () => onLogin()
-            // history.push(Routes.internetWarning, { route: Routes.createWallet })
+          onClick={() =>
+            history.push(Routes.internetWarning, { route: Routes.createWallet })
           }
         >
           {t(messages.createWallet())}
