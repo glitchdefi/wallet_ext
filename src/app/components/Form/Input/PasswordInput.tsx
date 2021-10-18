@@ -2,11 +2,12 @@ import React, { useState, ChangeEventHandler } from 'react';
 import styled from 'styled-components';
 import { SpaceProps } from 'styled-system';
 
+import { colors } from '../../../../theme/colors';
+
 import Input from './Input';
 import { Flex } from '../../Box';
 import { EyeOffIcon, EyeOnIcon } from '../../Svg';
-import { colors } from '../../../../theme/colors';
-
+import { Text } from '../../Text';
 interface PasswordInputProps extends SpaceProps {
   isError?: boolean;
   placeholder?: string;
@@ -21,10 +22,19 @@ interface PasswordInputProps extends SpaceProps {
     | 'numeric'
     | 'decimal'
     | 'search';
+  msgError?: string;
 }
 
 function PasswordInput(props: PasswordInputProps) {
-  const { onChange, placeholder, inputMode, value, ...rest } = props;
+  const {
+    onChange,
+    placeholder,
+    inputMode,
+    value,
+    isError,
+    msgError,
+    ...rest
+  } = props;
   const [show, setShow] = useState<boolean>(false);
 
   const onHandleShowPassword = () => {
@@ -32,39 +42,47 @@ function PasswordInput(props: PasswordInputProps) {
   };
 
   return (
-    <StyledWrapper {...rest}>
-      <Input
-        value={value}
-        hasBorder={false}
-        type={show ? 'text' : 'password'}
-        inputMode={inputMode}
-        onChange={onChange}
-        placeholder={placeholder}
-      />
-      {show ? (
-        <EyeOnIcon
-          cursor="pointer"
-          onClick={onHandleShowPassword}
-          style={{ userSelect: 'none' }}
+    <>
+      <StyledWrapper isError={isError} {...rest}>
+        <Input
+          value={value}
+          hasBorder={false}
+          type={show ? 'text' : 'password'}
+          inputMode={inputMode}
+          onChange={onChange}
+          placeholder={placeholder}
         />
-      ) : (
-        <EyeOffIcon
-          cursor="pointer"
-          onClick={onHandleShowPassword}
-          style={{ userSelect: 'none' }}
-        />
+        {show ? (
+          <EyeOnIcon
+            cursor="pointer"
+            onClick={onHandleShowPassword}
+            style={{ userSelect: 'none' }}
+          />
+        ) : (
+          <EyeOffIcon
+            cursor="pointer"
+            onClick={onHandleShowPassword}
+            style={{ userSelect: 'none' }}
+          />
+        )}
+      </StyledWrapper>
+      {isError && (
+        <Text mt="2px" color={colors.error}>
+          {msgError}
+        </Text>
       )}
-    </StyledWrapper>
+    </>
   );
 }
 
 const StyledWrapper = styled(Flex)<{ isError?: boolean }>`
-  border: 1px solid ${({ isError }) => (isError ? colors.red : colors.gray8)};
+  border: 1px solid ${({ isError }) => (isError ? colors.error : colors.gray8)};
   padding-right: 12px;
   transition: all 0.5s;
 
   &:focus-within {
-    border: 1px solid ${colors.primary};
+    border: 1px solid
+      ${({ isError }) => (isError ? colors.error : colors.primary)};
   }
 `;
 

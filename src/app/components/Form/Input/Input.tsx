@@ -9,7 +9,7 @@ const Input = styled.input<InputProps>`
   background-color: transparent;
   border: ${({ hasBorder = true }) =>
     hasBorder ? `1px solid ${colors.gray3}` : 'none'};
-  border-color: ${({ isError }) => isError && colors.red};
+  border-color: ${({ isError }) => isError && colors.error};
   color: ${colors.gray9};
   text-transform: ${({ textTransform }) => textTransform};
   display: block;
@@ -24,7 +24,7 @@ const Input = styled.input<InputProps>`
     transition: all 0.5s;
     border: ${({ hasBorder }) =>
       hasBorder ? `1px solid ${colors.primary}` : 'none'};
-    border-color: ${({ isError }) => isError && colors.red};
+    border-color: ${({ isError }) => isError && colors.error};
   }
 `;
 

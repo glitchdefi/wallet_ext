@@ -1,10 +1,12 @@
 {
     "common": {
         "create_wallet": "Create new wallet",
-        "import_wallet": "Import wallet",
+        "restore_wallet": "Restore wallet",
         "need_help_contact": "Need help? Contact",
         "glitch_finance_support": "Glitch Finance Support",
-        "ok": "OK"
+        "ok": "OK",
+        "mnemonic_phrase": "Mnemonic phrase",
+        "term_and_service": "Terms of Service"
     },
     "internetWarningPage": {
         "title": "Internet connection not recommended",
@@ -14,6 +16,25 @@
     },
     "homePage": {
         "a_crypto_wallet_for_defi": "A crypto wallet for DeFi"
+    },
+    "createWalletPage": {
+        "title": "Create new wallet",
+        "protect_your_wallet": "Protect your wallet with a password",
+        "please_write_down_these_12_words": "Please write down these 12 words in the correct order on paper and store it somewhere safe",
+        "verify_your_mnemonic": "Verify your Mnemonic",
+        "enter_the_following_words": "Enter the following words from your mnemonic phrase in the correct order.",
+        "please_remember_this_password": "Please remember this password. If you lose your password, everything in this account is lost.",
+        "set_up_password": "Set up Password",
+        "i_understand_that_glitch": "I understand that Glitch Wallet cannot recover this password for me",
+        "i_agree_to_the": "I agree to the"
+    },
+    "password": {
+        "create_a_password": "Create a password",
+        "title": "Password",
+        "confirm_password": "Confirm password",
+        "enter_password": "Enter password",
+        "re_enter_password": "Re-enter your password",
+        "password_confirmation_not_match": "Password confirmation does not match"
     },
     "aboutUs": {
         "title": "About Us"

@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import logo from '../../../assets/img/gl_logo.png';
-import { messages } from './message';
+import { messages } from './messages';
 import { Routes } from '../../../constants/routes';
 
 // Theme
@@ -42,10 +42,10 @@ function Welcome(): JSX.Element {
           width="100%"
           variant="secondary"
           onClick={() =>
-            history.push(Routes.internetWarning, { route: Routes.importWallet })
+            history.push(Routes.internetWarning, { route: Routes.restoreWallet })
           }
         >
-          {t(messages.importWallet())}
+          {t(messages.restoreWallet())}
         </Button>
 
         <Box pb="24px" mt="100px">

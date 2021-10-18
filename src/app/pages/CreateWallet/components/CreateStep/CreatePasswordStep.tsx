@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import { colors } from '../../../../../theme/colors';
 
+import { messages } from '../../messages';
+
 // Components
 import { Flex, Box } from '../../../../components/Box';
 import { Label, PasswordInput, CheckBox } from '../../../../components/Form';
@@ -9,8 +11,10 @@ import { Text } from '../../../../components/Text';
 import { ButtonShadow } from '../../../../components/Button';
 import { MessageBox } from '../../../../components/MessageBox';
 import { PasswordRulesTooltip } from '../PasswordRulesTooltip';
+import { useTranslation } from 'react-i18next';
 
 export function CreatePasswordStep() {
+  const { t } = useTranslation();
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [isPassedRules, setIsPassedRules] = useState<boolean>(false);
@@ -18,9 +22,9 @@ export function CreatePasswordStep() {
   return (
     <>
       <Box>
-        <Label>Password</Label>
+        <Label>{t(messages.password())}</Label>
         <PasswordInput
-          placeholder="Enter password"
+          placeholder={t(messages.enterPassword())}
           data-event="click"
           data-tip=""
           onChange={(e) => setPassword(e.target.value?.trim())}
@@ -32,24 +36,23 @@ export function CreatePasswordStep() {
       </Box>
 
       <Box mt="24px">
-        <Label>Confirm password</Label>
+        <Label>{t(messages.confirmPassword())}</Label>
         <PasswordInput
-          placeholder="Re-enter your password"
-          onChange={(e) => setPassword(e.target.value?.trim())}
+          isError={confirmPassword && confirmPassword !== password}
+          msgError={t(messages.confirmPasswordNotMatch())}
+          placeholder={t(messages.reEnterPassword())}
+          onChange={(e) => setConfirmPassword(e.target.value?.trim())}
         />
       </Box>
 
-      <MessageBox
-        mt="24px"
-        message="Please remember this password. If you lose your password, everything in this account is lost."
-      />
+      <MessageBox mt="24px" message={t(messages.warningPassword())} />
 
       <Box mt="24px">
         <CheckBox
           id="terms-of-service"
           labelComponent={
             <Flex>
-              <Text>I agree to the</Text>
+              <Text>{t(messages.iAgreeToThe())}</Text>
               <Text
                 as="a"
                 target="_blank"
@@ -57,7 +60,7 @@ export function CreatePasswordStep() {
                 ml="8px"
                 color={colors.primary}
               >
-                Terms of Service
+                {t(messages.termAndServices())}
               </Text>
             </Flex>
           }
@@ -66,17 +69,12 @@ export function CreatePasswordStep() {
         <CheckBox
           id="i-understand"
           mt="12px"
-          labelComponent={
-            <Text>
-              I understand that Glitch Wallet cannot recover this password for
-              me
-            </Text>
-          }
+          labelComponent={<Text>{t(messages.iUnderstandThatGlitch())}</Text>}
         />
       </Box>
 
       <Box pt="32px" pb="24px">
-        <ButtonShadow width="100%">Set up Password</ButtonShadow>
+        <ButtonShadow width="100%">{t(messages.setupPassword())}</ButtonShadow>
       </Box>
     </>
   );

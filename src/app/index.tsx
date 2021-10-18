@@ -52,7 +52,7 @@ const App = () => {
                 path={Routes.internetWarning}
                 component={InternetWarningPage}
               />
-              <Route path={Routes.importWallet} component={ImportWalletPage} />
+              <Route path={Routes.restoreWallet} component={ImportWalletPage} />
               <Route path={Routes.createWallet} component={CreateWalletPage} />
             </Switch>
           </Page>

@@ -4,6 +4,7 @@ export const colors = {
   red: '#A61D24',
   white: '#FFFFFF',
   green: '#49AA19',
+  error: '#D32029',
 
   orange: '#D87A16',
 

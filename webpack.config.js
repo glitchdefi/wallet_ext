@@ -7,6 +7,7 @@ var webpack = require('webpack'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
   TerserPlugin = require('terser-webpack-plugin');
 
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 var alias = {
@@ -108,8 +109,20 @@ var options = {
     extensions: fileExtensions
       .map((extension) => '.' + extension)
       .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
+    fallback: {
+      crypto: require.resolve('crypto-browserify'),
+      stream: require.resolve('stream-browserify'),
+      assert: false,
+      util: false,
+      http: false,
+      https: false,
+      os: false,
+    },
   },
   plugins: [
+    new NodePolyfillPlugin({
+      excludeAliases: ['console'],
+    }),
     new webpack.ProgressPlugin(),
     // clean the build folder
     new CleanWebpackPlugin({
