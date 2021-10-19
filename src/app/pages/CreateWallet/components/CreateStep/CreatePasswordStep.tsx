@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { colors } from '../../../../../theme/colors';
+import { colors } from 'theme/colors';
 
 import { messages } from '../../messages';
 
 // Components
-import { Flex, Box } from '../../../../components/Box';
-import { Label, PasswordInput, CheckBox } from '../../../../components/Form';
-import { Text } from '../../../../components/Text';
-import { ButtonShadow } from '../../../../components/Button';
-import { MessageBox } from '../../../../components/MessageBox';
+import { Flex, Box } from 'app/components/Box';
+import { Label, PasswordInput, CheckBox } from 'app/components/Form';
+import { Text } from 'app/components/Text';
+import { ButtonShadow } from 'app/components/Button';
+import { MessageBox } from 'app/components/MessageBox';
 import { PasswordRulesTooltip } from '../PasswordRulesTooltip';
-import { useTranslation } from 'react-i18next';
 
 export function CreatePasswordStep() {
   const { t } = useTranslation();

@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 
 import logo from '../../../assets/img/gl_logo.png';
 import { messages } from './messages';
-import { Routes } from '../../../constants/routes';
+import { Routes } from 'constants/routes';
 
 // Theme
-import { colors } from '../../../theme/colors';
+import { colors } from 'theme/colors';
 
 // Components
 import { Text } from '../../components/Text';

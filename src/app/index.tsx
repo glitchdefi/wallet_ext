@@ -16,6 +16,7 @@ import { PortProvider } from '../contexts/PortContext';
 import { Page } from './layouts/Page';
 
 // Pages
+import { HomePage } from './pages/Home';
 import { WelcomePage } from './pages/Welcome';
 import { ImportWalletPage } from './pages/ImportWallet';
 import { CreateWalletPage } from './pages/CreateWallet';
@@ -47,7 +48,8 @@ const App = () => {
           <GlobalStyles />
           <Page>
             <Switch>
-              <Route exact path="/" component={WelcomePage} />
+              <Route exact path={Routes.welcome} component={WelcomePage} />
+              <Route path={Routes.home} component={HomePage} />
               <Route
                 path={Routes.internetWarning}
                 component={InternetWarningPage}

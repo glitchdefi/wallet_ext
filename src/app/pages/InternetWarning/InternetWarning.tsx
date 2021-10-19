@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useLocation } from 'react-router';
 
-import { colors } from '../../../theme/colors';
+import { colors } from 'theme/colors';
 
-import { Routes } from '../../../constants/routes';
+import { Routes } from 'constants/routes';
 
 // Components
 import { Flex, Box } from '../../components/Box';

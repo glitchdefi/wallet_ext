@@ -6,6 +6,10 @@ export const colors = {
   green: '#49AA19',
   error: '#D32029',
 
+  blue1: '#111D2C',
+  blue3: '#15395B',
+  blue6: '#177DDC',
+
   orange: '#D87A16',
 
   shadow1: '#F100F5',

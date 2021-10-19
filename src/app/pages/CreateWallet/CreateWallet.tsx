@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import { colors } from '../../../theme/colors';
+import { colors } from 'theme/colors';
 
 import { messages } from './messages';
 
@@ -10,10 +10,10 @@ import { messages } from './messages';
 import { useStepTitleDesc } from '../../../state/wallet/hooks';
 
 // Components
-import { Flex, Box } from '../../components/Box';
-import { Label, PasswordInput, CheckBox } from '../../components/Form';
-import { Text } from '../../components/Text';
-import { ButtonShadow } from '../../components/Button';
+import { Flex, Box } from 'app/components/Box';
+import { Label, PasswordInput, CheckBox } from 'app/components/Form';
+import { Text } from 'app/components/Text';
+import { ButtonShadow } from 'app/components/Button';
 import { StepProgressLayout } from '../../components/StepProgressLayout';
 import { MessageBox } from '../../components/MessageBox';
 import { PasswordRulesTooltip } from './components/PasswordRulesTooltip';

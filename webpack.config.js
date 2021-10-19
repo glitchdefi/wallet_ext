@@ -18,6 +18,64 @@ var alias = {
     'utils',
     'redux-injectors.ts'
   ),
+  'theme/colors': path.join(__dirname, 'src', 'theme', 'colors.ts'),
+  'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
+  'app/components/Button': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Button',
+    'index.tsx'
+  ),
+  'app/components/Text': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Text',
+    'index.tsx'
+  ),
+  'app/components/Box': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Box',
+    'index.ts'
+  ),
+  'app/components/Image': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Image',
+    'index.tsx'
+  ),
+  'app/components/Svg': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Svg',
+    'index.tsx'
+  ),
+  'app/components/Form': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Form',
+    'index.tsx'
+  ),
+  'app/components/MessageBox': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'MessageBox',
+    'index.tsx'
+  ),
 };
 
 // load the secrets
