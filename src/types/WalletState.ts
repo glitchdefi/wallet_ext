@@ -4,4 +4,5 @@ export interface WalletState {
   accounts?: object;
   selectedAddress?: any;
   identities?: object;
+  seedPhrases?: string;
 }

@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import ReactTooltip from 'react-tooltip';
 import styled from 'styled-components';
 import { SpaceProps } from 'styled-system';
-import { colors } from '../../../../theme/colors';
 
-import { Flex, Box } from '../../../components/Box';
-import { CheckIcon } from '../../../components/Svg';
-import { Text } from '../../../components/Text';
+import { colors } from 'theme/colors';
+
+import { Flex, Box } from 'app/components/Box';
+import { CheckIcon } from 'app/components/Svg';
+import { Text } from 'app/components/Text';
 
 interface Props {
   value?: string;

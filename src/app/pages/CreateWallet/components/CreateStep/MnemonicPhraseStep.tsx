@@ -1,26 +1,42 @@
 import React from 'react';
+import crypto from 'crypto';
+import { colors } from 'theme/colors';
 
-import { colors } from '../../../../../theme/colors';
+// Hooks
+import { useMakeTextFile } from '../../../../../hooks/useMakeTextFile';
 
-import { Flex, Box } from '../../../../components/Box';
-import { MessageBox } from '../../../../components/MessageBox';
-import { Button, ButtonShadow } from '../../../../components/Button';
+import { Flex, Box } from 'app/components/Box';
+import { MessageBox } from 'app/components/MessageBox';
+import { Button, ButtonShadow, CopyButton } from 'app/components/Button';
+import { Text } from 'app/components/Text';
+import { DownloadIcon, CopyIcon } from 'app/components/Svg';
 import { MnemonicPhraseItem } from '../MnemonicPhraseItem';
-import { DownloadIcon, CopyIcon } from '../../../../components/Svg';
-import { Text } from '../../../../components/Text';
+interface Props {
+  seedPhrases: string;
+  onNextStep: () => void;
+}
 
-export function MnemonicPhraseStep() {
+export const MnemonicPhraseStep: React.FC<Props> = ({
+  seedPhrases,
+  onNextStep,
+}) => {
+  const seedPhrasesList: string[] = seedPhrases?.split(' ');
+  const { downloadLink } = useMakeTextFile(seedPhrasesList);
+  const fileName = crypto.randomBytes(6).toString('hex');
+
   return (
     <Box>
       <Flex
-        p="12px"
+        py="6px"
+        px="12px"
         flexWrap="wrap"
         alignItems="center"
         justifyContent="center"
         background={colors.gray1}
+        minHeight="120px"
       >
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((o) => (
-          <MnemonicPhraseItem />
+        {seedPhrasesList?.map((word: string, i) => (
+          <MnemonicPhraseItem variants="selected" word={word} num={i} key={i} />
         ))}
       </Flex>
 
@@ -28,20 +44,30 @@ export function MnemonicPhraseStep() {
         <Button p="0px">
           <Flex>
             <DownloadIcon width="16px" />
-            <Text ml="8px" color={colors.primary} bold>
+            <Text
+              as="a"
+              download={`${fileName}.txt`}
+              href={downloadLink}
+              ml="8px"
+              color={colors.primary}
+              bold
+            >
               Download
             </Text>
           </Flex>
         </Button>
 
-        <Button p="0px">
-          <Flex>
-            <CopyIcon width="12px" />
-            <Text ml="8px" color={colors.primary} bold>
-              Copy
-            </Text>
-          </Flex>
-        </Button>
+        <CopyButton
+          component={
+            <Flex>
+              <CopyIcon width="12px" />
+              <Text ml="8px" color={colors.primary} bold>
+                Copy
+              </Text>
+            </Flex>
+          }
+          value={seedPhrases}
+        />
       </Flex>
 
       <MessageBox
@@ -50,8 +76,10 @@ export function MnemonicPhraseStep() {
       />
 
       <Box pt="32px" pb="24px">
-        <ButtonShadow width="100%">I wrote down my Mnemonic</ButtonShadow>
+        <ButtonShadow width="100%" onClick={onNextStep}>
+          I wrote down my Mnemonic
+        </ButtonShadow>
       </Box>
     </Box>
   );
-}
+};

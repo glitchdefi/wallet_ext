@@ -4,15 +4,12 @@ import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
 
 // Types
-import { RootState } from 'types/RootState';
-import { Port, PortMessageActions } from 'types/Port';
+import { RootState } from 'types';
 
 log.setDefaultLevel('debug');
-
 export class GlitchController {
   glitchWeb3: GlitchWeb3;
   appStateController: AppStateController;
-  port: Port;
   memStore: {};
 
   constructor(otps: { initialState: RootState }) {
@@ -23,31 +20,23 @@ export class GlitchController {
   }
 
   //=============================================================================
-  // PORT METHODS
+  // WALLET METHODS
   //=============================================================================
 
-  initPort(port: Port) {
-    this.port = port;
-    port.onMessage.addListener(this.actionFromUI.bind(this));
+  /**
+   * 
+   * @returns Generate 12 mnemonic phrases
+   */
+  createSeedWords(): string {
+    return this.glitchWeb3.createSeedWords();
   }
 
-  actionFromUI(message: { action?: PortMessageActions; data?: any }) {
-    try {
-      const { action, data } = message || {};
-
-      if (action === 'createWallet') this.createNewWallet(data);
-    } catch (error) {
-      log.error('actionFromUI', error);
-    }
-  }
-
-  //=============================================================================
-  // MNEMONIC METHODS
-  //=============================================================================
-
+  /**
+   * 
+   * @param password 
+   */
   createNewWallet(password?: string) {
     const wallet = this.glitchWeb3.createNewWallet(password);
-    this.port.postMessage({ action: 'createWallet', data: wallet });
   }
 
   //=============================================================================

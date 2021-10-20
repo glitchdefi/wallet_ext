@@ -11,12 +11,12 @@ import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
 // Components
-import { Text } from '../../components/Text';
-import { Button, ButtonShadow } from '../../components/Button';
-import { Box, Flex } from '../../components/Box';
+import { Text } from 'app/components/Text';
+import { Button, ButtonShadow } from 'app/components/Button';
+import { Box, Flex } from 'app/components/Box';
 import { NeedHelpContact } from '../../components/Footer';
 
-function Welcome(): JSX.Element {
+const Welcome: React.FC = () => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -42,7 +42,9 @@ function Welcome(): JSX.Element {
           width="100%"
           variant="secondary"
           onClick={() =>
-            history.push(Routes.internetWarning, { route: Routes.restoreWallet })
+            history.push(Routes.internetWarning, {
+              route: Routes.restoreWallet,
+            })
           }
         >
           {t(messages.restoreWallet())}
@@ -54,7 +56,7 @@ function Welcome(): JSX.Element {
       </Flex>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

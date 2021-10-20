@@ -76,6 +76,14 @@ var alias = {
     'MessageBox',
     'index.tsx'
   ),
+  types: path.join(__dirname, 'src', 'types', 'index.ts'),
+  'state/wallet/hooks': path.join(
+    __dirname,
+    'src',
+    'state',
+    'wallet',
+    'hooks.ts'
+  ),
 };
 
 // load the secrets

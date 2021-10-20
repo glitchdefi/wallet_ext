@@ -4,4 +4,5 @@ export const Routes = {
   internetWarning: '/internet-warning',
   createWallet: '/create-wallet',
   restoreWallet: '/restore-wallet',
+  unlock: '/unlock',
 };

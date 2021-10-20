@@ -10,7 +10,6 @@ import { GlobalStyles } from '../theme/GlobalStyle';
 import { Routes } from '../constants/routes';
 
 import { ExtensionStore } from '../scripts/lib/localStore';
-import { PortProvider } from '../contexts/PortContext';
 
 // Components
 import { Page } from './layouts/Page';
@@ -21,13 +20,14 @@ import { WelcomePage } from './pages/Welcome';
 import { ImportWalletPage } from './pages/ImportWallet';
 import { CreateWalletPage } from './pages/CreateWallet';
 import { InternetWarningPage } from './pages/InternetWarning';
+import { UnlockPage } from './pages/Unlock';
 
 // Initialize languages
 import '../locales/i18n';
 
 const history = createMemoryHistory();
 
-const App = () => {
+const App: React.FC = () => {
   const [store, setStore] = useState(configureAppStore());
 
   useEffect(() => {
@@ -43,23 +43,22 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <PortProvider>
-        <Router history={history}>
-          <GlobalStyles />
-          <Page>
-            <Switch>
-              <Route exact path={Routes.welcome} component={WelcomePage} />
-              <Route path={Routes.home} component={HomePage} />
-              <Route
-                path={Routes.internetWarning}
-                component={InternetWarningPage}
-              />
-              <Route path={Routes.restoreWallet} component={ImportWalletPage} />
-              <Route path={Routes.createWallet} component={CreateWalletPage} />
-            </Switch>
-          </Page>
-        </Router>
-      </PortProvider>
+      <Router history={history}>
+        <GlobalStyles />
+        <Page>
+          <Switch>
+            <Route exact path={Routes.welcome} component={WelcomePage} />
+            <Route path={Routes.home} component={HomePage} />
+            <Route
+              path={Routes.internetWarning}
+              component={InternetWarningPage}
+            />
+            <Route path={Routes.restoreWallet} component={ImportWalletPage} />
+            <Route path={Routes.createWallet} component={CreateWalletPage} />
+            <Route path={Routes.unlock} component={UnlockPage} />
+          </Switch>
+        </Page>
+      </Router>
     </Provider>
   );
 };

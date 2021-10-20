@@ -9,21 +9,40 @@ import { messages } from '../../messages';
 import { Flex, Box } from 'app/components/Box';
 import { Label, PasswordInput, CheckBox } from 'app/components/Form';
 import { Text } from 'app/components/Text';
-import { ButtonShadow } from 'app/components/Button';
+import { Button, ButtonShadow } from 'app/components/Button';
 import { MessageBox } from 'app/components/MessageBox';
 import { PasswordRulesTooltip } from '../PasswordRulesTooltip';
 
-export function CreatePasswordStep() {
+interface Props {
+  onSetupPassword: (password: string) => void;
+}
+
+export const CreatePasswordStep: React.FC<Props> = ({ onSetupPassword }) => {
   const { t } = useTranslation();
+
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [isPassedRules, setIsPassedRules] = useState<boolean>(false);
+  const [checked, setChecked] = useState<{
+    agree: boolean;
+    understand: boolean;
+  }>({
+    agree: false,
+    understand: false,
+  });
+
+  const isEnableButton =
+    confirmPassword === password &&
+    isPassedRules &&
+    checked.agree &&
+    checked.understand;
 
   return (
     <>
       <Box>
         <Label>{t(messages.password())}</Label>
         <PasswordInput
+          value={password}
           placeholder={t(messages.enterPassword())}
           data-event="click"
           data-tip=""
@@ -38,6 +57,7 @@ export function CreatePasswordStep() {
       <Box mt="24px">
         <Label>{t(messages.confirmPassword())}</Label>
         <PasswordInput
+          value={confirmPassword}
           isError={confirmPassword && confirmPassword !== password}
           msgError={t(messages.confirmPasswordNotMatch())}
           placeholder={t(messages.reEnterPassword())}
@@ -50,9 +70,13 @@ export function CreatePasswordStep() {
       <Box mt="24px">
         <CheckBox
           id="terms-of-service"
+          checked={checked.agree}
+          onChange={(e) => setChecked({ ...checked, agree: e.target.checked })}
           labelComponent={
             <Flex>
-              <Text>{t(messages.iAgreeToThe())}</Text>
+              <Text style={{ userSelect: 'none' }}>
+                {t(messages.iAgreeToThe())}
+              </Text>
               <Text
                 as="a"
                 target="_blank"
@@ -68,14 +92,30 @@ export function CreatePasswordStep() {
 
         <CheckBox
           id="i-understand"
+          checked={checked.understand}
           mt="12px"
-          labelComponent={<Text>{t(messages.iUnderstandThatGlitch())}</Text>}
+          onChange={(e) =>
+            setChecked({ ...checked, understand: e.target.checked })
+          }
+          labelComponent={
+            <Text style={{ userSelect: 'none' }}>
+              {t(messages.iUnderstandThatGlitch())}
+            </Text>
+          }
         />
       </Box>
 
       <Box pt="32px" pb="24px">
-        <ButtonShadow width="100%">{t(messages.setupPassword())}</ButtonShadow>
+        {isEnableButton ? (
+          <ButtonShadow width="100%" onClick={() => onSetupPassword(password)}>
+            {t(messages.setupPassword())}
+          </ButtonShadow>
+        ) : (
+          <Button variant="disable-primary" width="100%">
+            {t(messages.setupPassword())}
+          </Button>
+        )}
       </Box>
     </>
   );
-}
+};

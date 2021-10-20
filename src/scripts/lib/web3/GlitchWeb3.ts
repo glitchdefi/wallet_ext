@@ -23,6 +23,15 @@ export class GlitchWeb3 {
   }
 
   /**
+   *
+   * @returns Generate 12 mnemonic phrases
+   */
+  createSeedWords(): string {
+    const mnemonic = bip39.generateMnemonic(128);
+    return mnemonic;
+  }
+
+  /**
    * Create new a wallet
    * @param password
    * @returns
@@ -32,17 +41,8 @@ export class GlitchWeb3 {
     privateKey: string;
     address: string;
   } {
-    const mnemonic = this.generateMnemonicPhrase();
+    const mnemonic = this.createSeedWords();
     return this.getWalletByMnemonic(mnemonic);
-  }
-
-  /**
-   *
-   * @returns Mnemonic phrases (12)
-   */
-  generateMnemonicPhrase(): string {
-    const mnemonic = bip39.generateMnemonic(128);
-    return mnemonic;
   }
 
   /**

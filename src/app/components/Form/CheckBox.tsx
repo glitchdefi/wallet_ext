@@ -5,14 +5,21 @@ import { colors } from '../../../theme/colors';
 import { Box } from '../Box';
 
 interface Props extends SpaceProps {
-  labelComponent: React.ReactNode;
+  checked: boolean;
   id: string;
+  labelComponent: React.ReactNode;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-function CheckBox({ labelComponent, id, ...rest }: Props) {
+function CheckBox({ labelComponent, id, onChange, checked, ...rest }: Props) {
   return (
     <Box {...rest}>
-      <StyledCheckBox id={id} type="checkbox" />
+      <StyledCheckBox
+        checked={checked}
+        id={id}
+        type="checkbox"
+        onChange={onChange}
+      />
       <label htmlFor={id}>{labelComponent}</label>
     </Box>
   );

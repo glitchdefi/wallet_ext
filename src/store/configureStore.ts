@@ -5,7 +5,7 @@ import {
 } from '@reduxjs/toolkit';
 import { createInjectorsEnhancer } from 'redux-injectors';
 import createSagaMiddleware from 'redux-saga';
-import { RootState } from 'types/RootState';
+import { RootState } from 'types';
 
 import { createReducer } from './reducers';
 

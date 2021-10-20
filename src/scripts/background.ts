@@ -1,9 +1,10 @@
 import log from 'loglevel';
+import { Handler } from './lib/handler';
 import { ExtensionPlatform } from './platforms/extension';
 import { ExtensionStore } from './lib/localStore';
 import { getFirstPreferredLangCode } from './lib/getFirstPreferredLangCode';
 import { GlitchController } from './controllers/GlitchController';
-import { RootState } from 'types/RootState';
+import { RootState, MessageTypes } from 'types';
 
 log.setDefaultLevel('debug');
 
@@ -69,9 +70,36 @@ async function loadStateFromPersistence(): Promise<RootState> {
 function handleChromeListeners(controller: GlitchController) {
   log.info('background.handleChromeListeners');
 
-  chrome.runtime.onConnect.addListener((port) => {
-    if (port.name === 'glitchController') {
-      controller.initPort(port);
+  chrome.runtime.onMessage.addListener(
+    (request: { type: string; payload?: object }, sender, sendResponse) => {
+      const senderURL = sender.url;
+      const popupURL = chrome.runtime.getURL('popup.html');
+      const windowURL = chrome.runtime.getURL('window.html');
+      const senderId = sender.id;
+      const extensionId = chrome.runtime.id;
+      const { type, payload } = request || {};
+
+      log.info('BG Received: ', request);
+
+      if (senderId === extensionId) {
+        if (senderURL === popupURL || senderURL === windowURL) {
+          try {
+            switch (type) {
+              case MessageTypes.BG_WALLET_CREATE_SEED_WORDS:
+                Handler.createSeedWords(controller, sendResponse);
+                break;
+
+              default:
+                Handler.handleDefault(request, sendResponse);
+            }
+          } catch (err) {
+            Handler.handleError(request, sendResponse);
+          }
+        }
+      }
+      // This logic require to be open message port between popup.js and background.js till not get responses by sendMessage.
+      // Don't remove return true.
+      return true;
     }
-  });
+  );
 }

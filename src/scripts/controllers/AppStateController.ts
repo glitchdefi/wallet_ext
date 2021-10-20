@@ -1,4 +1,4 @@
-import { RootState } from 'types/RootState';
+import { RootState } from 'types';
 import { SettingState } from 'types/SettingsState';
 import { TransactionsState } from 'types/TransactionsState';
 import { WalletState } from 'types/WalletState';
