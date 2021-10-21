@@ -13,6 +13,7 @@ import {
 } from 'state/wallet/hooks';
 
 // Components
+import { PageLayout } from 'app/layouts';
 import { MnemonicPhraseStep } from './components/CreateStep/MnemonicPhraseStep';
 import { CreatePasswordStep } from './components/CreateStep/CreatePasswordStep';
 import { VerifyMnemonicStep } from './components/CreateStep/VerifyMnemonicStep';
@@ -30,38 +31,40 @@ const CreateWallet: React.FC = () => {
   const [password, setPassword] = useState<string>();
 
   const { seedPhrases } = useSeedPhrases();
-  const { onCreateSeedPhrases } = useWalletActionHandlers();
-  const { stepTitle, stepDesc } = useStepTitleDesc(step, messages);
+  const { onCreateWallet, onCreateSeedPhrases } = useWalletActionHandlers();
+  const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'create');
 
   const stepProgress = ((step + 1) / MAX_STEP) * 100;
 
   return (
-    <StepProgressLayout
-      title={t(messages.title())}
-      step={step + 1}
-      stepProgress={stepProgress}
-      stepTitle={t(stepTitle)}
-      stepDescription={t(stepDesc)}
-      onBack={() => history.push('/')}
-    >
-      {step === 0 && (
-        <CreatePasswordStep
-          onSetupPassword={(password) => {
-            setPassword(password);
-            onCreateSeedPhrases();
-            // Move to mnemonic phrase step
-            setStep(1);
-          }}
-        />
-      )}
-      {step === 1 && (
-        <MnemonicPhraseStep
-          seedPhrases={seedPhrases}
-          onNextStep={() => setStep(2)}
-        />
-      )}
-      {step === 2 && <VerifyMnemonicStep seedPhrases={seedPhrases} />}
-    </StepProgressLayout>
+    <PageLayout>
+      <StepProgressLayout
+        title={t(messages.title())}
+        step={step + 1}
+        stepProgress={stepProgress}
+        stepTitle={t(stepTitle)}
+        stepDescription={t(stepDesc)}
+        onBack={() => history.push('/')}
+      >
+        {step === 0 && (
+          <CreatePasswordStep
+            onSetupPassword={(password) => {
+              setPassword(password);
+              onCreateSeedPhrases();
+              // Move to mnemonic phrase step
+              setStep(1);
+            }}
+          />
+        )}
+        {step === 1 && (
+          <MnemonicPhraseStep
+            seedPhrases={seedPhrases}
+            onNextStep={() => setStep(2)}
+          />
+        )}
+        {step === 2 && <VerifyMnemonicStep seedPhrases={seedPhrases} />}
+      </StepProgressLayout>
+    </PageLayout>
   );
 };
 

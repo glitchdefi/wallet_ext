@@ -45,19 +45,23 @@ export const useWalletActionHandlers = (): {
   };
 };
 
-export const useStepTitleDesc = (step: number, messages: any) => {
+export const useStepTitleDesc = (
+  step: number,
+  messages: any,
+  page: 'create' | 'restore'
+) => {
   const data = [
     {
-      title: messages.stepOneTitle(),
-      desc: messages.stepOneDesc(),
+      title: messages?.stepOneTitle(),
+      desc: messages?.stepOneDesc(),
     },
     {
-      title: messages.stepTwoTitle(),
-      desc: messages.stepTwoDesc(),
+      title: messages?.stepTwoTitle(),
+      desc: messages?.stepTwoDesc(),
     },
     {
-      title: messages.stepThreeTitle(),
-      desc: messages.stepThreeDesc(),
+      title: page === 'create' ? messages?.stepThreeTitle() : null,
+      desc: page === 'create' ? messages?.stepThreeDesc() : null,
     },
   ];
 

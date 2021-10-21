@@ -7,12 +7,13 @@ import { Tooltip } from '../Tooltip';
 import { CopyIcon } from '../Svg';
 
 interface Props extends SpaceProps {
+  id?: string;
   width?: string;
   value?: string;
   component?: React.ReactNode;
 }
 
-function CopyButton({ width, value, component, ...rest }: Props) {
+function CopyButton({ id, width, value, component, ...rest }: Props) {
   const [copied, setCopied] = useState(false);
   const tooltipRef = useRef();
 
@@ -32,17 +33,26 @@ function CopyButton({ width, value, component, ...rest }: Props) {
 
   return (
     <>
-      <div ref={tooltipRef} data-tip="" data-for={value} onClick={onCopy}>
-        <Button p="0px" {...rest}>
-          {isValidElement(component) ? (
-            React.cloneElement(component)
-          ) : (
-            <CopyIcon width={width} />
-          )}
-        </Button>
-      </div>
+      <Button
+        p="0px"
+        ref={tooltipRef}
+        data-tip=""
+        data-for={id}
+        onClick={onCopy}
+        {...rest}
+      >
+        {isValidElement(component) ? (
+          React.cloneElement(component)
+        ) : (
+          <CopyIcon width={width} />
+        )}
+      </Button>
 
-      <Tooltip id={value} getContent={() => (copied ? 'Copied' : 'Copy')} />
+      <Tooltip
+        id={id}
+        width="3rem"
+        getContent={() => (copied ? 'Copied' : 'Copy')}
+      />
     </>
   );
 }

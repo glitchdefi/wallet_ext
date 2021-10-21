@@ -18,6 +18,23 @@ export const createSeedWords = async (
   }
 };
 
+export const createNewWallet = async (
+  payload: { mnemonic?: string; password?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { mnemonic, password } = payload || {};
+
+    const walletInfo = controller.createNewWallet(mnemonic, password);
+    if (walletInfo) {
+      sendResponse({ ...successfulResponse, walletInfo });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const handleDefault = (request: Request, sendResponse: SendResponse) => {
   const response = {
     ...errorResponse,

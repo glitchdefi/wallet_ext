@@ -12,12 +12,12 @@ import { Routes } from '../constants/routes';
 import { ExtensionStore } from '../scripts/lib/localStore';
 
 // Components
-import { Page } from './layouts/Page';
+import { ContainerLayout } from './layouts';
 
 // Pages
 import { HomePage } from './pages/Home';
 import { WelcomePage } from './pages/Welcome';
-import { ImportWalletPage } from './pages/ImportWallet';
+import { RestoreWalletPage } from './pages/RestoreWallet';
 import { CreateWalletPage } from './pages/CreateWallet';
 import { InternetWarningPage } from './pages/InternetWarning';
 import { UnlockPage } from './pages/Unlock';
@@ -45,7 +45,7 @@ const App: React.FC = () => {
     <Provider store={store}>
       <Router history={history}>
         <GlobalStyles />
-        <Page>
+        <ContainerLayout>
           <Switch>
             <Route exact path={Routes.welcome} component={WelcomePage} />
             <Route path={Routes.home} component={HomePage} />
@@ -53,11 +53,11 @@ const App: React.FC = () => {
               path={Routes.internetWarning}
               component={InternetWarningPage}
             />
-            <Route path={Routes.restoreWallet} component={ImportWalletPage} />
+            <Route path={Routes.restoreWallet} component={RestoreWalletPage} />
             <Route path={Routes.createWallet} component={CreateWalletPage} />
             <Route path={Routes.unlock} component={UnlockPage} />
           </Switch>
-        </Page>
+        </ContainerLayout>
       </Router>
     </Provider>
   );

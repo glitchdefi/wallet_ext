@@ -50,7 +50,7 @@ const Welcome: React.FC = () => {
           {t(messages.restoreWallet())}
         </Button>
 
-        <Box pb="24px" mt="100px">
+        <Box pb="24px" mt="150px">
           <NeedHelpContact />
         </Box>
       </Flex>

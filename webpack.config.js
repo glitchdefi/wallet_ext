@@ -18,8 +18,16 @@ var alias = {
     'utils',
     'redux-injectors.ts'
   ),
+  'utils/message': path.join(__dirname, 'src', 'utils', 'message.ts'),
   'theme/colors': path.join(__dirname, 'src', 'theme', 'colors.ts'),
   'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
+  'app/layouts': path.join(__dirname, 'src', 'app', 'layouts', 'index.ts'),
+  'locales/translations': path.join(
+    __dirname,
+    'src',
+    'locales',
+    'translations.ts'
+  ),
   'app/components/Button': path.join(
     __dirname,
     'src',
@@ -74,6 +82,22 @@ var alias = {
     'app',
     'components',
     'MessageBox',
+    'index.tsx'
+  ),
+  'app/components/Footer': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Footer',
+    'index.tsx'
+  ),
+  'app/components/StepProgressLayout': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'StepProgressLayout',
     'index.tsx'
   ),
   types: path.join(__dirname, 'src', 'types', 'index.ts'),

@@ -16,8 +16,10 @@ export class GlitchWeb3 {
    * construction calls with the `new` operator.
    */
   constructor() {
-    const accountWeb3 = new GlitchWeb3Base(GlitchNetwork[0].networks[0].host);
-    this.glitchWeb3 = accountWeb3;
+    const connectGlitchNetwork = new GlitchWeb3Base(
+      GlitchNetwork[0].networks[0].host
+    );
+    this.glitchWeb3 = connectGlitchNetwork;
 
     log.info('Glitch Web3 initialization complete.');
   }
@@ -36,12 +38,11 @@ export class GlitchWeb3 {
    * @param password
    * @returns
    */
-  createNewWallet(password?: string): {
+  createNewWallet(mnemonic?: string): {
     mnemonic: string;
     privateKey: string;
     address: string;
   } {
-    const mnemonic = this.createSeedWords();
     return this.getWalletByMnemonic(mnemonic);
   }
 
@@ -72,6 +73,24 @@ export class GlitchWeb3 {
     } while (!GlitchCommon.codec.isBankAddress(address));
 
     return { mnemonic, privateKey, address };
+  }
+
+  /**
+   *
+   * @param password
+   * @returns walletStore
+   */
+  encode(password?: string): any {
+    // TODO
+  }
+
+  /**
+   *
+   * @param password
+   * @param address
+   */
+  decode(password?: string, address?: string) {
+    // TODO
   }
 
   /**

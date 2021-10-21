@@ -7,14 +7,15 @@ import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
 
 // Components
-import { Flex, Box } from '../../components/Box';
-import { CloseIcon } from '../../components/Svg';
-import { Text } from '../../components/Text';
-import { Button, ButtonShadow } from '../../components/Button';
+import { PageLayout } from 'app/layouts';
+import { Flex, Box } from 'app/components/Box';
+import { CloseIcon } from 'app/components/Svg';
+import { Text } from 'app/components/Text';
+import { Button, ButtonShadow } from 'app/components/Button';
 import { NeedHelpContact } from '../../components/Footer';
 import { messages } from './message';
 
-function InternetWarning() {
+const InternetWarning: React.FC = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation<{ route: string }>();
@@ -26,7 +27,7 @@ function InternetWarning() {
     : t(messages.importA());
 
   return (
-    <div>
+    <PageLayout>
       <Flex alignItems="center" justifyContent="flex-end" px="16px" py="22px">
         <Button px="8px" onClick={() => history.goBack()}>
           <CloseIcon />
@@ -59,8 +60,8 @@ function InternetWarning() {
       >
         <NeedHelpContact />
       </Flex>
-    </div>
+    </PageLayout>
   );
-}
+};
 
 export default InternetWarning;

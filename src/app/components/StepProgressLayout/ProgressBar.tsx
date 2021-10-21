@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { SpaceProps } from 'styled-system';
+import { colors } from 'theme/colors';
 import { Box } from '../Box';
 
 interface Props extends SpaceProps {
@@ -8,20 +9,27 @@ interface Props extends SpaceProps {
   height: string;
 }
 
-export function ProgressBar({ height, percentage, ...rest }: Props) {
+export const ProgressBar: React.FC<Props> = ({
+  height,
+  percentage,
+  ...rest
+}) => {
   return (
     <ProgressBarContainer height={height} {...rest}>
-      <ProgressBarIndicator style={{ width: `${percentage}%` }} />
+      <ProgressBarIndicator
+        percentage={percentage}
+        style={{ width: `${percentage}%` }}
+      />
     </ProgressBarContainer>
   );
-}
+};
 
 const ProgressBarContainer = styled(Box)`
-  background-color: #1c2a2f;
+  background-color: ${colors.gray2};
   position: relative;
 `;
 
-const ProgressBarIndicator = styled.div`
+const ProgressBarIndicator = styled.div<{ percentage?: number }>`
   height: 100%;
   -webkit-mask: linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0);
@@ -33,6 +41,13 @@ const ProgressBarIndicator = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: linear-gradient(to right, #00ffff, #f100f5, #f100f5);
+    background-image: linear-gradient(
+      to right,
+      ${colors.primary},
+      ${({ percentage }) =>
+        percentage > 60 ? colors.primary : colors.secondary},
+      ${colors.secondary},
+      ${colors.secondary}
+    );
   }
 `;

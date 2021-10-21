@@ -24,7 +24,7 @@ export class GlitchController {
   //=============================================================================
 
   /**
-   * 
+   *
    * @returns Generate 12 mnemonic phrases
    */
   createSeedWords(): string {
@@ -32,11 +32,19 @@ export class GlitchController {
   }
 
   /**
-   * 
-   * @param password 
+   *
+   * @param password
    */
-  createNewWallet(password?: string) {
-    const wallet = this.glitchWeb3.createNewWallet(password);
+  createNewWallet(
+    mnemonic?: string,
+    password?: string
+  ): {
+    mnemonic: string;
+    privateKey: string;
+    address: string;
+  } {
+    const wallet = this.glitchWeb3.createNewWallet(mnemonic);
+    return wallet;
   }
 
   //=============================================================================

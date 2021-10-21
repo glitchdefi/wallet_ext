@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { colors } from 'theme/colors';
 
 // Components
+import { PageLayout } from 'app/layouts';
 import { Box, Flex } from 'app/components/Box';
 import { Button, CopyButton } from 'app/components/Button';
 import { Text } from 'app/components/Text';
@@ -13,7 +14,7 @@ import { AssetsSection } from './components/AssetsSection';
 
 const Home: React.FC = () => {
   return (
-    <>
+    <PageLayout>
       <Flex p="16px" alignItems="center">
         <Flex width="100%" alignItems="center" justifyContent="flex-end">
           <Button p="0px">
@@ -64,7 +65,7 @@ const Home: React.FC = () => {
       </Box>
 
       <AssetsSection />
-    </>
+    </PageLayout>
   );
 };
 

@@ -89,6 +89,10 @@ function handleChromeListeners(controller: GlitchController) {
                 Handler.createSeedWords(controller, sendResponse);
                 break;
 
+              case MessageTypes.BG_WALLET_CREATE_WALLET:
+                Handler.createNewWallet(payload, controller, sendResponse);
+                break;
+
               default:
                 Handler.handleDefault(request, sendResponse);
             }

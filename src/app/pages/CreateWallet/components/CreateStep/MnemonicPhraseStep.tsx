@@ -58,6 +58,7 @@ export const MnemonicPhraseStep: React.FC<Props> = ({
         </Button>
 
         <CopyButton
+          id="copy-mnemonic"
           component={
             <Flex>
               <CopyIcon width="12px" />
