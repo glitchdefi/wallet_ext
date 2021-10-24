@@ -20,8 +20,8 @@ function Icon(props: SvgProps) {
           y2="-20.8696"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#00FFFF" />
-          <stop offset="1" stop-color="#F100F5" />
+          <stop stopColor="#00FFFF" />
+          <stop offset="1" stopColor="#F100F5" />
         </linearGradient>
       </defs>
     </Svg>

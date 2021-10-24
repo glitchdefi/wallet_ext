@@ -1,8 +1,20 @@
 export interface WalletState {
-  isInitialized?: boolean;
-  isUnlocked?: boolean;
-  accounts?: object;
+  isInitialized?: 'none' | 'pending' | 'completed';
+  isLocked?: boolean;
+  accounts?: {
+    [key: string]: {
+      address?: string;
+      balance?: string;
+    };
+  };
   selectedAddress?: any;
-  identities?: object;
+  identities?: {
+    [key: string]: {
+      address?: string;
+      name?: string;
+      avatar?: string;
+    };
+  };
   seedPhrases?: string;
+  isUnlockWrongPassword?: boolean;
 }

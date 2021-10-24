@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { colors } from 'theme/colors';
@@ -44,8 +44,10 @@ export const CreatePasswordStep: React.FC<Props> = ({ onSetupPassword }) => {
         <PasswordInput
           value={password}
           placeholder={t(messages.enterPassword())}
-          data-event="click"
           data-tip=""
+          data-for="password-input"
+          data-event="focus"
+          data-event-off="focusout"
           onChange={(e) => setPassword(e.target.value?.trim())}
         />
         <PasswordRulesTooltip

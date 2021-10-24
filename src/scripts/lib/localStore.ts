@@ -32,7 +32,7 @@ export class ExtensionStore {
     if (isEmpty(result)) {
       return undefined;
     }
-    return result;
+    return result[key];
   }
 
   /**
@@ -57,10 +57,10 @@ export class ExtensionStore {
   /**
    * Sets the key in local state
    * @param {Object} state - The state to set
-   * @returns {Promise<void>}
+   * @returns {Promise<object>}
    */
-  async set(state: object): Promise<void> {
-    return this._set(state);
+  async set(state: object): Promise<object> {
+    return await this._set(state);
   }
 
   /**
@@ -88,15 +88,15 @@ export class ExtensionStore {
    * @returns {Promise<void>}
    * @private
    */
-  _set(obj: object): Promise<void> {
+  _set(obj: object): Promise<object> {
     const { local } = extension.storage;
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<object>((resolve, reject) => {
       local.set(obj, () => {
         const err = checkForError();
         if (err) {
           reject(err);
         } else {
-          resolve();
+          resolve(obj);
         }
       });
     });

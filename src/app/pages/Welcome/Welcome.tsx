@@ -14,7 +14,7 @@ import { colors } from 'theme/colors';
 import { Text } from 'app/components/Text';
 import { Button, ButtonShadow } from 'app/components/Button';
 import { Box, Flex } from 'app/components/Box';
-import { NeedHelpContact } from '../../components/Footer';
+import { NeedHelpContact } from 'app/components/Footer';
 
 const Welcome: React.FC = () => {
   const { t } = useTranslation();

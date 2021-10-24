@@ -27,24 +27,106 @@ export class GlitchController {
    *
    * @returns Generate 12 mnemonic phrases
    */
-  createSeedWords(): string {
-    return this.glitchWeb3.createSeedWords();
+  createSeedPhrases(): string {
+    return this.glitchWeb3.createSeedPhrases();
   }
 
   /**
    *
    * @param password
    */
-  createNewWallet(
-    mnemonic?: string,
-    password?: string
-  ): {
-    mnemonic: string;
-    privateKey: string;
-    address: string;
-  } {
-    const wallet = this.glitchWeb3.createNewWallet(mnemonic);
-    return wallet;
+  async createNewWallet(password?: string): Promise<object> {
+    try {
+      const seedPhrases = this.createSeedPhrases();
+      const wallet = this.glitchWeb3.createNewWallet(seedPhrases);
+      this.glitchWeb3.importAccountToWeb3(wallet?.privateKey);
+
+      const encryptKey = await this.glitchWeb3.encrypt(seedPhrases, password);
+
+      // Update to store
+      await this.appStateController.setEncryptKey(encryptKey);
+
+      const newState = await this.appStateController.updateState('wallet', {
+        isInitialized: 'pending',
+        isLocked: true,
+        selectedAddress: wallet.address,
+        identities: {
+          [wallet.address]: {
+            address: wallet.address,
+            name: 'Account 1',
+            avatar: null,
+          },
+        },
+        accounts: {
+          [wallet.address]: {
+            address: wallet.address,
+            balance: 0,
+          },
+        },
+      });
+
+      return {
+        ...newState,
+        seedPhrases,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   *
+   * @param password
+   */
+  async createWalletCompleted(): Promise<object> {
+    try {
+      const addressSelected =
+        await this.appStateController.getAddressSelected();
+      const balance = await this.glitchWeb3.getBalance(addressSelected);
+
+      const newState = await this.appStateController.updateState('wallet', {
+        isInitialized: 'completed',
+        isLocked: false,
+        accounts: {
+          [addressSelected]: {
+            address: addressSelected,
+            balance,
+          },
+        },
+      });
+
+      return newState;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   *
+   * @returns
+   */
+  async unlockWallet(password?: string) {
+    let state = {};
+    const encryptKey = await this.appStateController.getEncryptKey();
+    const isInitialized = (await this.appStateController.getWalletState())
+      .isInitialized;
+
+    if (encryptKey) {
+      const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
+
+      const newState = await this.appStateController.updateState('wallet', {
+        ...state,
+        isLocked: isInitialized === 'completed' ? false : true,
+      });
+
+      return {
+        ...newState,
+        isWrongPassword: !seedPhrase,
+        seedPhrase: isInitialized !== 'completed' ? seedPhrase : null,
+      };
+    } else {
+      throw Error('Encrypt key not found');
+    }
   }
 
   //=============================================================================

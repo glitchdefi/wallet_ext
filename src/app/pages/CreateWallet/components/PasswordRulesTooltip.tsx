@@ -22,7 +22,7 @@ type RuleTypes = {
   least8Char: boolean;
 };
 
-export function PasswordRulesTooltip({ value, onPassed }: Props) {
+export const PasswordRulesTooltip: React.FC<Props> = ({ value, onPassed }) => {
   const [rules, setRules] = useState<RuleTypes>({
     lowercase: false,
     uppercase: false,
@@ -51,6 +51,7 @@ export function PasswordRulesTooltip({ value, onPassed }: Props) {
   return (
     <Container>
       <ReactTooltip
+        id="password-input"
         className="glch-tooltip"
         overridePosition={({ top }) => {
           return {
@@ -59,8 +60,6 @@ export function PasswordRulesTooltip({ value, onPassed }: Props) {
           };
         }}
         place="bottom"
-        globalEventOff="click"
-        effect="solid"
         backgroundColor={colors.gray2}
       >
         <Box>
@@ -85,7 +84,7 @@ export function PasswordRulesTooltip({ value, onPassed }: Props) {
       </ReactTooltip>
     </Container>
   );
-}
+};
 
 interface RuleProps extends SpaceProps {
   label: string;

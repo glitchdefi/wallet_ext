@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { slice } from './reducer';
 import { useInjectReducer } from 'utils/redux-injectors';
 import { RootState } from 'types';
+import { slice } from './reducer';
 import * as actions from './actions';
 
 const useWalletSelector = () =>
@@ -14,9 +14,38 @@ export const useWalletSlice = () => {
   useInjectReducer({ key: slice.name, reducer: slice.reducer });
 };
 
+export const useIsInitialized = () => {
+  const { isInitialized } = useWalletSelector();
+  return { isInitialized };
+};
+
 export const useSeedPhrases = () => {
   const { seedPhrases } = useWalletSelector();
   return { seedPhrases };
+};
+
+export const useUnlockWrongPassword = () => {
+  const { isUnlockWrongPassword } = useWalletSelector();
+  return { isUnlockWrongPassword };
+};
+
+export const useIdentities = () => {
+  const { identities } = useWalletSelector();
+  return { identities };
+};
+
+export const useAccounts = () => {
+  const { accounts } = useWalletSelector();
+  return { accounts };
+};
+
+export const useSelectedAddress = () => {
+  const { selectedAddress } = useWalletSelector();
+  return { selectedAddress };
+};
+
+export const useWallet = () => {
+  return useWalletSelector();
 };
 
 /**
@@ -24,24 +53,38 @@ export const useSeedPhrases = () => {
  * @returns actions
  */
 export const useWalletActionHandlers = (): {
-  onCreateSeedPhrases: () => void;
   onCreateWallet: (password: string) => void;
+  onUnlockWallet: (password: string) => void;
+  onCreateCompleted: () => void;
+  onClearIsWrongUnlockWallet: () => void;
 } => {
   const dispatch = useDispatch();
-
-  const onCreateSeedPhrases = useCallback(
-    () => dispatch(actions.createSeedWordsAction()),
-    [dispatch]
-  );
 
   const onCreateWallet = useCallback(
     (password: string) => dispatch(actions.createWalletAction(password)),
     [dispatch]
   );
 
+  const onUnlockWallet = useCallback(
+    (password: string) => dispatch(actions.unlockWalletAction(password)),
+    [dispatch]
+  );
+
+  const onCreateCompleted = useCallback(
+    () => dispatch(actions.createCompletedAction()),
+    [dispatch]
+  );
+
+  const onClearIsWrongUnlockWallet = useCallback(
+    () => dispatch(actions.clearIsWrongUnlockWallet()),
+    [dispatch]
+  );
+
   return {
-    onCreateSeedPhrases,
     onCreateWallet,
+    onUnlockWallet,
+    onCreateCompleted,
+    onClearIsWrongUnlockWallet,
   };
 };
 

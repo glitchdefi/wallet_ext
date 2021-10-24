@@ -3,6 +3,8 @@ import log from 'loglevel';
 import HDKey from 'hdkey';
 import web3Utils from 'web3-utils';
 import BN from 'bn.js';
+import keythereum from 'keythereum';
+import encryptor from '@metamask/browser-passworder';
 import GlitchCommon from '@glitchdefi/common';
 import { GlitchWeb3 as GlitchWeb3Base } from '@glitchdefi/web3';
 import { GlitchNetwork } from '../../../constants/networks';
@@ -28,7 +30,7 @@ export class GlitchWeb3 {
    *
    * @returns Generate 12 mnemonic phrases
    */
-  createSeedWords(): string {
+  createSeedPhrases(): string {
     const mnemonic = bip39.generateMnemonic(128);
     return mnemonic;
   }
@@ -77,20 +79,32 @@ export class GlitchWeb3 {
 
   /**
    *
+   * @param seedPhrases
    * @param password
-   * @returns walletStore
    */
-  encode(password?: string): any {
-    // TODO
+  async encrypt(seedPhrases?: string, password?: any): Promise<string> {
+    if (seedPhrases && password) {
+      return await encryptor.encrypt(password, seedPhrases);
+    } else {
+      throw Error('Private key and password is required');
+    }
   }
 
   /**
    *
+   * @param encryptKey
    * @param password
-   * @param address
    */
-  decode(password?: string, address?: string) {
-    // TODO
+  async decrypt(encryptKey?: string, password?: string): Promise<unknown> {
+    try {
+      if (typeof encryptKey === 'string' && typeof password === 'string') {
+        return await encryptor.decrypt(password, encryptKey);
+      }
+
+      throw new Error('Encrypt key or password is not string');
+    } catch (error) {
+      return null;
+    }
   }
 
   /**

@@ -6,7 +6,8 @@
         "glitch_finance_support": "Glitch Finance Support",
         "ok": "OK",
         "mnemonic_phrase": "Mnemonic phrase",
-        "term_and_service": "Terms of Service"
+        "term_and_service": "Terms of Service",
+        "or": "or"
     },
     "internetWarningPage": {
         "title": "Internet connection not recommended",
@@ -34,13 +35,20 @@
        "restore_wallet_from_mnemonic": "Restore wallet from Mnemonic",
        "you_already_have_a_wallet": "If you already have a wallet. Please enter your Mnemonic to restore your wallet"
     },
+    "unlockPage": {
+        "your_wallet_is_currently_locked": "Your wallet is currently locked. Please enter Glitch password to unlock.",
+        "glitch_password": "Glitch password",
+        "unlock": "Unlock"
+    },
     "password": {
         "create_a_password": "Create a password",
         "title": "Password",
         "confirm_password": "Confirm password",
         "enter_password": "Enter password",
         "re_enter_password": "Re-enter your password",
-        "password_confirmation_not_match": "Password confirmation does not match"
+        "password_confirmation_not_match": "Password confirmation does not match",
+        "incorrect_password": "Incorrect password",
+        "incorrect_password_you_have": "Incorrect password. You have ${{number}} attempt left."
     },
     "aboutUs": {
         "title": "About Us"

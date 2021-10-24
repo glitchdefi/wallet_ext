@@ -1,18 +1,25 @@
-import React, { useState, ChangeEventHandler } from 'react';
+import React, {
+  useState,
+  ChangeEventHandler,
+  FocusEventHandler,
+  Ref,
+} from 'react';
 import styled from 'styled-components';
 import { SpaceProps } from 'styled-system';
 
-import { colors } from '../../../../theme/colors';
+import { colors } from 'theme/colors';
 
 import Input from './Input';
 import { Flex } from '../../Box';
 import { EyeOffIcon, EyeOnIcon } from '../../Svg';
 import { Text } from '../../Text';
 interface PasswordInputProps extends SpaceProps {
+  ref?: Ref<HTMLInputElement>;
   isError?: boolean;
   placeholder?: string;
   value?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
+  onFocus?: FocusEventHandler<HTMLInputElement>;
   inputMode?:
     | 'none'
     | 'text'
@@ -25,7 +32,7 @@ interface PasswordInputProps extends SpaceProps {
   msgError?: string;
 }
 
-function PasswordInput(props: PasswordInputProps) {
+const PasswordInput: React.FC<PasswordInputProps> = (props) => {
   const {
     onChange,
     placeholder,
@@ -38,12 +45,12 @@ function PasswordInput(props: PasswordInputProps) {
   const [show, setShow] = useState<boolean>(false);
 
   const onHandleShowPassword = () => {
-    if (value) setShow((prev) => !prev);
+    setShow((prev) => !prev);
   };
 
   return (
     <>
-      <StyledWrapper isError={isError} {...rest}>
+      <StyledWrapper isError={isError}>
         <Input
           value={value}
           hasBorder={false}
@@ -51,6 +58,7 @@ function PasswordInput(props: PasswordInputProps) {
           inputMode={inputMode}
           onChange={onChange}
           placeholder={placeholder}
+          {...rest}
         />
         {show ? (
           <EyeOnIcon
@@ -73,7 +81,7 @@ function PasswordInput(props: PasswordInputProps) {
       )}
     </>
   );
-}
+};
 
 const StyledWrapper = styled(Flex)<{ isError?: boolean }>`
   border: 1px solid ${({ isError }) => (isError ? colors.error : colors.gray8)};

@@ -12,9 +12,12 @@ export class AppStateController {
     const { initialState } = opts;
 
     const defaultState: RootState = {
+      application: {
+        isLoading: false,
+      },
       wallet: {
-        isInitialized: false,
-        isUnlocked: false,
+        isInitialized: 'none',
+        isLocked: false,
         accounts: {},
         selectedAddress: null,
         identities: {},
@@ -28,24 +31,49 @@ export class AppStateController {
 
     this.localStore = new ExtensionStore();
 
-    this.store = {
-      ...defaultState,
-    };
+    this.localStore.set({ ...defaultState, ...initialState }).then((store) => {
+      this.store = store;
+    });
   }
 
   async getState(): Promise<RootState> {
-    return this.localStore.getAllStorageData();
+    return await this.localStore.getAllStorageData();
   }
 
   async getWalletState(): Promise<WalletState> {
-    return this.localStore.get('wallet');
+    return await this.localStore.get('wallet');
   }
 
   async getTransactionsState(): Promise<TransactionsState> {
-    return this.localStore.get('transactions');
+    return await this.localStore.get('transactions');
   }
 
   async getSettingsState(): Promise<SettingState> {
-    return this.localStore.get('settings');
+    return await this.localStore.get('settings');
+  }
+
+  async setEncryptKey(encryptKey: string): Promise<void> {
+    await this.localStore.set({ encryptKey });
+  }
+
+  async getEncryptKey(): Promise<string> {
+    return await this.localStore.get('encryptKey');
+  }
+
+  async getAddressSelected(): Promise<string> {
+    return (await this.getWalletState()).selectedAddress;
+  }
+
+  async updateState(
+    key: 'wallet' | 'transactions' | 'settings',
+    obj: WalletState | TransactionsState | SettingState
+  ): Promise<object> {
+    const oldState = await this.getState();
+    return await this.localStore.set({
+      [key]: {
+        ...oldState[key],
+        ...obj,
+      },
+    });
   }
 }

@@ -85,12 +85,16 @@ function handleChromeListeners(controller: GlitchController) {
         if (senderURL === popupURL || senderURL === windowURL) {
           try {
             switch (type) {
-              case MessageTypes.BG_WALLET_CREATE_SEED_WORDS:
-                Handler.createSeedWords(controller, sendResponse);
-                break;
-
               case MessageTypes.BG_WALLET_CREATE_WALLET:
                 Handler.createNewWallet(payload, controller, sendResponse);
+                break;
+
+              case MessageTypes.BG_WALLET_CREATE_WALLET_COMPLETED:
+                Handler.createWalletCompleted(controller, sendResponse);
+                break;
+
+              case MessageTypes.BG_WALLET_UNLOCK_WALLET:
+                Handler.unlockWallet(payload, controller, sendResponse);
                 break;
 
               default:
