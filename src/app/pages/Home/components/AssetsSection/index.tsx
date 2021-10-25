@@ -20,7 +20,7 @@ export const AssetsSection: React.FC = () => {
 
       <Box mt="8px">
         {[1, 2, 3, 4, 5].map((o) => (
-          <AssetItem />
+          <AssetItem key={o} />
         ))}
       </Box>
     </Box>

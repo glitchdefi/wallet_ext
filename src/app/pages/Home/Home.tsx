@@ -2,6 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { colors } from 'theme/colors';
+import { truncateAddress } from 'utils/strings';
+
+import bg from '../../../assets/img/account_card_bg.jpg';
+import { formatNumberDownRoundWithExtractMax } from 'utils/number';
+
+import { useApplicationSlice } from 'state/application/hooks';
+import {
+  useAccounts,
+  useIdentities,
+  useSelectedAddress,
+  useWalletSlice,
+} from 'state/wallet/hooks';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -13,6 +25,13 @@ import { GlitchLogo } from 'app/components/Image';
 import { AssetsSection } from './components/AssetsSection';
 
 const Home: React.FC = () => {
+  useWalletSlice();
+  useApplicationSlice();
+
+  const { selectedAddress } = useSelectedAddress();
+  const { identities } = useIdentities();
+  const { accounts } = useAccounts();
+
   return (
     <PageLayout>
       <Flex p="16px" alignItems="center">
@@ -31,7 +50,7 @@ const Home: React.FC = () => {
         <AccountCard>
           <Flex alignItems="center" justifyContent="space-between">
             <Text color={colors.gray7} bold>
-              Account 1
+              {identities[selectedAddress].name}
             </Text>
             <Button p="0px">
               <Flex width="24px" height="24px" alignItems="center">
@@ -42,9 +61,9 @@ const Home: React.FC = () => {
 
           <Flex alignItems="center">
             <Text fontSize="12px" color={colors.primary}>
-              0x7b17c2...22D89931
+              {truncateAddress(selectedAddress)}
             </Text>
-            <CopyButton p="2px" ml="6px" width="10px" />
+            <CopyButton value={selectedAddress} p="2px" ml="6px" width="10px" />
           </Flex>
 
           <Flex alignItems="center" mt="24px">
@@ -54,7 +73,10 @@ const Home: React.FC = () => {
 
             <Flex ml="8px" alignItems="flex-end">
               <Text color={colors.white} fontSize="24px" bold>
-                500.000000
+                {formatNumberDownRoundWithExtractMax(
+                  accounts[selectedAddress].balance,
+                  6
+                )}
               </Text>
               <Text ml="8px" pb="5px" color={colors.white}>
                 GLCH
@@ -72,7 +94,7 @@ const Home: React.FC = () => {
 const AccountCard = styled.div`
   padding: 16px;
   border-top: 3px solid #a900ac;
-  background-color: #14162b;
+  background-image: url(${bg});
 `;
 
 export default Home;

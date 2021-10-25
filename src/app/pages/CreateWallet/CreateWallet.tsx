@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
+import { Routes } from 'constants/routes';
 import { messages } from './messages';
 
 // Hooks
@@ -10,7 +11,12 @@ import {
   useWalletActionHandlers,
   useWalletSlice,
   useSeedPhrases,
+  useIsInitialized,
 } from 'state/wallet/hooks';
+import {
+  useApplicationSlice,
+  useLoadingApplication,
+} from 'state/application/hooks';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -26,15 +32,33 @@ const CreateWallet: React.FC = () => {
   const { t } = useTranslation();
   // Init wallet reducer
   useWalletSlice();
+  useApplicationSlice();
 
   const [step, setStep] = useState<number>(0);
-  const [password, setPassword] = useState<string>();
 
+  const { isLoading } = useLoadingApplication();
+  const { isInitialized } = useIsInitialized();
   const { seedPhrases } = useSeedPhrases();
-  const { onCreateWallet, onCreateSeedPhrases } = useWalletActionHandlers();
+  const { onCreateCompleted, onCreateWallet } = useWalletActionHandlers();
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'create');
 
   const stepProgress = ((step + 1) / MAX_STEP) * 100;
+
+  useEffect(() => {
+    // Move to mnemonic phrase step
+    if (!isLoading && seedPhrases && step === 0) {
+      setStep(1);
+    }
+
+    // Create completed -> push to home page
+    if (!isLoading && isInitialized === 'completed') {
+      history.push(Routes.home);
+    }
+  }, [isLoading, step]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
 
   return (
     <PageLayout>
@@ -44,15 +68,18 @@ const CreateWallet: React.FC = () => {
         stepProgress={stepProgress}
         stepTitle={t(stepTitle)}
         stepDescription={t(stepDesc)}
-        onBack={() => history.push('/')}
+        onBack={() => {
+          if (step === 0) {
+            history.push('/');
+          } else {
+            setStep(1);
+          }
+        }}
       >
         {step === 0 && (
           <CreatePasswordStep
             onSetupPassword={(password) => {
-              setPassword(password);
-              onCreateSeedPhrases();
-              // Move to mnemonic phrase step
-              setStep(1);
+              onCreateWallet(password);
             }}
           />
         )}
@@ -62,7 +89,12 @@ const CreateWallet: React.FC = () => {
             onNextStep={() => setStep(2)}
           />
         )}
-        {step === 2 && <VerifyMnemonicStep seedPhrases={seedPhrases} />}
+        {step === 2 && (
+          <VerifyMnemonicStep
+            seedPhrases={seedPhrases}
+            onSubmit={onCreateCompleted}
+          />
+        )}
       </StepProgressLayout>
     </PageLayout>
   );

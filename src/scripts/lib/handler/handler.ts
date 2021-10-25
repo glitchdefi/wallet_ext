@@ -4,31 +4,82 @@ import { successfulResponse, errorResponse } from './responseMessage';
 type Request = { type: string; payload?: object };
 type SendResponse = (response: any) => void;
 
-export const createSeedWords = async (
+export const createNewWallet = async (
+  payload: { password?: string },
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
   try {
-    const seedPhrases = controller.createSeedWords();
-    if (seedPhrases) {
-      sendResponse({ ...successfulResponse, seedPhrases });
+    const { password } = payload || {};
+
+    const state = await controller.createNewWallet(password);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
     }
   } catch (error) {
     sendResponse({ ...errorResponse, error });
   }
 };
 
-export const createNewWallet = async (
-  payload: { mnemonic?: string; password?: string },
+export const createWalletCompleted = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
   try {
-    const { mnemonic, password } = payload || {};
+    const state = await controller.createWalletCompleted();
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
 
-    const walletInfo = controller.createNewWallet(mnemonic, password);
-    if (walletInfo) {
-      sendResponse({ ...successfulResponse, walletInfo });
+export const unlockWallet = async (
+  payload: { password?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { password } = payload || {};
+
+    const state = await controller.unlockWallet(password);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
+export const checkIsValidSeedPhrase = async (
+  payload: { seedPhrase?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { seedPhrase } = payload || {};
+
+    const state = controller.checkIsValidSeedPhrase(seedPhrase);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
+export const restoreWallet = async (
+  payload: { seedPhrase?: string; password?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { seedPhrase, password } = payload || {};
+
+    const state = await controller.restoreWallet(seedPhrase, password);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
     }
   } catch (error) {
     sendResponse({ ...errorResponse, error });

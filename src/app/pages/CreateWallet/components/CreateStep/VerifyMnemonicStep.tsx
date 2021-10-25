@@ -4,15 +4,18 @@ import { colors } from 'theme/colors';
 
 // Components
 import { Box, Flex } from 'app/components/Box';
-import { MnemonicPhraseItem } from '../MnemonicPhraseItem';
 import { Button, ButtonShadow } from 'app/components/Button';
 import { Text } from 'app/components/Text';
-
+import { MnemonicPhraseItem } from '../MnemonicPhraseItem';
 interface Props {
   seedPhrases: string;
+  onSubmit: () => void;
 }
 
-export const VerifyMnemonicStep: React.FC<Props> = ({ seedPhrases }) => {
+export const VerifyMnemonicStep: React.FC<Props> = ({
+  seedPhrases,
+  onSubmit,
+}) => {
   const [seedPhrasesList, setSeedPhrasesList] = useState<string[]>([]);
   const [confirmSeedPhraseList, setConfirmSeedPhraseList] = useState<string[]>(
     []
@@ -83,7 +86,9 @@ export const VerifyMnemonicStep: React.FC<Props> = ({ seedPhrases }) => {
 
       <Box pt="48px" pb="24px">
         {isValid ? (
-          <ButtonShadow width="100%">Confirm</ButtonShadow>
+          <ButtonShadow width="100%" onClick={onSubmit}>
+            Confirm
+          </ButtonShadow>
         ) : (
           <Button variant="disable-primary" width="100%">
             Confirm

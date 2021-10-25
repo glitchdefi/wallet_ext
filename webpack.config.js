@@ -19,6 +19,8 @@ var alias = {
     'redux-injectors.ts'
   ),
   'utils/message': path.join(__dirname, 'src', 'utils', 'message.ts'),
+  'utils/strings': path.join(__dirname, 'src', 'utils', 'strings.ts'),
+  'utils/number': path.join(__dirname, 'src', 'utils', 'number.ts'),
   'theme/colors': path.join(__dirname, 'src', 'theme', 'colors.ts'),
   'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
   'app/layouts': path.join(__dirname, 'src', 'app', 'layouts', 'index.ts'),
@@ -100,12 +102,35 @@ var alias = {
     'StepProgressLayout',
     'index.tsx'
   ),
+  'app/components/Loading': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Loading',
+    'index.tsx'
+  ),
+  'app/components/ScrollToTop': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'ScrollToTop',
+    'index.tsx'
+  ),
   types: path.join(__dirname, 'src', 'types', 'index.ts'),
   'state/wallet/hooks': path.join(
     __dirname,
     'src',
     'state',
     'wallet',
+    'hooks.ts'
+  ),
+  'state/application/hooks': path.join(
+    __dirname,
+    'src',
+    'state',
+    'application',
     'hooks.ts'
   ),
 };
@@ -133,7 +158,7 @@ if (fileSystem.existsSync(secretsPath)) {
 var options = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
-    popup: path.join(__dirname, 'src', 'app', 'index.tsx'),
+    popup: path.join(__dirname, 'src', 'index.tsx'),
     background: path.join(__dirname, 'src', 'scripts', 'background.ts'),
     contentScript: path.join(__dirname, 'src', 'scripts', 'content.ts'),
   },
@@ -207,6 +232,7 @@ var options = {
       http: false,
       https: false,
       os: false,
+      fs: false,
     },
   },
   plugins: [

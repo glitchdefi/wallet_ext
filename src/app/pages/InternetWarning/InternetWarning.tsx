@@ -53,7 +53,7 @@ const InternetWarning: React.FC = () => {
 
       <Flex
         pb="24px"
-        mt="100px"
+        mt="80px"
         alignItems="center"
         justifyContent="center"
         px="32px"
