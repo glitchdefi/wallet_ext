@@ -92,7 +92,11 @@ const Unlock: React.FC = () => {
         <Box pb="24px" mt="40px">
           <Flex justifyContent="center" alignItems="center">
             <Text fontSize="12px">{t(messages.or())}</Text>
-            <Button ml="8px" py="0px">
+            <Button
+              ml="8px"
+              py="0px"
+              onClick={() => history.push(Routes.restoreWallet)}
+            >
               <Text fontSize="12px" color={colors.primary} bold>
                 {t(messages.restoreWallet()).toLocaleLowerCase()}
               </Text>
