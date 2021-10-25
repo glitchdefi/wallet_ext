@@ -36,6 +36,7 @@ export const VerifyMnemonicStep: React.FC<Props> = ({
         flexWrap="wrap"
         justifyContent="center"
         background={colors.gray1}
+        minHeight="120px"
       >
         {confirmSeedPhraseList?.map((word: string, i) => (
           <MnemonicPhraseItem
