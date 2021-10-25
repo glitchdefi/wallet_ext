@@ -2,12 +2,13 @@ import * as bip39 from 'bip39';
 import log from 'loglevel';
 import HDKey from 'hdkey';
 import web3Utils from 'web3-utils';
+import { findIndex } from 'lodash';
 import BN from 'bn.js';
-import keythereum from 'keythereum';
 import encryptor from '@metamask/browser-passworder';
 import GlitchCommon from '@glitchdefi/common';
 import { GlitchWeb3 as GlitchWeb3Base } from '@glitchdefi/web3';
 import { GlitchNetwork } from '../../../constants/networks';
+import { GlitchToken } from '../../../constants/tokens';
 
 log.setDefaultLevel('debug');
 export class GlitchWeb3 {
@@ -137,5 +138,24 @@ export class GlitchWeb3 {
    */
   isValidAddress(address: string): boolean {
     return GlitchCommon.codec.isBankAddress(address);
+  }
+
+  /**
+   *
+   * @param mnemonic
+   * @returns
+   */
+  isValidSeedPhrase(seedPhrase: string): boolean {
+    const rs =
+      seedPhrase &&
+      GlitchToken.mnemonic_length.includes(seedPhrase.split(' ').length);
+    if (!rs) return false;
+    const blankValueIndex = findIndex(seedPhrase.split(' '), (e: any) => {
+      return e.trim() === '';
+    });
+
+    const validateBip39 = bip39.validateMnemonic(seedPhrase);
+
+    return validateBip39 && blankValueIndex === -1;
   }
 }

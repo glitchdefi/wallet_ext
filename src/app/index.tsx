@@ -9,6 +9,7 @@ import { Routes } from '../constants/routes';
 import { ContainerLayout } from './layouts';
 import { LoadingApplication } from './components/Loading';
 import { GRoute, Authenticated } from './components/CustomRoute';
+import { ScrollToTop } from './components/ScrollToTop';
 
 // Pages
 import { HomePage } from './pages/Home';
@@ -24,7 +25,7 @@ export const App: React.FC = () => {
   return (
     <Router history={history}>
       <GlobalStyles />
-
+      <ScrollToTop />
       <ContainerLayout>
         <LoadingApplication />
         <Switch>

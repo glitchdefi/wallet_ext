@@ -5,6 +5,7 @@ import { colors } from 'theme/colors';
 import { truncateAddress } from 'utils/strings';
 
 import bg from '../../../assets/img/account_card_bg.jpg';
+import { formatNumberDownRoundWithExtractMax } from 'utils/number';
 
 import { useApplicationSlice } from 'state/application/hooks';
 import {
@@ -72,7 +73,10 @@ const Home: React.FC = () => {
 
             <Flex ml="8px" alignItems="flex-end">
               <Text color={colors.white} fontSize="24px" bold>
-                {accounts[selectedAddress].balance}
+                {formatNumberDownRoundWithExtractMax(
+                  accounts[selectedAddress].balance,
+                  6
+                )}
               </Text>
               <Text ml="8px" pb="5px" color={colors.white}>
                 GLCH

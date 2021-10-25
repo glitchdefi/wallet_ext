@@ -1,4 +1,5 @@
 export interface WalletState {
+  // Save to ext storage
   isInitialized?: 'none' | 'pending' | 'completed';
   isLocked?: boolean;
   accounts?: {
@@ -15,6 +16,9 @@ export interface WalletState {
       avatar?: string;
     };
   };
+
+  // Not save to ext storage
   seedPhrases?: string;
   isUnlockWrongPassword?: boolean;
+  isValidSeedPhrase?: boolean;
 }

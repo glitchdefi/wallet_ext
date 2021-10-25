@@ -44,6 +44,11 @@ export const useSelectedAddress = () => {
   return { selectedAddress };
 };
 
+export const useIsValidSeedPhrase = () => {
+  const { isValidSeedPhrase } = useWalletSelector();
+  return { isValidSeedPhrase };
+};
+
 export const useWallet = () => {
   return useWalletSelector();
 };
@@ -57,6 +62,8 @@ export const useWalletActionHandlers = (): {
   onUnlockWallet: (password: string) => void;
   onCreateCompleted: () => void;
   onClearIsWrongUnlockWallet: () => void;
+  onCheckIsValidSeedPhrase: (seedPhrase: string) => void;
+  onRestoreWallet: (seedPhrase: string, password: string) => void;
 } => {
   const dispatch = useDispatch();
 
@@ -80,11 +87,25 @@ export const useWalletActionHandlers = (): {
     [dispatch]
   );
 
+  const onCheckIsValidSeedPhrase = useCallback(
+    (seedPhrase?: string) =>
+      dispatch(actions.checkIsValidSeedPhraseAction(seedPhrase)),
+    [dispatch]
+  );
+
+  const onRestoreWallet = useCallback(
+    (seedPhrase?: string, password?: string) =>
+      dispatch(actions.restoreWalletAction(seedPhrase, password)),
+    [dispatch]
+  );
+
   return {
     onCreateWallet,
     onUnlockWallet,
     onCreateCompleted,
     onClearIsWrongUnlockWallet,
+    onCheckIsValidSeedPhrase,
+    onRestoreWallet,
   };
 };
 

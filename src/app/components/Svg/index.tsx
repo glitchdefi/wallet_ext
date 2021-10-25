@@ -12,6 +12,7 @@ export { default as WalletIcon } from './Icons/Wallet';
 export { default as SettingIcon } from './Icons/Setting';
 export { default as AvatarIcon } from './Icons/Avatar';
 export { default as PlusIcon } from './Icons/Plus';
+export { default as SnippetsIcon } from './Icons/Snippets';
 
 export { default as Svg } from './Svg';
 export type { SvgProps } from './types';

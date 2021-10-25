@@ -32,5 +32,8 @@ export const slice = createSlice({
     setAccounts: (state, action) => {
       state.accounts = action.payload;
     },
+    setIsValidSeedPhrase: (state, action) => {
+      state.isValidSeedPhrase = action.payload;
+    },
   },
 });

@@ -20,6 +20,7 @@ var alias = {
   ),
   'utils/message': path.join(__dirname, 'src', 'utils', 'message.ts'),
   'utils/strings': path.join(__dirname, 'src', 'utils', 'strings.ts'),
+  'utils/number': path.join(__dirname, 'src', 'utils', 'number.ts'),
   'theme/colors': path.join(__dirname, 'src', 'theme', 'colors.ts'),
   'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
   'app/layouts': path.join(__dirname, 'src', 'app', 'layouts', 'index.ts'),
@@ -107,6 +108,14 @@ var alias = {
     'app',
     'components',
     'Loading',
+    'index.tsx'
+  ),
+  'app/components/ScrollToTop': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'ScrollToTop',
     'index.tsx'
   ),
   types: path.join(__dirname, 'src', 'types', 'index.ts'),

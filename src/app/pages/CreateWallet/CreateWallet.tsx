@@ -56,6 +56,10 @@ const CreateWallet: React.FC = () => {
     }
   }, [isLoading, step]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
+
   return (
     <PageLayout>
       <StepProgressLayout
@@ -64,7 +68,13 @@ const CreateWallet: React.FC = () => {
         stepProgress={stepProgress}
         stepTitle={t(stepTitle)}
         stepDescription={t(stepDesc)}
-        onBack={() => history.push('/')}
+        onBack={() => {
+          if (step === 0) {
+            history.push('/');
+          } else {
+            setStep(1);
+          }
+        }}
       >
         {step === 0 && (
           <CreatePasswordStep

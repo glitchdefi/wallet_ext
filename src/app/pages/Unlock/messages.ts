@@ -9,4 +9,5 @@ export const messages = {
   unlock: () => _t(translations.unlockPage.unlock),
   restoreWallet: () => _t(translations.common.restore_wallet),
   or: () => _t(translations.common.or),
+  incorrectPassword: () => _t(translations.password.incorrect_password),
 };

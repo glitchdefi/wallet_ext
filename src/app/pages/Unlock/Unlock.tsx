@@ -69,7 +69,7 @@ const Unlock: React.FC = () => {
                 setPassword(e.target.value);
                 !value && onClearIsWrongUnlockWallet();
               }}
-              msgError="Incorrect password"
+              msgError={t(messages.incorrectPassword())}
             />
 
             <Box mt="32px">

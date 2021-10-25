@@ -129,6 +129,57 @@ export class GlitchController {
     }
   }
 
+  /**
+   *
+   * @param password
+   */
+  async restoreWallet(seedPhrase?: string, password?: string): Promise<object> {
+    try {
+      const wallet = this.glitchWeb3.createNewWallet(seedPhrase);
+      this.glitchWeb3.importAccountToWeb3(wallet?.privateKey);
+
+      const encryptKey = await this.glitchWeb3.encrypt(seedPhrase, password);
+      const balance = await this.glitchWeb3.getBalance(wallet?.address);
+
+      // Update to store
+      await this.appStateController.setEncryptKey(encryptKey);
+
+      const newState = await this.appStateController.updateState('wallet', {
+        isInitialized: 'completed',
+        isLocked: false,
+        selectedAddress: wallet.address,
+        identities: {
+          [wallet.address]: {
+            address: wallet.address,
+            name: 'Account 1',
+            avatar: null,
+          },
+        },
+        accounts: {
+          [wallet.address]: {
+            address: wallet.address,
+            balance,
+          },
+        },
+      });
+
+      return {
+        ...newState,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   *
+   * @returns
+   */
+  checkIsValidSeedPhrase(seedPhrase?: string): { isValid?: boolean } {
+    const isValid = this.glitchWeb3.isValidSeedPhrase(seedPhrase);
+    return { isValid };
+  }
+
   //=============================================================================
   // STORE MANAGEMENT METHODS
   //=============================================================================
