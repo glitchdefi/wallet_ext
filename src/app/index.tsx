@@ -5,6 +5,13 @@ import { createMemoryHistory } from 'history';
 import { GlobalStyles } from '../theme/GlobalStyle';
 import { Routes } from '../constants/routes';
 
+// Hooks
+import {
+  useApplicationSlice,
+  useLoadingApplication,
+} from 'state/application/hooks';
+import { useWalletSlice } from 'state/wallet/hooks';
+
 // Components
 import { ContainerLayout } from './layouts';
 import { LoadingApplication } from './components/Loading';
@@ -22,12 +29,16 @@ import { UnlockPage } from './pages/Unlock';
 const history = createMemoryHistory();
 
 export const App: React.FC = () => {
+  useWalletSlice();
+  useApplicationSlice();
+  const { isLoading } = useLoadingApplication();
+  
   return (
     <Router history={history}>
       <GlobalStyles />
       <ScrollToTop />
       <ContainerLayout>
-        <LoadingApplication />
+        {isLoading && <LoadingApplication />}
         <Switch>
           <GRoute exact path={Routes.welcome} component={WelcomePage} />
 

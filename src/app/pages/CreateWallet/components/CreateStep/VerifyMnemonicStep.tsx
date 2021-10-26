@@ -9,7 +9,7 @@ import { Text } from 'app/components/Text';
 import { MnemonicPhraseItem } from '../MnemonicPhraseItem';
 interface Props {
   seedPhrases: string;
-  onSubmit: () => void;
+  onSubmit?: () => void;
 }
 
 export const VerifyMnemonicStep: React.FC<Props> = ({

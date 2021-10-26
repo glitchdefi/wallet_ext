@@ -232,7 +232,6 @@ var options = {
       http: false,
       https: false,
       os: false,
-      fs: false,
     },
   },
   plugins: [

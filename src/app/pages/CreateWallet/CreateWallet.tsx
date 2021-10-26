@@ -9,9 +9,9 @@ import { messages } from './messages';
 import {
   useStepTitleDesc,
   useWalletActionHandlers,
-  useWalletSlice,
   useSeedPhrases,
   useIsInitialized,
+  useWalletSlice,
 } from 'state/wallet/hooks';
 import {
   useApplicationSlice,
@@ -28,11 +28,11 @@ import { StepProgressLayout } from '../../components/StepProgressLayout';
 const MAX_STEP = 3;
 
 const CreateWallet: React.FC = () => {
-  const history = useHistory();
-  const { t } = useTranslation();
-  // Init wallet reducer
   useWalletSlice();
   useApplicationSlice();
+
+  const history = useHistory();
+  const { t } = useTranslation();
 
   const [step, setStep] = useState<number>(0);
 

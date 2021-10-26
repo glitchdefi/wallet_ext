@@ -7,7 +7,6 @@ import { truncateAddress } from 'utils/strings';
 import bg from '../../../assets/img/account_card_bg.jpg';
 import { formatNumberDownRoundWithExtractMax } from 'utils/number';
 
-import { useApplicationSlice } from 'state/application/hooks';
 import {
   useAccounts,
   useIdentities,
@@ -26,7 +25,6 @@ import { AssetsSection } from './components/AssetsSection';
 
 const Home: React.FC = () => {
   useWalletSlice();
-  useApplicationSlice();
 
   const { selectedAddress } = useSelectedAddress();
   const { identities } = useIdentities();

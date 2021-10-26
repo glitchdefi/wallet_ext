@@ -13,25 +13,27 @@ import {
   useWalletSlice,
 } from 'state/wallet/hooks';
 
-import { PageLayout } from 'app/layouts';
-import { StepProgressLayout } from 'app/components/StepProgressLayout';
 import {
   useApplicationSlice,
   useLoadingApplication,
 } from 'state/application/hooks';
+
+import { PageLayout } from 'app/layouts';
+import { StepProgressLayout } from 'app/components/StepProgressLayout';
 import { EnterSeedPhraseStep } from './components/EnterSeedPhraseStep';
 import { CreatePasswordStep } from '../CreateWallet/components/CreateStep/CreatePasswordStep';
 
 const MAX_STEP = 2;
 
 const RestoreWallet: React.FC = () => {
-  useApplicationSlice();
   useWalletSlice();
+  useApplicationSlice();
+
   const history = useHistory();
   const { t } = useTranslation();
 
   const [step, setStep] = useState<number>(0);
-  const [seedPhrase, setSeedPhrase] = useState<string>();
+  const [seedPhrase, setSeedPhrase] = useState<string>('');
 
   const { isLoading } = useLoadingApplication();
   const { isInitialized } = useIsInitialized();

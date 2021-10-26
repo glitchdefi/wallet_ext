@@ -9,6 +9,7 @@ const Container = styled.div`
   background-image: url(${background});
   background-size: cover;
   background-attachment: fixed;
+  position: relative;
 `;
 
 export default Container;
