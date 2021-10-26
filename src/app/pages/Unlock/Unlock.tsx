@@ -40,7 +40,7 @@ const Unlock: React.FC = () => {
   const [password, setPassword] = useState<string>('');
 
   useEffect(() => {
-    if (!isUnlockWrongPassword && seedPhrases) {
+    if (seedPhrases) {
       history.push(Routes.createWallet);
     }
   }, [seedPhrases]);
