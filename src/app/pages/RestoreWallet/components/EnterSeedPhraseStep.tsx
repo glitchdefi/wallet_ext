@@ -49,6 +49,7 @@ export const EnterSeedPhraseStep: React.FC<Props> = ({
           alignItems="center"
         >
           <StyledInput
+            id="seed-phrase-input"
             value={seedPhrase}
             as={TextareaAutosize}
             placeholder="Enter your Mnemonic"
@@ -56,8 +57,12 @@ export const EnterSeedPhraseStep: React.FC<Props> = ({
           />
           <Button
             p="0px"
-            onClick={async () => {
-              const text = await navigator.clipboard.readText();
+            onClick={() => {
+              var pasteText = document.getElementById('seed-phrase-input');
+              pasteText.focus();
+              document.execCommand('paste');
+
+              pasteText.textContent && setSeedPhrase(pasteText.textContent);
             }}
           >
             <SnippetsIcon width="15px" />

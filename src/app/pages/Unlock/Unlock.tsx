@@ -26,17 +26,18 @@ import { NeedHelpContact } from 'app/components/Footer';
 import { Label, PasswordInput } from 'app/components/Form';
 
 const Unlock: React.FC = () => {
-  const { t } = useTranslation();
-  const history = useHistory();
   useWalletSlice();
   useApplicationSlice();
+
+  const { t } = useTranslation();
+  const history = useHistory();
 
   const { seedPhrases } = useSeedPhrases();
   const { isUnlockWrongPassword } = useUnlockWrongPassword();
   const { onClearIsWrongUnlockWallet, onUnlockWallet } =
     useWalletActionHandlers();
 
-  const [password, setPassword] = useState<string>();
+  const [password, setPassword] = useState<string>('');
 
   useEffect(() => {
     if (!isUnlockWrongPassword && seedPhrases) {
@@ -95,7 +96,10 @@ const Unlock: React.FC = () => {
             <Button
               ml="8px"
               py="0px"
-              onClick={() => history.push(Routes.restoreWallet)}
+              onClick={() => {
+                isUnlockWrongPassword && onClearIsWrongUnlockWallet();
+                history.push(Routes.restoreWallet);
+              }}
             >
               <Text fontSize="12px" color={colors.primary} bold>
                 {t(messages.restoreWallet()).toLocaleLowerCase()}

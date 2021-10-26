@@ -1,25 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  useApplicationSlice,
-  useLoadingApplication,
-} from 'state/application/hooks';
 
 import Spinner from './Spinner';
 
 const LoadingApplication: React.FC = () => {
-  useApplicationSlice();
-
-  const { isLoading } = useLoadingApplication();
-
-  if (isLoading)
-    return (
-      <Overlay>
-        <Spinner size="36px" />
-      </Overlay>
-    );
-
-  return null;
+  return (
+    <Overlay>
+      <Spinner size="36px" />
+    </Overlay>
+  );
 };
 
 const Overlay = styled.div`
@@ -30,9 +19,7 @@ const Overlay = styled.div`
   height: 100%;
   position: absolute;
   background-color: rgba(0, 12, 23, 0.6);
-  top: 0;
   left: 0;
-  right: 0;
   bottom: 0;
   z-index: 999;
 `;

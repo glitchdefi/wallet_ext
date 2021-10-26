@@ -1,7 +1,7 @@
 {
   "name": "glch-wallet-extension",
   "version": "0.0.1",
-  "description": "GLCH Wallet Base",
+  "description": "GLCH Wallet Extension",
   "license": "MIT",
   "scripts": {
     "build": "node utils/build.js",

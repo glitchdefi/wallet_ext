@@ -13,6 +13,6 @@ export const useApplicationSlice = () => {
 };
 
 export const useLoadingApplication = () => {
-  const { isLoading } = useApplicationSelector();
+  const { isLoading } = useApplicationSelector() || {};
   return { isLoading };
 };
