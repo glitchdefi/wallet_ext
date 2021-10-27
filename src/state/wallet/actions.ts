@@ -5,6 +5,7 @@ import { slice as appSlice } from '../application/reducer';
 import { sendMessage } from '../../scripts/lib/messages';
 import { MessageTypes } from 'types';
 import { WalletState } from 'types/WalletState';
+import { Routes } from 'constants/routes';
 
 const actions = slice.actions;
 const applicationActions = appSlice.actions;
@@ -123,14 +124,92 @@ export const clearIsWrongUnlockWallet = () => (dispatch: Dispatch<any>) => {
   dispatch(actions.setUnlockWrongPassword(false));
 };
 
+export const addNewAccountAction =
+  (name: string, history: any) => async (dispatch: Dispatch<any>) => {
+    try {
+      dispatch(applicationActions.setIsLoadingApp(true));
+
+      const data = await sendMessage({
+        type: MessageTypes.BG_ACCOUNT_ADD_ACCOUNT,
+        payload: {
+          name,
+        },
+      });
+
+      if (data?.state) {
+        dispatch(setWalletState(data.state.wallet));
+        history.push(Routes.home);
+      }
+    } catch (error) {
+      // Handle Error
+    } finally {
+      dispatch(applicationActions.setIsLoadingApp(false));
+    }
+  };
+
+export const changeAccountAction =
+  (address: string) => async (dispatch: Dispatch<any>) => {
+    try {
+      dispatch(applicationActions.setIsLoadingApp(true));
+
+      const data = await sendMessage({
+        type: MessageTypes.BG_ACCOUNT_CHANGE_ACCOUNT,
+        payload: {
+          address,
+        },
+      });
+
+      if (data?.state) {
+        dispatch(setWalletState(data.state.wallet));
+      }
+    } catch (error) {
+      // Handle Error
+    } finally {
+      dispatch(applicationActions.setIsLoadingApp(false));
+    }
+  };
+
+export const importAccountAction =
+  (name: string, privateKey: string, history: any) =>
+  async (dispatch: Dispatch<any>) => {
+    try {
+      dispatch(applicationActions.setIsLoadingApp(true));
+
+      const data = await sendMessage({
+        type: MessageTypes.BG_ACCOUNT_IMPORT_ACCOUNT,
+        payload: {
+          name,
+          privateKey,
+        },
+      });
+
+      if (data?.state) {
+        const { wallet, invalidPrivateKey } = data?.state || {};
+
+        dispatch(actions.setIsInvalidPrivateKey(invalidPrivateKey));
+
+        if (wallet) {
+          dispatch(setWalletState(wallet));
+          history.push(Routes.home);
+        }
+      }
+    } catch (error) {
+      // Handle Error
+    } finally {
+      dispatch(applicationActions.setIsLoadingApp(false));
+    }
+  };
+
+export const clearIsInvalidPrivateKey = () => (dispatch: Dispatch<any>) => {
+  dispatch(actions.setIsInvalidPrivateKey(false));
+};
+
 const setWalletState = (wallet: WalletState) => (dispatch: Dispatch<any>) => {
   try {
-    const { isInitialized, isLocked, identities, accounts, selectedAddress } =
-      wallet || {};
+    const { isInitialized, isLocked, accounts, selectedAddress } = wallet || {};
 
     dispatch(actions.setIsInitialized(isInitialized));
     dispatch(actions.setIsLocked(isLocked));
-    dispatch(actions.setIdentities(identities));
     dispatch(actions.setSelectedAddress(selectedAddress));
     dispatch(actions.setAccounts(accounts));
   } catch (error) {

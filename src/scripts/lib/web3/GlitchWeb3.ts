@@ -79,6 +79,40 @@ export class GlitchWeb3 {
   }
 
   /**
+   * Add new account
+   * @returns Account info
+   */
+  addNewAccount(): {
+    publicKey?: string;
+    privateKey?: string;
+    address?: string;
+  } {
+    const account = this.glitchWeb3.wallet.createRegularAccount();
+
+    if (account) {
+      return {
+        ...account,
+        privateKey: GlitchCommon.codec.toKeyString(account.privateKey),
+      };
+    }
+
+    return null;
+  }
+
+  /**
+   * Get address from private key
+   * @returns
+   */
+  getAddressFromPrivateKey(privateKey: string): string {
+    if (privateKey.length < GlitchToken.private_key_length) {
+      return null;
+    } else {
+      const { address } = GlitchCommon.ecc.toPubKeyAndAddress(privateKey);
+      return address;
+    }
+  }
+
+  /**
    *
    * @param seedPhrases
    * @param password
@@ -118,7 +152,7 @@ export class GlitchWeb3 {
       const result = await this.glitchWeb3.getBalance(address);
       return web3Utils.fromWei(new BN(result.balance));
     } catch (error) {
-      return 0;
+      return '0';
     }
   }
 

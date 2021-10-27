@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { colors } from 'theme/colors';
@@ -9,7 +9,6 @@ import { formatNumberDownRoundWithExtractMax } from 'utils/number';
 
 import {
   useAccounts,
-  useIdentities,
   useSelectedAddress,
   useWalletSlice,
 } from 'state/wallet/hooks';
@@ -19,36 +18,29 @@ import { PageLayout } from 'app/layouts';
 import { Box, Flex } from 'app/components/Box';
 import { Button, CopyButton } from 'app/components/Button';
 import { Text } from 'app/components/Text';
-import { LockIcon, AvatarIcon, EllipsisIcon } from 'app/components/Svg';
+import { EllipsisIcon } from 'app/components/Svg';
 import { GlitchLogo } from 'app/components/Image';
 import { AssetsSection } from './components/AssetsSection';
+import { Header } from './components/Header';
+import { ManageAccountModal } from './components/ManageAccountModal';
 
 const Home: React.FC = () => {
   useWalletSlice();
 
   const { selectedAddress } = useSelectedAddress();
-  const { identities } = useIdentities();
   const { accounts } = useAccounts();
+
+  const [isOpenMnaModal, setIsOpenMnaModal] = useState<boolean>(false);
 
   return (
     <PageLayout>
-      <Flex p="16px" alignItems="center">
-        <Flex width="100%" alignItems="center" justifyContent="flex-end">
-          <Button p="0px">
-            <LockIcon />
-          </Button>
-
-          <Button p="0px" ml="24px">
-            <AvatarIcon width="40px" />
-          </Button>
-        </Flex>
-      </Flex>
+      <Header onAvatarClick={() => setIsOpenMnaModal(!isOpenMnaModal)} />
 
       <Box px="16px" mt="16px">
         <AccountCard>
           <Flex alignItems="center" justifyContent="space-between">
             <Text color={colors.gray7} bold>
-              {identities[selectedAddress].name}
+              {accounts[selectedAddress].name}
             </Text>
             <Button p="0px">
               <Flex width="24px" height="24px" alignItems="center">
@@ -84,6 +76,10 @@ const Home: React.FC = () => {
         </AccountCard>
       </Box>
 
+      <ManageAccountModal
+        isOpen={isOpenMnaModal}
+        onClose={() => setIsOpenMnaModal(false)}
+      />
       <AssetsSection />
     </PageLayout>
   );

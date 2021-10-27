@@ -1,7 +1,11 @@
 import { variants } from './types';
-import { colors } from '../../../theme/colors';
+import { colors } from 'theme/colors';
 
 export const styleVariants = {
+  [variants.PRIMARY]: {
+    color: colors.gray1,
+    backgroundColor: colors.primary,
+  },
   [variants.SECONDARY]: {
     color: colors.primary,
     border: `1px solid ${colors.primary}`,

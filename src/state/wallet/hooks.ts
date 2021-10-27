@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer } from 'utils/redux-injectors';
 import { RootState } from 'types';
@@ -29,11 +30,6 @@ export const useUnlockWrongPassword = () => {
   return { isUnlockWrongPassword };
 };
 
-export const useIdentities = () => {
-  const { identities } = useWalletSelector();
-  return { identities };
-};
-
 export const useAccounts = () => {
   const { accounts } = useWalletSelector();
   return { accounts };
@@ -49,13 +45,18 @@ export const useIsValidSeedPhrase = () => {
   return { isValidSeedPhrase };
 };
 
+export const useIsInvalidPrivateKey = () => {
+  const { isInvalidPrivateKey } = useWalletSelector();
+  return { isInvalidPrivateKey };
+};
+
 export const useWallet = () => {
   return useWalletSelector();
 };
 
 /**
  *
- * @returns actions
+ * @returns wallet actions
  */
 export const useWalletActionHandlers = (): {
   onCreateWallet: (password: string) => void;
@@ -106,6 +107,48 @@ export const useWalletActionHandlers = (): {
     onClearIsWrongUnlockWallet,
     onCheckIsValidSeedPhrase,
     onRestoreWallet,
+  };
+};
+
+/**
+ *
+ * @returns account actions
+ */
+export const useAccountActionHandlers = (): {
+  onAddNewAccount: (name: string) => void;
+  onChangeAccount: (address: string) => void;
+  onImportAccount: (name: string, privateKey: string) => void;
+  onClearIsInvalidPrivateKey: () => void;
+} => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const onAddNewAccount = useCallback(
+    (name: string) => dispatch(actions.addNewAccountAction(name, history)),
+    [dispatch]
+  );
+
+  const onChangeAccount = useCallback(
+    (address: string) => dispatch(actions.changeAccountAction(address)),
+    [dispatch]
+  );
+
+  const onImportAccount = useCallback(
+    (name: string, privateKey: string) =>
+      dispatch(actions.importAccountAction(name, privateKey, history)),
+    [dispatch]
+  );
+
+  const onClearIsInvalidPrivateKey = useCallback(
+    () => dispatch(actions.clearIsInvalidPrivateKey()),
+    [dispatch]
+  );
+
+  return {
+    onAddNewAccount,
+    onChangeAccount,
+    onImportAccount,
+    onClearIsInvalidPrivateKey,
   };
 };
 

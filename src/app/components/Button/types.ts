@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { LayoutProps, SpaceProps } from 'styled-system';
 
 export const variants = {
+  PRIMARY: 'primary',
   SECONDARY: 'secondary',
   DISABLE_PRIMARY: 'disable-primary',
   DISABLE_SECONDARY: 'disable-secondary',

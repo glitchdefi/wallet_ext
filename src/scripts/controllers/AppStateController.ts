@@ -20,7 +20,6 @@ export class AppStateController {
         isLocked: false,
         accounts: {},
         selectedAddress: null,
-        identities: {},
       },
       transactions: {},
       settings: {
@@ -62,6 +61,10 @@ export class AppStateController {
 
   async getAddressSelected(): Promise<string> {
     return (await this.getWalletState()).selectedAddress;
+  }
+
+  async getAccounts(): Promise<object> {
+    return (await this.getWalletState()).accounts;
   }
 
   async updateState(

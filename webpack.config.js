@@ -118,6 +118,14 @@ var alias = {
     'ScrollToTop',
     'index.tsx'
   ),
+  'app/components/Modal': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Modal',
+    'index.tsx'
+  ),
   types: path.join(__dirname, 'src', 'types', 'index.ts'),
   'state/wallet/hooks': path.join(
     __dirname,

@@ -50,17 +50,12 @@ export class GlitchController {
         isInitialized: 'pending',
         isLocked: true,
         selectedAddress: wallet.address,
-        identities: {
-          [wallet.address]: {
-            address: wallet.address,
-            name: 'Account 1',
-            avatar: null,
-          },
-        },
         accounts: {
           [wallet.address]: {
             address: wallet.address,
             balance: 0,
+            name: 'Account 1',
+            avatar: null,
           },
         },
       });
@@ -82,6 +77,7 @@ export class GlitchController {
     try {
       const addressSelected =
         await this.appStateController.getAddressSelected();
+      const oldAccounts = await this.appStateController.getAccounts();
       const balance = await this.glitchWeb3.getBalance(addressSelected);
 
       const newState = await this.appStateController.updateState('wallet', {
@@ -89,7 +85,7 @@ export class GlitchController {
         isLocked: false,
         accounts: {
           [addressSelected]: {
-            address: addressSelected,
+            ...oldAccounts[addressSelected],
             balance,
           },
         },
@@ -148,17 +144,12 @@ export class GlitchController {
         isInitialized: 'completed',
         isLocked: false,
         selectedAddress: wallet.address,
-        identities: {
-          [wallet.address]: {
-            address: wallet.address,
-            name: 'Account 1',
-            avatar: null,
-          },
-        },
         accounts: {
           [wallet.address]: {
             address: wallet.address,
             balance,
+            name: 'Account 1',
+            avatar: null,
           },
         },
       });
@@ -166,6 +157,99 @@ export class GlitchController {
       return {
         ...newState,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //=============================================================================
+  // ACCOUNT METHODS
+  //=============================================================================
+
+  /**
+   *  Add new account
+   * @returns
+   */
+  async addNewAccount(name?: string): Promise<object> {
+    try {
+      const account = this.glitchWeb3.addNewAccount();
+      this.glitchWeb3.importAccountToWeb3(account?.privateKey);
+
+      const oldAccounts = await this.appStateController.getAccounts();
+
+      const newState = await this.appStateController.updateState('wallet', {
+        accounts: {
+          ...oldAccounts,
+          [account.address]: {
+            name,
+            address: account.address,
+            avatar: null,
+            balance: 0,
+          },
+        },
+      });
+
+      return { ...newState };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   *  Change account
+   * @returns
+   */
+  async changeAccount(address?: string): Promise<object> {
+    try {
+      const oldAccounts = await this.appStateController.getAccounts();
+      const balance = await this.glitchWeb3.getBalance(address);
+
+      const newState = await this.appStateController.updateState('wallet', {
+        selectedAddress: address,
+        accounts: {
+          ...oldAccounts,
+          [address]: {
+            ...oldAccounts[address],
+            balance,
+          },
+        },
+      });
+
+      return { ...newState };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   *  Change account
+   * @returns
+   */
+  async importAccount(name?: string, privateKey?: string): Promise<object> {
+    try {
+      const address = this.glitchWeb3.getAddressFromPrivateKey(privateKey);
+      let newState = {};
+
+      if (address) {
+        const oldAccounts = await this.appStateController.getAccounts();
+        const balance = await this.glitchWeb3.getBalance(address);
+
+        this.glitchWeb3.importAccountToWeb3(privateKey);
+
+        newState = await this.appStateController.updateState('wallet', {
+          accounts: {
+            ...oldAccounts,
+            [address]: {
+              name,
+              address,
+              balance,
+              avatar: null,
+            },
+          },
+        });
+      }
+
+      return { invalidPrivateKey: !address, ...newState };
     } catch (error) {
       throw error;
     }

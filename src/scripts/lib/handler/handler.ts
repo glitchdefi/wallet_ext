@@ -86,6 +86,57 @@ export const restoreWallet = async (
   }
 };
 
+export const addNewAccount = async (
+  payload: { name?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { name } = payload || {};
+
+    const state = await controller.addNewAccount(name);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
+export const changeAccount = async (
+  payload: { address?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { address } = payload || {};
+
+    const state = await controller.changeAccount(address);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
+export const importAccount = async (
+  payload: { name?: string; privateKey?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { name, privateKey } = payload || {};
+
+    const state = await controller.importAccount(name, privateKey);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const handleDefault = (request: Request, sendResponse: SendResponse) => {
   const response = {
     ...errorResponse,

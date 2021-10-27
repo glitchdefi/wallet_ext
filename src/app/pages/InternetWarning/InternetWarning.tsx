@@ -30,7 +30,7 @@ const InternetWarning: React.FC = () => {
     <PageLayout>
       <Flex alignItems="center" justifyContent="flex-end" px="16px" py="22px">
         <Button px="8px" onClick={() => history.goBack()}>
-          <CloseIcon />
+          <CloseIcon fill={colors.primary} />
         </Button>
       </Flex>
 

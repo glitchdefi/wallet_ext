@@ -10,18 +10,18 @@ interface Props extends SpaceProps {
   message: string;
 }
 
-function MessageBox(props: Props) {
+const MessageBox: React.FC<Props> = (props) => {
   const { message, ...rest } = props;
 
   return (
     <MsgBoxContainer {...rest}>
-      <WarningIcon pt="3px" width="14px" />
+      <WarningIcon pt="3px" width="16px" />
       <Text ml="10px" fontSize="12px">
         {message}
       </Text>
     </MsgBoxContainer>
   );
-}
+};
 
 const MsgBoxContainer = styled(Flex)`
   padding: 6px 16px;

@@ -7,7 +7,12 @@
         "ok": "OK",
         "mnemonic_phrase": "Mnemonic phrase",
         "term_and_service": "Terms of Service",
-        "or": "or"
+        "or": "or",
+        "private_keys": "Private keys",
+        "cancel": "Cancel",
+        "create": "Create",
+        "import": "Import",
+        "account": "Account"
     },
     "internetWarningPage": {
         "title": "Internet connection not recommended",
@@ -39,6 +44,15 @@
         "your_wallet_is_currently_locked": "Your wallet is currently locked. Please enter Glitch password to unlock.",
         "glitch_password": "Glitch password",
         "unlock": "Unlock"
+    },
+    "createImportAccountPage": {
+        "title": "Create/Import account",
+        "account_name": "Account name (optional)",
+        "import_account_warning": "Imported accounts will not be associated with your originally created Glitch account Mnemonic phrase.",
+        "enter_private_key": "Enter Private key",
+        "invalid_private_keys": "Invalid Private keys",
+        "create_account": "Create account",
+        "import_private_keys": "Import Private Keys"
     },
     "password": {
         "create_a_password": "Create a password",

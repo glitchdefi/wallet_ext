@@ -14,9 +14,6 @@ export const slice = createSlice({
     seedPhrasesLoaded: (state, action) => {
       state.seedPhrases = action.payload;
     },
-    setIdentities: (state, action) => {
-      state.identities = action.payload;
-    },
     setSelectedAddress: (state, action) => {
       state.selectedAddress = action.payload;
     },
@@ -34,6 +31,9 @@ export const slice = createSlice({
     },
     setIsValidSeedPhrase: (state, action) => {
       state.isValidSeedPhrase = action.payload;
+    },
+    setIsInvalidPrivateKey: (state, action) => {
+      state.isInvalidPrivateKey = action.payload;
     },
   },
 });

@@ -25,6 +25,7 @@ import { RestoreWalletPage } from './pages/RestoreWallet';
 import { CreateWalletPage } from './pages/CreateWallet';
 import { InternetWarningPage } from './pages/InternetWarning';
 import { UnlockPage } from './pages/Unlock';
+import { CreateImportAccountPage } from './pages/CreateImportAccount';
 
 const history = createMemoryHistory();
 
@@ -32,7 +33,7 @@ export const App: React.FC = () => {
   useWalletSlice();
   useApplicationSlice();
   const { isLoading } = useLoadingApplication();
-  
+
   return (
     <Router history={history}>
       <GlobalStyles />
@@ -52,6 +53,10 @@ export const App: React.FC = () => {
           <Route path={Routes.unlock} component={UnlockPage} />
 
           <Authenticated path={Routes.home} component={HomePage} />
+          <Authenticated
+            path={Routes.createImportAccount}
+            component={CreateImportAccountPage}
+          />
         </Switch>
       </ContainerLayout>
     </Router>
