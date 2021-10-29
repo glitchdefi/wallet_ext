@@ -69,8 +69,8 @@ const StyledCheckBox = styled.input`
   &:checked + label:after {
     content: '';
     position: absolute;
-    left: 4px;
-    top: 8px;
+    left: 3px;
+    top: 7px;
     background: ${colors.gray1};
     width: 2px;
     height: 2px;
