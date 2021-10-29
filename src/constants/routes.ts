@@ -6,4 +6,6 @@ export const Routes = {
   restoreWallet: '/restore-wallet',
   createImportAccount: '/create-import-account',
   unlock: '/unlock',
+  accountDetails: '/account-details',
+  showPrivateKeys: '/show-private-keys',
 };

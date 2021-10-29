@@ -23,8 +23,8 @@ export const slice = createSlice({
     setIsLocked: (state, action) => {
       state.isLocked = action.payload;
     },
-    setUnlockWrongPassword: (state, action) => {
-      state.isUnlockWrongPassword = action.payload;
+    setWrongPassword: (state, action) => {
+      state.isWrongPassword = action.payload;
     },
     setAccounts: (state, action) => {
       state.accounts = action.payload;
@@ -34,6 +34,9 @@ export const slice = createSlice({
     },
     setIsInvalidPrivateKey: (state, action) => {
       state.isInvalidPrivateKey = action.payload;
+    },
+    setShowPrivateKey: (state, action) => {
+      state.showPrivateKey = action.payload;
     },
   },
 });

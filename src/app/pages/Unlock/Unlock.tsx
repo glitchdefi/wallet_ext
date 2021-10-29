@@ -9,9 +9,9 @@ import { Routes } from 'constants/routes';
 
 import {
   useSeedPhrases,
-  useUnlockWrongPassword,
   useWalletActionHandlers,
   useWalletSlice,
+  useWrongPassword,
 } from 'state/wallet/hooks';
 import { useApplicationSlice } from 'state/application/hooks';
 
@@ -33,8 +33,8 @@ const Unlock: React.FC = () => {
   const history = useHistory();
 
   const { seedPhrases } = useSeedPhrases();
-  const { isUnlockWrongPassword } = useUnlockWrongPassword();
-  const { onClearIsWrongUnlockWallet, onUnlockWallet } =
+  const { isWrongPassword } = useWrongPassword();
+  const { onClearIsWrongPassword, onUnlockWallet } =
     useWalletActionHandlers();
 
   const [password, setPassword] = useState<string>('');
@@ -61,14 +61,14 @@ const Unlock: React.FC = () => {
           <Box mt="16px">
             <Label>{t(messages.glitchPassword())}</Label>
             <PasswordInput
-              isError={isUnlockWrongPassword}
+              isError={isWrongPassword}
               value={password}
               placeholder={t(messages.password())}
               onChange={(e) => {
                 const { value } = e.target;
 
                 setPassword(e.target.value);
-                !value && onClearIsWrongUnlockWallet();
+                !value && onClearIsWrongPassword();
               }}
               msgError={t(messages.incorrectPassword())}
             />
@@ -97,7 +97,7 @@ const Unlock: React.FC = () => {
               ml="8px"
               py="0px"
               onClick={() => {
-                isUnlockWrongPassword && onClearIsWrongUnlockWallet();
+                isWrongPassword && onClearIsWrongPassword();
                 history.push(Routes.restoreWallet);
               }}
             >

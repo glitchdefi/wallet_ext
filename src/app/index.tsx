@@ -26,6 +26,8 @@ import { CreateWalletPage } from './pages/CreateWallet';
 import { InternetWarningPage } from './pages/InternetWarning';
 import { UnlockPage } from './pages/Unlock';
 import { CreateImportAccountPage } from './pages/CreateImportAccount';
+import { AccountDetailsPage } from './pages/AccountDetails';
+import { ShowPrivateKeysPage } from './pages/ShowPrivateKeys';
 
 const history = createMemoryHistory();
 
@@ -56,6 +58,14 @@ export const App: React.FC = () => {
           <Authenticated
             path={Routes.createImportAccount}
             component={CreateImportAccountPage}
+          />
+          <Authenticated
+            path={Routes.accountDetails}
+            component={AccountDetailsPage}
+          />
+          <Authenticated
+            path={Routes.showPrivateKeys}
+            component={ShowPrivateKeysPage}
           />
         </Switch>
       </ContainerLayout>

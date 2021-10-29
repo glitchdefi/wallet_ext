@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
 import { truncateAddress } from 'utils/strings';
+import { Routes } from 'constants/routes';
 
 import bg from '../../../assets/img/account_card_bg.jpg';
 import { formatNumberDownRoundWithExtractMax } from 'utils/number';
@@ -12,25 +14,33 @@ import {
   useSelectedAddress,
   useWalletSlice,
 } from 'state/wallet/hooks';
+import { useScrollBlock } from 'hooks/useScrollBlock';
 
 // Components
 import { PageLayout } from 'app/layouts';
 import { Box, Flex } from 'app/components/Box';
-import { Button, CopyButton } from 'app/components/Button';
+import { CopyButton } from 'app/components/Button';
 import { Text } from 'app/components/Text';
-import { EllipsisIcon } from 'app/components/Svg';
+import { EllipsisIcon, GatewayIcon, ProfileIcon } from 'app/components/Svg';
 import { GlitchLogo } from 'app/components/Image';
 import { AssetsSection } from './components/AssetsSection';
 import { Header } from './components/Header';
+import { Dropdown } from 'app/components/Dropdown';
 import { ManageAccountModal } from './components/ManageAccountModal';
 
 const Home: React.FC = () => {
   useWalletSlice();
+  const history = useHistory();
 
   const { selectedAddress } = useSelectedAddress();
   const { accounts } = useAccounts();
+  const [blockScroll, allowScroll] = useScrollBlock();
 
   const [isOpenMnaModal, setIsOpenMnaModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    isOpenMnaModal ? blockScroll() : allowScroll();
+  }, [isOpenMnaModal]);
 
   return (
     <PageLayout>
@@ -42,11 +52,26 @@ const Home: React.FC = () => {
             <Text color={colors.gray7} bold>
               {accounts[selectedAddress].name}
             </Text>
-            <Button p="0px">
-              <Flex width="24px" height="24px" alignItems="center">
-                <EllipsisIcon />
-              </Flex>
-            </Button>
+
+            <Dropdown
+              onSelect={(eventKey) => {
+                if (eventKey == 0) history.push(Routes.accountDetails);
+                if (eventKey == 1) history.push(Routes.showPrivateKeys);
+              }}
+              customToggle={
+                <Flex width="24px" height="24px" alignItems="center">
+                  <EllipsisIcon />
+                </Flex>
+              }
+              items={[
+                { key: 0, icon: <ProfileIcon />, label: 'Account details' },
+                {
+                  key: 1,
+                  icon: <GatewayIcon />,
+                  label: 'Show Private Keys',
+                },
+              ]}
+            />
           </Flex>
 
           <Flex alignItems="center">

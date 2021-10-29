@@ -68,7 +68,7 @@ export const unlockWalletAction =
       const { state } = data || {};
 
       if (state?.isWrongPassword) {
-        dispatch(actions.setUnlockWrongPassword(state.isWrongPassword));
+        dispatch(actions.setWrongPassword(state.isWrongPassword));
       } else {
         dispatch(actions.seedPhrasesLoaded(state?.seedPhrase));
         dispatch(actions.setIsLocked(state?.wallet?.isLocked));
@@ -120,8 +120,8 @@ export const restoreWalletAction =
     }
   };
 
-export const clearIsWrongUnlockWallet = () => (dispatch: Dispatch<any>) => {
-  dispatch(actions.setUnlockWrongPassword(false));
+export const clearIsWrongPassword = () => (dispatch: Dispatch<any>) => {
+  dispatch(actions.setWrongPassword(false));
 };
 
 export const addNewAccountAction =
@@ -200,8 +200,54 @@ export const importAccountAction =
     }
   };
 
+export const showPrivateKeysAction =
+  (password: string) => async (dispatch: Dispatch<any>) => {
+    try {
+      dispatch(applicationActions.setIsLoadingApp(true));
+
+      const data = await sendMessage({
+        type: MessageTypes.BG_ACCOUNT_SHOW_PRIVATE_KEYS,
+        payload: {
+          password,
+        },
+      });
+
+      if (data?.state) {
+        const { isWrongPassword, privateKey } = data?.state || {};
+        dispatch(actions.setWrongPassword(isWrongPassword));
+        dispatch(actions.setShowPrivateKey(privateKey));
+      }
+    } catch (error) {
+      // Handle Error
+    } finally {
+      dispatch(applicationActions.setIsLoadingApp(false));
+    }
+  };
+
+export const changeAccountNameAction =
+  (name: string) => async (dispatch: Dispatch<any>) => {
+    try {
+      const data = await sendMessage({
+        type: MessageTypes.BG_ACCOUNT_CHANGE_ACCOUNT_NAME,
+        payload: {
+          name,
+        },
+      });
+
+      if (data?.state?.wallet) {
+        dispatch(setWalletState(data?.state?.wallet));
+      }
+    } catch (error) {
+      // Handle Error
+    }
+  };
+
 export const clearIsInvalidPrivateKey = () => (dispatch: Dispatch<any>) => {
   dispatch(actions.setIsInvalidPrivateKey(false));
+};
+
+export const clearShowPrivateKey = () => (dispatch: Dispatch<any>) => {
+  dispatch(actions.setShowPrivateKey(''));
 };
 
 const setWalletState = (wallet: WalletState) => (dispatch: Dispatch<any>) => {

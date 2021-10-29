@@ -45,7 +45,7 @@ function CopyButton({ id, width, value, component, ...rest }: Props) {
 
       <Tooltip
         id={id}
-        width="3rem"
+        width="6rem"
         getContent={() => (copied ? 'Copied' : 'Copy')}
       />
     </>

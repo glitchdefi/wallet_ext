@@ -13,12 +13,7 @@ interface Props {
 
 export const AssetItem: React.FC<Props> = () => {
   return (
-    <Flex
-      background="rgba(255, 255, 255, 0.03)"
-      py="20px"
-      px="16px"
-      alignItems="center"
-    >
+    <Wrapper py="20px" px="16px" alignItems="center">
       <GlitchLogo width={36} height={36} />
       <Box ml="16px" width="100%">
         <Flex width="100%" alignItems="center" justifyContent="space-between">
@@ -46,9 +41,16 @@ export const AssetItem: React.FC<Props> = () => {
           </Text>
         </Flex>
       </Box>
-    </Flex>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled(Flex)`
+  &:hover {
+    transition: all 0.3s;
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+`;
 
 const NetworkType = styled.div`
   margin-left: 10px;

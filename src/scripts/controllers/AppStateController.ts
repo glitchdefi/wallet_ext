@@ -59,11 +59,22 @@ export class AppStateController {
     return await this.localStore.get('encryptKey');
   }
 
+  async setKeyAccounts(encryptPK: string): Promise<void> {
+    const oldKeys = await this.getKeyAccounts();
+    const keyAccounts = oldKeys.push(encryptPK);
+
+    await this.localStore.set({ keyAccounts });
+  }
+
+  async getKeyAccounts(): Promise<string[]> {
+    return await this.localStore.get('keyAccounts');
+  }
+
   async getAddressSelected(): Promise<string> {
     return (await this.getWalletState()).selectedAddress;
   }
 
-  async getAccounts(): Promise<object> {
+  async getAccounts(): Promise<WalletState['accounts']> {
     return (await this.getWalletState()).accounts;
   }
 

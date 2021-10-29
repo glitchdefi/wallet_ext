@@ -14,6 +14,7 @@ const Text = styled.div<TextProps>`
   line-height: 1.5;
   font-feature-settings: 'zero' on;
   text-decoration: none;
+  word-break: break-word;
   ${({ textTransform }) => textTransform && `text-transform: ${textTransform};`}
   ${({ ellipsis }) =>
     ellipsis &&

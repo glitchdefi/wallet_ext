@@ -49,6 +49,7 @@ export const EnterSeedPhraseStep: React.FC<Props> = ({
           alignItems="center"
         >
           <StyledInput
+            hasBorder={false}
             id="seed-phrase-input"
             value={seedPhrase}
             as={TextareaAutosize}

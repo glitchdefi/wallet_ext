@@ -11,6 +11,7 @@ import { App } from './app';
 
 // Initialize languages
 import './locales/i18n';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Root: React.FC = () => {
   const [store, setStore] = useState(configureAppStore());

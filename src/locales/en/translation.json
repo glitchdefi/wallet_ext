@@ -12,7 +12,8 @@
         "cancel": "Cancel",
         "create": "Create",
         "import": "Import",
-        "account": "Account"
+        "account": "Account",
+        "account_details": "Account details"
     },
     "internetWarningPage": {
         "title": "Internet connection not recommended",
@@ -53,6 +54,10 @@
         "invalid_private_keys": "Invalid Private keys",
         "create_account": "Create account",
         "import_private_keys": "Import Private Keys"
+    },
+    "showPrivateKeysPage": {
+        "title": "Show Private Keys",
+        "warning": "Warning: Never disclose this key. Anyone with your private keys can steal any assets held in your account."
     },
     "password": {
         "create_a_password": "Create a password",

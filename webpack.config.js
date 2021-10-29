@@ -24,6 +24,7 @@ var alias = {
   'theme/colors': path.join(__dirname, 'src', 'theme', 'colors.ts'),
   'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
   'app/layouts': path.join(__dirname, 'src', 'app', 'layouts', 'index.ts'),
+  'hooks/useScrollBlock': path.join(__dirname, 'src', 'hooks', 'useScrollBlock.ts'),
   'locales/translations': path.join(
     __dirname,
     'src',
@@ -124,6 +125,14 @@ var alias = {
     'app',
     'components',
     'Modal',
+    'index.tsx'
+  ),
+  'app/components/Dropdown': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Dropdown',
     'index.tsx'
   ),
   types: path.join(__dirname, 'src', 'types', 'index.ts'),

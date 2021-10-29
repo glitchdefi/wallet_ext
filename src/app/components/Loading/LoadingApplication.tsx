@@ -21,7 +21,7 @@ const Overlay = styled.div`
   background-color: rgba(0, 12, 23, 0.6);
   left: 0;
   bottom: 0;
-  z-index: 999;
+  z-index: 1060;
 `;
 
 export default LoadingApplication;

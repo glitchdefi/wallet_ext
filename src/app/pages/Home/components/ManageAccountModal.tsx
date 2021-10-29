@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
+import Modal from 'react-bootstrap/Modal';
 
 import {
   useAccountActionHandlers,
@@ -14,7 +15,7 @@ import { truncateAddress } from 'utils/strings';
 import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
-import { Modal } from 'app/components/Modal';
+// import { Modal } from 'app/components/Modal';
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { Button } from 'app/components/Button';
@@ -39,7 +40,7 @@ export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
   }, [selectedAddress]);
 
   return (
-    <Modal bottom="0px !important" mt="76px !important" isOpen={isOpen}>
+    <StyledModal show={isOpen}>
       <Flex
         borderBottom={`1px solid ${colors.gray8}`}
         p="12px"
@@ -55,7 +56,7 @@ export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
         </Button>
       </Flex>
 
-      <Flex height="344px" flexDirection="column" overflowY="scroll">
+      <Flex height="330px" flexDirection="column" overflowY="scroll">
         {Object.entries(accounts).map((val, i) => {
           const account = val[1];
           const checked = account.address === selectedAddress;
@@ -100,9 +101,28 @@ export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
           Import Private Keys
         </Button>
       </Box>
-    </Modal>
+    </StyledModal>
   );
 };
+
+const StyledModal = styled(Modal)`
+  padding-right: 0px !important;
+
+  .modal-dialog {
+    margin-top: 76px !important;
+    margin: 16px;
+
+    .modal-content {
+      border-radius: 0px;
+      border: none;
+      background-color: ${colors.gray1}
+    }
+  }
+
+  .modal-backdrop.show {
+    opacity: 0;
+  }
+`;
 
 const AccountWrapper = styled.div`
   display: flex;

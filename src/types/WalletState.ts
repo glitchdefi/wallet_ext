@@ -8,13 +8,15 @@ export interface WalletState {
       avatar?: string;
       address?: string;
       balance?: string;
+      privateKey?: string;
     };
   };
   selectedAddress?: any;
 
   // Not save to ext storage
   seedPhrases?: string;
-  isUnlockWrongPassword?: boolean;
+  isWrongPassword?: boolean;
   isValidSeedPhrase?: boolean;
   isInvalidPrivateKey?: boolean;
+  showPrivateKey?: string;
 }

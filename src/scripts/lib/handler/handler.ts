@@ -137,6 +137,40 @@ export const importAccount = async (
   }
 };
 
+export const showPrivateKeys = async (
+  payload: { password?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { password } = payload || {};
+
+    const state = await controller.showPrivateKeysAccount(password);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
+export const changeAccountName = async (
+  payload: { name?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { name } = payload || {};
+
+    const state = await controller.changeAccountName(name);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const handleDefault = (request: Request, sendResponse: SendResponse) => {
   const response = {
     ...errorResponse,

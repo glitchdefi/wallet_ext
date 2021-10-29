@@ -123,6 +123,14 @@ function handleChromeListeners(controller: GlitchController) {
                 Handler.importAccount(payload, controller, sendResponse);
                 break;
 
+              case MessageTypes.BG_ACCOUNT_SHOW_PRIVATE_KEYS:
+                Handler.showPrivateKeys(payload, controller, sendResponse);
+                break;
+
+              case MessageTypes.BG_ACCOUNT_CHANGE_ACCOUNT_NAME:
+                Handler.changeAccountName(payload, controller, sendResponse);
+                break;
+
               default:
                 Handler.handleDefault(request, sendResponse);
             }

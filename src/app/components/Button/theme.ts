@@ -21,12 +21,12 @@ export const styleVariants = {
   [variants.DISABLE_PRIMARY]: {
     color: colors.gray4,
     backgroundColor: colors.gray,
-    cursor: 'not-allowed',
+    cursor: 'not-allowed !important',
   },
   [variants.DISABLE_SECONDARY]: {
     color: colors.gray4,
     backgroundColor: colors.gray2,
     border: `1px solid ${colors.gray4}`,
-    cursor: 'not-allowed',
+    cursor: 'not-allowed !important',
   },
 };

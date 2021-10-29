@@ -25,9 +25,9 @@ export const useSeedPhrases = () => {
   return { seedPhrases };
 };
 
-export const useUnlockWrongPassword = () => {
-  const { isUnlockWrongPassword } = useWalletSelector();
-  return { isUnlockWrongPassword };
+export const useWrongPassword = () => {
+  const { isWrongPassword } = useWalletSelector();
+  return { isWrongPassword };
 };
 
 export const useAccounts = () => {
@@ -50,6 +50,11 @@ export const useIsInvalidPrivateKey = () => {
   return { isInvalidPrivateKey };
 };
 
+export const useShowPrivateKey = () => {
+  const { showPrivateKey } = useWalletSelector();
+  return { showPrivateKey };
+};
+
 export const useWallet = () => {
   return useWalletSelector();
 };
@@ -62,7 +67,7 @@ export const useWalletActionHandlers = (): {
   onCreateWallet: (password: string) => void;
   onUnlockWallet: (password: string) => void;
   onCreateCompleted: () => void;
-  onClearIsWrongUnlockWallet: () => void;
+  onClearIsWrongPassword: () => void;
   onCheckIsValidSeedPhrase: (seedPhrase: string) => void;
   onRestoreWallet: (seedPhrase: string, password: string) => void;
 } => {
@@ -83,8 +88,8 @@ export const useWalletActionHandlers = (): {
     [dispatch]
   );
 
-  const onClearIsWrongUnlockWallet = useCallback(
-    () => dispatch(actions.clearIsWrongUnlockWallet()),
+  const onClearIsWrongPassword = useCallback(
+    () => dispatch(actions.clearIsWrongPassword()),
     [dispatch]
   );
 
@@ -104,7 +109,7 @@ export const useWalletActionHandlers = (): {
     onCreateWallet,
     onUnlockWallet,
     onCreateCompleted,
-    onClearIsWrongUnlockWallet,
+    onClearIsWrongPassword,
     onCheckIsValidSeedPhrase,
     onRestoreWallet,
   };
@@ -119,6 +124,9 @@ export const useAccountActionHandlers = (): {
   onChangeAccount: (address: string) => void;
   onImportAccount: (name: string, privateKey: string) => void;
   onClearIsInvalidPrivateKey: () => void;
+  onShowPrivateKeys: (password: string) => void;
+  onClearShowPrivateKey: () => void;
+  onChangeAccountName: (name: string) => void;
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -139,8 +147,23 @@ export const useAccountActionHandlers = (): {
     [dispatch]
   );
 
+  const onShowPrivateKeys = useCallback(
+    (password: string) => dispatch(actions.showPrivateKeysAction(password)),
+    [dispatch]
+  );
+
   const onClearIsInvalidPrivateKey = useCallback(
     () => dispatch(actions.clearIsInvalidPrivateKey()),
+    [dispatch]
+  );
+
+  const onClearShowPrivateKey = useCallback(
+    () => dispatch(actions.clearShowPrivateKey()),
+    [dispatch]
+  );
+
+  const onChangeAccountName = useCallback(
+    (name: string) => dispatch(actions.changeAccountNameAction(name)),
     [dispatch]
   );
 
@@ -149,6 +172,9 @@ export const useAccountActionHandlers = (): {
     onChangeAccount,
     onImportAccount,
     onClearIsInvalidPrivateKey,
+    onShowPrivateKeys,
+    onClearShowPrivateKey,
+    onChangeAccountName,
   };
 };
 
