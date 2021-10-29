@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { messages } from './messages';
-import { Routes } from 'constants/routes';
 
 // Hooks
 import {
-  useIsInitialized,
   useStepTitleDesc,
   useWalletActionHandlers,
   useWalletSlice,
 } from 'state/wallet/hooks';
 
-import {
-  useApplicationSlice,
-  useLoadingApplication,
-} from 'state/application/hooks';
+import { useApplicationSlice } from 'state/application/hooks';
 
 import { PageLayout } from 'app/layouts';
 import { StepProgressLayout } from 'app/components/StepProgressLayout';
@@ -35,18 +30,10 @@ const RestoreWallet: React.FC = () => {
   const [step, setStep] = useState<number>(0);
   const [seedPhrase, setSeedPhrase] = useState<string>('');
 
-  const { isLoading } = useLoadingApplication();
-  const { isInitialized } = useIsInitialized();
   const { onRestoreWallet } = useWalletActionHandlers();
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'restore');
 
   const stepProgress = ((step + 1) / MAX_STEP) * 100;
-
-  useEffect(() => {
-    if (!isLoading && isInitialized === 'completed') {
-      history.push(Routes.home);
-    }
-  }, [isLoading, isInitialized]);
 
   return (
     <PageLayout minHeight="600px">

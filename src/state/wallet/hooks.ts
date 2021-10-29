@@ -66,20 +66,27 @@ export const useWallet = () => {
 export const useWalletActionHandlers = (): {
   onCreateWallet: (password: string) => void;
   onUnlockWallet: (password: string) => void;
-  onCreateCompleted: () => void;
-  onClearIsWrongPassword: () => void;
   onCheckIsValidSeedPhrase: (seedPhrase: string) => void;
   onRestoreWallet: (seedPhrase: string, password: string) => void;
+  onLockWallet: () => void;
+  onCreateCompleted: () => void;
+  onClearIsWrongPassword: () => void;
 } => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onCreateWallet = useCallback(
     (password: string) => dispatch(actions.createWalletAction(password)),
     [dispatch]
   );
 
+  const onLockWallet = useCallback(
+    () => dispatch(actions.lockWalletAction(history)),
+    [dispatch]
+  );
+
   const onUnlockWallet = useCallback(
-    (password: string) => dispatch(actions.unlockWalletAction(password)),
+    (password: string) => dispatch(actions.unlockWalletAction(password, history)),
     [dispatch]
   );
 
@@ -101,7 +108,7 @@ export const useWalletActionHandlers = (): {
 
   const onRestoreWallet = useCallback(
     (seedPhrase?: string, password?: string) =>
-      dispatch(actions.restoreWalletAction(seedPhrase, password)),
+      dispatch(actions.restoreWalletAction(seedPhrase, password, history)),
     [dispatch]
   );
 
@@ -112,6 +119,7 @@ export const useWalletActionHandlers = (): {
     onClearIsWrongPassword,
     onCheckIsValidSeedPhrase,
     onRestoreWallet,
+    onLockWallet,
   };
 };
 

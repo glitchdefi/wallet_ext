@@ -12,6 +12,7 @@ import { formatNumberDownRoundWithExtractMax } from 'utils/number';
 import {
   useAccounts,
   useSelectedAddress,
+  useWalletActionHandlers,
   useWalletSlice,
 } from 'state/wallet/hooks';
 import { useScrollBlock } from 'hooks/useScrollBlock';
@@ -32,6 +33,7 @@ const Home: React.FC = () => {
   useWalletSlice();
   const history = useHistory();
 
+  const { onLockWallet } = useWalletActionHandlers();
   const { selectedAddress } = useSelectedAddress();
   const { accounts } = useAccounts();
   const [blockScroll, allowScroll] = useScrollBlock();
@@ -44,7 +46,10 @@ const Home: React.FC = () => {
 
   return (
     <PageLayout>
-      <Header onAvatarClick={() => setIsOpenMnaModal(!isOpenMnaModal)} />
+      <Header
+        onLockClick={onLockWallet}
+        onAvatarClick={() => setIsOpenMnaModal(!isOpenMnaModal)}
+      />
 
       <Box px="16px" mt="16px">
         <AccountCard>

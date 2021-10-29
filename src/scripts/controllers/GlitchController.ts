@@ -107,6 +107,20 @@ export class GlitchController {
    *
    * @returns
    */
+  async lockWallet() {
+    const newState = await this.appStateController.updateState('wallet', {
+      isLocked: true,
+    });
+
+    return {
+      ...newState,
+    };
+  }
+
+  /**
+   *
+   * @returns
+   */
   async unlockWallet(password?: string) {
     let state = {};
     const encryptKey = await this.appStateController.getEncryptKey();

@@ -35,6 +35,20 @@ export const createWalletCompleted = async (
   }
 };
 
+export const lockWallet = async (
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const state = await controller.lockWallet();
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const unlockWallet = async (
   payload: { password?: string },
   controller: GlitchController,

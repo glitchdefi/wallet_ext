@@ -98,6 +98,10 @@ function handleChromeListeners(controller: GlitchController) {
                 Handler.restoreWallet(payload, controller, sendResponse);
                 break;
 
+              case MessageTypes.BG_WALLET_LOCK_WALLET:
+                Handler.lockWallet(controller, sendResponse);
+                break;
+
               case MessageTypes.BG_WALLET_UNLOCK_WALLET:
                 Handler.unlockWallet(payload, controller, sendResponse);
                 break;

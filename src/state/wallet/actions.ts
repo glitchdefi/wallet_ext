@@ -54,7 +54,7 @@ export const createCompletedAction = () => async (dispatch: Dispatch<any>) => {
 };
 
 export const unlockWalletAction =
-  (password: string) => async (dispatch: Dispatch<any>) => {
+  (password: string, history: any) => async (dispatch: Dispatch<any>) => {
     try {
       dispatch(applicationActions.setIsLoadingApp(true));
 
@@ -72,11 +72,33 @@ export const unlockWalletAction =
       } else {
         dispatch(actions.seedPhrasesLoaded(state?.seedPhrase));
         dispatch(actions.setIsLocked(state?.wallet?.isLocked));
+
+        state?.seedPhrase
+          ? history.push(Routes.createWallet)
+          : history.push(Routes.home);
       }
     } catch (error) {
       // Handle Error
     } finally {
       dispatch(applicationActions.setIsLoadingApp(false));
+    }
+  };
+
+export const lockWalletAction =
+  (history: any) => async (dispatch: Dispatch<any>) => {
+    try {
+      const data = await sendMessage({
+        type: MessageTypes.BG_WALLET_LOCK_WALLET,
+      });
+
+      const { state } = data || {};
+
+      if (state?.wallet) {
+        dispatch(setWalletState(state.wallet));
+        history.push(Routes.unlock);
+      }
+    } catch (error) {
+      // Handle Error
     }
   };
 
@@ -99,7 +121,8 @@ export const checkIsValidSeedPhraseAction =
   };
 
 export const restoreWalletAction =
-  (seedPhrase: string, password: string) => async (dispatch: Dispatch<any>) => {
+  (seedPhrase: string, password: string, history: any) =>
+  async (dispatch: Dispatch<any>) => {
     try {
       dispatch(applicationActions.setIsLoadingApp(true));
 
@@ -113,6 +136,7 @@ export const restoreWalletAction =
 
       const { state } = data || {};
       dispatch(setWalletState(state?.wallet));
+      history.push(Routes.home);
     } catch (error) {
       // Handle Error
     } finally {

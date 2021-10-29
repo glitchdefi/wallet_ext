@@ -32,18 +32,10 @@ const Unlock: React.FC = () => {
   const { t } = useTranslation();
   const history = useHistory();
 
-  const { seedPhrases } = useSeedPhrases();
   const { isWrongPassword } = useWrongPassword();
-  const { onClearIsWrongPassword, onUnlockWallet } =
-    useWalletActionHandlers();
+  const { onClearIsWrongPassword, onUnlockWallet } = useWalletActionHandlers();
 
   const [password, setPassword] = useState<string>('');
-
-  useEffect(() => {
-    if (seedPhrases) {
-      history.push(Routes.createWallet);
-    }
-  }, [seedPhrases]);
 
   return (
     <Container>

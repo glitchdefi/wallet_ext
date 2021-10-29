@@ -8,6 +8,8 @@ const Authenticated: React.FC<RouteProps> = (props) => {
   const { component: Component, ...rest } = props;
   const { isInitialized, isLocked } = useWallet();
 
+  console.log(isInitialized, isLocked)
+
   return (
     <Route
       {...rest}
