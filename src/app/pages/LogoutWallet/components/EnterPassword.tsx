@@ -32,14 +32,19 @@ export const EnterPassword: React.FC<Props> = ({
 
   const { isWrongPassword } = useWrongPassword();
   const { seedPhrases } = useSeedPhrases();
-  const { onLogoutWallet, onShowSeedPhrase, onClearIsWrongPassword } =
-    useWalletActionHandlers();
+  const {
+    onLogoutWallet,
+    onShowSeedPhrase,
+    onClearIsWrongPassword,
+    onClearSeedPhrase,
+  } = useWalletActionHandlers();
 
   const [password, setPassword] = useState<string>('');
 
   useEffect(() => {
     return () => {
       onClearIsWrongPassword();
+      onClearSeedPhrase();
     };
   }, []);
 

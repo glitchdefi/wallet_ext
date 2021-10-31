@@ -48,6 +48,7 @@ export const SettingsPanel: React.FC = () => {
         <SettingItem
           leftIcon={<OneToOneIcon width="24px" />}
           label="Reveal Mnemonic phrase"
+          onClick={() => history.push(Routes.revealMnemonicPhrase)}
         />
         <SettingItem
           leftIcon={<LogoutIcon width="24px" />}

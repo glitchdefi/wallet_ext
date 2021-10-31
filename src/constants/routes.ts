@@ -10,4 +10,5 @@ export const Routes = {
   showPrivateKeys: '/show-private-keys',
   aboutUs: '/about-us',
   logoutWallet: '/logout-wallet',
+  revealMnemonicPhrase: '/reveal-mnemonic-phrase',
 };

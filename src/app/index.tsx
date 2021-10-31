@@ -30,6 +30,7 @@ import { AccountDetailsPage } from './pages/AccountDetails';
 import { ShowPrivateKeysPage } from './pages/ShowPrivateKeys';
 import { AboutUsPage } from './pages/AboutUs';
 import { LogoutWalletPage } from './pages/LogoutWallet';
+import { RevealMnemonicPhrasePage } from './pages/RevealMnemonicPhrase';
 
 const history = createMemoryHistory();
 
@@ -73,6 +74,10 @@ export const App: React.FC = () => {
           <Authenticated
             path={Routes.logoutWallet}
             component={LogoutWalletPage}
+          />
+          <Authenticated
+            path={Routes.revealMnemonicPhrase}
+            component={RevealMnemonicPhrasePage}
           />
         </Switch>
       </ContainerLayout>

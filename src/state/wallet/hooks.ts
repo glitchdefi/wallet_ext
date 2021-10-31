@@ -73,6 +73,7 @@ export const useWalletActionHandlers = (): {
   onLockWallet: () => void;
   onCreateCompleted: () => void;
   onClearIsWrongPassword: () => void;
+  onClearSeedPhrase: () => void;
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -126,6 +127,11 @@ export const useWalletActionHandlers = (): {
     [dispatch]
   );
 
+  const onClearSeedPhrase = useCallback(
+    () => dispatch(actions.clearSeedPhrase()),
+    [dispatch]
+  );
+
   return {
     onCreateWallet,
     onUnlockWallet,
@@ -136,6 +142,7 @@ export const useWalletActionHandlers = (): {
     onLockWallet,
     onLogoutWallet,
     onShowSeedPhrase,
+    onClearSeedPhrase,
   };
 };
 

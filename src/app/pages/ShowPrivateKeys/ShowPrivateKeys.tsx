@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import TextareaAutosize from 'react-autosize-textarea/lib';
 import styled from 'styled-components';
 
 import { Routes } from 'constants/routes';
@@ -26,7 +27,6 @@ import { Button, ButtonShadow } from 'app/components/Button';
 import { AvatarIcon, CheckIcon, CloseIcon, CopyIcon } from 'app/components/Svg';
 import { Input, Label, PasswordInput } from 'app/components/Form';
 import { MessageBox } from 'app/components/MessageBox';
-import TextareaAutosize from 'react-autosize-textarea/lib';
 
 const ShowPrivateKeys: React.FC = () => {
   useWalletSlice();

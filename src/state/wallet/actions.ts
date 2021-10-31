@@ -193,6 +193,10 @@ export const showSeedPhraseAction =
     }
   };
 
+export const clearSeedPhrase = () => (dispatch: Dispatch<any>) => {
+  dispatch(actions.seedPhrasesLoaded(''));
+};
+
 export const clearIsWrongPassword = () => (dispatch: Dispatch<any>) => {
   dispatch(actions.setWrongPassword(false));
 };
