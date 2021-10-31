@@ -5,7 +5,6 @@ import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
 
 // Types
 import { RootState } from 'types';
-import { resetIdCounter } from 'react-tabs';
 
 log.setDefaultLevel('debug');
 export class GlitchController {
@@ -182,6 +181,52 @@ export class GlitchController {
       return {
         ...newState,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   *
+   * @param password
+   */
+  async logoutWallet(password?: string): Promise<object> {
+    try {
+      const encryptKey = await this.appStateController.getEncryptKey();
+
+      if (encryptKey) {
+        const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
+        if (seedPhrase) await this.appStateController.setDefaultState();
+
+        return {
+          isWrongPassword: !seedPhrase,
+        };
+      } else {
+        throw Error('Encrypt key not found');
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   *
+   * @param password
+   */
+  async showSeedPhrase(password?: string): Promise<object> {
+    try {
+      const encryptKey = await this.appStateController.getEncryptKey();
+
+      if (encryptKey) {
+        const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
+
+        return {
+          isWrongPassword: !seedPhrase,
+          seedPhrase,
+        };
+      } else {
+        throw Error('Encrypt key not found');
+      }
     } catch (error) {
       throw error;
     }

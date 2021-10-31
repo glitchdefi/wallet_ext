@@ -8,6 +8,9 @@ export const colors = {
 
   cyan5: '#00E6E6',
 
+  geekBlue: '#131629',
+  magenta2: '#480049',
+
   blue1: '#111D2C',
   blue3: '#15395B',
   blue6: '#177DDC',

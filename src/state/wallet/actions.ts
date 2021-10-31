@@ -115,7 +115,6 @@ export const checkIsValidSeedPhraseAction =
       const { state } = data || {};
       dispatch(actions.setIsValidSeedPhrase(state?.isValid));
     } catch (error) {
-      console.log(error);
       // Handle Error
     }
   };
@@ -137,6 +136,56 @@ export const restoreWalletAction =
       const { state } = data || {};
       dispatch(setWalletState(state?.wallet));
       history.push(Routes.home);
+    } catch (error) {
+      // Handle Error
+    } finally {
+      dispatch(applicationActions.setIsLoadingApp(false));
+    }
+  };
+
+export const logoutWalletAction =
+  (password: string, history: any) => async (dispatch: Dispatch<any>) => {
+    try {
+      dispatch(applicationActions.setIsLoadingApp(true));
+
+      const data = await sendMessage({
+        type: MessageTypes.BG_WALLET_LOGOUT_WALLET,
+        payload: {
+          password,
+        },
+      });
+
+      const { state } = data || {};
+
+      if (state?.isWrongPassword) {
+        dispatch(actions.setWrongPassword(state.isWrongPassword));
+      } else {
+        dispatch(setWalletState(state?.wallet));
+        history.push(Routes.welcome);
+      }
+    } catch (error) {
+      // Handle Error
+    } finally {
+      dispatch(applicationActions.setIsLoadingApp(false));
+    }
+  };
+
+export const showSeedPhraseAction =
+  (password: string) => async (dispatch: Dispatch<any>) => {
+    try {
+      dispatch(applicationActions.setIsLoadingApp(true));
+
+      const data = await sendMessage({
+        type: MessageTypes.BG_WALLET_SHOW_SEED_PHARES,
+        payload: {
+          password,
+        },
+      });
+
+      const { state } = data || {};
+
+      dispatch(actions.setWrongPassword(state?.isWrongPassword));
+      dispatch(actions.seedPhrasesLoaded(state?.seedPhrase));
     } catch (error) {
       // Handle Error
     } finally {

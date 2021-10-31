@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { colors } from 'theme/colors';
 
 // Hooks
-import { useMakeTextFile } from '../../../../../hooks/useMakeTextFile';
+import { useMakeTextFile } from 'hooks/useMakeTextFile';
 
 import { Flex, Box } from 'app/components/Box';
 import { MessageBox } from 'app/components/MessageBox';

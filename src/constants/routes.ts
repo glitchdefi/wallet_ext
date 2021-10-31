@@ -8,4 +8,6 @@ export const Routes = {
   unlock: '/unlock',
   accountDetails: '/account-details',
   showPrivateKeys: '/show-private-keys',
+  aboutUs: '/about-us',
+  logoutWallet: '/logout-wallet',
 };

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer } from 'utils/redux-injectors';
@@ -68,6 +68,8 @@ export const useWalletActionHandlers = (): {
   onUnlockWallet: (password: string) => void;
   onCheckIsValidSeedPhrase: (seedPhrase: string) => void;
   onRestoreWallet: (seedPhrase: string, password: string) => void;
+  onLogoutWallet: (password: string) => void;
+  onShowSeedPhrase: (password: string) => void;
   onLockWallet: () => void;
   onCreateCompleted: () => void;
   onClearIsWrongPassword: () => void;
@@ -86,7 +88,8 @@ export const useWalletActionHandlers = (): {
   );
 
   const onUnlockWallet = useCallback(
-    (password: string) => dispatch(actions.unlockWalletAction(password, history)),
+    (password: string) =>
+      dispatch(actions.unlockWalletAction(password, history)),
     [dispatch]
   );
 
@@ -112,6 +115,17 @@ export const useWalletActionHandlers = (): {
     [dispatch]
   );
 
+  const onLogoutWallet = useCallback(
+    (password?: string) =>
+      dispatch(actions.logoutWalletAction(password, history)),
+    [dispatch]
+  );
+
+  const onShowSeedPhrase = useCallback(
+    (password?: string) => dispatch(actions.showSeedPhraseAction(password)),
+    [dispatch]
+  );
+
   return {
     onCreateWallet,
     onUnlockWallet,
@@ -120,6 +134,8 @@ export const useWalletActionHandlers = (): {
     onCheckIsValidSeedPhrase,
     onRestoreWallet,
     onLockWallet,
+    onLogoutWallet,
+    onShowSeedPhrase,
   };
 };
 

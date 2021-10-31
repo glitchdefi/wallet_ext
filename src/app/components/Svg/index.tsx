@@ -16,6 +16,14 @@ export { default as SnippetsIcon } from './Icons/Snippets';
 export { default as ProfileIcon } from './Icons/Profile';
 export { default as GatewayIcon } from './Icons/Gateway';
 export { default as EditIcon } from './Icons/Edit';
+export { default as TranslationIcon } from './Icons/Translation';
+export { default as RightArrowIcon } from './Icons/RightArrow';
+export { default as OneToOneIcon } from './Icons/OneToOne';
+export { default as DownArrowIcon } from './Icons/DownArrow';
+export { default as DeleteIcon } from './Icons/Delete';
+export { default as CurrencyIcon } from './Icons/Currency';
+export { default as ClockCircleIcon } from './Icons/ClockCircle';
+export { default as LogoutIcon } from './Icons/Logout';
 
 export { default as Svg } from './Svg';
 export type { SvgProps } from './types';

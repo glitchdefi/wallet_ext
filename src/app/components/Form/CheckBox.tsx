@@ -6,8 +6,8 @@ import { Box } from '../Box';
 
 interface Props extends SpaceProps {
   checked: boolean;
-  id: string;
-  labelComponent: React.ReactNode;
+  id?: string;
+  labelComponent?: React.ReactNode;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 

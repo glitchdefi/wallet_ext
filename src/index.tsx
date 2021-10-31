@@ -21,7 +21,6 @@ const Root: React.FC = () => {
       const localStore = new ExtensionStore();
       const initState = await localStore.getAllStorageData();
 
-      console.log('Storage', initState);
       setStore(configureAppStore(initState));
     }
 

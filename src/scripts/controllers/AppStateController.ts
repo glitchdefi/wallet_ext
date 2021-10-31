@@ -7,6 +7,7 @@ import { ExtensionStore } from '../lib/localStore';
 export class AppStateController {
   store: RootState;
   localStore: ExtensionStore;
+  defaultState: RootState;
 
   constructor(opts: { initialState?: RootState }) {
     const { initialState } = opts;
@@ -29,6 +30,7 @@ export class AppStateController {
     };
 
     this.localStore = new ExtensionStore();
+    this.defaultState = defaultState;
 
     this.localStore.set({ ...defaultState, ...initialState }).then((store) => {
       this.store = store;
@@ -37,6 +39,14 @@ export class AppStateController {
 
   async getState(): Promise<RootState> {
     return await this.localStore.getAllStorageData();
+  }
+
+  async getDefaultState(): Promise<RootState> {
+    return this.defaultState;
+  }
+
+  async setDefaultState(): Promise<void> {
+    await this.localStore.set({ ...this.defaultState });
   }
 
   async getWalletState(): Promise<WalletState> {

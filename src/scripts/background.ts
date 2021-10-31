@@ -106,6 +106,14 @@ function handleChromeListeners(controller: GlitchController) {
                 Handler.unlockWallet(payload, controller, sendResponse);
                 break;
 
+              case MessageTypes.BG_WALLET_LOGOUT_WALLET:
+                Handler.logoutWallet(payload, controller, sendResponse);
+                break;
+
+              case MessageTypes.BG_WALLET_SHOW_SEED_PHARES:
+                Handler.showSeedPhrase(payload, controller, sendResponse);
+                break;
+
               case MessageTypes.BG_WALLET_CHECK_IS_VALID_SEED_PHRASE:
                 Handler.checkIsValidSeedPhrase(
                   payload,

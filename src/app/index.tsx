@@ -28,6 +28,8 @@ import { UnlockPage } from './pages/Unlock';
 import { CreateImportAccountPage } from './pages/CreateImportAccount';
 import { AccountDetailsPage } from './pages/AccountDetails';
 import { ShowPrivateKeysPage } from './pages/ShowPrivateKeys';
+import { AboutUsPage } from './pages/AboutUs';
+import { LogoutWalletPage } from './pages/LogoutWallet';
 
 const history = createMemoryHistory();
 
@@ -66,6 +68,11 @@ export const App: React.FC = () => {
           <Authenticated
             path={Routes.showPrivateKeys}
             component={ShowPrivateKeysPage}
+          />
+          <Authenticated path={Routes.aboutUs} component={AboutUsPage} />
+          <Authenticated
+            path={Routes.logoutWallet}
+            component={LogoutWalletPage}
           />
         </Switch>
       </ContainerLayout>

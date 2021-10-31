@@ -25,6 +25,7 @@ var alias = {
   'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
   'app/layouts': path.join(__dirname, 'src', 'app', 'layouts', 'index.ts'),
   'hooks/useScrollBlock': path.join(__dirname, 'src', 'hooks', 'useScrollBlock.ts'),
+  'hooks/useMakeTextFile': path.join(__dirname, 'src', 'hooks', 'useMakeTextFile.ts'),
   'locales/translations': path.join(
     __dirname,
     'src',

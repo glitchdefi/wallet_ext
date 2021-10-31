@@ -100,6 +100,40 @@ export const restoreWallet = async (
   }
 };
 
+export const logoutWallet = async (
+  payload: { password?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { password } = payload || {};
+
+    const state = await controller.logoutWallet(password);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
+export const showSeedPhrase = async (
+  payload: { password?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { password } = payload || {};
+
+    const state = await controller.showSeedPhrase(password);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const addNewAccount = async (
   payload: { name?: string },
   controller: GlitchController,
