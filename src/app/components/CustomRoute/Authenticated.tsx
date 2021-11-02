@@ -12,18 +12,8 @@ const Authenticated: React.FC<RouteProps> = (props) => {
     <Route
       {...rest}
       render={(props) => {
-        if (isInitialized === 'completed' && !isLocked) {
+        if (isInitialized !== 'none' && !isLocked) {
           return <Component {...props} />;
-        }
-
-        if (isInitialized === 'pending' && !isLocked) {
-          return (
-            <Redirect
-              to={{
-                pathname: Routes.createWallet,
-              }}
-            />
-          );
         }
 
         if (isLocked) {

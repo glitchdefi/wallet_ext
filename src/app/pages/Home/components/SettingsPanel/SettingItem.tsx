@@ -7,7 +7,7 @@ import { Button } from 'app/components/Button';
 
 interface Props {
   label: string;
-  actionLabel?: string;
+  actionLabel?: any;
   leftIcon: React.ReactNode;
   rightComponent?: React.ReactNode;
   onClick?(): void;

@@ -76,7 +76,7 @@ export const MnemonicPhraseStep: React.FC<Props> = ({
         message="Never share your Mnemonic phrase with anyone! If you lose your Mnemonic phrase, you will not able to access your funds!"
       />
 
-      <Box pt="32px" pb="24px">
+      <Box mt="auto" pt="32px" pb="24px">
         <ButtonShadow width="100%" onClick={onNextStep}>
           I wrote down my Mnemonic
         </ButtonShadow>

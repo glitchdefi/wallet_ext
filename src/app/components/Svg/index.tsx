@@ -24,6 +24,11 @@ export { default as DeleteIcon } from './Icons/Delete';
 export { default as CurrencyIcon } from './Icons/Currency';
 export { default as ClockCircleIcon } from './Icons/ClockCircle';
 export { default as LogoutIcon } from './Icons/Logout';
+export { default as QrCodeIcon } from './Icons/QrCode';
+export { default as SendIcon } from './Icons/Send';
+export { default as NotFoundIcon } from './Icons/NotFound';
+export { default as SearchIcon } from './Icons/Search';
+export { default as ExclaimationCircleIcon } from './Icons/ExclaimationCircle';
 
 export { default as Svg } from './Svg';
 export type { SvgProps } from './types';

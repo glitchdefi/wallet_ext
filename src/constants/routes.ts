@@ -11,4 +11,8 @@ export const Routes = {
   aboutUs: '/about-us',
   logoutWallet: '/logout-wallet',
   revealMnemonicPhrase: '/reveal-mnemonic-phrase',
+  tokenDetails: '/token-details',
+  receiveToken: '/receive-token',
+  addAssets: '/add-assets',
+  backUp: '/back-up',
 };

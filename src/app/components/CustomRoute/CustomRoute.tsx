@@ -12,17 +12,10 @@ const CustomRoute: React.FC<RouteProps> = (props) => {
     <Route
       {...rest}
       render={(props) => {
-        if (isInitialized === 'pending' && !isLocked) {
-          return (
-            <Redirect
-              to={{
-                pathname: Routes.createWallet,
-              }}
-            />
-          );
-        }
-
-        if (isInitialized === 'completed' && !isLocked) {
+        if (
+          (isInitialized === 'pending' || isInitialized === 'completed') &&
+          !isLocked
+        ) {
           return (
             <Redirect
               to={{

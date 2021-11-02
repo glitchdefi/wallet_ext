@@ -11,9 +11,9 @@ interface Props {
   onClick?: () => void;
 }
 
-export const AssetItem: React.FC<Props> = () => {
+export const AssetItem: React.FC<Props> = ({ onClick }) => {
   return (
-    <Wrapper py="20px" px="16px" alignItems="center">
+    <Wrapper py="20px" px="16px" alignItems="center" onClick={onClick}>
       <GlitchLogo width={36} height={36} />
       <Box ml="16px" width="100%">
         <Flex width="100%" alignItems="center" justifyContent="space-between">

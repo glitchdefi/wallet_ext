@@ -24,9 +24,14 @@ export class AppStateController {
       },
       transactions: {},
       settings: {
-        locale: null,
+        locale: 'en',
         currency: 'usd',
+        autoLock: {
+          openTime: new Date().getTime(),
+          duration: 60000,
+        },
       },
+      encryptKey: null,
     };
 
     this.localStore = new ExtensionStore();

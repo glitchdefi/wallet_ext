@@ -3,21 +3,30 @@ import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
+import { LOCK_TIME_LIST } from 'constants/values';
 
-import { Box } from 'app/components/Box';
+import { useIsBackup, useWalletSlice } from 'state/wallet/hooks';
+
+import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import {
   ClockCircleIcon,
   CurrencyIcon,
+  DownArrowIcon,
+  ExclaimationCircleIcon,
   LogoutIcon,
   OneToOneIcon,
   TranslationIcon,
 } from 'app/components/Svg';
 import { GlitchLogo } from 'app/components/Image';
+import { Dropdown } from 'app/components/Dropdown';
 import { SettingItem } from './SettingItem';
 
 export const SettingsPanel: React.FC = () => {
+  useWalletSlice();
   const history = useHistory();
+
+  const { isBackUp } = useIsBackup();
 
   return (
     <Box minHeight="600px" overflowY="scroll">
@@ -44,11 +53,40 @@ export const SettingsPanel: React.FC = () => {
           leftIcon={<ClockCircleIcon width="24px" />}
           label="Auto-lock timer"
           actionLabel="USD"
+          rightComponent={
+            <Dropdown
+              onSelect={(eventKey) => {
+                if (eventKey == 0) history.push(Routes.accountDetails);
+                if (eventKey == 1) history.push(Routes.showPrivateKeys);
+              }}
+              customToggle={
+                <Flex
+                  py="5px"
+                  px="12px"
+                  border={`1px solid ${colors.gray8}`}
+                  alignItems="center"
+                >
+                  <Text mr="21px">Never</Text>
+                  <DownArrowIcon color={colors.gray9} />
+                </Flex>
+              }
+              items={LOCK_TIME_LIST}
+            />
+          }
         />
         <SettingItem
           leftIcon={<OneToOneIcon width="24px" />}
-          label="Reveal Mnemonic phrase"
-          onClick={() => history.push(Routes.revealMnemonicPhrase)}
+          label={
+            !isBackUp
+              ? 'Your wallet is not backed up'
+              : 'Reveal Mnemonic phrase'
+          }
+          actionLabel={<ExclaimationCircleIcon />}
+          onClick={() =>
+            history.push(
+              !isBackUp ? Routes.backUp : Routes.revealMnemonicPhrase
+            )
+          }
         />
         <SettingItem
           leftIcon={<LogoutIcon width="24px" />}

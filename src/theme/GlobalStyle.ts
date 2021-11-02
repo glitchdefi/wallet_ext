@@ -7,6 +7,7 @@ export const GlobalStyles = createGlobalStyle`
         padding: 0;
         font-family: IBM Plex Mono, monospace !important;
         background-color: #07111f;
+        min-height: 600px;
     }
 
     .modal-open {

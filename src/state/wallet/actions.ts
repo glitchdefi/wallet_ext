@@ -70,12 +70,8 @@ export const unlockWalletAction =
       if (state?.isWrongPassword) {
         dispatch(actions.setWrongPassword(state.isWrongPassword));
       } else {
-        dispatch(actions.seedPhrasesLoaded(state?.seedPhrase));
         dispatch(actions.setIsLocked(state?.wallet?.isLocked));
-
-        state?.seedPhrase
-          ? history.push(Routes.createWallet)
-          : history.push(Routes.home);
+        history.push(Routes.home);
       }
     } catch (error) {
       // Handle Error
@@ -162,6 +158,29 @@ export const logoutWalletAction =
       } else {
         dispatch(setWalletState(state?.wallet));
         history.push(Routes.welcome);
+      }
+    } catch (error) {
+      // Handle Error
+    } finally {
+      dispatch(applicationActions.setIsLoadingApp(false));
+    }
+  };
+
+export const backupWalletAction =
+  (history: any) => async (dispatch: Dispatch<any>) => {
+    try {
+      dispatch(applicationActions.setIsLoadingApp(true));
+
+      const data = await sendMessage({
+        type: MessageTypes.BG_WALLET_BACK_UP_WALLET,
+      });
+
+      const { wallet } = data?.state || {};
+
+      if (wallet) {
+        dispatch(actions.setIsInitialized(wallet.isInitialized));
+        dispatch(actions.setIsBackUp(wallet.isBackUp));
+        history.push(Routes.home);
       }
     } catch (error) {
       // Handle Error
@@ -329,12 +348,14 @@ export const clearShowPrivateKey = () => (dispatch: Dispatch<any>) => {
 
 const setWalletState = (wallet: WalletState) => (dispatch: Dispatch<any>) => {
   try {
-    const { isInitialized, isLocked, accounts, selectedAddress } = wallet || {};
+    const { isInitialized, isLocked, accounts, selectedAddress, isBackUp } =
+      wallet || {};
 
     dispatch(actions.setIsInitialized(isInitialized));
     dispatch(actions.setIsLocked(isLocked));
     dispatch(actions.setSelectedAddress(selectedAddress));
     dispatch(actions.setAccounts(accounts));
+    dispatch(actions.setIsBackUp(isBackUp));
   } catch (error) {
     // Handle Error
   }

@@ -12,6 +12,7 @@ export interface WalletState {
     };
   };
   selectedAddress?: any;
+  isBackUp?: boolean;
 
   // Not save to ext storage
   seedPhrases?: string;

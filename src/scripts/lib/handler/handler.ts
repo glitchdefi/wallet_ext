@@ -117,6 +117,20 @@ export const logoutWallet = async (
   }
 };
 
+export const backupWallet = async (
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const state = await controller.backupWallet();
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const showSeedPhrase = async (
   payload: { password?: string },
   controller: GlitchController,

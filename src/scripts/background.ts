@@ -2,7 +2,7 @@ import log from 'loglevel';
 import { Handler } from './lib/handler';
 import { ExtensionPlatform } from './platforms/extension';
 import { ExtensionStore } from './lib/localStore';
-import { getFirstPreferredLangCode } from './lib/getFirstPreferredLangCode';
+// import { getFirstPreferredLangCode } from './lib/getFirstPreferredLangCode';
 import { GlitchController } from './controllers/GlitchController';
 import { RootState, MessageTypes } from 'types';
 
@@ -37,34 +37,10 @@ async function loadStateFromPersistence(): Promise<RootState> {
   log.info('background.loadStateFromPersistence');
   // read from disk
   // first from preferred, async API:
-  const state = await extStore.getAllStorageData();
-  const initLangCode = await getFirstPreferredLangCode();
-
-  const newState = state
-    ? {
-        ...state,
-        settings: {
-          locale: initLangCode,
-        },
-      }
-    : {
-        settings: {
-          locale: initLangCode,
-        },
-      };
-
-  // write to disk
-  if (extStore.isSupported) {
-    extStore.set(newState);
-  } else {
-    // throw in setTimeout so as to not block boot
-    setTimeout(() => {
-      throw new Error('Glitch - Localstore not supported');
-    });
-  }
+  const oldState = await extStore.getAllStorageData();
 
   // return just the data
-  return newState;
+  return oldState;
 }
 
 function handleChromeListeners(controller: GlitchController) {
@@ -112,6 +88,10 @@ function handleChromeListeners(controller: GlitchController) {
 
               case MessageTypes.BG_WALLET_SHOW_SEED_PHARES:
                 Handler.showSeedPhrase(payload, controller, sendResponse);
+                break;
+
+              case MessageTypes.BG_WALLET_BACK_UP_WALLET:
+                Handler.backupWallet(controller, sendResponse);
                 break;
 
               case MessageTypes.BG_WALLET_CHECK_IS_VALID_SEED_PHRASE:

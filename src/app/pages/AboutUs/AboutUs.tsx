@@ -1,7 +1,10 @@
 import React from 'react';
 import { colors } from 'theme/colors';
+import { useHistory } from 'react-router';
 
 import logo from '../../../assets/img/gl_logo.png';
+
+import { Routes } from 'constants/routes';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -12,6 +15,8 @@ import { Image } from 'app/components/Image';
 import { Button } from 'app/components/Button';
 
 const AboutUs: React.FC = () => {
+  const history = useHistory();
+
   return (
     <PageLayout>
       <Flex
@@ -19,7 +24,7 @@ const AboutUs: React.FC = () => {
         borderBottom={`1px solid ${colors.magenta2}`}
         p="16px"
       >
-        <Button p="0px">
+        <Button p="0px" onClick={() => history.push(Routes.home)}>
           <LeftArrowIcon width="13px" />
         </Button>
         <Text mt="3px" bold ml="16px" color={colors.gray7}>

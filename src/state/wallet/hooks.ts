@@ -55,6 +55,11 @@ export const useShowPrivateKey = () => {
   return { showPrivateKey };
 };
 
+export const useIsBackup = () => {
+  const { isBackUp } = useWalletSelector();
+  return { isBackUp };
+};
+
 export const useWallet = () => {
   return useWalletSelector();
 };
@@ -74,6 +79,7 @@ export const useWalletActionHandlers = (): {
   onCreateCompleted: () => void;
   onClearIsWrongPassword: () => void;
   onClearSeedPhrase: () => void;
+  onBackupWalletAction: () => void;
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -132,6 +138,11 @@ export const useWalletActionHandlers = (): {
     [dispatch]
   );
 
+  const onBackupWalletAction = useCallback(
+    () => dispatch(actions.backupWalletAction(history)),
+    [dispatch]
+  );
+
   return {
     onCreateWallet,
     onUnlockWallet,
@@ -143,6 +154,7 @@ export const useWalletActionHandlers = (): {
     onLogoutWallet,
     onShowSeedPhrase,
     onClearSeedPhrase,
+    onBackupWalletAction,
   };
 };
 

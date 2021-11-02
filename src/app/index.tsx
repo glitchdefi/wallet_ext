@@ -31,6 +31,10 @@ import { ShowPrivateKeysPage } from './pages/ShowPrivateKeys';
 import { AboutUsPage } from './pages/AboutUs';
 import { LogoutWalletPage } from './pages/LogoutWallet';
 import { RevealMnemonicPhrasePage } from './pages/RevealMnemonicPhrase';
+import { TokenDetailsPage } from './pages/TokenDetails';
+import { ReceiveTokenPage } from './pages/ReceiveToken';
+import { AddAssetsPage } from './pages/AddAssets';
+import { BackUpPage } from './pages/BackUp';
 
 const history = createMemoryHistory();
 
@@ -79,6 +83,16 @@ export const App: React.FC = () => {
             path={Routes.revealMnemonicPhrase}
             component={RevealMnemonicPhrasePage}
           />
+          <Authenticated
+            path={Routes.tokenDetails}
+            component={TokenDetailsPage}
+          />
+          <Authenticated
+            path={Routes.receiveToken}
+            component={ReceiveTokenPage}
+          />
+          <Authenticated path={Routes.addAssets} component={AddAssetsPage} />
+          <Authenticated path={Routes.backUp} component={BackUpPage} />
         </Switch>
       </ContainerLayout>
     </Router>

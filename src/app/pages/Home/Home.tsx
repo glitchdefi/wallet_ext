@@ -11,7 +11,7 @@ import { WalletPanel } from './components/WalletPanel/WalletPanel';
 import { SettingsPanel } from './components/SettingsPanel/SettingsPanel';
 
 const Home: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<number>(1);
+  const [activeTab, setActiveTab] = useState<number>(0);
 
   return (
     <PageLayout>

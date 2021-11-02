@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { SpaceProps } from 'styled-system';
+import { colors } from 'theme/colors';
 
 import { Flex } from '../Box';
 import { WarningIcon } from '../Svg';
@@ -27,6 +28,7 @@ const MsgBoxContainer = styled(Flex)`
   padding: 6px 16px;
   align-items: flex-start;
   border: 1px solid #d87a16;
+  background-color: ${colors.gray1};
 `;
 
 export default MessageBox;

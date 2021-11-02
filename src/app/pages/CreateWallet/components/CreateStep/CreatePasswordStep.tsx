@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { colors } from 'theme/colors';
@@ -15,13 +15,17 @@ import { PasswordRulesTooltip } from '../PasswordRulesTooltip';
 
 interface Props {
   onSetupPassword: (password: string) => void;
+  initValue?: string;
 }
 
-export const CreatePasswordStep: React.FC<Props> = ({ onSetupPassword }) => {
+export const CreatePasswordStep: React.FC<Props> = ({
+  initValue,
+  onSetupPassword,
+}) => {
   const { t } = useTranslation();
 
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [password, setPassword] = useState<string>(initValue);
+  const [confirmPassword, setConfirmPassword] = useState<string>(initValue);
   const [isPassedRules, setIsPassedRules] = useState<boolean>(false);
   const [checked, setChecked] = useState<{
     agree: boolean;

@@ -38,5 +38,8 @@ export const slice = createSlice({
     setShowPrivateKey: (state, action) => {
       state.showPrivateKey = action.payload;
     },
+    setIsBackUp: (state, action) => {
+      state.isBackUp = action.payload;
+    },
   },
 });

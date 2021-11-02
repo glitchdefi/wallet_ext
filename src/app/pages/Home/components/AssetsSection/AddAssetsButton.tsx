@@ -11,9 +11,9 @@ interface Props {
   onClick?: () => void;
 }
 
-export const AddAssetsButton: React.FC<Props> = () => {
+export const AddAssetsButton: React.FC<Props> = ({ onClick }) => {
   return (
-    <Button py="0px" px="8px" variant="secondary">
+    <Button py="0px" px="8px" variant="secondary" onClick={onClick}>
       <Flex alignItems="center">
         <PlusIcon />
         <Text ml="8px" color={colors.primary} bold>

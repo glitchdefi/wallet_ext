@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
 
@@ -6,8 +6,8 @@ import bg from '../../../../../assets/img/account_card_bg.jpg';
 
 import {
   useAccounts,
+  useIsBackup,
   useSelectedAddress,
-  useWalletActionHandlers,
   useWalletSlice,
 } from 'state/wallet/hooks';
 
@@ -24,24 +24,23 @@ import { GlitchLogo } from 'app/components/Image';
 import { Dropdown } from 'app/components/Dropdown';
 import { AssetsSection } from '../AssetsSection';
 import { Header } from '../Header';
-import { ManageAccountModal } from '../ManageAccountModal';
+import { BackedUpView } from './BackedUpView';
 
 export const WalletPanel: React.FC = () => {
   useWalletSlice();
   const history = useHistory();
 
-  const { onLockWallet } = useWalletActionHandlers();
   const { selectedAddress } = useSelectedAddress();
   const { accounts } = useAccounts();
-
-  const [isOpenMnaModal, setIsOpenMnaModal] = useState<boolean>(false);
+  const { isBackUp } = useIsBackup();
 
   return (
-    <Box minHeight="0" overflowY="scroll">
-      <Header
-        onLockClick={onLockWallet}
-        onAvatarClick={() => setIsOpenMnaModal(!isOpenMnaModal)}
-      />
+    <Box height="540.94px" overflowY="scroll">
+      <Header />
+
+      {!isBackUp && (
+        <BackedUpView onBackup={() => history.push(Routes.backUp)} />
+      )}
 
       <Box px="16px" mt="16px">
         <AccountCard>
@@ -97,11 +96,6 @@ export const WalletPanel: React.FC = () => {
           </Flex>
         </AccountCard>
       </Box>
-
-      <ManageAccountModal
-        isOpen={isOpenMnaModal}
-        onClose={() => setIsOpenMnaModal(false)}
-      />
       <AssetsSection />
     </Box>
   );

@@ -35,6 +35,7 @@ const CreateWallet: React.FC = () => {
   const { t } = useTranslation();
 
   const [step, setStep] = useState<number>(0);
+  const [password, setPassword] = useState<string>('');
 
   const { isLoading } = useLoadingApplication();
   const { isInitialized } = useIsInitialized();
@@ -45,11 +46,6 @@ const CreateWallet: React.FC = () => {
   const stepProgress = ((step + 1) / MAX_STEP) * 100;
 
   useEffect(() => {
-    // Move to mnemonic phrase step
-    if (!isLoading && seedPhrases && step === 0) {
-      setStep(1);
-    }
-
     // Create completed -> push to home page
     if (!isLoading && isInitialized === 'completed') {
       history.push(Routes.home);
@@ -72,14 +68,17 @@ const CreateWallet: React.FC = () => {
           if (step === 0) {
             history.push('/');
           } else {
-            setStep(1);
+            setStep(step - 1);
           }
         }}
       >
         {step === 0 && (
           <CreatePasswordStep
+            initValue={password}
             onSetupPassword={(password) => {
+              setPassword(password);
               onCreateWallet(password);
+              setStep(1);
             }}
           />
         )}

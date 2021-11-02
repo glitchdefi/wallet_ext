@@ -54,6 +54,7 @@ export class GlitchController {
         isInitialized: 'pending',
         isLocked: true,
         selectedAddress: wallet.address,
+        isBackUp: false,
         accounts: {
           [wallet.address]: {
             address: wallet.address,
@@ -88,6 +89,7 @@ export class GlitchController {
       const newState = await this.appStateController.updateState('wallet', {
         isInitialized: 'completed',
         isLocked: false,
+        isBackUp: true,
         accounts: {
           [addressSelected]: {
             ...oldAccounts[addressSelected],
@@ -123,25 +125,37 @@ export class GlitchController {
   async unlockWallet(password?: string) {
     let state = {};
     const encryptKey = await this.appStateController.getEncryptKey();
-    const isInitialized = (await this.appStateController.getWalletState())
-      .isInitialized;
 
     if (encryptKey) {
       const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
 
       const newState = await this.appStateController.updateState('wallet', {
         ...state,
-        isLocked: isInitialized === 'completed' ? false : true,
+        isLocked: false,
       });
 
       return {
         ...newState,
         isWrongPassword: !seedPhrase,
-        seedPhrase: isInitialized !== 'completed' ? seedPhrase : null,
       };
     } else {
       throw Error('Encrypt key not found');
     }
+  }
+
+  /**
+   *
+   * @returns
+   */
+  async backupWallet() {
+    const newState = await this.appStateController.updateState('wallet', {
+      isBackUp: true,
+      isInitialized: 'completed',
+    });
+
+    return {
+      ...newState,
+    };
   }
 
   /**
@@ -167,6 +181,7 @@ export class GlitchController {
         isInitialized: 'completed',
         isLocked: false,
         selectedAddress: wallet.address,
+        isBackUp: true,
         accounts: {
           [wallet.address]: {
             address: wallet.address,

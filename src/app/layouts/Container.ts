@@ -5,7 +5,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 375px;
-  height: auto;
+  min-height: 600px;
+  height: 100%;
   background-image: url(${background});
   background-size: cover;
   background-attachment: fixed;
