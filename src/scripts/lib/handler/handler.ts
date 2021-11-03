@@ -1,3 +1,4 @@
+import BN from 'bn.js';
 import { GlitchController } from '../../controllers/GlitchController';
 import { successfulResponse, errorResponse } from './responseMessage';
 
@@ -148,6 +149,37 @@ export const showSeedPhrase = async (
   }
 };
 
+export const getBalance = async (
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const state = await controller.getBalance();
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
+export const getTokenPrice = async (
+  payload: { tokenName?: string; currency?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { tokenName, currency } = payload || {};
+    const state = await controller.getTokenPrice(tokenName, currency);
+
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const addNewAccount = async (
   payload: { name?: string },
   controller: GlitchController,
@@ -225,6 +257,41 @@ export const changeAccountName = async (
     const { name } = payload || {};
 
     const state = await controller.changeAccountName(name);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
+export const checkIsValidAddress = async (
+  payload: { fromAddress?: string; toAddress?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { fromAddress, toAddress } = payload || {};
+
+    const state = controller.checkIsValidAddress(fromAddress, toAddress);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
+export const transfer = async (
+  payload: { password?: string; toAddress?: string; amount?: BN },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { password, toAddress, amount } = payload || {};
+
+    const state = await controller.transfer(password, toAddress, amount);
+
     if (state) {
       sendResponse({ ...successfulResponse, state });
     }

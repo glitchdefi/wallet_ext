@@ -1,4 +1,5 @@
-import { useCallback, useEffect } from 'react';
+import BN from 'bn.js';
+import { useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer } from 'utils/redux-injectors';
@@ -60,6 +61,16 @@ export const useIsBackup = () => {
   return { isBackUp };
 };
 
+export const useTokenPrice = () => {
+  const { priceUsd } = useWalletSelector();
+  return { priceUsd };
+};
+
+export const useIsValidAddress = () => {
+  const { isValidAddress } = useWalletSelector();
+  return { isValidAddress };
+};
+
 export const useWallet = () => {
   return useWalletSelector();
 };
@@ -80,6 +91,10 @@ export const useWalletActionHandlers = (): {
   onClearIsWrongPassword: () => void;
   onClearSeedPhrase: () => void;
   onBackupWalletAction: () => void;
+  getBalance: () => void;
+  getTokenPrice: (tokenName: string, currency: string) => void;
+  checkIsValidAddress: (fromAddress: string, address: string) => void;
+  onTransfer: (password: string, toAddress: string, amount: BN) => void;
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -143,6 +158,29 @@ export const useWalletActionHandlers = (): {
     [dispatch]
   );
 
+  const getBalance = useCallback(
+    () => dispatch(actions.getBalanceAction()),
+    [dispatch]
+  );
+
+  const getTokenPrice = useCallback(
+    (tokenName: string, currency: string) =>
+      dispatch(actions.getTokenPriceAction(tokenName, currency)),
+    [dispatch]
+  );
+
+  const checkIsValidAddress = useCallback(
+    (fromAddress: string, toAddress: string) =>
+      dispatch(actions.checkIsValidAddressAction(fromAddress, toAddress)),
+    [dispatch]
+  );
+
+  const onTransfer = useCallback(
+    (password: string, toAddress: string, amount: BN) =>
+      dispatch(actions.transferAction(password, toAddress, amount)),
+    [dispatch]
+  );
+
   return {
     onCreateWallet,
     onUnlockWallet,
@@ -155,6 +193,10 @@ export const useWalletActionHandlers = (): {
     onShowSeedPhrase,
     onClearSeedPhrase,
     onBackupWalletAction,
+    getBalance,
+    getTokenPrice,
+    checkIsValidAddress,
+    onTransfer,
   };
 };
 

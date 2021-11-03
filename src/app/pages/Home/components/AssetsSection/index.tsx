@@ -2,6 +2,12 @@ import React from 'react';
 import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
+import {
+  useWalletSlice,
+  useSelectedAddress,
+  useAccounts,
+  useTokenPrice,
+} from 'state/wallet/hooks';
 
 // Components
 import { Box, Flex } from 'app/components/Box';
@@ -11,7 +17,14 @@ import { AssetItem } from './AssetItem';
 import { Routes } from 'constants/routes';
 
 export const AssetsSection: React.FC = () => {
+  useWalletSlice();
   const history = useHistory();
+
+  const { selectedAddress } = useSelectedAddress();
+  const { accounts } = useAccounts();
+  const { priceUsd } = useTokenPrice();
+
+  const balance = accounts[selectedAddress].balance;
 
   return (
     <Box mt="24px">
@@ -23,12 +36,12 @@ export const AssetsSection: React.FC = () => {
       </Flex>
 
       <Box mt="8px">
-        {[1, 2, 3, 4, 5].map((o) => (
-          <AssetItem
-            key={o}
-            onClick={() => history.push(Routes.tokenDetails)}
-          />
-        ))}
+        <AssetItem
+          name="Glitch"
+          amount={balance}
+          totalValue={Number(balance) * priceUsd}
+          onClick={() => history.push(Routes.tokenDetails)}
+        />
       </Box>
     </Box>
   );

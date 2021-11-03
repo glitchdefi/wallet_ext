@@ -21,6 +21,7 @@ export class AppStateController {
         isLocked: false,
         accounts: {},
         selectedAddress: null,
+        priceUsd: null,
       },
       transactions: {},
       settings: {

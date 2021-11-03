@@ -81,7 +81,7 @@ export const SettingsPanel: React.FC = () => {
               ? 'Your wallet is not backed up'
               : 'Reveal Mnemonic phrase'
           }
-          actionLabel={<ExclaimationCircleIcon />}
+          actionLabel={!isBackUp && <ExclaimationCircleIcon />}
           onClick={() =>
             history.push(
               !isBackUp ? Routes.backUp : Routes.revealMnemonicPhrase

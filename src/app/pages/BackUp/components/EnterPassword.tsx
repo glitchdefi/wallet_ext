@@ -33,7 +33,7 @@ export const EnterPassword: React.FC<Props> = ({ initValue, onChange }) => {
   }, []);
 
   return (
-    <Flex height="100%" p="32px" flexDirection="column">
+    <Flex flex={1} p="32px" flexDirection="column">
       <Box background={colors.geekBlue} p="16px">
         <Text fontSize="12px" color={colors.cyan5}>
           Please enter the Glitch password to back up your wallet

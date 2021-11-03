@@ -7,12 +7,14 @@ export interface WalletState {
       name?: string;
       avatar?: string;
       address?: string;
-      balance?: string;
+      balance?: any;
       privateKey?: string;
     };
   };
   selectedAddress?: any;
   isBackUp?: boolean;
+  isValidAddress?: boolean;
+  priceUsd?: number;
 
   // Not save to ext storage
   seedPhrases?: string;

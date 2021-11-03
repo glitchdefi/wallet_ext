@@ -18,3 +18,5 @@ export const LOCK_TIME_LIST = [
     label: '1 hour',
   },
 ];
+
+export const UPDATE_TIME = 5000;

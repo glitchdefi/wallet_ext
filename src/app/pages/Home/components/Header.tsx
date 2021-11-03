@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { useWalletActionHandlers, useWalletSlice } from 'state/wallet/hooks';
+import { colors } from 'theme/colors';
 
 import { Flex } from 'app/components/Box';
 import { Button } from 'app/components/Button';
@@ -20,7 +21,11 @@ export const Header: React.FC<Props> = ({ hasBottomBorder }) => {
 
   return (
     <>
-      <Flex p="16px" alignItems="center">
+      <Flex
+        borderBottom={hasBottomBorder && `1px solid ${colors.magenta2}`}
+        p="16px"
+        alignItems="center"
+      >
         <Flex width="100%" alignItems="center" justifyContent="flex-end">
           <Button p="0px" onClick={onLockWallet}>
             <LockIcon />

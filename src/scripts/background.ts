@@ -94,6 +94,22 @@ function handleChromeListeners(controller: GlitchController) {
                 Handler.backupWallet(controller, sendResponse);
                 break;
 
+              case MessageTypes.BG_WALLET_GET_BALANCE:
+                Handler.getBalance(controller, sendResponse);
+                break;
+
+              case MessageTypes.BG_WALLET_GET_TOKEN_PRICE:
+                Handler.getTokenPrice(payload, controller, sendResponse);
+                break;
+
+              case MessageTypes.BG_WALLET_CHECK_IS_VALID_ADDRESS:
+                Handler.checkIsValidAddress(payload, controller, sendResponse);
+                break;
+
+              case MessageTypes.BG_WALLET_TRANSFER_TOKEN:
+                Handler.transfer(payload, controller, sendResponse);
+                break;
+
               case MessageTypes.BG_WALLET_CHECK_IS_VALID_SEED_PHRASE:
                 Handler.checkIsValidSeedPhrase(
                   payload,
@@ -122,6 +138,8 @@ function handleChromeListeners(controller: GlitchController) {
               case MessageTypes.BG_ACCOUNT_CHANGE_ACCOUNT_NAME:
                 Handler.changeAccountName(payload, controller, sendResponse);
                 break;
+
+              // Transactions
 
               default:
                 Handler.handleDefault(request, sendResponse);

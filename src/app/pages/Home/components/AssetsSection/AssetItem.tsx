@@ -8,10 +8,18 @@ import { Text } from 'app/components/Text';
 import { GlitchLogo } from 'app/components/Image';
 
 interface Props {
+  name?: string;
+  amount?: any;
+  totalValue?: any;
   onClick?: () => void;
 }
 
-export const AssetItem: React.FC<Props> = ({ onClick }) => {
+export const AssetItem: React.FC<Props> = ({
+  name,
+  amount,
+  totalValue,
+  onClick,
+}) => {
   return (
     <Wrapper py="20px" px="16px" alignItems="center" onClick={onClick}>
       <GlitchLogo width={36} height={36} />
@@ -21,23 +29,23 @@ export const AssetItem: React.FC<Props> = ({ onClick }) => {
             <Text large bold>
               GLCH
             </Text>
-            <NetworkType>
+            {/* <NetworkType>
               <Text fontSize="10px" color={colors.blue6}>
                 ERC20
               </Text>
-            </NetworkType>
+            </NetworkType> */}
           </Flex>
           <Text large bold>
-            500.000000
+            {amount}
           </Text>
         </Flex>
         <Flex alignItems="center" justifyContent="space-between">
           <Text fontSize="12px" color={colors.gray6}>
-            Glitch
+            {name}
           </Text>
 
           <Text fontSize="12px" color={colors.gray6}>
-            $309.84 USD
+            {`$${totalValue} USD`}
           </Text>
         </Flex>
       </Box>
@@ -46,6 +54,8 @@ export const AssetItem: React.FC<Props> = ({ onClick }) => {
 };
 
 const Wrapper = styled(Flex)`
+  cursor: pointer;
+  
   &:hover {
     transition: all 0.3s;
     background-color: rgba(255, 255, 255, 0.03);

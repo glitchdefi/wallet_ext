@@ -1,3 +1,4 @@
+import BN from 'bn.js';
 import { Dispatch } from 'redux';
 import { slice } from './reducer';
 import { slice as appSlice } from '../application/reducer';
@@ -212,6 +213,58 @@ export const showSeedPhraseAction =
     }
   };
 
+export const getBalanceAction = () => async (dispatch: Dispatch<any>) => {
+  try {
+    const data = await sendMessage({
+      type: MessageTypes.BG_WALLET_GET_BALANCE,
+    });
+
+    const { wallet } = data?.state || {};
+    dispatch(setWalletState(wallet));
+  } catch (error) {
+    // Handle Error
+  }
+};
+
+export const getTokenPriceAction =
+  (tokenName: string, currency: string) => async (dispatch: Dispatch<any>) => {
+    try {
+      const data = await sendMessage({
+        type: MessageTypes.BG_WALLET_GET_TOKEN_PRICE,
+        payload: {
+          tokenName,
+          currency,
+        },
+      });
+
+      const { price } = data?.state || {};
+
+      dispatch(actions.setTokenPrices(price));
+    } catch (error) {
+      // Handle Error
+    }
+  };
+
+export const checkIsValidAddressAction =
+  (fromAddress?: string, toAddress?: string) =>
+  async (dispatch: Dispatch<any>) => {
+    try {
+      const data = await sendMessage({
+        type: MessageTypes.BG_WALLET_CHECK_IS_VALID_ADDRESS,
+        payload: {
+          fromAddress,
+          toAddress,
+        },
+      });
+
+      const { isValid } = data?.state || {};
+
+      dispatch(actions.setIsValidAddress(isValid));
+    } catch (error) {
+      // Handle Error
+    }
+  };
+
 export const clearSeedPhrase = () => (dispatch: Dispatch<any>) => {
   dispatch(actions.seedPhrasesLoaded(''));
 };
@@ -312,6 +365,34 @@ export const showPrivateKeysAction =
         const { isWrongPassword, privateKey } = data?.state || {};
         dispatch(actions.setWrongPassword(isWrongPassword));
         dispatch(actions.setShowPrivateKey(privateKey));
+      }
+    } catch (error) {
+      // Handle Error
+    } finally {
+      dispatch(applicationActions.setIsLoadingApp(false));
+    }
+  };
+
+export const transferAction =
+  (password: string, toAddress: string, amount: BN) =>
+  async (dispatch: Dispatch<any>) => {
+    try {
+      dispatch(applicationActions.setIsLoadingApp(true));
+
+      const data = await sendMessage({
+        type: MessageTypes.BG_WALLET_TRANSFER_TOKEN,
+        payload: {
+          password,
+          toAddress,
+          amount,
+        },
+      });
+
+      const { isWrongPassword } = data?.state;
+
+      if (isWrongPassword) {
+        dispatch(actions.setWrongPassword(isWrongPassword));
+      } else {
       }
     } catch (error) {
       // Handle Error

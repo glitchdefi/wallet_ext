@@ -145,9 +145,9 @@ export class GlitchWeb3 {
   /**
    * Get account balance.
    * @param {string} address address of the account.
-   * @returns {number | string} account balance.
+   * @returns {string} account balance.
    */
-  async getBalance(address: string): Promise<number | string> {
+  async getBalance(address: string): Promise<string> {
     try {
       const result = await this.glitchWeb3.getBalance(address);
       return web3Utils.fromWei(new BN(result.balance));
@@ -171,7 +171,33 @@ export class GlitchWeb3 {
    * @returns
    */
   isValidAddress(address: string): boolean {
-    return GlitchCommon.codec.isBankAddress(address);
+    try {
+      if (address.trim().length !== GlitchToken.wallet_address_length) {
+        return false;
+      }
+
+      return (
+        GlitchCommon.ecc.validateAddress(address) &&
+        GlitchCommon.codec.isBankAddress(address)
+      );
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async transfer(toAddress: string, _amount: BN): Promise<any> {
+    try {
+      const fee = web3Utils.toWei(GlitchToken.fee.toString());
+      const amount = web3Utils.toWei(_amount).toString();
+
+      const result = await this.glitchWeb3.transfer(toAddress, amount, {
+        fee,
+      });
+
+      console.log(result);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   /**

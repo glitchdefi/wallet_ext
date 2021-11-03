@@ -1,4 +1,6 @@
 import log from 'loglevel';
+import BN from 'bn.js';
+import axios from 'axios';
 
 import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
@@ -411,12 +413,88 @@ export class GlitchController {
   }
 
   /**
+   *  Transfer token
+   * @returns
+   */
+  async transfer(
+    password?: string,
+    toAddress?: string,
+    amount?: BN
+  ): Promise<object> {
+    try {
+      const encryptKey = await this.appStateController.getEncryptKey();
+
+      if (encryptKey) {
+        const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
+
+        if (seedPhrase) {
+          const data = await this.glitchWeb3.transfer(toAddress, amount);
+        }
+
+        return {
+          isWrongPassword: !seedPhrase,
+        };
+      } else {
+        throw Error('Encrypt key not found');
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    *
    * @returns
    */
   checkIsValidSeedPhrase(seedPhrase?: string): { isValid?: boolean } {
     const isValid = this.glitchWeb3.isValidSeedPhrase(seedPhrase);
     return { isValid };
+  }
+
+  /**
+   *
+   * @returns
+   */
+  checkIsValidAddress(
+    fromAddress?: string,
+    toAddress?: string
+  ): { isValid?: boolean } {
+    const isValid =
+      this.glitchWeb3.isValidAddress(toAddress) && fromAddress !== toAddress;
+    return { isValid };
+  }
+
+  async getTokenPrice(tokenName?: string, currency?: string): Promise<object> {
+    try {
+      const res = await axios.get(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${tokenName}&vs_currencies=${currency}`
+      );
+      const priceUsd = res?.data[tokenName]?.usd;
+
+      await this.appStateController.updateState('wallet', {
+        priceUsd,
+      });
+
+      return { price: priceUsd };
+    } catch (error) {
+      log.info('getTokenPriceError', error);
+    }
+  }
+
+  async getBalance(): Promise<object> {
+    const oldAccounts = await this.appStateController.getAccounts();
+    const addressSelected = await this.appStateController.getAddressSelected();
+    const balance = await this.glitchWeb3.getBalance(addressSelected);
+
+    oldAccounts[addressSelected].balance = balance;
+
+    const newState = await this.appStateController.updateState('wallet', {
+      accounts: {
+        ...oldAccounts,
+      },
+    });
+
+    return { ...newState };
   }
 
   //=============================================================================

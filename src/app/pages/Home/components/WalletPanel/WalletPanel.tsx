@@ -8,6 +8,7 @@ import {
   useAccounts,
   useIsBackup,
   useSelectedAddress,
+  useTokenPrice,
   useWalletSlice,
 } from 'state/wallet/hooks';
 
@@ -33,6 +34,12 @@ export const WalletPanel: React.FC = () => {
   const { selectedAddress } = useSelectedAddress();
   const { accounts } = useAccounts();
   const { isBackUp } = useIsBackup();
+  const { priceUsd } = useTokenPrice();
+
+  const name = accounts[selectedAddress].name;
+  const balance = accounts[selectedAddress].balance;
+
+  const totalUsd = Number(balance) * priceUsd;
 
   return (
     <Box height="540.94px" overflowY="scroll">
@@ -46,7 +53,7 @@ export const WalletPanel: React.FC = () => {
         <AccountCard>
           <Flex alignItems="center" justifyContent="space-between">
             <Text color={colors.gray7} bold>
-              {accounts[selectedAddress].name}
+              {name}
             </Text>
 
             <Dropdown
@@ -77,23 +84,24 @@ export const WalletPanel: React.FC = () => {
             <CopyButton value={selectedAddress} p="2px" ml="6px" width="10px" />
           </Flex>
 
-          <Flex alignItems="center" mt="24px">
+          <Flex alignItems="center" mt="16px">
             <Box width="24px" height="24px" pt="2px">
               <GlitchLogo width={24} height={24} />
             </Box>
 
             <Flex ml="8px" alignItems="flex-end">
               <Text color={colors.white} fontSize="24px" bold>
-                {formatNumberDownRoundWithExtractMax(
-                  accounts[selectedAddress].balance,
-                  6
-                )}
+                {formatNumberDownRoundWithExtractMax(balance, 6)}
               </Text>
               <Text ml="8px" pb="5px" color={colors.white}>
                 GLCH
               </Text>
             </Flex>
           </Flex>
+
+          <Text mt="4px" fontSize="12px" color={colors.gray6}>
+            {`~ $${totalUsd} USD`}
+          </Text>
         </AccountCard>
       </Box>
       <AssetsSection />

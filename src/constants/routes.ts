@@ -15,4 +15,5 @@ export const Routes = {
   receiveToken: '/receive-token',
   addAssets: '/add-assets',
   backUp: '/back-up',
+  sendToken: '/send-token',
 };

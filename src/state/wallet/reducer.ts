@@ -41,5 +41,11 @@ export const slice = createSlice({
     setIsBackUp: (state, action) => {
       state.isBackUp = action.payload;
     },
+    setTokenPrices: (state, action) => {
+      state.priceUsd = action.payload;
+    },
+    setIsValidAddress: (state, action) => {
+      state.isValidAddress = action.payload;
+    },
   },
 });

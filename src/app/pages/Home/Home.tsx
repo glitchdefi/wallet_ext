@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import { colors } from 'theme/colors';
+import {
+  useActiveTabHome,
+  useAppActionHandlers,
+  useApplicationSlice,
+} from 'state/application/hooks';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -11,13 +16,16 @@ import { WalletPanel } from './components/WalletPanel/WalletPanel';
 import { SettingsPanel } from './components/SettingsPanel/SettingsPanel';
 
 const Home: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<number>(0);
+  useApplicationSlice();
+
+  const { onSetActiveTabHome } = useAppActionHandlers();
+  const { activeTabHomePage } = useActiveTabHome();
 
   return (
     <PageLayout>
       <StyledTabs
-        selectedIndex={activeTab}
-        onSelect={(index) => setActiveTab(index)}
+        selectedIndex={activeTabHomePage}
+        onSelect={(index) => onSetActiveTabHome(index)}
       >
         <TabPanel>
           <WalletPanel />
@@ -27,16 +35,16 @@ const Home: React.FC = () => {
         </TabPanel>
 
         <TabList>
-          <StyledTab isactive={activeTab === 0 ? 'true' : 'false'}>
+          <StyledTab isactive={activeTabHomePage === 0 ? 'true' : 'false'}>
             <WalletIcon
               width="24px"
-              color={activeTab === 0 ? colors.primary : colors.gray6}
+              color={activeTabHomePage === 0 ? colors.primary : colors.gray6}
             />
           </StyledTab>
-          <StyledTab isactive={activeTab === 1 ? 'true' : 'false'}>
+          <StyledTab isactive={activeTabHomePage === 1 ? 'true' : 'false'}>
             <SettingIcon
               width="24px"
-              color={activeTab === 1 ? colors.primary : colors.gray6}
+              color={activeTabHomePage === 1 ? colors.primary : colors.gray6}
             />
           </StyledTab>
         </TabList>
