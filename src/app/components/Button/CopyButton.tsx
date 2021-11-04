@@ -40,7 +40,7 @@ function CopyButton({ id, width, value, component, ...rest }: Props) {
         data-for={id}
         onClick={onCopy}
       >
-        <Button p="0px" {...rest}>
+        <Button display="flex" p="0px" {...rest}>
           {isValidElement(component) ? (
             React.cloneElement(component)
           ) : (

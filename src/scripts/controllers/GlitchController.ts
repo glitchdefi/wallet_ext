@@ -1,6 +1,7 @@
 import log from 'loglevel';
 import BN from 'bn.js';
 import axios from 'axios';
+import moment from 'moment';
 
 import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
@@ -64,6 +65,7 @@ export class GlitchController {
             name: 'Account 1',
             avatar: null,
             privateKey: encryptPrivateKey,
+            createdAt: moment().valueOf(),
           },
         },
       });
@@ -191,6 +193,7 @@ export class GlitchController {
             name: 'Account 1',
             avatar: null,
             privateKey: encryptPrivateKey,
+            createdAt: moment().valueOf(),
           },
         },
       });
@@ -259,7 +262,7 @@ export class GlitchController {
    */
   async addNewAccount(name?: string): Promise<object> {
     try {
-      const account = this.glitchWeb3.addNewAccount();
+      const account = await this.glitchWeb3.addNewAccount();
       this.glitchWeb3.importAccountToWeb3(account?.privateKey);
 
       const encryptPrivateKey = await this.glitchWeb3.encrypt(
@@ -278,6 +281,7 @@ export class GlitchController {
             avatar: null,
             balance: 0,
             privateKey: encryptPrivateKey,
+            createdAt: moment().valueOf(),
           },
           ...oldAccounts,
         },
@@ -298,14 +302,12 @@ export class GlitchController {
       const oldAccounts = await this.appStateController.getAccounts();
       const balance = await this.glitchWeb3.getBalance(address);
 
+      oldAccounts[address].balance = balance;
+
       const newState = await this.appStateController.updateState('wallet', {
         selectedAddress: address,
         accounts: {
           ...oldAccounts,
-          [address]: {
-            ...oldAccounts[address],
-            balance,
-          },
         },
       });
 
@@ -316,12 +318,14 @@ export class GlitchController {
   }
 
   /**
-   *  Change account
+   *  Import account
    * @returns
    */
   async importAccount(name?: string, privateKey?: string): Promise<object> {
     try {
-      const address = this.glitchWeb3.getAddressFromPrivateKey(privateKey);
+      const address = await this.glitchWeb3.getAddressFromPrivateKey(
+        privateKey
+      );
       let newState = {};
 
       if (address) {
@@ -343,6 +347,7 @@ export class GlitchController {
               balance,
               avatar: null,
               privateKey: encryptPrivateKey,
+              createdAt: moment().valueOf(),
             },
             ...oldAccounts,
           },

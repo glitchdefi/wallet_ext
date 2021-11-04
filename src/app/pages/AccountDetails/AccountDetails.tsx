@@ -39,7 +39,7 @@ const AccountDetails: React.FC = () => {
 
   useEffect(() => {
     showEdit && setShowEdit(false);
-  }, [accounts]);
+  }, [accounts[selectedAddress].name]);
 
   useEffect(() => {
     if (copied) {

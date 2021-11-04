@@ -89,7 +89,7 @@ export const ImportPrivateKeyPanel: React.FC = () => {
         )}
       </Box>
 
-      <Flex mt="103px" pb="16px">
+      <Flex mt="89px" pb="16px">
         <Button
           mr="8px"
           width="50%"

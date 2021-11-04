@@ -60,7 +60,7 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    getBalance();
+    // getBalance();
     getTokenPrice('glitch-protocol', 'usd');
   }, [timeQuery]);
 

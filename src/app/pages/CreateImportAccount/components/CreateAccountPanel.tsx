@@ -38,7 +38,7 @@ export const CreateAccountPanel: React.FC = () => {
         onChange={(e) => setName(e.target.value)}
       />
 
-      <Flex mt="304px" pb="16px">
+      <Flex mt="294px" pb="16px">
         <Button
           mr="8px"
           width="50%"

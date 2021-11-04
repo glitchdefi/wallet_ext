@@ -36,7 +36,7 @@ export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const { accounts } = useAccounts();
 
   useEffect(() => {
-    onClose();
+    onClose && onClose();
   }, [selectedAddress]);
 
   return (
@@ -57,27 +57,31 @@ export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
       </Flex>
 
       <Flex height="330px" flexDirection="column" overflowY="scroll">
-        {Object.entries(accounts).map((val, i) => {
-          const account = val[1];
-          const checked = account.address === selectedAddress;
+        {Object.entries(accounts)
+          .sort(([, a], [, b]) => {
+            return b.createdAt - a.createdAt;
+          })
+          .map((val, i) => {
+            const account = val[1];
+            const checked = account.address === selectedAddress;
 
-          return (
-            <AccountWrapper
-              key={i}
-              onClick={() => onChangeAccount(account.address)}
-            >
-              <Box>
-                <Text color={colors.gray7} bold>
-                  {account?.name}
-                </Text>
-                <Text fontSize="12px" color={colors.gray7}>
-                  {truncateAddress(account?.address)}
-                </Text>
-              </Box>
-              {checked && <CheckIcon width="18px" color={colors.primary} />}
-            </AccountWrapper>
-          );
-        })}
+            return (
+              <AccountWrapper
+                key={i}
+                onClick={() => onChangeAccount(account.address)}
+              >
+                <Box>
+                  <Text color={colors.gray7} bold>
+                    {account?.name}
+                  </Text>
+                  <Text fontSize="12px" color={colors.gray7}>
+                    {truncateAddress(account?.address)}
+                  </Text>
+                </Box>
+                {checked && <CheckIcon width="18px" color={colors.primary} />}
+              </AccountWrapper>
+            );
+          })}
       </Flex>
 
       <Box p="16px">
@@ -115,7 +119,7 @@ const StyledModal = styled(Modal)`
     .modal-content {
       border-radius: 0px;
       border: none;
-      background-color: ${colors.gray1}
+      background-color: ${colors.gray1};
     }
   }
 

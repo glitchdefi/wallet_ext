@@ -9,6 +9,7 @@ export interface WalletState {
       address?: string;
       balance?: any;
       privateKey?: string;
+      createdAt?: number;
     };
   };
   selectedAddress?: any;

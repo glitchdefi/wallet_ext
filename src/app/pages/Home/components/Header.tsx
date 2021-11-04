@@ -31,7 +31,11 @@ export const Header: React.FC<Props> = ({ hasBottomBorder }) => {
             <LockIcon />
           </Button>
 
-          <Button p="0px" ml="24px" onClick={() => setIsOpenModal(true)}>
+          <Button
+            p="0px"
+            ml="24px"
+            onClick={() => setIsOpenModal((prev) => !prev)}
+          >
             <AvatarIcon width="40px" />
           </Button>
         </Flex>

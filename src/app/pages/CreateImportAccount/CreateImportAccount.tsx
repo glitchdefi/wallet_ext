@@ -56,7 +56,7 @@ const CreateImportAccount: React.FC = () => {
           </Button>
         </Flex>
 
-        <Box px="16px" height="100%" background={colors.gray1}>
+        <Box px="16px" background={colors.gray1}>
           <StyledTabs
             selectedIndex={activeTab}
             onSelect={(index) => setActiveTab(index)}

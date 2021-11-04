@@ -77,6 +77,7 @@ const BackUp: React.FC = () => {
         <EnterPassword
           initValue={password}
           onChange={(password) => {
+            seedPhrases && onClearSeedPhrase();
             setPassword(password);
             onShowSeedPhrase(password);
           }}

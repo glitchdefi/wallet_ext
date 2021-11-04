@@ -82,12 +82,12 @@ export class GlitchWeb3 {
    * Add new account
    * @returns Account info
    */
-  addNewAccount(): {
+  async addNewAccount(): Promise<{
     publicKey?: string;
     privateKey?: string;
     address?: string;
-  } {
-    const account = this.glitchWeb3.wallet.createRegularAccount();
+  }> {
+    const account = await this.glitchWeb3.wallet.createRegularAccount();
 
     if (account) {
       return {
@@ -103,11 +103,11 @@ export class GlitchWeb3 {
    * Get address from private key
    * @returns
    */
-  getAddressFromPrivateKey(privateKey: string): string {
+  async getAddressFromPrivateKey(privateKey: string): Promise<string> {
     if (privateKey.length < GlitchToken.private_key_length) {
       return null;
     } else {
-      const { address } = GlitchCommon.ecc.toPubKeyAndAddress(privateKey);
+      const { address } = await GlitchCommon.ecc.toPubKeyAndAddress(privateKey);
       return address;
     }
   }
