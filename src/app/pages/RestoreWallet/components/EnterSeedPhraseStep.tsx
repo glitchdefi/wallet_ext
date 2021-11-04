@@ -63,7 +63,8 @@ export const EnterSeedPhraseStep: React.FC<Props> = ({
               pasteText.focus();
               document.execCommand('paste');
 
-              pasteText.textContent && setSeedPhrase(pasteText.textContent);
+              pasteText.textContent &&
+                setSeedPhrase(`${seedPhrase}${pasteText.textContent?.trim()}`);
             }}
           >
             <SnippetsIcon width="15px" />

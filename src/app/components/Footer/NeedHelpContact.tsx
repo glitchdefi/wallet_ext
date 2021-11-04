@@ -8,7 +8,7 @@ import { Text } from '../Text';
 import { colors } from '../../../theme/colors';
 import styled from 'styled-components';
 
-function NeedHelpContact() {
+const NeedHelpContact: React.FC = () => {
   const { t } = useTranslation();
 
   return (
@@ -29,7 +29,7 @@ function NeedHelpContact() {
       </StyledText>
     </Flex>
   );
-}
+};
 
 const StyledText = styled(Text)`
   text-decoration: none;

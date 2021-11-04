@@ -92,12 +92,17 @@ const AccountDetails: React.FC = () => {
                 ml="16px"
                 p="0px"
                 onClick={() => {
-                  name !== accounts[selectedAddress].name
-                    ? onChangeAccountName(name)
-                    : setShowEdit(false);
+                  if (name) {
+                    name !== accounts[selectedAddress].name
+                      ? onChangeAccountName(name)
+                      : setShowEdit(false);
+                  }
                 }}
               >
-                <CheckIcon width="20px" color={colors.primary} />
+                <CheckIcon
+                  width="20px"
+                  color={name ? colors.primary : colors.gray}
+                />
               </Button>
             </Flex>
           ) : (

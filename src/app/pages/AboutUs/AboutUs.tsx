@@ -47,34 +47,45 @@ const AboutUs: React.FC = () => {
             Glitch Wallet
           </Text>
           <Text fontSize="12px" color={colors.gray5}>
-            Current version 1.1.0
+            Current version 0.0.1
           </Text>
         </Flex>
       </Box>
 
       <Box px="16px" mt="16px">
-        <Item label="Terms of Service" />
-        <Item label="Privacy Policy" />
+        <Item
+          label="Terms of Service"
+          href="https://glitch.finance/privacy-policy/"
+        />
+        <Item
+          label="Privacy Policy"
+          href="https://glitch.finance/privacy-policy/"
+        />
 
         <Box my="16px" height="1px" background={colors.magenta2} />
 
-        <Item label="Visit our Official website" />
-        <Item label="Join us on Telegram" />
-        <Item label="Follow us on Twitter" />
-        <Item label="Follow us on Medium" />
+        <Item
+          label="Visit our Official website"
+          href="https://glitch.finance/"
+        />
+        <Item label="Join us on Telegram" href="https://t.me/glitchprotocol" />
+        <Item
+          label="Follow us on Twitter"
+          href="https://twitter.com/GlitchProtocol"
+        />
+        <Item
+          label="Follow us on Medium"
+          href="https://medium.com/glitchfinance"
+        />
       </Box>
     </PageLayout>
   );
 };
 
-const Item: React.FC<{ label: string; onClick?(): void }> = ({
-  label,
-  onClick,
-}) => (
-  <Button width="100%" px="16" py="21px" onClick={onClick}>
+const Item: React.FC<{ label: string; href?: string }> = ({ label, href }) => (
+  <Button width="100%" px="16" py="21px" onClick={() => window.open(href)}>
     <Flex alignItems="center" justifyContent="space-between">
       <Text>{label}</Text>
-
       <RightArrowIcon width="16px" />
     </Flex>
   </Button>

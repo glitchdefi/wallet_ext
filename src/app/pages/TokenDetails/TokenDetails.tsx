@@ -33,7 +33,7 @@ const TokenDetails: React.FC = () => {
 
   return (
     <PageLayout>
-      <Header hasBottomBorder />
+      <Header hasBackButton hasBottomBorder />
 
       <Flex flexDirection="column" px="16px">
         <Flex mt="26px" flexDirection="column" alignItems="center">
