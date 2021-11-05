@@ -76,7 +76,8 @@ export const ImportPrivateKeyPanel: React.FC = () => {
               pasteText.focus();
               document.execCommand('paste');
 
-              pasteText.textContent && setPrivateKey(pasteText.textContent);
+              pasteText.textContent &&
+                setPrivateKey(`${privateKey}${pasteText.textContent?.trim()}`);
             }}
           >
             <SnippetsIcon width="15px" />
