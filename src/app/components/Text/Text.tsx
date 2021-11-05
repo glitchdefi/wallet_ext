@@ -15,9 +15,6 @@ const Text = styled.div<TextProps>`
   font-feature-settings: 'zero' on;
   text-decoration: none;
   word-break: break-word;
-  &:hover {
-    color: ${({ color }) => color};
-  }
   ${({ textTransform }) => textTransform && `text-transform: ${textTransform};`}
   ${({ ellipsis }) =>
     ellipsis &&

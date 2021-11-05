@@ -10,6 +10,13 @@ export const GlobalStyles = createGlobalStyle`
         min-height: 600px;
     }
 
+    a {
+        &:hover {
+            color: ${colors.primary} !important;
+            opacity: 0.8;
+        }
+    }
+
     .modal-open {
         padding-right: 0px !important;
     }
