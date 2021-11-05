@@ -5,10 +5,16 @@ import { useWalletActionHandlers, useWalletSlice } from 'state/wallet/hooks';
 import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
 
-import { Flex } from 'app/components/Box';
+import { Flex, Box } from 'app/components/Box';
 import { Button } from 'app/components/Button';
-import { LockIcon, AvatarIcon, LeftArrowIcon } from 'app/components/Svg';
+import {
+  LockIcon,
+  AvatarIcon,
+  LeftArrowIcon,
+  DownArrowIcon,
+} from 'app/components/Svg';
 import { ManageAccountModal } from './ManageAccountModal';
+import { Text } from 'app/components/Text';
 interface Props {
   hasBackButton?: boolean;
   hasBottomBorder?: boolean;
@@ -28,14 +34,35 @@ export const Header: React.FC<Props> = ({ hasBackButton, hasBottomBorder }) => {
         borderBottom={hasBottomBorder && `1px solid ${colors.magenta2}`}
         p="16px"
         alignItems="center"
+        justifyContent="space-between"
       >
-        {hasBackButton && (
-          <Button p="0px" onClick={() => history.push(Routes.home)}>
-            <LeftArrowIcon color={colors.primary} width="16px" />
-          </Button>
-        )}
+        <Flex alignItems="center">
+          {hasBackButton && (
+            <Button p="0px" mr="16px" onClick={() => history.push(Routes.home)}>
+              <LeftArrowIcon color={colors.primary} width="16px" />
+            </Button>
+          )}
 
-        <Flex width="100%" alignItems="center" justifyContent="flex-end">
+          <Flex
+            width="fit-content"
+            alignItems="center"
+            p="8px"
+            border={`1px solid ${colors.gray2}`}
+          >
+            <Box
+              width="10px"
+              height="10px"
+              borderRadius="5px"
+              background={colors.green}
+            />
+            <Text mx="8px" fontSize="12px">
+              Glitch Testnet
+            </Text>
+            <DownArrowIcon width="12px" color={colors.gray7} />
+          </Flex>
+        </Flex>
+
+        <Flex alignItems="center" justifyContent="flex-end">
           <Button p="0px" onClick={onLockWallet}>
             <LockIcon />
           </Button>

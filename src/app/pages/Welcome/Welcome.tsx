@@ -15,6 +15,7 @@ import { Text } from 'app/components/Text';
 import { Button, ButtonShadow } from 'app/components/Button';
 import { Box, Flex } from 'app/components/Box';
 import { NeedHelpContact } from 'app/components/Footer';
+import { DownArrowIcon } from 'app/components/Svg';
 
 const Welcome: React.FC = () => {
   const { t } = useTranslation();
@@ -22,7 +23,27 @@ const Welcome: React.FC = () => {
 
   return (
     <Container>
-      <Flex mt="48px" alignItems="center" flexDirection="column" px="32px">
+      <Box p="16px">
+        <Flex
+          width="fit-content"
+          alignItems="center"
+          p="8px"
+          border={`1px solid ${colors.gray2}`}
+        >
+          <Box
+            width="10px"
+            height="10px"
+            borderRadius="5px"
+            background={colors.green}
+          />
+          <Text mx="8px" fontSize="12px">
+            Glitch Testnet
+          </Text>
+          <DownArrowIcon width="12px" color={colors.gray7} />
+        </Flex>
+      </Box>
+
+      <Flex mt="32px" alignItems="center" flexDirection="column" px="32px">
         <img src={logo} width="200px" />
         <TextGradient mt="12px" bold>
           {t(messages.title())}
@@ -50,7 +71,7 @@ const Welcome: React.FC = () => {
           {t(messages.restoreWallet())}
         </Button>
 
-        <Box pb="24px" mt="150px">
+        <Box pb="24px" mt="100px">
           <NeedHelpContact />
         </Box>
       </Flex>
