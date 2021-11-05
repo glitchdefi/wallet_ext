@@ -55,6 +55,8 @@ export const AmountInput: React.FC<Props> = ({ onChange, balance }) => {
    *
    */
   const onMaxClick = () => {
+    if (Number(balance) <= 0) return;
+
     // Reset error
     setHasDecimalsError(false);
 
