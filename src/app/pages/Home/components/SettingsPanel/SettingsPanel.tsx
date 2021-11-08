@@ -39,7 +39,7 @@ export const SettingsPanel: React.FC = () => {
       </Box>
 
       <Box px="16px" mt="8px">
-        <SettingItem
+        {/* <SettingItem
           leftIcon={<TranslationIcon width="24px" />}
           label="Language"
           actionLabel="English"
@@ -48,7 +48,7 @@ export const SettingsPanel: React.FC = () => {
           leftIcon={<CurrencyIcon width="24px" />}
           label="Currency"
           actionLabel="USD"
-        />
+        /> */}
         <SettingItem
           leftIcon={<ClockCircleIcon width="24px" />}
           label="Auto-lock timer"

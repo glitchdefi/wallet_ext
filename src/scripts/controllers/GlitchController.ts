@@ -302,6 +302,13 @@ export class GlitchController {
       const oldAccounts = await this.appStateController.getAccounts();
       const balance = await this.glitchWeb3.getBalance(address);
 
+      const privateKey = await this.glitchWeb3.decrypt(
+        oldAccounts[address].privateKey,
+        address
+      );
+
+      this.glitchWeb3.importAccountToWeb3(privateKey);
+
       oldAccounts[address].balance = balance;
 
       const newState = await this.appStateController.updateState('wallet', {
@@ -424,7 +431,7 @@ export class GlitchController {
   async transfer(
     password?: string,
     toAddress?: string,
-    amount?: BN
+    amount?: any
   ): Promise<object> {
     try {
       const encryptKey = await this.appStateController.getEncryptKey();
@@ -433,7 +440,7 @@ export class GlitchController {
         const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
 
         if (seedPhrase) {
-          const data = await this.glitchWeb3.transfer(toAddress, amount);
+          const data = await this.glitchWeb3.transferToken(toAddress, amount);
         }
 
         return {

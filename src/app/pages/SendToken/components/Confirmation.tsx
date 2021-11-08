@@ -42,7 +42,6 @@ export const Confirmation: React.FC<Props> = ({ amount, toAddress }) => {
     };
   }, []);
 
-  console.log(amount);
   return (
     <Flex flexDirection="column">
       <Flex p="16px" flexDirection="column">
@@ -119,7 +118,7 @@ export const Confirmation: React.FC<Props> = ({ amount, toAddress }) => {
         {password ? (
           <ButtonShadow
             width="100%"
-            onClick={() => onTransfer(password, toAddress, new BN(amount))}
+            onClick={() => onTransfer(password, toAddress, amount)}
           >
             Confirm
           </ButtonShadow>

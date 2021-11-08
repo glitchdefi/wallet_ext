@@ -94,7 +94,7 @@ export const useWalletActionHandlers = (): {
   getBalance: () => void;
   getTokenPrice: (tokenName: string, currency: string) => void;
   checkIsValidAddress: (fromAddress: string, address: string) => void;
-  onTransfer: (password: string, toAddress: string, amount: BN) => void;
+  onTransfer: (password: string, toAddress: string, amount: any) => void;
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -176,7 +176,7 @@ export const useWalletActionHandlers = (): {
   );
 
   const onTransfer = useCallback(
-    (password: string, toAddress: string, amount: BN) =>
+    (password: string, toAddress: string, amount: any) =>
       dispatch(actions.transferAction(password, toAddress, amount)),
     [dispatch]
   );

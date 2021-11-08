@@ -130,7 +130,7 @@ export class GlitchWeb3 {
    * @param encryptKey
    * @param password
    */
-  async decrypt(encryptKey?: string, password?: string): Promise<unknown> {
+  async decrypt(encryptKey?: string, password?: string): Promise<any> {
     try {
       if (typeof encryptKey === 'string' && typeof password === 'string') {
         return await encryptor.decrypt(password, encryptKey);
@@ -162,6 +162,8 @@ export class GlitchWeb3 {
    * @returns
    */
   importAccountToWeb3(privatekey: string) {
+    console.log(this.glitchWeb3.wallet.importAccount(privatekey));
+
     this.glitchWeb3.wallet.importAccount(privatekey);
   }
 
@@ -185,7 +187,7 @@ export class GlitchWeb3 {
     }
   }
 
-  async transfer(toAddress: string, _amount: BN): Promise<any> {
+  async transferToken(toAddress: string, _amount: any): Promise<any> {
     try {
       const fee = web3Utils.toWei(GlitchToken.fee.toString());
       const amount = web3Utils.toWei(_amount).toString();

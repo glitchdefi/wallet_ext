@@ -374,7 +374,7 @@ export const showPrivateKeysAction =
   };
 
 export const transferAction =
-  (password: string, toAddress: string, amount: BN) =>
+  (password: string, toAddress: string, amount: any) =>
   async (dispatch: Dispatch<any>) => {
     try {
       dispatch(applicationActions.setIsLoadingApp(true));

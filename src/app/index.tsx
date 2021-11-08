@@ -6,6 +6,8 @@ import { GlobalStyles } from '../theme/GlobalStyle';
 import { UPDATE_TIME } from 'constants/values';
 import { Routes } from '../constants/routes';
 
+import { ToastListener } from 'contexts/ToastsContext';
+
 // Hooks
 import {
   useApplicationSlice,
@@ -68,6 +70,7 @@ export const App: React.FC = () => {
     <Router history={history}>
       <GlobalStyles />
       <ScrollToTop />
+      <ToastListener />
       <ContainerLayout>
         {isLoading && <LoadingApplication />}
         <Switch>

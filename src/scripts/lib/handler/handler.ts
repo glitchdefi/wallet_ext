@@ -1,4 +1,3 @@
-import BN from 'bn.js';
 import { GlitchController } from '../../controllers/GlitchController';
 import { successfulResponse, errorResponse } from './responseMessage';
 
@@ -283,7 +282,7 @@ export const checkIsValidAddress = async (
 };
 
 export const transfer = async (
-  payload: { password?: string; toAddress?: string; amount?: BN },
+  payload: { password?: string; toAddress?: string; amount?: any },
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {

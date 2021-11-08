@@ -25,6 +25,14 @@ var alias = {
   'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
   'constants/values': path.join(__dirname, 'src', 'constants', 'values.ts'),
   'app/layouts': path.join(__dirname, 'src', 'app', 'layouts', 'index.ts'),
+  'contexts/ToastsContext': path.join(
+    __dirname,
+    'src',
+    'contexts',
+    'ToastsContext',
+    'index.tsx'
+  ),
+  'hooks/useToast': path.join(__dirname, 'src', 'hooks', 'useToast.ts'),
   'hooks/useScrollBlock': path.join(
     __dirname,
     'src',
@@ -153,6 +161,14 @@ var alias = {
     'app',
     'components',
     'Empty',
+    'index.tsx'
+  ),
+  'app/components/Toast': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Toast',
     'index.tsx'
   ),
   types: path.join(__dirname, 'src', 'types', 'index.ts'),

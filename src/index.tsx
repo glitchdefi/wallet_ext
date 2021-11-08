@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { configureAppStore } from './store/configureStore';
 
 import { ExtensionStore } from './scripts/lib/localStore';
+import { ToastsProvider } from 'contexts/ToastsContext';
 
 // App
 import { App } from './app';
@@ -21,7 +22,7 @@ const Root: React.FC = () => {
       const localStore = new ExtensionStore();
       const initState = await localStore.getAllStorageData();
 
-      console.log("Storage", initState)
+      console.log('Storage', initState);
       setStore(configureAppStore(initState));
     }
 
@@ -30,7 +31,9 @@ const Root: React.FC = () => {
 
   return (
     <Provider store={store}>
-      <App />
+      <ToastsProvider>
+        <App />
+      </ToastsProvider>
     </Provider>
   );
 };

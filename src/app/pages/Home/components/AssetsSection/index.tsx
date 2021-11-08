@@ -32,7 +32,7 @@ export const AssetsSection: React.FC = () => {
         <Text fontSize="20px" color={colors.gray7} bold>
           Assets
         </Text>
-        <AddAssetsButton onClick={() => history.push(Routes.addAssets)} />
+        {/* <AddAssetsButton onClick={() => history.push(Routes.addAssets)} /> */}
       </Flex>
 
       <Box mt="8px">
