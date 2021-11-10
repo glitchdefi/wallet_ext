@@ -12,5 +12,17 @@ export const slice = createSlice({
     setTransactions: (state, action) => {
       state.transactions = action.payload;
     },
+    setIsTransferSuccess: (state, action) => {
+      state.isTransferSuccess = action.payload;
+    },
+    setIsFetchingTransactions: (state, action) => {
+      state.isFetchingTransactions = action.payload;
+    },
+    setTransactionsError: (state, action) => {
+      state.transactionsError = action.payload;
+    },
+    setTotalTransactions: (state, action) => {
+      state.totalTransactions = action.payload;
+    },
   },
 });

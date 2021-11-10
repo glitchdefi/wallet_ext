@@ -51,8 +51,9 @@ export class AppStateController {
     return this.defaultState;
   }
 
-  async setDefaultState(): Promise<void> {
+  async setDefaultState(): Promise<object> {
     await this.localStore.set({ ...this.defaultState });
+    return { ...this.defaultState };
   }
 
   async getWalletState(): Promise<WalletState> {

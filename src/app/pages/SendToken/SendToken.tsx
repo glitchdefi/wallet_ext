@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
+import { useTransactionsSlice } from 'state/transactions/hooks';
 
 import { PageLayout } from 'app/layouts';
 import { Flex } from 'app/components/Box';
@@ -13,9 +14,10 @@ import { Confirmation } from './components/Confirmation';
 import { SendForm } from './components/SendForm';
 
 const SendToken: React.FC = () => {
+  useTransactionsSlice();
   const history = useHistory();
 
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState('');
   const [toAddress, setToAddress] = useState('');
   const [step, setStep] = useState(0);
 
@@ -26,7 +28,16 @@ const SendToken: React.FC = () => {
         borderBottom={`1px solid ${colors.magenta2}`}
         p="16px"
       >
-        <Button p="0px" onClick={() => history.push(Routes.tokenDetails)}>
+        <Button
+          p="0px"
+          onClick={() => {
+            if (step === 0) {
+              history.push(Routes.tokenDetails);
+            } else {
+              setStep(step - 1);
+            }
+          }}
+        >
           <LeftArrowIcon width="13px" />
         </Button>
         <Text mt="3px" bold ml="16px" color={colors.gray7}>
@@ -36,6 +47,7 @@ const SendToken: React.FC = () => {
 
       {step === 0 && (
         <SendForm
+          initData={{ amount, toAddress }}
           onNext={(amount, toAddress) => {
             setAmount(amount);
             setToAddress(toAddress);

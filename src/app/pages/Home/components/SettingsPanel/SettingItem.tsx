@@ -20,7 +20,7 @@ export const SettingItem: React.FC<Props> = ({
   leftIcon,
   onClick,
 }) => {
-  return (
+  const getContent = () => (
     <Flex py="21px" alignItems="center" justifyContent="space-between">
       <Flex flex={1} alignItems="center">
         {React.isValidElement(leftIcon) && React.cloneElement(leftIcon)}
@@ -30,13 +30,19 @@ export const SettingItem: React.FC<Props> = ({
       {React.isValidElement(rightComponent) ? (
         React.cloneElement(rightComponent)
       ) : (
-        <Button p="0px" onClick={onClick}>
-          <Flex alignItems="center">
-            {actionLabel && <Text color={colors.gray6}>{actionLabel}</Text>}
-            <RightArrowIcon ml="21px" />
-          </Flex>
-        </Button>
+        <Flex alignItems="center">
+          {actionLabel && <Text color={colors.gray6}>{actionLabel}</Text>}
+          <RightArrowIcon ml="21px" />
+        </Flex>
       )}
     </Flex>
+  );
+
+  return React.isValidElement(rightComponent) ? (
+    getContent()
+  ) : (
+    <Button width="100%" p="0px" onClick={onClick}>
+      {getContent()}
+    </Button>
   );
 };

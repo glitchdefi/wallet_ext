@@ -34,7 +34,7 @@ export const PasswordRulesTooltip: React.FC<Props> = ({ value, onPassed }) => {
   useEffect(() => {
     setRules({
       ...rules,
-      lowercase: /[a-z]/g.test(value),
+      lowercase: value ? /[a-z]/g.test(value) : false,
       uppercase: /[A-Z]/g.test(value),
       number: /[0-9]/g.test(value),
       special: /[!@#$%^&*(),.?":{}|<>]/g.test(value),

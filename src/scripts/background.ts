@@ -110,6 +110,10 @@ function handleChromeListeners(controller: GlitchController) {
                 Handler.transfer(payload, controller, sendResponse);
                 break;
 
+              case MessageTypes.BG_WALLET_RESET_STATE:
+                Handler.resetState(controller, sendResponse);
+                break;
+
               case MessageTypes.BG_WALLET_CHECK_IS_VALID_SEED_PHRASE:
                 Handler.checkIsValidSeedPhrase(
                   payload,
@@ -140,6 +144,9 @@ function handleChromeListeners(controller: GlitchController) {
                 break;
 
               // Transactions
+              case MessageTypes.BG_TRANSACTION_GET_TX_LIST:
+                Handler.fetchTransactions(payload, controller, sendResponse);
+                break;
 
               default:
                 Handler.handleDefault(request, sendResponse);

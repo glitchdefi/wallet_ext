@@ -162,7 +162,10 @@ export class GlitchWeb3 {
    * @returns
    */
   importAccountToWeb3(privatekey: string) {
-    console.log(this.glitchWeb3.wallet.importAccount(privatekey));
+    console.log(
+      'Change Account - wallet.importAccount',
+      this.glitchWeb3.wallet.importAccount(privatekey)
+    );
 
     this.glitchWeb3.wallet.importAccount(privatekey);
   }
@@ -187,6 +190,12 @@ export class GlitchWeb3 {
     }
   }
 
+  /**
+   *
+   * @param toAddress
+   * @param _amount
+   * @returns
+   */
   async transferToken(toAddress: string, _amount: any): Promise<any> {
     try {
       const fee = web3Utils.toWei(GlitchToken.fee.toString());
@@ -196,11 +205,43 @@ export class GlitchWeb3 {
         fee,
       });
 
-      console.log(result);
+      console.log('Transfer success', result);
+
+      return this.getTransactionFromResponse(result);
     } catch (err) {
-      console.log(err);
+      log.info('transferToken Error: ', err);
+      throw err;
     }
   }
+
+  /**
+   *
+   * @param response
+   * @returns
+   */
+  getTransactionFromResponse = (response: any): object => {
+    const hash = response.hash;
+    const height = response.height;
+    const from = response.events[0].eventData.from;
+    const to = response.events[0].eventData.to;
+    let gasused = response.events[0].eventData.gasused;
+
+    let value = response.events[1].eventData.value;
+    const method = response.events[1].eventName;
+    const timestamp = response.id;
+
+    return {
+      timestamp,
+      hash,
+      height,
+      from,
+      to,
+      gasused: gasused,
+      value: value,
+      method,
+      result_log: 1,
+    };
+  };
 
   /**
    *

@@ -111,7 +111,7 @@ export const CreatePasswordStep: React.FC<Props> = ({
         />
       </Box>
 
-      <Box pt="32px" pb="24px">
+      <Box pt="24px" pb="16px">
         {isEnableButton ? (
           <ButtonShadow width="100%" onClick={() => onSetupPassword(password)}>
             {t(messages.setupPassword())}

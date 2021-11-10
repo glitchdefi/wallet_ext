@@ -32,51 +32,56 @@ const AboutUs: React.FC = () => {
         </Text>
       </Flex>
 
-      <Box p="16px">
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          flexDirection="column"
-          background={colors.geekBlue}
-          pt="8px"
-          px="16px"
-          pb="16px"
-        >
-          <Image src={logo} width={150} height={72} />
-          <Text bold large mt="12px">
-            Glitch Wallet
-          </Text>
-          <Text fontSize="12px" color={colors.gray5}>
-            Current version 0.0.1
-          </Text>
-        </Flex>
-      </Box>
+      <Box height="543px" overflowY="scroll">
+        <Box p="16px">
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            flexDirection="column"
+            background={colors.geekBlue}
+            pt="8px"
+            px="16px"
+            pb="16px"
+          >
+            <Image src={logo} width={150} height={72} />
+            <Text bold large mt="12px">
+              Glitch Wallet
+            </Text>
+            <Text fontSize="12px" color={colors.gray5}>
+              Current version 0.0.1
+            </Text>
+          </Flex>
+        </Box>
 
-      <Box px="16px" mt="16px">
-        <Item
-          label="Terms of Service"
-          href="https://glitch.finance/privacy-policy/"
-        />
-        <Item
-          label="Privacy Policy"
-          href="https://glitch.finance/privacy-policy/"
-        />
+        <Box px="16px" mt="16px">
+          <Item
+            label="Terms of Service"
+            href="https://glitch.finance/privacy-policy/"
+          />
+          <Item
+            label="Privacy Policy"
+            href="https://glitch.finance/privacy-policy/"
+          />
 
-        <Box my="16px" height="1px" background={colors.magenta2} />
+          <Box my="16px" height="1px" background={colors.magenta2} />
 
-        <Item
-          label="Visit our Official website"
-          href="https://glitch.finance/"
-        />
-        <Item label="Join us on Telegram" href="https://t.me/glitchprotocol" />
-        <Item
-          label="Follow us on Twitter"
-          href="https://twitter.com/GlitchProtocol"
-        />
-        <Item
-          label="Follow us on Medium"
-          href="https://medium.com/glitchfinance"
-        />
+          <Item
+            label="Visit our Official website"
+            href="https://glitch.finance/"
+          />
+          <Item
+            label="Join us on Telegram"
+            href="https://t.me/glitchprotocol"
+          />
+          <Item
+            label="Follow us on Twitter"
+            href="https://twitter.com/GlitchProtocol"
+          />
+          <Item
+            label="Follow us on Medium"
+            href="https://medium.com/glitchfinance"
+          />
+        </Box>
       </Box>
     </PageLayout>
   );

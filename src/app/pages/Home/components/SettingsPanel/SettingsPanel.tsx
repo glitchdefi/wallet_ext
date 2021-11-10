@@ -56,8 +56,8 @@ export const SettingsPanel: React.FC = () => {
           rightComponent={
             <Dropdown
               onSelect={(eventKey) => {
-                if (eventKey == 0) history.push(Routes.accountDetails);
-                if (eventKey == 1) history.push(Routes.showPrivateKeys);
+                // if (eventKey == 0) history.push(Routes.accountDetails);
+                // if (eventKey == 1) history.push(Routes.showPrivateKeys);
               }}
               customToggle={
                 <Flex

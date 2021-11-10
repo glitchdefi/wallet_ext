@@ -131,6 +131,20 @@ export const backupWallet = async (
   }
 };
 
+export const resetState = async (
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const state = await controller.setDefaultAppState();
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const showSeedPhrase = async (
   payload: { password?: string },
   controller: GlitchController,
@@ -290,6 +304,31 @@ export const transfer = async (
     const { password, toAddress, amount } = payload || {};
 
     const state = await controller.transfer(password, toAddress, amount);
+
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
+export const fetchTransactions = async (
+  payload: {
+    params?: {
+      pageIndex: number;
+      pageSize: number;
+      txStatus: number;
+      txType: number;
+    };
+  },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { params } = payload || {};
+
+    const state = await controller.getTransactionHistory(params);
 
     if (state) {
       sendResponse({ ...successfulResponse, state });

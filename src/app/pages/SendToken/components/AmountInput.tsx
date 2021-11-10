@@ -7,7 +7,7 @@ import { GlitchToken } from '../../../../constants/tokens';
 import { colors } from 'theme/colors';
 import { isValidAmountSend } from 'utils/number';
 
-import { Flex } from 'app/components/Box';
+import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { Button } from 'app/components/Button';
 import { Input } from 'app/components/Form';
@@ -18,14 +18,23 @@ type Value = {
 };
 
 interface Props {
+  initAmount?: any;
   balance?: any;
   onChange: ({ amount, isValid }: Value) => void;
 }
 
-export const AmountInput: React.FC<Props> = ({ onChange, balance }) => {
+export const AmountInput: React.FC<Props> = ({
+  initAmount,
+  onChange,
+  balance,
+}) => {
   const [amount, setAmount] = useState<any>('');
   const [isValid, setIsValid] = useState(false);
   const [hasDecimalsError, setHasDecimalsError] = useState(false);
+
+  useEffect(() => {
+    initAmount && setAmount(initAmount);
+  }, [initAmount]);
 
   // Check validate
   useEffect(() => {
@@ -69,7 +78,14 @@ export const AmountInput: React.FC<Props> = ({ onChange, balance }) => {
 
   return (
     <>
-      <InputWrap>
+      <InputWrap
+        isError={
+          Number(amount) > Number(balance) ||
+          (Number(amount) > 0 && !isValid) ||
+          Number(amount) < 0 ||
+          hasDecimalsError
+        }
+      >
         <Input
           value={amount}
           type="number"
@@ -77,19 +93,27 @@ export const AmountInput: React.FC<Props> = ({ onChange, balance }) => {
           placeholder="0"
           onChange={onInputChange}
         />
-        <Flex flex={1} alignItems="center" justifyContent="flex-end" px="12px">
-          <Text large color={colors.gray4}>
-            GLCH
-          </Text>
-          <Text large mx="12px" color={colors.gray4}>
-            |
-          </Text>
-          <Button py="2px" px="8px" variant="secondary" onClick={onMaxClick}>
-            <Text color={colors.primary} fontSize="12px">
-              Max
+
+        <Box>
+          <Flex
+            flex={1}
+            alignItems="center"
+            justifyContent="flex-end"
+            px="12px"
+          >
+            <Text large color={colors.gray4}>
+              GLCH
             </Text>
-          </Button>
-        </Flex>
+            <Text large mx="12px" color={colors.gray4}>
+              |
+            </Text>
+            <Button py="2px" px="8px" variant="secondary" onClick={onMaxClick}>
+              <Text color={colors.primary} fontSize="12px">
+                Max
+              </Text>
+            </Button>
+          </Flex>
+        </Box>
       </InputWrap>
 
       {Number(amount) > 0 && !isValid && (
@@ -111,15 +135,26 @@ export const AmountInput: React.FC<Props> = ({ onChange, balance }) => {
   );
 };
 
-const InputWrap = styled.div`
+const InputWrap = styled.div<{ isError?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid ${colors.gray8};
+  transition: all 0.3s;
+  border: 1px solid ${({ isError }) => (isError ? colors.error : colors.gray8)};
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
 
   &:focus-within {
-    transition: all 0.3s;
-    border: 1px solid ${colors.primary};
+    border: 1px solid
+      ${({ isError }) => (isError ? colors.error : colors.primary)};
   }
 
   input {

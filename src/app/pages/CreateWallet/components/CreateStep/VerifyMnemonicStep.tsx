@@ -85,7 +85,7 @@ export const VerifyMnemonicStep: React.FC<Props> = ({
         ))}
       </Flex>
 
-      <Box pt="48px" pb="24px">
+      <Box pt="24px" pb="16px">
         {isValid ? (
           <ButtonShadow width="100%" onClick={onSubmit}>
             Confirm

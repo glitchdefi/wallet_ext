@@ -10,14 +10,14 @@ import {
   useTokenPrice,
 } from 'state/wallet/hooks';
 
-import { Box, Flex } from 'app/components/Box';
+import { Flex } from 'app/components/Box';
 import { PageLayout } from 'app/layouts';
 import { Header } from '../Home/components/Header';
 import { Text } from 'app/components/Text';
 import { GlitchLogo } from 'app/components/Image';
 import { QrCodeIcon, SendIcon } from 'app/components/Svg';
 import { Button } from 'app/components/Button';
-import { Empty } from 'app/components/Empty';
+import { TransactionHistorySection } from './components/TransactionHistorySection';
 
 const TokenDetails: React.FC = () => {
   useWalletSlice();
@@ -35,7 +35,7 @@ const TokenDetails: React.FC = () => {
     <PageLayout>
       <Header hasBackButton hasBottomBorder />
 
-      <Flex flexDirection="column" px="16px">
+      <Flex height="527px" flexDirection="column" px="16px" overflowY="scroll">
         <Flex mt="26px" flexDirection="column" alignItems="center">
           <GlitchLogo width={64} height={64} />
 
@@ -85,13 +85,7 @@ const TokenDetails: React.FC = () => {
           </Button>
         </Flex>
 
-        <Box my="32px" width="100%" height="1px" background={colors.magenta2} />
-
-        <Text color={colors.gray7} bold>
-          Transaction history
-        </Text>
-
-        <Empty my="48px" message="You have no transactions" />
+        <TransactionHistorySection />
       </Flex>
     </PageLayout>
   );

@@ -21,10 +21,6 @@ export const GlobalStyles = createGlobalStyle`
         padding-right: 0px !important;
     }
 
-    .modal-backdrop.show {
-        opacity: 0.1;
-    }
-
     ::-webkit-scrollbar {
         height: 5px;
         width: 2px;

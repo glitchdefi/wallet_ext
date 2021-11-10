@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import BN from 'bn.js';
 
 import { GlitchToken } from '../../../../constants/tokens';
 
@@ -11,6 +10,7 @@ import {
   useTokenPrice,
   useWalletActionHandlers,
   useWrongPassword,
+  useTransferAction,
 } from 'state/wallet/hooks';
 
 // Components
@@ -20,7 +20,6 @@ import { GlitchLogo } from 'app/components/Image';
 import { Label, PasswordInput } from 'app/components/Form';
 import { Button, ButtonShadow } from 'app/components/Button';
 import { useApplicationSlice } from 'state/application/hooks';
-
 interface Props {
   amount?: any;
   toAddress?: any;
@@ -32,9 +31,10 @@ export const Confirmation: React.FC<Props> = ({ amount, toAddress }) => {
   const [password, setPassword] = useState<string>('');
 
   const { selectedAddress } = useSelectedAddress();
-  const { onClearIsWrongPassword, onTransfer } = useWalletActionHandlers();
   const { priceUsd } = useTokenPrice();
   const { isWrongPassword } = useWrongPassword();
+  const { onClearIsWrongPassword } = useWalletActionHandlers();
+  const { onTransfer } = useTransferAction();
 
   useEffect(() => {
     () => {
@@ -43,54 +43,56 @@ export const Confirmation: React.FC<Props> = ({ amount, toAddress }) => {
   }, []);
 
   return (
-    <Flex flexDirection="column">
-      <Flex p="16px" flexDirection="column">
-        <Text bold large>
-          Confirmation
-        </Text>
+    <>
+      <Flex height="300px" flexDirection="column" overflowY="scroll">
+        <Flex p="16px" flexDirection="column">
+          <Text bold large>
+            Confirmation
+          </Text>
 
-        <Box mt="16px">
-          <Text fontSize="12px" color={colors.gray5}>
-            From
-          </Text>
-          <Text mt="4px" color={colors.gray7}>
-            {truncateAddress(selectedAddress)}
-          </Text>
-        </Box>
-
-        <Box mt="16px">
-          <Text fontSize="12px" color={colors.gray5}>
-            To
-          </Text>
-          <Text mt="4px" color={colors.gray7}>
-            {truncateAddress(toAddress)}
-          </Text>
-        </Box>
-
-        <Box mt="16px">
-          <Text fontSize="12px" color={colors.gray5}>
-            Amount
-          </Text>
-          <Flex mt="5px">
-            <GlitchLogo width={24} height={24} />
-            <Text ml="8px">{amount} GLCH</Text>
-            <Text ml="8px" color={colors.gray5}>
-              {`~ $${priceUsd * amount} USD`}
+          <Box mt="16px">
+            <Text fontSize="12px" color={colors.gray5}>
+              From
             </Text>
-          </Flex>
-        </Box>
-
-        <Box mt="16px">
-          <Text fontSize="12px" color={colors.gray5}>
-            Network fee
-          </Text>
-          <Flex mt="4px">
-            <Text>{`${GlitchToken.fee} GLCH`}</Text>
-            <Text ml="8px" color={colors.gray5}>
-              {`~ $${(GlitchToken.fee * priceUsd).toFixed(9)} USD`}
+            <Text mt="4px" color={colors.gray7}>
+              {truncateAddress(selectedAddress)}
             </Text>
-          </Flex>
-        </Box>
+          </Box>
+
+          <Box mt="16px">
+            <Text fontSize="12px" color={colors.gray5}>
+              To
+            </Text>
+            <Text mt="4px" color={colors.gray7}>
+              {truncateAddress(toAddress)}
+            </Text>
+          </Box>
+
+          <Box mt="16px">
+            <Text fontSize="12px" color={colors.gray5}>
+              Amount
+            </Text>
+            <Flex mt="5px">
+              <GlitchLogo width={24} height={24} />
+              <Text ml="8px">{amount} GLCH</Text>
+              <Text ml="8px" color={colors.gray5}>
+                {`~ $${priceUsd * amount} USD`}
+              </Text>
+            </Flex>
+          </Box>
+
+          <Box mt="16px">
+            <Text fontSize="12px" color={colors.gray5}>
+              Network fee
+            </Text>
+            <Flex mt="4px">
+              <Text>{`${GlitchToken.fee} GLCH`}</Text>
+              <Text ml="8px" color={colors.gray5}>
+                {`~ $${(GlitchToken.fee * priceUsd).toFixed(9)} USD`}
+              </Text>
+            </Flex>
+          </Box>
+        </Flex>
       </Flex>
 
       <Box background={colors.geekBlue} mt="16px" p="16px">
@@ -114,7 +116,7 @@ export const Confirmation: React.FC<Props> = ({ amount, toAddress }) => {
         </Box>
       </Box>
 
-      <Box pt="48px" pb="16px" px="16px">
+      <Box py="16px" px="16px">
         {password ? (
           <ButtonShadow
             width="100%"
@@ -128,6 +130,6 @@ export const Confirmation: React.FC<Props> = ({ amount, toAddress }) => {
           </Button>
         )}
       </Box>
-    </Flex>
+    </>
   );
 };

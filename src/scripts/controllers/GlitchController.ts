@@ -1,5 +1,4 @@
 import log from 'loglevel';
-import BN from 'bn.js';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -440,11 +439,20 @@ export class GlitchController {
         const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
 
         if (seedPhrase) {
-          const data = await this.glitchWeb3.transferToken(toAddress, amount);
+          const transaction = await this.glitchWeb3.transferToken(
+            toAddress,
+            amount
+          );
+
+          return {
+            isWrongPassword: false,
+            isTransferSuccess: true,
+            transaction,
+          };
         }
 
         return {
-          isWrongPassword: !seedPhrase,
+          isWrongPassword: true,
         };
       } else {
         throw Error('Encrypt key not found');
@@ -509,11 +517,35 @@ export class GlitchController {
     return { ...newState };
   }
 
+  async getTransactionHistory(params: {
+    pageIndex: number;
+    pageSize: number;
+    txStatus: number;
+    txType: number;
+  }): Promise<object> {
+    const { pageIndex, pageSize, txStatus, txType } = params || {};
+    const address = await this.appStateController.getAddressSelected();
+
+    try {
+      const res = await axios.get(
+        `https://api-testnet.glitch.finance/address/${address}/tx?page_index=${pageIndex}&page_size=${pageSize}&txStatus=${txStatus}&txType=${txType}`
+      );
+
+      return res?.data;
+    } catch (error) {
+      log.info('getTransactionHistoryError', error);
+    }
+  }
+
   //=============================================================================
   // STORE MANAGEMENT METHODS
   //=============================================================================
 
   async getAppState() {
     return await this.appStateController.getState();
+  }
+
+  async setDefaultAppState(): Promise<object> {
+    return await this.appStateController.setDefaultState();
   }
 }

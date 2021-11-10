@@ -1,9 +1,9 @@
-import BN from 'bn.js';
 import { useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer } from 'utils/redux-injectors';
 import { RootState } from 'types';
+import { useToast } from 'hooks/useToast';
 import { slice } from './reducer';
 import * as actions from './actions';
 
@@ -75,6 +75,32 @@ export const useWallet = () => {
   return useWalletSelector();
 };
 
+export const useTransferAction = (): {
+  onTransfer: (password: string, toAddress: string, amount: any) => void;
+} => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { toastSuccess } = useToast();
+
+  const onTransfer = useCallback(
+    (password: string, toAddress: string, amount: any) =>
+      dispatch(
+        actions.transferAction(
+          password,
+          toAddress,
+          amount,
+          toastSuccess,
+          history
+        )
+      ),
+    [dispatch]
+  );
+
+  return {
+    onTransfer,
+  };
+};
+
 /**
  *
  * @returns wallet actions
@@ -92,9 +118,9 @@ export const useWalletActionHandlers = (): {
   onClearSeedPhrase: () => void;
   onBackupWalletAction: () => void;
   getBalance: () => void;
+  onResetState: () => void;
   getTokenPrice: (tokenName: string, currency: string) => void;
   checkIsValidAddress: (fromAddress: string, address: string) => void;
-  onTransfer: (password: string, toAddress: string, amount: any) => void;
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -175,9 +201,8 @@ export const useWalletActionHandlers = (): {
     [dispatch]
   );
 
-  const onTransfer = useCallback(
-    (password: string, toAddress: string, amount: any) =>
-      dispatch(actions.transferAction(password, toAddress, amount)),
+  const onResetState = useCallback(
+    () => dispatch(actions.resetStateAction(history)),
     [dispatch]
   );
 
@@ -196,7 +221,7 @@ export const useWalletActionHandlers = (): {
     getBalance,
     getTokenPrice,
     checkIsValidAddress,
-    onTransfer,
+    onResetState,
   };
 };
 

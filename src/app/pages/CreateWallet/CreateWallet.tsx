@@ -40,7 +40,8 @@ const CreateWallet: React.FC = () => {
   const { isLoading } = useLoadingApplication();
   const { isInitialized } = useIsInitialized();
   const { seedPhrases } = useSeedPhrases();
-  const { onCreateCompleted, onCreateWallet } = useWalletActionHandlers();
+  const { onResetState, onCreateCompleted, onCreateWallet } =
+    useWalletActionHandlers();
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'create');
 
   const stepProgress = ((step + 1) / MAX_STEP) * 100;
@@ -66,7 +67,7 @@ const CreateWallet: React.FC = () => {
         stepDescription={t(stepDesc)}
         onBack={() => {
           if (step === 0) {
-            history.push('/');
+            onResetState();
           } else {
             setStep(step - 1);
           }

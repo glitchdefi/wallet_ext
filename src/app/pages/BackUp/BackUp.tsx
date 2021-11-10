@@ -86,7 +86,7 @@ const BackUp: React.FC = () => {
 
       {(step === 1 || step === 2) && (
         <Flex flexDirection="column" p="16px">
-          <Flex mb="32px" alignItems="flex-start">
+          <Flex mb="24px" alignItems="flex-start">
             <Flex>
               <Text color={colors.secondary} large bold>
                 [

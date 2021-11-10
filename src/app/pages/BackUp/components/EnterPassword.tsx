@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
+import { Routes } from 'constants/routes';
 
 import {
   useWalletActionHandlers,
@@ -21,6 +23,8 @@ interface Props {
 
 export const EnterPassword: React.FC<Props> = ({ initValue, onChange }) => {
   useWalletSlice();
+  const history = useHistory();
+
   const [password, setPassword] = useState(initValue);
 
   const { onClearIsWrongPassword } = useWalletActionHandlers();
@@ -56,7 +60,12 @@ export const EnterPassword: React.FC<Props> = ({ initValue, onChange }) => {
         </Box>
       </Box>
       <Flex mt="auto" alignItems="center">
-        <Button width="50%" variant="cancel" mr="16px">
+        <Button
+          width="50%"
+          variant="cancel"
+          mr="16px"
+          onClick={() => history.push(Routes.home)}
+        >
           Cancel
         </Button>
 

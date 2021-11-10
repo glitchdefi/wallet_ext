@@ -20,3 +20,33 @@ export const LOCK_TIME_LIST = [
 ];
 
 export const UPDATE_TIME = 5000;
+export const PAGE_SIZE = 1000;
+export const KIND_OF_TXN_LIST = [
+  {
+    label: 'All',
+    key: 0,
+  },
+  {
+    label: 'Send',
+    key: 2,
+  },
+  {
+    label: 'Receive',
+    key: 1,
+  },
+];
+
+export const STATUS_TYPE_LIST = [
+  {
+    label: 'All',
+    key: 2,
+  },
+  {
+    label: 'Success',
+    key: 1,
+  },
+  {
+    label: 'Failed',
+    key: 0,
+  },
+];

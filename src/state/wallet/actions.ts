@@ -1,7 +1,7 @@
-import BN from 'bn.js';
 import { Dispatch } from 'redux';
 import { slice } from './reducer';
 import { slice as appSlice } from '../application/reducer';
+import { slice as transactionSlice } from '../transactions/reducer';
 
 import { sendMessage } from '../../scripts/lib/messages';
 import { MessageTypes } from 'types';
@@ -10,6 +10,7 @@ import { Routes } from 'constants/routes';
 
 const actions = slice.actions;
 const applicationActions = appSlice.actions;
+const transactionActions = transactionSlice.actions;
 
 export const createWalletAction =
   (password: string) => async (dispatch: Dispatch<any>) => {
@@ -158,12 +159,29 @@ export const logoutWalletAction =
         dispatch(actions.setWrongPassword(state.isWrongPassword));
       } else {
         dispatch(setWalletState(state?.wallet));
+        dispatch(applicationActions.setActiveTabHomePage(0));
         history.push(Routes.welcome);
       }
     } catch (error) {
       // Handle Error
     } finally {
       dispatch(applicationActions.setIsLoadingApp(false));
+    }
+  };
+
+export const resetStateAction =
+  (history: any) => async (dispatch: Dispatch<any>) => {
+    try {
+      const data = await sendMessage({
+        type: MessageTypes.BG_WALLET_RESET_STATE,
+      });
+
+      const { state } = data || {};
+
+      dispatch(setWalletState(state?.wallet));
+      history.push(Routes.welcome);
+    } catch (error) {
+      // Handle Error
     }
   };
 
@@ -374,7 +392,13 @@ export const showPrivateKeysAction =
   };
 
 export const transferAction =
-  (password: string, toAddress: string, amount: any) =>
+  (
+    password: string,
+    toAddress: string,
+    amount: any,
+    toastSuccess: any,
+    history: any
+  ) =>
   async (dispatch: Dispatch<any>) => {
     try {
       dispatch(applicationActions.setIsLoadingApp(true));
@@ -388,13 +412,24 @@ export const transferAction =
         },
       });
 
-      const { isWrongPassword } = data?.state;
+      const { isWrongPassword, isTransferSuccess } = data?.state || {};
 
       if (isWrongPassword) {
         dispatch(actions.setWrongPassword(isWrongPassword));
-      } else {
+      }
+
+      if (isTransferSuccess) {
+        dispatch(transactionActions.setIsTransferSuccess(true));
+        dispatch(getBalanceAction());
+        toastSuccess(
+          'Success',
+          'Sent has been successfully! It might take some time for changes to take affect.'
+        );
+
+        history.push(Routes.tokenDetails);
       }
     } catch (error) {
+      console.log(error);
       // Handle Error
     } finally {
       dispatch(applicationActions.setIsLoadingApp(false));

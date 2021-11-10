@@ -39,9 +39,9 @@ function StepProgressLayout({
             {title}
           </Text>
         </Flex>
-        <ProgressBar mt="32px" height="3px" percentage={stepProgress} />
+        <ProgressBar mt="16px" height="3px" percentage={stepProgress} />
 
-        <Flex mt="32px" alignItems="flex-start">
+        <Flex mt="24px" alignItems="flex-start">
           <Flex>
             <Text color={colors.secondary} large bold>
               [
@@ -62,7 +62,7 @@ function StepProgressLayout({
             </Text>
           </Box>
         </Flex>
-        <Box mt="32px">{children}</Box>
+        <Box mt="24px">{children}</Box>
       </Box>
     </div>
   );

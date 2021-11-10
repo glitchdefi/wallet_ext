@@ -16,7 +16,7 @@ const MessageBox: React.FC<Props> = (props) => {
 
   return (
     <MsgBoxContainer {...rest}>
-      <WarningIcon pt="3px" width="16px" />
+      <WarningIcon color="#d87a16" pt="3px" width="16px" />
       <Text ml="10px" fontSize="12px">
         {message}
       </Text>

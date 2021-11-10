@@ -29,6 +29,8 @@ export { default as SendIcon } from './Icons/Send';
 export { default as NotFoundIcon } from './Icons/NotFound';
 export { default as SearchIcon } from './Icons/Search';
 export { default as ExclaimationCircleIcon } from './Icons/ExclaimationCircle';
+export { default as OutlineSelectIcon } from './Icons/OutlineSelect';
+export { default as FilterIcon } from './Icons/Filter';
 
 export { default as Svg } from './Svg';
 export type { SvgProps } from './types';

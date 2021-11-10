@@ -8,8 +8,6 @@ import {
   useSelectedAddress,
   useAccounts,
   useTokenPrice,
-  useIsValidAddress,
-  useWalletActionHandlers,
 } from 'state/wallet/hooks';
 
 import { Box, Flex } from 'app/components/Box';
@@ -20,33 +18,38 @@ import { GlitchLogo } from 'app/components/Image';
 import { Label, Input } from 'app/components/Form';
 import { AmountInput } from './AmountInput';
 import { NetworkFee } from './NetworkFee';
-
+import { checkIsValidAddress } from 'utils/strings';
 interface Props {
-  onNext: (amount: number, toAddress: string) => void;
+  initData: { amount: any; toAddress: string };
+  onNext: (amount: any, toAddress: string) => void;
 }
 
-export const SendForm: React.FC<Props> = ({ onNext }) => {
+export const SendForm: React.FC<Props> = ({ initData, onNext }) => {
   useWalletSlice();
 
-  const { checkIsValidAddress } = useWalletActionHandlers();
   const { selectedAddress } = useSelectedAddress();
   const { accounts } = useAccounts();
   const { priceUsd } = useTokenPrice();
-  const { isValidAddress } = useIsValidAddress();
 
   const balance = accounts[selectedAddress].balance;
 
   const [toAddress, setToAddress] = useState<string>('');
   const [amount, setAmount] = useState<any>('');
   const [isValidAmount, setIsValidAmount] = useState(false);
+  const [isValidAddress, setIsValidAddress] = useState(false);
 
   const feeToUsd = GlitchToken.fee * priceUsd;
   const isEnableSendButton = isValidAddress && isValidAmount;
 
   useEffect(() => {
-    if (toAddress) {
-      checkIsValidAddress(selectedAddress, toAddress);
+    if (initData) {
+      !toAddress && setToAddress(initData.toAddress);
+      !amount && setAmount(initData.amount);
     }
+  }, [initData]);
+
+  useEffect(() => {
+    setIsValidAddress(checkIsValidAddress(selectedAddress, toAddress));
   }, [toAddress]);
 
   return (
@@ -102,6 +105,7 @@ export const SendForm: React.FC<Props> = ({ onNext }) => {
           </Flex>
 
           <AmountInput
+            initAmount={amount}
             onChange={({ amount, isValid }) => {
               setAmount(amount);
               setIsValidAmount(isValid);

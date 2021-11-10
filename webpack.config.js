@@ -24,6 +24,7 @@ var alias = {
   'theme/colors': path.join(__dirname, 'src', 'theme', 'colors.ts'),
   'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
   'constants/values': path.join(__dirname, 'src', 'constants', 'values.ts'),
+  'constants/tokens': path.join(__dirname, 'src', 'constants', 'tokens.ts'),
   'app/layouts': path.join(__dirname, 'src', 'app', 'layouts', 'index.ts'),
   'contexts/ToastsContext': path.join(
     __dirname,
@@ -171,7 +172,16 @@ var alias = {
     'Toast',
     'index.tsx'
   ),
+  'app/components/Skeleton': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Skeleton',
+    'index.tsx'
+  ),
   types: path.join(__dirname, 'src', 'types', 'index.ts'),
+  'types/TransactionsState': path.join(__dirname, 'src', 'types', 'TransactionsState.ts'),
   'state/wallet/hooks': path.join(
     __dirname,
     'src',
@@ -184,6 +194,13 @@ var alias = {
     'src',
     'state',
     'application',
+    'hooks.ts'
+  ),
+  'state/transactions/hooks': path.join(
+    __dirname,
+    'src',
+    'state',
+    'transactions',
     'hooks.ts'
   ),
 };
