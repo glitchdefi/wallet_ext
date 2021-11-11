@@ -21,22 +21,37 @@ export const useIsTransferSuccess = () => {
   return { isTransferSuccess };
 };
 
-export const useTransactions = ({ pageIndex, pageSize, txStatus, txType }) => {
+export const useTransactions = (filter: {
+  pageIndex: number;
+  pageSize: number;
+  txStatus: number;
+  txType: number;
+  startTime: number;
+  endTime: number;
+}) => {
   const dispatch = useDispatch();
   const { toastError } = useToast();
   const { isFetchingTransactions, transactions, transactionsError } =
     useTransactionSelector();
   const { selectedAddress } = useSelectedAddress();
+  const { pageIndex, pageSize, txStatus, txType, startTime, endTime } = filter;
 
   useEffect(() => {
     dispatch(setIsFetchingTransactions());
 
     setTimeout(() => {
       dispatch(
-        fetchTransactionsAction({ pageIndex, pageSize, txStatus, txType })
+        fetchTransactionsAction({
+          pageIndex,
+          pageSize,
+          txStatus,
+          txType,
+          startTime,
+          endTime,
+        })
       );
     }, 200);
-  }, [dispatch, selectedAddress, txStatus, txType]);
+  }, [dispatch, selectedAddress, txStatus, txType, startTime, endTime]);
 
   useEffect(() => {
     if (transactionsError) {

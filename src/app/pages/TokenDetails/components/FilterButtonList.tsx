@@ -8,6 +8,8 @@ import { Text } from 'app/components/Text';
 type List = {
   label: string;
   key: any;
+  startTime?: number;
+  endTime?: number;
 };
 
 interface Props {
@@ -24,7 +26,9 @@ export const FilterButtonList: React.FC<Props> = ({
   return (
     <ListWrapper>
       {list.map((o, i) => {
-        const isActive = activeKey == o.key;
+        const isActive = o?.startTime
+          ? o.startTime === activeKey
+          : activeKey == o.key;
         const hasBorderRight = i < list.length - 1;
 
         return (
@@ -58,6 +62,7 @@ const StyledButton = styled.div<{
     hasBorderRight && `1px solid ${colors.gray4}`};
   cursor: pointer;
   background-color: ${({ isActive }) => isActive && colors.primary};
+  transition: all 0.3s;
 
   &:hover {
     opacity: 0.8;

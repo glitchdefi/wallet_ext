@@ -11,7 +11,7 @@ export const setIsFetchingTransactions =
   };
 
 export const fetchTransactionsAction =
-  ({ pageIndex, pageSize, txStatus, txType }) =>
+  ({ pageIndex, pageSize, txStatus, txType, startTime, endTime }) =>
   async (dispatch: Dispatch<any>) => {
     try {
       const res = await sendMessage({
@@ -22,6 +22,8 @@ export const fetchTransactionsAction =
             pageSize,
             txStatus,
             txType,
+            startTime,
+            endTime,
           },
         },
       });

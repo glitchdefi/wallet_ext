@@ -22,7 +22,12 @@ export const TransactionHistorySection: React.FC = () => {
 
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
-  const [filter, setFilter] = useState({ txStatus: 2, txType: 0 }); // Status 2 -> all, TxType 0 -> all
+  const [filter, setFilter] = useState({
+    txStatus: 2,
+    txType: 0,
+    startTime: null,
+    endTime: null,
+  }); // Status 2 -> all, TxType 0 -> all
 
   const { selectedAddress } = useSelectedAddress();
 
@@ -31,11 +36,13 @@ export const TransactionHistorySection: React.FC = () => {
     pageSize: PAGE_SIZE,
     txStatus: filter.txStatus,
     txType: filter.txType,
+    startTime: filter.startTime,
+    endTime: filter.endTime,
   });
 
   // Reset filter when account changed
   useEffect(() => {
-    setFilter({ txStatus: 2, txType: 0 });
+    setFilter({ txStatus: 2, txType: 0, startTime: null, endTime: null });
   }, [selectedAddress]);
 
   return (
@@ -71,8 +78,8 @@ export const TransactionHistorySection: React.FC = () => {
         initFilter={filter}
         isOpen={showFilterModal}
         onClose={() => setShowFilterModal(false)}
-        onFilter={({ txStatus, txType }) => {
-          setFilter({ txStatus, txType });
+        onFilter={({ txStatus, txType, startTime, endTime }) => {
+          setFilter({ txStatus, txType, startTime, endTime });
           setShowFilterModal(false);
         }}
       />

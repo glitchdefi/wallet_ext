@@ -320,6 +320,8 @@ export const fetchTransactions = async (
       pageSize: number;
       txStatus: number;
       txType: number;
+      startTime: number;
+      endTime: number;
     };
   },
   controller: GlitchController,

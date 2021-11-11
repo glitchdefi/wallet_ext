@@ -38,6 +38,7 @@
     "node-polyfill-webpack-plugin": "^1.1.4",
     "pify": "^5.0.0",
     "qrcode.react": "^1.0.1",
+    "rc-picker": "^2.5.19",
     "react": "^17.0.1",
     "react-autosize-textarea": "^7.1.0",
     "react-bootstrap": "^2.0.0",

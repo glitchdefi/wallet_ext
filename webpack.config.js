@@ -40,6 +40,12 @@ var alias = {
     'hooks',
     'useScrollBlock.ts'
   ),
+  'hooks/useOnClickOutside': path.join(
+    __dirname,
+    'src',
+    'hooks',
+    'useOnClickOutside.ts'
+  ),
   'hooks/useMakeTextFile': path.join(
     __dirname,
     'src',

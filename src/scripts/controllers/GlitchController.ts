@@ -522,13 +522,21 @@ export class GlitchController {
     pageSize: number;
     txStatus: number;
     txType: number;
+    startTime: number;
+    endTime: number;
   }): Promise<object> {
-    const { pageIndex, pageSize, txStatus, txType } = params || {};
+    const { pageIndex, pageSize, txStatus, txType, startTime, endTime } =
+      params || {};
     const address = await this.appStateController.getAddressSelected();
+
+    const dateParams =
+      startTime && endTime
+        ? `&start_time=${startTime}&end_time=${endTime}`
+        : '';
 
     try {
       const res = await axios.get(
-        `https://api-testnet.glitch.finance/address/${address}/tx?page_index=${pageIndex}&page_size=${pageSize}&txStatus=${txStatus}&txType=${txType}`
+        `https://api-testnet.glitch.finance/address/${address}/tx?page_index=${pageIndex}&page_size=${pageSize}&txStatus=${txStatus}&txType=${txType}${dateParams}`
       );
 
       return res?.data;

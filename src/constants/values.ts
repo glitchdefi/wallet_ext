@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const LOCK_TIME_LIST = [
   { key: 0, time: 60 * 1000, label: '1 minute' },
   {
@@ -48,5 +50,32 @@ export const STATUS_TYPE_LIST = [
   {
     label: 'Failed',
     key: 0,
+  },
+];
+
+export const DATE_LIST = [
+  {
+    label: 'All',
+    key: 0,
+    startTime: null,
+    endTime: null,
+  },
+  {
+    label: '1 week',
+    key: 1,
+    startTime: moment().subtract(1, 'week').startOf('day').valueOf(),
+    endTime: moment().endOf('day').valueOf(),
+  },
+  {
+    label: '1 month',
+    key: 2,
+    startTime: moment().subtract(1, 'month').startOf('day').valueOf(),
+    endTime: moment().endOf('day').valueOf(),
+  },
+  {
+    label: '3 months',
+    key: 3,
+    startTime: moment().subtract(3, 'months').startOf('day').valueOf(),
+    endTime: moment().endOf('day').valueOf(),
   },
 ];
