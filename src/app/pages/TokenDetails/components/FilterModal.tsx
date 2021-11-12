@@ -35,104 +35,140 @@ interface Props {
     startTime?: number;
     endTime?: number;
   }): void;
+  onChangeDateType: (type?: 'select' | 'calendar') => void;
+  initDateType?: 'select' | 'calendar';
 }
 
-export const FilterModal: React.FC<Props> = ({
-  initFilter,
-  isOpen,
-  onClose,
-  onFilter,
-}) => {
-  const [filter, setFilter] = useState({
-    txStatus: 2,
-    txType: 0,
-    startTime: null,
-    endTime: null,
-  }); // Status 2 -> all, TxType 0 -> all
+export const FilterModal: React.FC<Props> = React.memo(
+  ({
+    initFilter,
+    isOpen,
+    onClose,
+    onFilter,
+    initDateType,
+    onChangeDateType,
+  }) => {
+    const [filter, setFilter] = useState({
+      txStatus: 2,
+      txType: 0,
+      startTime: null,
+      endTime: null,
+    }); // Status 2 -> all, TxType 0 -> all
+    const [dateType, setDateType] = useState<'select' | 'calendar'>('select');
 
-  useEffect(() => {
-    initFilter &&
-      setFilter({
-        txStatus: initFilter.txStatus,
-        txType: initFilter.txType,
-        startTime: initFilter.startTime,
-        endTime: initFilter?.endTime,
-      });
-  }, [initFilter]);
+    useEffect(() => {
+      initFilter &&
+        setFilter({
+          txStatus: initFilter.txStatus,
+          txType: initFilter.txType,
+          startTime: initFilter.startTime,
+          endTime: initFilter?.endTime,
+        });
+    }, [initFilter]);
 
-  return (
-    <StyledModal show={isOpen} centered>
-      <Flex
-        borderBottom={`1px solid ${colors.gray8}`}
-        p="12px"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Text color={colors.gray7} bold>
-          Filter
-        </Text>
+    useEffect(() => {
+      initDateType && setDateType(initDateType);
+    }, [initDateType]);
 
-        <Button p="0px" onClick={onClose}>
-          <CloseIcon width="13px" fill={colors.gray7} />
-        </Button>
-      </Flex>
+    return (
+      <StyledModal show={isOpen} centered>
+        <Flex
+          borderBottom={`1px solid ${colors.gray8}`}
+          p="12px"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Text color={colors.gray7} bold>
+            Filter
+          </Text>
 
-      <Box p="16px" mt="16px">
-        {/* Date */}
-        <Box>
-          <Text>Date</Text>
-          <Box mt="8px">
-            <FilterButtonList
-              list={DATE_LIST}
-              activeKey={filter.startTime || 0}
-              onItemClick={(key) =>
-                setFilter({
-                  ...filter,
-                  startTime: DATE_LIST[key].startTime,
-                  endTime: DATE_LIST[key].endTime,
-                })
-              }
-            />
+          <Button p="0px" onClick={onClose}>
+            <CloseIcon width="13px" fill={colors.gray7} />
+          </Button>
+        </Flex>
+
+        <Box p="16px" mt="16px">
+          {/* Date */}
+          <Box>
+            <Text>Date</Text>
+            <Box mt="8px">
+              <FilterButtonList
+                list={DATE_LIST}
+                activeKey={
+                  dateType === 'calendar' ? null : filter.startTime || 0
+                }
+                onItemClick={(key) => {
+                  setDateType('select');
+                  setFilter({
+                    ...filter,
+                    startTime: DATE_LIST[key].startTime,
+                    endTime: DATE_LIST[key].endTime,
+                  });
+                }}
+              />
+            </Box>
+
+            <Box mt="16px">
+              <DateRangePicker
+                values={
+                  dateType === 'calendar'
+                    ? {
+                        startTime: filter.startTime,
+                        endTime: filter.endTime,
+                      }
+                    : {
+                        startTime: null,
+                        endTime: null,
+                      }
+                }
+                onCalendarChange={(startTime, endTime) => {
+                  setDateType(startTime || endTime ? 'calendar' : 'select');
+                  setFilter({ ...filter, startTime, endTime });
+                }}
+              />
+            </Box>
           </Box>
 
-          {/* <Box mt="16px">
-            <DateRangePicker />
-          </Box> */}
-        </Box>
+          {/* Kind of Txn */}
+          <Box mt="32px">
+            <Text>Kind of txn</Text>
+            <Box mt="8px">
+              <FilterButtonList
+                list={KIND_OF_TXN_LIST}
+                activeKey={filter.txType}
+                onItemClick={(key) => setFilter({ ...filter, txType: key })}
+              />
+            </Box>
+          </Box>
 
-        {/* Kind of Txn */}
-        <Box mt="32px">
-          <Text>Kind of txn</Text>
-          <Box mt="8px">
-            <FilterButtonList
-              list={KIND_OF_TXN_LIST}
-              activeKey={filter.txType}
-              onItemClick={(key) => setFilter({ ...filter, txType: key })}
-            />
+          {/* Status */}
+          <Box mt="32px">
+            <Text>Status</Text>
+            <Box mt="8px">
+              <FilterButtonList
+                list={STATUS_TYPE_LIST}
+                activeKey={filter.txStatus}
+                onItemClick={(key) => setFilter({ ...filter, txStatus: key })}
+              />
+            </Box>
+          </Box>
+
+          <Box mt="32px">
+            <ButtonShadow
+              width="100%"
+              onClick={() => {
+                onFilter(filter);
+                onChangeDateType(dateType);
+              }}
+            >
+              Show results
+            </ButtonShadow>
           </Box>
         </Box>
-
-        {/* Status */}
-        <Box mt="32px">
-          <Text>Status</Text>
-          <Box mt="8px">
-            <FilterButtonList
-              list={STATUS_TYPE_LIST}
-              activeKey={filter.txStatus}
-              onItemClick={(key) => setFilter({ ...filter, txStatus: key })}
-            />
-          </Box>
-        </Box>
-
-        <Box mt="32px">
-          <ButtonShadow width="100%" onClick={() => onFilter(filter)}>
-            Show results
-          </ButtonShadow>
-        </Box>
-      </Box>
-    </StyledModal>
-  );
-};
+      </StyledModal>
+    );
+  }
+);
 
 const StyledModal = styled(Modal)`
   padding-right: 0px !important;

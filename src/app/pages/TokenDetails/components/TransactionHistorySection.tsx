@@ -28,6 +28,7 @@ export const TransactionHistorySection: React.FC = () => {
     startTime: null,
     endTime: null,
   }); // Status 2 -> all, TxType 0 -> all
+  const [dateType, setDateType] = useState<'select' | 'calendar'>('select');
 
   const { selectedAddress } = useSelectedAddress();
 
@@ -76,12 +77,14 @@ export const TransactionHistorySection: React.FC = () => {
 
       <FilterModal
         initFilter={filter}
+        initDateType={dateType}
         isOpen={showFilterModal}
         onClose={() => setShowFilterModal(false)}
         onFilter={({ txStatus, txType, startTime, endTime }) => {
           setFilter({ txStatus, txType, startTime, endTime });
           setShowFilterModal(false);
         }}
+        onChangeDateType={(type) => setDateType(type)}
       />
     </>
   );

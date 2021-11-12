@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import PickerPanel from 'rc-picker/lib/PickerPanel';
 import 'rc-picker/assets/index.css';
@@ -7,101 +7,181 @@ import momentGenerateConfig from 'rc-picker/lib/generate/moment';
 import styled from 'styled-components';
 import { colors } from 'theme/colors';
 
-import { Flex } from 'app/components/Box';
+import { Box, Flex } from 'app/components/Box';
 import { Button } from 'app/components/Button';
 import { Text } from 'app/components/Text';
 import { CalendarIcon, CloseIcon, SwapRightIcon } from 'app/components/Svg';
 import { useOnClickOutside } from 'hooks/useOnClickOutside';
 
-export const DateRangePicker: React.FC = () => {
-  const ref = useRef();
-  const [startTime, setStartTime] = useState<number>();
-  const [endTime, setEndTime] = useState<number>();
-  const [isStartTime, setIsStartTime] = useState<boolean>(false);
-  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+interface Props {
+  values: { startTime: number; endTime: number };
+  onCalendarChange: (startTime: number, endTime: number) => void;
+}
 
-  useOnClickOutside(ref, () => setShowDatePicker(false));
+export const DateRangePicker: React.FC<Props> = React.memo(
+  ({ values, onCalendarChange }) => {
+    const ref = useRef();
+    const [startTime, setStartTime] = useState<number>();
+    const [endTime, setEndTime] = useState<number>();
+    const [isStartTime, setIsStartTime] = useState<boolean>(false);
+    const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
-  return (
-    <>
-      <DateInputWrapper ref={ref}>
-        <Flex alignItems="center">
-          <Button
-            p="0px"
-            onClick={() => {
-              setShowDatePicker(true);
-              setIsStartTime(true);
-            }}
-          >
-            <Text color={startTime ? colors.gray9 : colors.gray5}>
-              {startTime
-                ? moment(startTime).format('YYYY-MM-DD')
-                : 'Select time'}
-            </Text>
-          </Button>
+    useOnClickOutside(ref, () => setShowDatePicker(false));
 
-          <SwapRightIcon
-            color={startTime || endTime ? colors.primary : colors.gray5}
-            mx="12px"
-          />
+    useEffect(() => {
+      setStartTime(values.startTime);
+      setEndTime(values.endTime);
+    }, [values.startTime, values.endTime]);
 
-          <Button
-            p="0px"
-            onClick={() => {
-              setShowDatePicker(true);
-              setIsStartTime(false);
-            }}
-          >
-            <Text color={endTime ? colors.gray9 : colors.gray5}>
-              {endTime ? moment(endTime).format('YYYY-MM-DD') : 'Select time'}
-            </Text>
-          </Button>
-        </Flex>
+    return (
+      <Box ref={ref}>
+        <DateInputWrapper ref={ref}>
+          <Flex alignItems="center">
+            <Button
+              p="0px"
+              onClick={() => {
+                setShowDatePicker(true);
+                setIsStartTime(true);
+              }}
+            >
+              <Label
+                active={showDatePicker && isStartTime}
+                color={startTime ? colors.gray9 : colors.gray5}
+              >
+                {startTime
+                  ? moment(startTime).format('YYYY-MM-DD')
+                  : 'Select time'}
+              </Label>
+            </Button>
 
-        <StyledButton>
-          <Button display="flex" p="0px">
-            <CalendarIcon
-              className="calendar-icon"
-              width="16px"
-              color={colors.gray5}
+            <SwapRightIcon
+              color={startTime || endTime ? colors.primary : colors.gray5}
+              mx="12px"
             />
-            <CloseIcon
-              display="none"
-              className="clear-icon"
-              width="12px"
-              color={colors.gray5}
-            />
-          </Button>
-        </StyledButton>
-      </DateInputWrapper>
-      {showDatePicker && (
-        <PickerPanelWrapper ref={ref}>
-          <PickerPanel
-            value={isStartTime ? moment(startTime) : moment(endTime)}
-            disabledDate={(date) => {
-              return (
-                !isStartTime &&
-                startTime &&
-                date.valueOf() < moment(startTime).valueOf()
-              );
-            }}
-            generateConfig={momentGenerateConfig}
-            picker="date"
-            locale={enUS}
-            onChange={(value) => {
-              isStartTime
-                ? setStartTime(value.valueOf())
-                : setEndTime(value.valueOf());
 
-              setShowDatePicker(false);
-            }}
-            showToday
-          />
-        </PickerPanelWrapper>
-      )}
-    </>
-  );
-};
+            <Button
+              p="0px"
+              onClick={() => {
+                setShowDatePicker(true);
+                setIsStartTime(false);
+              }}
+            >
+              <Label
+                active={showDatePicker && !isStartTime}
+                color={endTime ? colors.gray9 : colors.gray5}
+              >
+                {endTime ? moment(endTime).format('YYYY-MM-DD') : 'Select time'}
+              </Label>
+            </Button>
+          </Flex>
+
+          <StyledButton>
+            <Button
+              display="flex"
+              p="0px"
+              onClick={() => {
+                if (startTime || endTime) {
+                  setStartTime(null);
+                  setEndTime(null);
+                  onCalendarChange(null, null);
+                  setShowDatePicker(false);
+                }
+              }}
+            >
+              <CalendarIcon
+                className="calendar-icon"
+                width="16px"
+                color={colors.gray5}
+              />
+              <CloseIcon
+                display="none"
+                className="clear-icon"
+                width="12px"
+                color={colors.gray5}
+              />
+            </Button>
+          </StyledButton>
+        </DateInputWrapper>
+        {showDatePicker && (
+          <PickerPanelWrapper>
+            <PickerPanel
+              value={
+                isStartTime && startTime
+                  ? moment(startTime)
+                  : endTime
+                  ? moment(endTime)
+                  : null
+              }
+              disabledDate={(date) => {
+                const endCondition =
+                  !isStartTime &&
+                  startTime &&
+                  date.valueOf() < moment(startTime).valueOf();
+
+                const startCondition =
+                  isStartTime &&
+                  endTime &&
+                  date.valueOf() > moment(endTime).valueOf();
+
+                return (
+                  startCondition ||
+                  endCondition ||
+                  date.valueOf() > moment().valueOf()
+                );
+              }}
+              generateConfig={momentGenerateConfig}
+              picker="date"
+              locale={enUS}
+              onChange={(value) => {
+                const st = isStartTime ? value.valueOf() : startTime;
+                const et = !isStartTime ? value.valueOf() : endTime;
+
+                setStartTime(st);
+                setEndTime(et);
+
+                onCalendarChange(st, et);
+
+                setShowDatePicker(false);
+              }}
+              dateRender={(currentDate, today) => {
+                const isRange =
+                  startTime && endTime
+                    ? currentDate.valueOf() > moment(startTime).valueOf() &&
+                      currentDate.valueOf() < moment(endTime).valueOf()
+                    : false;
+
+                return (
+                  <div
+                    className={`rc-picker-cell-inner ${
+                      isRange ? 'rc-picker-cell-inner-range' : ''
+                    }`}
+                  >
+                    {currentDate.format('DD')}
+                  </div>
+                );
+              }}
+              showToday
+            />
+          </PickerPanelWrapper>
+        )}
+      </Box>
+    );
+  },
+  areEqual
+);
+
+function areEqual(prevProps, nextProps) {
+  if (JSON.stringify(prevProps.values) === JSON.stringify(nextProps.values)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+const Label = styled(Text)<{ active?: boolean }>`
+  transition: all 0.3s;
+  color: ${({ active }) => active && colors.primary};
+`;
 
 const DateInputWrapper = styled(Flex)`
   position: relative;
@@ -185,6 +265,18 @@ const PickerPanelWrapper = styled(Flex)`
 
     .rc-picker-cell-in-view {
       color: ${colors.gray9};
+    }
+
+    .rc-picker-cell-disabled {
+      .rc-picker-cell-inner {
+        &:hover {
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .rc-picker-cell-inner-range {
+      border: 1px solid ${colors.secondary};
     }
 
     .rc-picker-cell-today > .rc-picker-cell-inner {
