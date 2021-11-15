@@ -21,6 +21,7 @@ var alias = {
   'utils/message': path.join(__dirname, 'src', 'utils', 'message.ts'),
   'utils/strings': path.join(__dirname, 'src', 'utils', 'strings.ts'),
   'utils/number': path.join(__dirname, 'src', 'utils', 'number.ts'),
+  'utils/drawAvatar': path.join(__dirname, 'src', 'utils', 'drawAvatar.ts'),
   'theme/colors': path.join(__dirname, 'src', 'theme', 'colors.ts'),
   'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
   'constants/values': path.join(__dirname, 'src', 'constants', 'values.ts'),
