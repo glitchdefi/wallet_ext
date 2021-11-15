@@ -18,7 +18,7 @@ const NeedHelpContact: React.FC = () => {
       </Text>
       <StyledText
         as="a"
-        href="https://google.com"
+        href="https://glitch.finance/contact/"
         target="_blank"
         ml="6px"
         fontSize="12px"

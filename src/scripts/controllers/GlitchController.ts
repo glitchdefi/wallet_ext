@@ -7,6 +7,7 @@ import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
 
 // Types
 import { RootState } from 'types';
+import { getAvatar } from 'utils/drawAvatar';
 
 log.setDefaultLevel('debug');
 export class GlitchController {
@@ -49,6 +50,8 @@ export class GlitchController {
         wallet?.address
       );
 
+      const avatar = getAvatar();
+
       // Update to store
       await this.appStateController.setEncryptKey(encryptKey);
 
@@ -62,7 +65,7 @@ export class GlitchController {
             address: wallet.address,
             balance: 0,
             name: 'Account 1',
-            avatar: null,
+            avatar,
             privateKey: encryptPrivateKey,
             createdAt: moment().valueOf(),
           },
@@ -177,6 +180,8 @@ export class GlitchController {
       );
       const balance = await this.glitchWeb3.getBalance(wallet?.address);
 
+      const avatar = getAvatar();
+
       // Update to store
       await this.appStateController.setEncryptKey(encryptKey);
 
@@ -190,7 +195,7 @@ export class GlitchController {
             address: wallet.address,
             balance,
             name: 'Account 1',
-            avatar: null,
+            avatar,
             privateKey: encryptPrivateKey,
             createdAt: moment().valueOf(),
           },
@@ -270,6 +275,7 @@ export class GlitchController {
       );
 
       const oldAccounts = await this.appStateController.getAccounts();
+      const avatar = getAvatar();
 
       const newState = await this.appStateController.updateState('wallet', {
         selectedAddress: account.address,
@@ -277,7 +283,7 @@ export class GlitchController {
           [account.address]: {
             name,
             address: account.address,
-            avatar: null,
+            avatar,
             balance: 0,
             privateKey: encryptPrivateKey,
             createdAt: moment().valueOf(),
@@ -343,6 +349,7 @@ export class GlitchController {
         );
 
         this.glitchWeb3.importAccountToWeb3(privateKey);
+        const avatar = getAvatar();
 
         newState = await this.appStateController.updateState('wallet', {
           selectedAddress: address,
@@ -351,7 +358,7 @@ export class GlitchController {
               name,
               address,
               balance,
-              avatar: null,
+              avatar,
               privateKey: encryptPrivateKey,
               createdAt: moment().valueOf(),
             },

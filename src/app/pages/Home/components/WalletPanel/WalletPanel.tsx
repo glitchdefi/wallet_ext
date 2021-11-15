@@ -43,7 +43,7 @@ export const WalletPanel: React.FC = () => {
 
   return (
     <Box height="540.94px" overflowY="scroll">
-      <Header />
+      <Header account={accounts[selectedAddress]} />
 
       {!isBackUp && (
         <BackedUpView onBackup={() => history.push(Routes.backUp)} />

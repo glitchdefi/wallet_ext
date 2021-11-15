@@ -33,7 +33,11 @@ const TokenDetails: React.FC = () => {
 
   return (
     <PageLayout>
-      <Header hasBackButton hasBottomBorder />
+      <Header
+        account={accounts[selectedAddress]}
+        hasBackButton
+        hasBottomBorder
+      />
 
       <Flex height="527px" flexDirection="column" px="16px" overflowY="scroll">
         <Flex mt="26px" flexDirection="column" alignItems="center">

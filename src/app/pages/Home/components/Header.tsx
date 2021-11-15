@@ -16,13 +16,19 @@ import {
 import { ManageAccountModal } from './ManageAccountModal';
 import { Text } from 'app/components/Text';
 interface Props {
+  account?: { avatar?: string };
   hasBackButton?: boolean;
   hasBottomBorder?: boolean;
 }
 
-export const Header: React.FC<Props> = ({ hasBackButton, hasBottomBorder }) => {
+export const Header: React.FC<Props> = ({
+  account,
+  hasBackButton,
+  hasBottomBorder,
+}) => {
   useWalletSlice();
   const history = useHistory();
+  const { avatar } = account;
 
   const { onLockWallet } = useWalletActionHandlers();
 
@@ -72,7 +78,14 @@ export const Header: React.FC<Props> = ({ hasBackButton, hasBottomBorder }) => {
             ml="24px"
             onClick={() => setIsOpenModal((prev) => !prev)}
           >
-            <AvatarIcon width="40px" />
+            <Flex
+              position="relative"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <AvatarIcon width="40px" />
+              <img style={{ position: 'absolute' }} src={avatar} width="32px" />
+            </Flex>
           </Button>
         </Flex>
       </Flex>
