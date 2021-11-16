@@ -6,7 +6,7 @@ import QRCode from 'qrcode.react';
 
 import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
-import { useSelectedAddress, useWalletSlice } from 'state/wallet/hooks';
+import { useSelectedAddress } from 'state/wallet/hooks';
 
 import { Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -15,8 +15,6 @@ import { Button } from 'app/components/Button';
 import { CheckIcon, CopyIcon, LeftArrowIcon } from 'app/components/Svg';
 
 const ReceiveToken: React.FC = () => {
-  useWalletSlice();
-
   const history = useHistory();
   const { t } = useTranslation();
 
@@ -65,10 +63,7 @@ const ReceiveToken: React.FC = () => {
         </Flex>
 
         <StyledBorder>
-          <QRCode
-            value={selectedAddress}
-            size={160}
-          />
+          <QRCode value={selectedAddress} size={160} />
         </StyledBorder>
 
         <Flex

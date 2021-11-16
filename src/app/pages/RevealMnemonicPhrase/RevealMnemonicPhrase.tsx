@@ -8,10 +8,8 @@ import { colors } from 'theme/colors';
 import {
   useSeedPhrases,
   useWalletActionHandlers,
-  useWalletSlice,
   useWrongPassword,
 } from 'state/wallet/hooks';
-import { useApplicationSlice } from 'state/application/hooks';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -25,9 +23,6 @@ import { MnemonicPhraseItem } from '../CreateWallet/components/MnemonicPhraseIte
 import { useMakeTextFile } from 'hooks/useMakeTextFile';
 
 const RevealMnemonicPhrase: React.FC = () => {
-  useWalletSlice();
-  useApplicationSlice();
-
   const history = useHistory();
 
   const { isWrongPassword } = useWrongPassword();

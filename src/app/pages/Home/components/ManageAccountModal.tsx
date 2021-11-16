@@ -7,9 +7,7 @@ import {
   useAccountActionHandlers,
   useAccounts,
   useSelectedAddress,
-  useWalletSlice,
 } from 'state/wallet/hooks';
-import { useApplicationSlice } from 'state/application/hooks';
 
 import { truncateAddress } from 'utils/strings';
 import { Routes } from 'constants/routes';
@@ -27,9 +25,6 @@ interface Props {
 }
 
 export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
-  useApplicationSlice();
-  useWalletSlice();
-
   const history = useHistory();
   const { onChangeAccount } = useAccountActionHandlers();
   const { selectedAddress } = useSelectedAddress();

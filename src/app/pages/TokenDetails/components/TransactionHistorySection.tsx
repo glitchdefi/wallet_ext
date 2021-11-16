@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-  useTransactions,
-  useTransactionsSlice,
-} from 'state/transactions/hooks';
+import { useTransactions } from 'state/transactions/hooks';
 
 import { colors } from 'theme/colors';
 import { PAGE_SIZE } from 'constants/values';
-import { useWalletSlice, useSelectedAddress } from 'state/wallet/hooks';
+import { useSelectedAddress } from 'state/wallet/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -17,9 +14,6 @@ import { TransactionList } from './TransactionList';
 import { FilterModal } from './FilterModal';
 
 export const TransactionHistorySection: React.FC = () => {
-  useWalletSlice();
-  useTransactionsSlice();
-
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [filter, setFilter] = useState({

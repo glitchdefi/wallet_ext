@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Router, Route, Switch } from 'react-router';
+import { Router, Route, Switch, useHistory } from 'react-router';
 import { createMemoryHistory } from 'history';
 
 import { GlobalStyles } from '../theme/GlobalStyle';
@@ -9,11 +9,9 @@ import { Routes } from '../constants/routes';
 import { ToastListener } from 'contexts/ToastsContext';
 
 // Hooks
-import {
-  useApplicationSlice,
-  useLoadingApplication,
-} from 'state/application/hooks';
-import { useWalletActionHandlers, useWalletSlice } from 'state/wallet/hooks';
+import { useLoadingApplication } from 'state/application/hooks';
+import { useWalletActionHandlers } from 'state/wallet/hooks';
+import { useAutoLockTimer } from 'state/settings/hooks';
 
 // Components
 import { ContainerLayout } from './layouts';
@@ -43,13 +41,18 @@ import { SendTokenPage } from './pages/SendToken';
 const history = createMemoryHistory();
 
 export const App: React.FC = () => {
-  useWalletSlice();
-  useApplicationSlice();
   const { isLoading } = useLoadingApplication();
-
-  const { getBalance, getTokenPrice } = useWalletActionHandlers();
+  const { onLockWallet, getBalance, getTokenPrice } = useWalletActionHandlers();
+  const { openTime, duration } = useAutoLockTimer();
 
   const [timeQuery, setTimeQuery] = useState(0);
+
+  useEffect(() => {
+    if (duration && new Date().getTime() - openTime > duration) {
+      onLockWallet();
+      history.push(Routes.unlock);
+    }
+  }, [duration]);
 
   useEffect(() => {
     const job = setInterval(() => {

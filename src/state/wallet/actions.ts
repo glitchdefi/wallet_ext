@@ -91,6 +91,7 @@ export const lockWalletAction =
 
       const { state } = data || {};
 
+      console.log(state);
       if (state?.wallet) {
         dispatch(setWalletState(state.wallet));
         history.push(Routes.unlock);

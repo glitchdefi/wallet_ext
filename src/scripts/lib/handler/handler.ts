@@ -340,6 +340,21 @@ export const fetchTransactions = async (
   }
 };
 
+export const setAutoLockTimer = async (
+  payload: { openTime?: number; duration?: number },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const state = await controller.setAutoLockTimer(payload);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const handleDefault = (request: Request, sendResponse: SendResponse) => {
   const response = {
     ...errorResponse,

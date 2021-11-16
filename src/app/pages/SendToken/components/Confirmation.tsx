@@ -5,7 +5,6 @@ import { GlitchToken } from '../../../../constants/tokens';
 import { colors } from 'theme/colors';
 import { truncateAddress } from 'utils/strings';
 import {
-  useWalletSlice,
   useSelectedAddress,
   useTokenPrice,
   useWalletActionHandlers,
@@ -19,15 +18,12 @@ import { Text } from 'app/components/Text';
 import { GlitchLogo } from 'app/components/Image';
 import { Label, PasswordInput } from 'app/components/Form';
 import { Button, ButtonShadow } from 'app/components/Button';
-import { useApplicationSlice } from 'state/application/hooks';
 interface Props {
   amount?: any;
   toAddress?: any;
 }
 
 export const Confirmation: React.FC<Props> = ({ amount, toAddress }) => {
-  useWalletSlice();
-  useApplicationSlice();
   const [password, setPassword] = useState<string>('');
 
   const { selectedAddress } = useSelectedAddress();

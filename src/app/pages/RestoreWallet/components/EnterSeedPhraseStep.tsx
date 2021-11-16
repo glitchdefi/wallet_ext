@@ -8,10 +8,8 @@ import { colors } from 'theme/colors';
 // Hooks
 import {
   useWalletActionHandlers,
-  useWalletSlice,
   useIsValidSeedPhrase,
 } from 'state/wallet/hooks';
-import { useApplicationSlice } from 'state/application/hooks';
 
 import { Input, Label } from 'app/components/Form';
 import { Box, Flex } from 'app/components/Box';
@@ -28,9 +26,6 @@ export const EnterSeedPhraseStep: React.FC<Props> = ({
   defaultSeedPhrase,
   onNextStep,
 }) => {
-  useApplicationSlice();
-  useWalletSlice();
-
   const [seedPhrase, setSeedPhrase] = useState<string>(defaultSeedPhrase);
 
   const { isValidSeedPhrase } = useIsValidSeedPhrase();

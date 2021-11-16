@@ -5,21 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { messages } from '../messages';
 import { Routes } from 'constants/routes';
 
-import {
-  useAccountActionHandlers,
-  useAccounts,
-  useWalletSlice,
-} from 'state/wallet/hooks';
-import { useApplicationSlice } from 'state/application/hooks';
+import { useAccountActionHandlers, useAccounts } from 'state/wallet/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Input, Label } from 'app/components/Form';
 import { Button, ButtonShadow } from 'app/components/Button';
 
 export const CreateAccountPanel: React.FC = () => {
-  useApplicationSlice();
-  useWalletSlice();
-
   const history = useHistory();
   const { t } = useTranslation();
 

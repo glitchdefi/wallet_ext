@@ -6,7 +6,6 @@ import { colors } from 'theme/colors';
 import {
   useActiveTabHome,
   useAppActionHandlers,
-  useApplicationSlice,
 } from 'state/application/hooks';
 
 // Components
@@ -16,8 +15,6 @@ import { WalletPanel } from './components/WalletPanel/WalletPanel';
 import { SettingsPanel } from './components/SettingsPanel/SettingsPanel';
 
 const Home: React.FC = () => {
-  useApplicationSlice();
-
   const { onSetActiveTabHome } = useAppActionHandlers();
   const { activeTabHomePage } = useActiveTabHome();
 

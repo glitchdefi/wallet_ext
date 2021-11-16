@@ -40,7 +40,7 @@ export class ExtensionStore {
    * @private
    * @returns the key-value map from local storage
    */
-  getAllStorageData(): Promise<object> {
+  getAllStorageData(): Promise<any> {
     const { local } = extension.storage;
     return new Promise((resolve, reject) => {
       local.get(null, (result: any) => {

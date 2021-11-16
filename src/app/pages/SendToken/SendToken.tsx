@@ -3,7 +3,6 @@ import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
-import { useTransactionsSlice } from 'state/transactions/hooks';
 
 import { PageLayout } from 'app/layouts';
 import { Flex } from 'app/components/Box';
@@ -14,7 +13,6 @@ import { Confirmation } from './components/Confirmation';
 import { SendForm } from './components/SendForm';
 
 const SendToken: React.FC = () => {
-  useTransactionsSlice();
   const history = useHistory();
 
   const [amount, setAmount] = useState('');

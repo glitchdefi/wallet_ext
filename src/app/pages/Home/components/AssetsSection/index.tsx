@@ -3,7 +3,6 @@ import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
 import {
-  useWalletSlice,
   useSelectedAddress,
   useAccounts,
   useTokenPrice,
@@ -17,7 +16,6 @@ import { AssetItem } from './AssetItem';
 import { Routes } from 'constants/routes';
 
 export const AssetsSection: React.FC = () => {
-  useWalletSlice();
   const history = useHistory();
 
   const { selectedAddress } = useSelectedAddress();

@@ -1,20 +1,14 @@
 import { useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
-import { useInjectReducer } from 'utils/redux-injectors';
 import { RootState } from 'types';
 import { useToast } from 'hooks/useToast';
-import { slice } from './reducer';
 import * as actions from './actions';
 
 const useWalletSelector = () =>
   useSelector((state: RootState) => {
     return state.wallet;
   });
-
-export const useWalletSlice = () => {
-  useInjectReducer({ key: slice.name, reducer: slice.reducer });
-};
 
 export const useIsInitialized = () => {
   const { isInitialized } = useWalletSelector();

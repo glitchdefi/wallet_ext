@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { useWalletActionHandlers, useWalletSlice } from 'state/wallet/hooks';
+import { useWalletActionHandlers } from 'state/wallet/hooks';
 import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
 
@@ -26,7 +26,6 @@ export const Header: React.FC<Props> = ({
   hasBackButton,
   hasBottomBorder,
 }) => {
-  useWalletSlice();
   const history = useHistory();
   const { avatar } = account;
 

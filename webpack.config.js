@@ -210,6 +210,13 @@ var alias = {
     'transactions',
     'hooks.ts'
   ),
+  'state/settings/hooks': path.join(
+    __dirname,
+    'src',
+    'state',
+    'settings',
+    'hooks.ts'
+  ),
 };
 
 // load the secrets

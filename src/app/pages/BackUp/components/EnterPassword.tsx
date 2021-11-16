@@ -4,11 +4,7 @@ import { useHistory } from 'react-router';
 import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
 
-import {
-  useWalletActionHandlers,
-  useWalletSlice,
-  useWrongPassword,
-} from 'state/wallet/hooks';
+import { useWalletActionHandlers, useWrongPassword } from 'state/wallet/hooks';
 
 // Components
 import { Flex, Box } from 'app/components/Box';
@@ -22,7 +18,6 @@ interface Props {
 }
 
 export const EnterPassword: React.FC<Props> = ({ initValue, onChange }) => {
-  useWalletSlice();
   const history = useHistory();
 
   const [password, setPassword] = useState(initValue);

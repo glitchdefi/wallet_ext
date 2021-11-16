@@ -15,10 +15,8 @@ import {
   useSelectedAddress,
   useShowPrivateKey,
   useWalletActionHandlers,
-  useWalletSlice,
   useWrongPassword,
 } from 'state/wallet/hooks';
-import { useApplicationSlice } from 'state/application/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -29,9 +27,6 @@ import { Input, Label, PasswordInput } from 'app/components/Form';
 import { MessageBox } from 'app/components/MessageBox';
 
 const ShowPrivateKeys: React.FC = () => {
-  useWalletSlice();
-  useApplicationSlice();
-
   const history = useHistory();
   const { t } = useTranslation();
 

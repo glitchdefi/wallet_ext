@@ -11,12 +11,8 @@ import {
   useWalletActionHandlers,
   useSeedPhrases,
   useIsInitialized,
-  useWalletSlice,
 } from 'state/wallet/hooks';
-import {
-  useApplicationSlice,
-  useLoadingApplication,
-} from 'state/application/hooks';
+import { useLoadingApplication } from 'state/application/hooks';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -28,9 +24,6 @@ import { StepProgressLayout } from '../../components/StepProgressLayout';
 const MAX_STEP = 3;
 
 const CreateWallet: React.FC = () => {
-  useWalletSlice();
-  useApplicationSlice();
-
   const history = useHistory();
   const { t } = useTranslation();
 

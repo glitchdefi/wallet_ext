@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -7,13 +7,7 @@ import logo from '../../../assets/img/gl_logo.png';
 import { messages } from './messages';
 import { Routes } from 'constants/routes';
 
-import {
-  useSeedPhrases,
-  useWalletActionHandlers,
-  useWalletSlice,
-  useWrongPassword,
-} from 'state/wallet/hooks';
-import { useApplicationSlice } from 'state/application/hooks';
+import { useWalletActionHandlers, useWrongPassword } from 'state/wallet/hooks';
 
 // Theme
 import { colors } from 'theme/colors';
@@ -27,9 +21,6 @@ import { Label, PasswordInput } from 'app/components/Form';
 import { DownArrowIcon } from 'app/components/Svg';
 
 const Unlock: React.FC = () => {
-  useWalletSlice();
-  useApplicationSlice();
-
   const { t } = useTranslation();
   const history = useHistory();
 

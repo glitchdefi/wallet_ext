@@ -5,13 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { messages } from './messages';
 
 // Hooks
-import {
-  useStepTitleDesc,
-  useWalletActionHandlers,
-  useWalletSlice,
-} from 'state/wallet/hooks';
-
-import { useApplicationSlice } from 'state/application/hooks';
+import { useStepTitleDesc, useWalletActionHandlers } from 'state/wallet/hooks';
 
 import { PageLayout } from 'app/layouts';
 import { StepProgressLayout } from 'app/components/StepProgressLayout';
@@ -21,9 +15,6 @@ import { CreatePasswordStep } from '../CreateWallet/components/CreateStep/Create
 const MAX_STEP = 2;
 
 const RestoreWallet: React.FC = () => {
-  useWalletSlice();
-  useApplicationSlice();
-
   const history = useHistory();
   const { t } = useTranslation();
 

@@ -4,7 +4,6 @@ import { GlitchToken } from '../../../../constants/tokens';
 
 import { colors } from 'theme/colors';
 import {
-  useWalletSlice,
   useSelectedAddress,
   useAccounts,
   useTokenPrice,
@@ -25,8 +24,6 @@ interface Props {
 }
 
 export const SendForm: React.FC<Props> = ({ initData, onNext }) => {
-  useWalletSlice();
-
   const { selectedAddress } = useSelectedAddress();
   const { accounts } = useAccounts();
   const { priceUsd } = useTokenPrice();

@@ -11,7 +11,6 @@ import {
   useAccountActionHandlers,
   useAccounts,
   useSelectedAddress,
-  useWalletSlice,
 } from 'state/wallet/hooks';
 
 import { Box, Flex } from 'app/components/Box';
@@ -23,7 +22,6 @@ import { messages } from './messages';
 import { Input } from 'app/components/Form';
 
 const AccountDetails: React.FC = () => {
-  useWalletSlice();
   const history = useHistory();
   const { t } = useTranslation();
 

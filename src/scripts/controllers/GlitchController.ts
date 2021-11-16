@@ -134,10 +134,19 @@ export class GlitchController {
 
     if (encryptKey) {
       const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
+      const settings = await this.appStateController.getSettingsState();
 
       const newState = await this.appStateController.updateState('wallet', {
         ...state,
         isLocked: false,
+      });
+
+      // Reset open time
+      await this.appStateController.updateState('settings', {
+        autoLock: {
+          ...settings.autoLock,
+          openTime: new Date().getTime(),
+        },
       });
 
       return {
@@ -441,12 +450,15 @@ export class GlitchController {
   ): Promise<object> {
     try {
       const encryptKey = await this.appStateController.getEncryptKey();
+      const addressSelected =
+        await this.appStateController.getAddressSelected();
 
       if (encryptKey) {
         const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
 
         if (seedPhrase) {
           const transaction = await this.glitchWeb3.transferToken(
+            addressSelected,
             toAddress,
             amount
           );
@@ -549,6 +561,34 @@ export class GlitchController {
       return res?.data;
     } catch (error) {
       log.info('getTransactionHistoryError', error);
+    }
+  }
+
+  //=============================================================================
+  // SETTINGS METHODS
+  //=============================================================================
+  /**
+   *
+   * @returns
+   */
+  async setAutoLockTimer(autoLock?: {
+    openTime?: number;
+    duration?: number;
+  }): Promise<object> {
+    try {
+      const { openTime, duration } = autoLock || {};
+      const settings = await this.appStateController.getSettingsState();
+
+      const newState = await this.appStateController.updateState('settings', {
+        autoLock: {
+          openTime,
+          duration: duration || settings.autoLock.duration,
+        },
+      });
+
+      return { ...newState };
+    } catch (error) {
+      throw error;
     }
   }
 

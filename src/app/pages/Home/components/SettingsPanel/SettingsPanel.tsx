@@ -5,7 +5,8 @@ import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
 import { LOCK_TIME_LIST } from 'constants/values';
 
-import { useIsBackup, useWalletSlice } from 'state/wallet/hooks';
+import { useIsBackup } from 'state/wallet/hooks';
+import { useAutoLockTimer } from 'state/settings/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -23,10 +24,11 @@ import { Dropdown } from 'app/components/Dropdown';
 import { SettingItem } from './SettingItem';
 
 export const SettingsPanel: React.FC = () => {
-  useWalletSlice();
   const history = useHistory();
 
   const { isBackUp } = useIsBackup();
+  const { duration, onSetAutoLockTimer } = useAutoLockTimer();
+  const activeTimer = LOCK_TIME_LIST.find((o) => o.time === duration);
 
   return (
     <Box minHeight="600px" overflowY="scroll">
@@ -55,9 +57,11 @@ export const SettingsPanel: React.FC = () => {
           actionLabel="USD"
           rightComponent={
             <Dropdown
-              onSelect={(eventKey) => {
-                // if (eventKey == 0) history.push(Routes.accountDetails);
-                // if (eventKey == 1) history.push(Routes.showPrivateKeys);
+              showChecked
+              activeKey={activeTimer?.key}
+              onSelect={(key) => {
+                const { time } = LOCK_TIME_LIST[key];
+                onSetAutoLockTimer(new Date().getTime(), time);
               }}
               customToggle={
                 <Flex
@@ -66,7 +70,7 @@ export const SettingsPanel: React.FC = () => {
                   border={`1px solid ${colors.gray8}`}
                   alignItems="center"
                 >
-                  <Text mr="21px">Never</Text>
+                  <Text mr="21px">{activeTimer?.label}</Text>
                   <DownArrowIcon color={colors.gray9} />
                 </Flex>
               }

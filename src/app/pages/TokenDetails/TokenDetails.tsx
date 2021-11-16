@@ -4,7 +4,6 @@ import { Routes } from 'constants/routes';
 
 import { colors } from 'theme/colors';
 import {
-  useWalletSlice,
   useSelectedAddress,
   useAccounts,
   useTokenPrice,
@@ -20,7 +19,6 @@ import { Button } from 'app/components/Button';
 import { TransactionHistorySection } from './components/TransactionHistorySection';
 
 const TokenDetails: React.FC = () => {
-  useWalletSlice();
   const history = useHistory();
 
   const { selectedAddress } = useSelectedAddress();

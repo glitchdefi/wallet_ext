@@ -192,17 +192,23 @@ export class GlitchWeb3 {
 
   /**
    *
+   * @param fromAddress
    * @param toAddress
    * @param _amount
    * @returns
    */
-  async transferToken(toAddress: string, _amount: any): Promise<any> {
+  async transferToken(
+    fromAddress: string,
+    toAddress: string,
+    _amount: any
+  ): Promise<any> {
     try {
       const fee = web3Utils.toWei(GlitchToken.fee.toString());
       const amount = web3Utils.toWei(_amount).toString();
 
       const result = await this.glitchWeb3.transfer(toAddress, amount, {
         fee,
+        from: fromAddress,
       });
 
       console.log('Transfer success', result);

@@ -3,10 +3,8 @@ import React, { useEffect, useState } from 'react';
 import {
   useSeedPhrases,
   useWalletActionHandlers,
-  useWalletSlice,
   useWrongPassword,
 } from 'state/wallet/hooks';
-import { useApplicationSlice } from 'state/application/hooks';
 
 import { Flex, Box } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -27,9 +25,6 @@ export const EnterPassword: React.FC<Props> = ({
   onShow,
   onCancel,
 }) => {
-  useApplicationSlice();
-  useWalletSlice();
-
   const { isWrongPassword } = useWrongPassword();
   const { seedPhrases } = useSeedPhrases();
   const {

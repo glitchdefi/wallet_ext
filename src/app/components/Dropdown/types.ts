@@ -13,4 +13,5 @@ export interface CustomDropdownProps {
   customToggle?: React.ReactNode;
   align?: 'start' | 'end';
   activeKey?: string | number;
+  showChecked?: boolean;
 }

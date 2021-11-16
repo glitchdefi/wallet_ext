@@ -9,7 +9,6 @@ import {
   useIsBackup,
   useSelectedAddress,
   useTokenPrice,
-  useWalletSlice,
 } from 'state/wallet/hooks';
 
 import { truncateAddress } from 'utils/strings';
@@ -28,7 +27,6 @@ import { Header } from '../Header';
 import { BackedUpView } from './BackedUpView';
 
 export const WalletPanel: React.FC = () => {
-  useWalletSlice();
   const history = useHistory();
 
   const { selectedAddress } = useSelectedAddress();

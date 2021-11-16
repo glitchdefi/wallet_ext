@@ -148,6 +148,11 @@ function handleChromeListeners(controller: GlitchController) {
                 Handler.fetchTransactions(payload, controller, sendResponse);
                 break;
 
+              // Settings
+              case MessageTypes.BG_SETTINGS_SET_AUTO_LOCK_TIMER:
+                Handler.setAutoLockTimer(payload, controller, sendResponse);
+                break;
+
               default:
                 Handler.handleDefault(request, sendResponse);
             }

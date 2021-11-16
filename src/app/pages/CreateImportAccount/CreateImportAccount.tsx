@@ -7,7 +7,6 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import {
   useAccountActionHandlers,
   useIsInvalidPrivateKey,
-  useWalletSlice,
 } from 'state/wallet/hooks';
 
 import { messages } from './messages';
@@ -24,7 +23,6 @@ import { CreateAccountPanel } from './components/CreateAccountPanel';
 import { ImportPrivateKeyPanel } from './components/ImportPrivateKeyPanel';
 
 const CreateImportAccount: React.FC = () => {
-  useWalletSlice();
   const history = useHistory();
   const location = useLocation<{ activeTab?: number }>();
 

@@ -8,7 +8,6 @@ import { colors } from 'theme/colors';
 import {
   useSeedPhrases,
   useWalletActionHandlers,
-  useWalletSlice,
   useStepTitleDesc,
 } from 'state/wallet/hooks';
 
@@ -21,13 +20,10 @@ import { LeftArrowIcon } from 'app/components/Svg';
 import { Text } from 'app/components/Text';
 import { Button } from 'app/components/Button';
 import { EnterPassword } from './components/EnterPassword';
-import { useApplicationSlice } from 'state/application/hooks';
 import { MnemonicPhraseStep } from '../CreateWallet/components/CreateStep/MnemonicPhraseStep';
 import { VerifyMnemonicStep } from '../CreateWallet/components/CreateStep/VerifyMnemonicStep';
 
 const BackUp: React.FC = () => {
-  useApplicationSlice();
-  useWalletSlice();
   const history = useHistory();
   const { t } = useTranslation();
 

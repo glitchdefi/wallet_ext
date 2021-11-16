@@ -11,9 +11,7 @@ import {
   useAccountActionHandlers,
   useAccounts,
   useIsInvalidPrivateKey,
-  useWalletSlice,
 } from 'state/wallet/hooks';
-import { useApplicationSlice } from 'state/application/hooks';
 
 import { colors } from 'theme/colors';
 
@@ -25,9 +23,6 @@ import { Text } from 'app/components/Text';
 import { SnippetsIcon } from 'app/components/Svg';
 
 export const ImportPrivateKeyPanel: React.FC = () => {
-  useApplicationSlice();
-  useWalletSlice();
-
   const history = useHistory();
   const { t } = useTranslation();
 

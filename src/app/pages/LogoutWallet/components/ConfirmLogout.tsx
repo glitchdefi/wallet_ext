@@ -4,8 +4,7 @@ import React from 'react';
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { Button } from 'app/components/Button';
-import { useApplicationSlice } from 'state/application/hooks';
-import { useWalletActionHandlers, useWalletSlice } from 'state/wallet/hooks';
+import { useWalletActionHandlers } from 'state/wallet/hooks';
 
 interface Props {
   password: string;
@@ -13,9 +12,6 @@ interface Props {
 }
 
 export const ConfirmLogout: React.FC<Props> = ({ password, onCancel }) => {
-  useApplicationSlice();
-  useWalletSlice();
-
   const { onLogoutWallet } = useWalletActionHandlers();
 
   return (

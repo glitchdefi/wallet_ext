@@ -14,6 +14,7 @@ export class AppStateController {
 
     const defaultState: RootState = {
       application: {
+        activeTabHomePage: 0,
         isLoading: false,
       },
       wallet: {
