@@ -10,7 +10,7 @@ import { ToastListener } from 'contexts/ToastsContext';
 
 // Hooks
 import { useLoadingApplication } from 'state/application/hooks';
-import { useWalletActionHandlers } from 'state/wallet/hooks';
+import { useIsInitialized, useWalletActionHandlers } from 'state/wallet/hooks';
 import { useAutoLockTimer } from 'state/settings/hooks';
 
 // Components
@@ -42,13 +42,18 @@ const history = createMemoryHistory();
 
 export const App: React.FC = () => {
   const { isLoading } = useLoadingApplication();
+  const { isInitialized } = useIsInitialized();
   const { onLockWallet, getBalance, getTokenPrice } = useWalletActionHandlers();
   const { openTime, duration } = useAutoLockTimer();
 
   const [timeQuery, setTimeQuery] = useState(0);
 
   useEffect(() => {
-    if (duration && new Date().getTime() - openTime > duration) {
+    if (
+      isInitialized !== 'none' &&
+      duration &&
+      new Date().getTime() - openTime > duration
+    ) {
       onLockWallet();
       history.push(Routes.unlock);
     }
@@ -65,8 +70,10 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    getBalance();
-    getTokenPrice('glitch-protocol', 'usd');
+    if (isInitialized !== 'none') {
+      getBalance();
+      getTokenPrice('glitch-protocol', 'usd');
+    }
   }, [timeQuery]);
 
   return (

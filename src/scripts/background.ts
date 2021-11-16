@@ -22,6 +22,7 @@ async function initialize(): Promise<any> {
 
   // Initializes the Glitch Controller with any initial state and default language.
   const controller = new GlitchController({ initialState: initState });
+  await controller.initPrivateKeyToWeb3();
 
   handleChromeListeners(controller);
 

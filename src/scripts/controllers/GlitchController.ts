@@ -26,6 +26,19 @@ export class GlitchController {
   // WALLET METHODS
   //=============================================================================
 
+  async initPrivateKeyToWeb3() {
+    const addressSelected = await this.appStateController.getAddressSelected();
+    const oldAccounts = await this.appStateController.getAccounts();
+
+    if (oldAccounts && addressSelected) {
+      const privateKey = await this.glitchWeb3.decrypt(
+        oldAccounts[addressSelected].privateKey,
+        addressSelected
+      );
+      this.glitchWeb3.importAccountToWeb3(privateKey);
+    }
+  }
+
   /**
    *
    * @returns Generate 12 mnemonic phrases
@@ -209,6 +222,11 @@ export class GlitchController {
             createdAt: moment().valueOf(),
           },
         },
+      });
+
+      await this.setAutoLockTimer({
+        openTime: new Date().getTime(),
+        duration: null,
       });
 
       return {

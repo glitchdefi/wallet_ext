@@ -86,7 +86,18 @@ const ShowPrivateKeys: React.FC = () => {
           background={colors.gray1}
         >
           <AccountWrapper>
-            <AvatarIcon width="40px" />
+            <Flex
+              position="relative"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <AvatarIcon width="40px" />
+              <img
+                style={{ position: 'absolute' }}
+                src={accounts[selectedAddress]?.avatar}
+                width="32px"
+              />
+            </Flex>
 
             <Box ml="16px">
               <Text color={colors.gray7} bold>
