@@ -10,9 +10,8 @@ import { truncateAddress } from 'utils/strings';
 import { messages } from './messages';
 
 import {
+  useAccount,
   useAccountActionHandlers,
-  useAccounts,
-  useSelectedAddress,
   useShowPrivateKey,
   useWalletActionHandlers,
   useWrongPassword,
@@ -30,10 +29,9 @@ const ShowPrivateKeys: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
+  const { name, avatar, address } = useAccount();
   const { showPrivateKey } = useShowPrivateKey();
   const { isWrongPassword } = useWrongPassword();
-  const { selectedAddress } = useSelectedAddress();
-  const { accounts } = useAccounts();
   const { onClearShowPrivateKey, onShowPrivateKeys } =
     useAccountActionHandlers();
   const { onClearIsWrongPassword } = useWalletActionHandlers();
@@ -92,19 +90,15 @@ const ShowPrivateKeys: React.FC = () => {
               justifyContent="center"
             >
               <AvatarIcon width="40px" />
-              <img
-                style={{ position: 'absolute' }}
-                src={accounts[selectedAddress]?.avatar}
-                width="32px"
-              />
+              <img style={{ position: 'absolute' }} src={avatar} width="32px" />
             </Flex>
 
             <Box ml="16px">
               <Text color={colors.gray7} bold>
-                {accounts[selectedAddress]?.name}
+                {name}
               </Text>
               <Text fontSize="12px" color={colors.gray6}>
-                {truncateAddress(accounts[selectedAddress]?.address)}
+                {truncateAddress(address)}
               </Text>
             </Box>
           </AccountWrapper>

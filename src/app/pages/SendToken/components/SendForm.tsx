@@ -3,11 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { GlitchToken } from '../../../../constants/tokens';
 
 import { colors } from 'theme/colors';
-import {
-  useSelectedAddress,
-  useAccounts,
-  useTokenPrice,
-} from 'state/wallet/hooks';
+import { useTokenPrice, useAccount } from 'state/wallet/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -24,11 +20,8 @@ interface Props {
 }
 
 export const SendForm: React.FC<Props> = ({ initData, onNext }) => {
-  const { selectedAddress } = useSelectedAddress();
-  const { accounts } = useAccounts();
+  const { address, balance } = useAccount();
   const { priceUsd } = useTokenPrice();
-
-  const balance = accounts[selectedAddress].balance;
 
   const [toAddress, setToAddress] = useState<string>('');
   const [amount, setAmount] = useState<any>('');
@@ -46,7 +39,7 @@ export const SendForm: React.FC<Props> = ({ initData, onNext }) => {
   }, [initData]);
 
   useEffect(() => {
-    setIsValidAddress(checkIsValidAddress(selectedAddress, toAddress));
+    setIsValidAddress(checkIsValidAddress(address, toAddress));
   }, [toAddress]);
 
   return (

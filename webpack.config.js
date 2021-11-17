@@ -187,6 +187,14 @@ var alias = {
     'Skeleton',
     'index.tsx'
   ),
+  'app/components/Shared': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Shared',
+    'index.tsx'
+  ),
   types: path.join(__dirname, 'src', 'types', 'index.ts'),
   'types/TransactionsState': path.join(__dirname, 'src', 'types', 'TransactionsState.ts'),
   'state/wallet/hooks': path.join(

@@ -4,12 +4,7 @@ import { useHistory } from 'react-router';
 
 import bg from '../../../../../assets/img/account_card_bg.jpg';
 
-import {
-  useAccounts,
-  useIsBackup,
-  useSelectedAddress,
-  useTokenPrice,
-} from 'state/wallet/hooks';
+import { useAccount, useIsBackup } from 'state/wallet/hooks';
 
 import { truncateAddress } from 'utils/strings';
 import { formatNumberDownRoundWithExtractMax } from 'utils/number';
@@ -29,19 +24,13 @@ import { BackedUpView } from './BackedUpView';
 export const WalletPanel: React.FC = () => {
   const history = useHistory();
 
-  const { selectedAddress } = useSelectedAddress();
-  const { accounts } = useAccounts();
+  const account = useAccount();
+  const { name, balance, totalValue, address } = account;
   const { isBackUp } = useIsBackup();
-  const { priceUsd } = useTokenPrice();
-
-  const name = accounts[selectedAddress].name;
-  const balance = accounts[selectedAddress].balance;
-
-  const totalUsd = Number(balance) * priceUsd;
 
   return (
     <Box height="540.94px" overflowY="scroll">
-      <Header account={accounts[selectedAddress]} />
+      <Header account={account} />
 
       {!isBackUp && (
         <BackedUpView onBackup={() => history.push(Routes.backUp)} />
@@ -77,9 +66,9 @@ export const WalletPanel: React.FC = () => {
 
           <Flex alignItems="center">
             <Text fontSize="12px" color={colors.primary}>
-              {truncateAddress(selectedAddress)}
+              {truncateAddress(address)}
             </Text>
-            <CopyButton value={selectedAddress} p="2px" ml="6px" width="10px" />
+            <CopyButton value={address} p="2px" ml="6px" width="10px" />
           </Flex>
 
           <Flex alignItems="center" mt="16px">
@@ -98,7 +87,7 @@ export const WalletPanel: React.FC = () => {
           </Flex>
 
           <Text mt="4px" fontSize="12px" color={colors.gray6}>
-            {`~ $${totalUsd} USD`}
+            {`~ $${totalValue} USD`}
           </Text>
         </AccountCard>
       </Box>

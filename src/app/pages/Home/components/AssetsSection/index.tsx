@@ -2,11 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
-import {
-  useSelectedAddress,
-  useAccounts,
-  useTokenPrice,
-} from 'state/wallet/hooks';
+import { useAccount } from 'state/wallet/hooks';
 
 // Components
 import { Box, Flex } from 'app/components/Box';
@@ -17,12 +13,7 @@ import { Routes } from 'constants/routes';
 
 export const AssetsSection: React.FC = () => {
   const history = useHistory();
-
-  const { selectedAddress } = useSelectedAddress();
-  const { accounts } = useAccounts();
-  const { priceUsd } = useTokenPrice();
-
-  const balance = accounts[selectedAddress].balance;
+  const { totalValue, balance } = useAccount();
 
   return (
     <Box mt="24px">
@@ -37,7 +28,7 @@ export const AssetsSection: React.FC = () => {
         <AssetItem
           name="Glitch"
           amount={balance}
-          totalValue={Number(balance) * priceUsd}
+          totalValue={totalValue}
           onClick={() => history.push(Routes.tokenDetails)}
         />
       </Box>

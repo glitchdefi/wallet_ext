@@ -103,10 +103,6 @@ function handleChromeListeners(controller: GlitchController) {
                 Handler.getTokenPrice(payload, controller, sendResponse);
                 break;
 
-              case MessageTypes.BG_WALLET_CHECK_IS_VALID_ADDRESS:
-                Handler.checkIsValidAddress(payload, controller, sendResponse);
-                break;
-
               case MessageTypes.BG_WALLET_TRANSFER_TOKEN:
                 Handler.transfer(payload, controller, sendResponse);
                 break;

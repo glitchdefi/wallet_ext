@@ -35,4 +35,13 @@ export const GlobalStyles = createGlobalStyle`
         background: ${colors.primary};
         border-radius: 10px;
     }
+
+    @-webkit-keyframes hue {
+        from {
+          -webkit-filter: hue-rotate(0deg);
+        }
+        to {
+          -webkit-filter: hue-rotate(-360deg);
+        }
+    }
 `;

@@ -63,7 +63,11 @@ export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
             return (
               <AccountWrapper
                 key={i}
-                onClick={() => onChangeAccount(account.address)}
+                onClick={() => {
+                  if (account.address !== selectedAddress) {
+                    onChangeAccount(account.address);
+                  }
+                }}
               >
                 <Box>
                   <Text color={colors.gray7} bold>

@@ -15,74 +15,62 @@ import { Text } from 'app/components/Text';
 import { Button, ButtonShadow } from 'app/components/Button';
 import { Box, Flex } from 'app/components/Box';
 import { NeedHelpContact } from 'app/components/Footer';
-import { DownArrowIcon } from 'app/components/Svg';
+import { NetworkBox } from 'app/components/Shared';
+import { PageLayout } from 'app/layouts';
 
 const Welcome: React.FC = () => {
   const { t } = useTranslation();
   const history = useHistory();
 
   return (
-    <Container>
-      <Box p="16px">
-        <Flex
-          width="fit-content"
-          alignItems="center"
-          p="8px"
-          border={`1px solid ${colors.gray2}`}
-        >
-          <Box
-            width="10px"
-            height="10px"
-            borderRadius="5px"
-            background={colors.green}
-          />
-          <Text mx="8px" fontSize="12px">
-            Glitch Testnet
-          </Text>
-          <DownArrowIcon width="12px" color={colors.gray7} />
+    <PageLayout hasOverlay={false}>
+      <NetworkBox />
+
+      <Flex
+        flex={1}
+        alignItems="center"
+        flexDirection="column"
+        justifyContent="space-between"
+        pt="32px"
+        pb="24px"
+        px="32px"
+      >
+        <Flex flexDirection="column" alignItems="center">
+          <img src={logo} width="200px" />
+          <TextGradient mt="12px" bold>
+            {t(messages.title())}
+          </TextGradient>
+
+          <ButtonShadow
+            mt="72px"
+            width="100%"
+            onClick={() =>
+              history.push(Routes.internetWarning, {
+                route: Routes.createWallet,
+              })
+            }
+          >
+            {t(messages.createWallet())}
+          </ButtonShadow>
+          <Button
+            mt="24px"
+            width="100%"
+            variant="secondary"
+            onClick={() =>
+              history.push(Routes.internetWarning, {
+                route: Routes.restoreWallet,
+              })
+            }
+          >
+            {t(messages.restoreWallet())}
+          </Button>
         </Flex>
-      </Box>
 
-      <Flex mt="32px" alignItems="center" flexDirection="column" px="32px">
-        <img src={logo} width="200px" />
-        <TextGradient mt="12px" bold>
-          {t(messages.title())}
-        </TextGradient>
-
-        <ButtonShadow
-          mt="72px"
-          width="100%"
-          onClick={() =>
-            history.push(Routes.internetWarning, { route: Routes.createWallet })
-          }
-        >
-          {t(messages.createWallet())}
-        </ButtonShadow>
-        <Button
-          mt="24px"
-          width="100%"
-          variant="secondary"
-          onClick={() =>
-            history.push(Routes.internetWarning, {
-              route: Routes.restoreWallet,
-            })
-          }
-        >
-          {t(messages.restoreWallet())}
-        </Button>
-
-        <Box pb="24px" mt="100px">
-          <NeedHelpContact />
-        </Box>
+        <NeedHelpContact />
       </Flex>
-    </Container>
+    </PageLayout>
   );
 };
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-`;
 
 const TextGradient = styled(Text)`
   font-size: 20px;
@@ -95,6 +83,8 @@ const TextGradient = styled(Text)`
   -webkit-background-clip: text;
   color: transparent;
   margin-bottom: 32px;
+
+  -webkit-animation: hue 5s infinite linear;
 `;
 
 export default Welcome;

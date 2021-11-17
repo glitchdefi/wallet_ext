@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'types';
 import { useToast } from 'hooks/useToast';
 import * as actions from './actions';
+import { AccountType } from 'types/WalletState';
 
 const useWalletSelector = () =>
   useSelector((state: RootState) => {
@@ -23,6 +24,27 @@ export const useSeedPhrases = () => {
 export const useWrongPassword = () => {
   const { isWrongPassword } = useWalletSelector();
   return { isWrongPassword };
+};
+
+export const useAccount = (): AccountType => {
+  const { accounts, selectedAddress, priceUsd } = useWalletSelector();
+  if (accounts && selectedAddress) {
+    const account = accounts[selectedAddress];
+
+    if (account) {
+      return { ...account, totalValue: Number(account.balance) * priceUsd };
+    } else {
+      return {
+        name: '--',
+        address: '--',
+        balance: '--',
+        avatar: null,
+        createdAt: null,
+        privateKey: null,
+        totalValue: '--',
+      };
+    }
+  }
 };
 
 export const useAccounts = () => {
@@ -114,7 +136,6 @@ export const useWalletActionHandlers = (): {
   getBalance: () => void;
   onResetState: () => void;
   getTokenPrice: (tokenName: string, currency: string) => void;
-  checkIsValidAddress: (fromAddress: string, address: string) => void;
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -189,12 +210,6 @@ export const useWalletActionHandlers = (): {
     [dispatch]
   );
 
-  const checkIsValidAddress = useCallback(
-    (fromAddress: string, toAddress: string) =>
-      dispatch(actions.checkIsValidAddressAction(fromAddress, toAddress)),
-    [dispatch]
-  );
-
   const onResetState = useCallback(
     () => dispatch(actions.resetStateAction(history)),
     [dispatch]
@@ -214,7 +229,6 @@ export const useWalletActionHandlers = (): {
     onBackupWalletAction,
     getBalance,
     getTokenPrice,
-    checkIsValidAddress,
     onResetState,
   };
 };

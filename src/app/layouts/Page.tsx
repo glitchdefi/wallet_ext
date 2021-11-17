@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { BoxProps, Flex, FlexProps } from 'app/components/Box';
+import { Flex, FlexProps } from 'app/components/Box';
 
-interface Props extends FlexProps {}
+interface Props extends FlexProps {
+  hasOverlay?: boolean;
+}
 
-export const Page: React.FC<Props> = ({ children, ...rest }) => {
+export const Page: React.FC<Props> = ({ children, hasOverlay, ...rest }) => {
   return (
-    <PageWrap>
+    <PageWrap hasOverlay={hasOverlay}>
       <Flex width="100%" minHeight="100%" flexDirection="column" {...rest}>
         {children}
       </Flex>
@@ -14,10 +16,15 @@ export const Page: React.FC<Props> = ({ children, ...rest }) => {
   );
 };
 
-const PageWrap = styled.div<BoxProps>`
-  background-color: rgba(0, 12, 23, 0.6);
+const PageWrap = styled.div<{ hasOverlay?: boolean }>`
+  background-color: ${({ hasOverlay }) =>
+    hasOverlay ? 'rgba(0, 12, 23, 0.6)' : 'transparent'};
   display: flex;
   flex: 1;
 `;
+
+Page.defaultProps = {
+  hasOverlay: true,
+};
 
 export default Page;

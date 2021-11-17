@@ -7,11 +7,17 @@ function getRandomColor() {
   return color;
 }
 
+const randomAngle = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min)) + min;
+
 export function getAvatar() {
   const randomColor = getRandomColor();
-  const randomColor2 = getRandomColor();
+  const randomColor2 = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
   // SET VALUE for PIES
-  const data = [260, 100]; // 3 do cong lại 360
+  const angle1 = randomAngle(46, 229);
+
+  const data = [angle1, 360 - angle1];
   const colors = [randomColor, randomColor2];
 
   let canvas = null;

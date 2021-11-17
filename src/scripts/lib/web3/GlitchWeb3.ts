@@ -87,7 +87,7 @@ export class GlitchWeb3 {
     privateKey?: string;
     address?: string;
   }> {
-    const account = await this.glitchWeb3.wallet.createRegularAccount();
+    const account = await this.glitchWeb3.wallet.createBankAccount();
 
     if (account) {
       return {

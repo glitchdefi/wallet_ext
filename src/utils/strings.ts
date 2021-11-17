@@ -18,7 +18,10 @@ export function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export const checkIsValidAddress = (address: string, toAddress: string): boolean => {
+export const checkIsValidAddress = (
+  address: string,
+  toAddress: string
+): boolean => {
   try {
     if (toAddress.trim().length !== GlitchToken.wallet_address_length) {
       return false;
@@ -26,7 +29,8 @@ export const checkIsValidAddress = (address: string, toAddress: string): boolean
 
     return (
       GlitchCommon.ecc.validateAddress(toAddress) &&
-      GlitchCommon.codec.isBankAddress(toAddress) &&
+      (GlitchCommon.codec.isBankAddress(toAddress) ||
+        GlitchCommon.codec.isRegularAddress(toAddress)) &&
       address !== toAddress
     );
   } catch (error) {

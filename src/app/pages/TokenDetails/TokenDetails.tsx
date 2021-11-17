@@ -3,11 +3,7 @@ import { useHistory } from 'react-router';
 import { Routes } from 'constants/routes';
 
 import { colors } from 'theme/colors';
-import {
-  useSelectedAddress,
-  useAccounts,
-  useTokenPrice,
-} from 'state/wallet/hooks';
+import { useAccount } from 'state/wallet/hooks';
 
 import { Flex } from 'app/components/Box';
 import { PageLayout } from 'app/layouts';
@@ -21,21 +17,12 @@ import { TransactionHistorySection } from './components/TransactionHistorySectio
 const TokenDetails: React.FC = () => {
   const history = useHistory();
 
-  const { selectedAddress } = useSelectedAddress();
-  const { accounts } = useAccounts();
-  const { priceUsd } = useTokenPrice();
-
-  const balance = accounts[selectedAddress].balance;
-
-  const totalUsd = Number(balance) * priceUsd;
+  const account = useAccount();
+  const { balance, totalValue } = account;
 
   return (
     <PageLayout>
-      <Header
-        account={accounts[selectedAddress]}
-        hasBackButton
-        hasBottomBorder
-      />
+      <Header account={account} hasBackButton hasBottomBorder />
 
       <Flex height="527px" flexDirection="column" px="16px" overflowY="scroll">
         <Flex mt="26px" flexDirection="column" alignItems="center">
@@ -51,7 +38,7 @@ const TokenDetails: React.FC = () => {
           </Flex>
 
           <Text fontSize="12px" color={colors.gray6}>
-            {`~ $${totalUsd} USD`}
+            {`~ $${totalValue} USD`}
           </Text>
         </Flex>
 

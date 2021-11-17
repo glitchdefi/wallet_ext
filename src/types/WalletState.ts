@@ -3,14 +3,7 @@ export interface WalletState {
   isInitialized?: 'none' | 'pending' | 'completed';
   isLocked?: boolean;
   accounts?: {
-    [key: string]: {
-      name?: string;
-      avatar?: string;
-      address?: string;
-      balance?: any;
-      privateKey?: string;
-      createdAt?: number;
-    };
+    [key: string]: AccountType;
   };
   selectedAddress?: any;
   isBackUp?: boolean;
@@ -24,3 +17,13 @@ export interface WalletState {
   isInvalidPrivateKey?: boolean;
   showPrivateKey?: string;
 }
+
+export type AccountType = {
+  name?: string;
+  avatar?: string;
+  address?: string;
+  balance?: any;
+  totalValue?: any;
+  privateKey?: string;
+  createdAt?: number;
+};

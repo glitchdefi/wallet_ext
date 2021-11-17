@@ -7,11 +7,7 @@ import QRCode from 'qrcode.react';
 import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
-import {
-  useAccountActionHandlers,
-  useAccounts,
-  useSelectedAddress,
-} from 'state/wallet/hooks';
+import { useAccount, useAccountActionHandlers } from 'state/wallet/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -25,19 +21,17 @@ const AccountDetails: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const { selectedAddress } = useSelectedAddress();
-  const { accounts } = useAccounts();
+  const account = useAccount();
+  const { name: accountName, address } = account;
   const { onChangeAccountName } = useAccountActionHandlers();
 
   const [copied, setCopied] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [name, setName] = useState<string>(
-    accounts[selectedAddress].name || ''
-  );
+  const [name, setName] = useState<string>(accountName || '');
 
   useEffect(() => {
     showEdit && setShowEdit(false);
-  }, [accounts[selectedAddress].name]);
+  }, [accountName]);
 
   useEffect(() => {
     if (copied) {
@@ -91,7 +85,7 @@ const AccountDetails: React.FC = () => {
                 p="0px"
                 onClick={() => {
                   if (name) {
-                    name !== accounts[selectedAddress].name
+                    name !== accountName
                       ? onChangeAccountName(name)
                       : setShowEdit(false);
                   }
@@ -109,13 +103,13 @@ const AccountDetails: React.FC = () => {
                 <EditIcon width="14px" />
               </Button>
               <Text color={colors.gray7} bold>
-                {accounts[selectedAddress].name}
+                {accountName}
               </Text>
             </Flex>
           )}
 
           <StyledBorder>
-            <QRCode value={selectedAddress} size={160} />
+            <QRCode value={address} size={160} />
           </StyledBorder>
 
           <Flex
@@ -126,7 +120,7 @@ const AccountDetails: React.FC = () => {
             px="26px"
           >
             <Text textAlign="center" color={colors.gray7} large>
-              {selectedAddress}
+              {address}
             </Text>
           </Flex>
 

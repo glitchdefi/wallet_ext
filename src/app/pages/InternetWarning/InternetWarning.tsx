@@ -12,7 +12,7 @@ import { Flex, Box } from 'app/components/Box';
 import { CloseIcon } from 'app/components/Svg';
 import { Text } from 'app/components/Text';
 import { Button, ButtonShadow } from 'app/components/Button';
-import { NeedHelpContact } from '../../components/Footer';
+import { NeedHelpContact } from 'app/components/Footer';
 import { messages } from './message';
 
 const InternetWarning: React.FC = () => {
@@ -34,31 +34,34 @@ const InternetWarning: React.FC = () => {
         </Button>
       </Flex>
 
-      <Box pt="48px" px="32px">
-        <Text fontSize="20px" color={colors.orange} bold>
-          {t(messages.title())}
-        </Text>
-        <Text mt="16px" color={colors.gray7} fontSize="14px">
-          {t(messages.desc(), { type: descType })}
-        </Text>
-
-        <ButtonShadow
-          mt="32px"
-          width="50%"
-          onClick={() => history.push(state.route)}
-        >
-          {t(messages.ok())}
-        </ButtonShadow>
-      </Box>
-
       <Flex
+        flex={1}
+        flexDirection="column"
+        justifyContent="space-between"
+        pt="48px"
         pb="24px"
-        mt="80px"
-        alignItems="center"
-        justifyContent="center"
         px="32px"
       >
-        <NeedHelpContact />
+        <Box>
+          <Text fontSize="20px" color={colors.orange} bold>
+            {t(messages.title())}
+          </Text>
+          <Text mt="16px" color={colors.gray7} fontSize="14px">
+            {t(messages.desc(), { type: descType })}
+          </Text>
+
+          <ButtonShadow
+            mt="32px"
+            width="50%"
+            onClick={() => history.push(state.route)}
+          >
+            {t(messages.ok())}
+          </ButtonShadow>
+        </Box>
+
+        <Flex alignItems="center" justifyContent="center">
+          <NeedHelpContact />
+        </Flex>
       </Flex>
     </PageLayout>
   );

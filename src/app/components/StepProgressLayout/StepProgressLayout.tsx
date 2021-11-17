@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { colors } from '../../../theme/colors';
+import { colors } from 'theme/colors';
 
 // Components
 import { Box, Flex } from '../Box';
@@ -29,8 +29,8 @@ function StepProgressLayout({
   stepDescription,
 }: Props) {
   return (
-    <div>
-      <Box pt="16px" px="16px">
+    <Box pt="16px" px="16px">
+      <Box>
         <Flex alignItems="center">
           <Button padding="0px" onClick={onBack}>
             <LeftArrowIcon />
@@ -40,31 +40,31 @@ function StepProgressLayout({
           </Text>
         </Flex>
         <ProgressBar mt="16px" height="3px" percentage={stepProgress} />
-
-        <Flex mt="24px" alignItems="flex-start">
-          <Flex>
-            <Text color={colors.secondary} large bold>
-              [
-            </Text>
-            <Text color={colors.primary} large bold>
-              {step}
-            </Text>
-            <Text color={colors.secondary} large bold>
-              ]
-            </Text>
-          </Flex>
-          <Box ml="8px">
-            <Text color={colors.gray7} large bold>
-              {stepTitle}
-            </Text>
-            <Text mt="4px" fontSize="12px" color={colors.gray5}>
-              {stepDescription}
-            </Text>
-          </Box>
-        </Flex>
-        <Box mt="24px">{children}</Box>
       </Box>
-    </div>
+
+      <Flex mt="24px" alignItems="flex-start">
+        <Flex>
+          <Text color={colors.secondary} large bold>
+            [
+          </Text>
+          <Text color={colors.primary} large bold>
+            {step}
+          </Text>
+          <Text color={colors.secondary} large bold>
+            ]
+          </Text>
+        </Flex>
+        <Box ml="8px">
+          <Text color={colors.gray7} large bold>
+            {stepTitle}
+          </Text>
+          <Text mt="4px" fontSize="12px" color={colors.gray5}>
+            {stepDescription}
+          </Text>
+        </Box>
+      </Flex>
+      <Box mt="24px">{children}</Box>
+    </Box>
   );
 }
 

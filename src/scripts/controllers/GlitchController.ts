@@ -508,19 +508,6 @@ export class GlitchController {
     return { isValid };
   }
 
-  /**
-   *
-   * @returns
-   */
-  checkIsValidAddress(
-    fromAddress?: string,
-    toAddress?: string
-  ): { isValid?: boolean } {
-    const isValid =
-      this.glitchWeb3.isValidAddress(toAddress) && fromAddress !== toAddress;
-    return { isValid };
-  }
-
   async getTokenPrice(tokenName?: string, currency?: string): Promise<object> {
     try {
       const res = await axios.get(

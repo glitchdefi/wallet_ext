@@ -278,23 +278,6 @@ export const changeAccountName = async (
   }
 };
 
-export const checkIsValidAddress = async (
-  payload: { fromAddress?: string; toAddress?: string },
-  controller: GlitchController,
-  sendResponse: SendResponse
-) => {
-  try {
-    const { fromAddress, toAddress } = payload || {};
-
-    const state = controller.checkIsValidAddress(fromAddress, toAddress);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
-};
-
 export const transfer = async (
   payload: { password?: string; toAddress?: string; amount?: any },
   controller: GlitchController,

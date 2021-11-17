@@ -43,72 +43,76 @@ export const CreatePasswordStep: React.FC<Props> = ({
 
   return (
     <>
-      <Box>
-        <Label>{t(messages.password())}</Label>
-        <PasswordInput
-          value={password}
-          placeholder={t(messages.enterPassword())}
-          data-tip=""
-          data-for="password-input"
-          data-event="focus"
-          data-event-off="focusout"
-          onChange={(e) => setPassword(e.target.value?.trim())}
-        />
-        <PasswordRulesTooltip
-          value={password}
-          onPassed={(isPassed) => setIsPassedRules(isPassed)}
-        />
-      </Box>
+      <Box height="">
+        <Box>
+          <Label>{t(messages.password())}</Label>
+          <PasswordInput
+            value={password}
+            placeholder={t(messages.enterPassword())}
+            data-tip=""
+            data-for="password-input"
+            data-event="focus"
+            data-event-off="focusout"
+            onChange={(e) => setPassword(e.target.value?.trim())}
+          />
+          <PasswordRulesTooltip
+            value={password}
+            onPassed={(isPassed) => setIsPassedRules(isPassed)}
+          />
+        </Box>
 
-      <Box mt="24px">
-        <Label>{t(messages.confirmPassword())}</Label>
-        <PasswordInput
-          value={confirmPassword}
-          isError={confirmPassword && confirmPassword !== password}
-          msgError={t(messages.confirmPasswordNotMatch())}
-          placeholder={t(messages.reEnterPassword())}
-          onChange={(e) => setConfirmPassword(e.target.value?.trim())}
-        />
-      </Box>
+        <Box mt="24px">
+          <Label>{t(messages.confirmPassword())}</Label>
+          <PasswordInput
+            value={confirmPassword}
+            isError={confirmPassword && confirmPassword !== password}
+            msgError={t(messages.confirmPasswordNotMatch())}
+            placeholder={t(messages.reEnterPassword())}
+            onChange={(e) => setConfirmPassword(e.target.value?.trim())}
+          />
+        </Box>
 
-      <MessageBox mt="24px" message={t(messages.warningPassword())} />
+        <MessageBox mt="24px" message={t(messages.warningPassword())} />
 
-      <Box mt="24px">
-        <CheckBox
-          id="terms-of-service"
-          checked={checked.agree}
-          onChange={(e) => setChecked({ ...checked, agree: e.target.checked })}
-          labelComponent={
-            <Flex>
+        <Box mt="24px">
+          <CheckBox
+            id="terms-of-service"
+            checked={checked.agree}
+            onChange={(e) =>
+              setChecked({ ...checked, agree: e.target.checked })
+            }
+            labelComponent={
+              <Flex>
+                <Text style={{ userSelect: 'none' }}>
+                  {t(messages.iAgreeToThe())}
+                </Text>
+                <Text
+                  as="a"
+                  target="_blank"
+                  href="https://google.com"
+                  ml="8px"
+                  color={colors.primary}
+                >
+                  {t(messages.termAndServices())}
+                </Text>
+              </Flex>
+            }
+          />
+
+          <CheckBox
+            id="i-understand"
+            checked={checked.understand}
+            mt="12px"
+            onChange={(e) =>
+              setChecked({ ...checked, understand: e.target.checked })
+            }
+            labelComponent={
               <Text style={{ userSelect: 'none' }}>
-                {t(messages.iAgreeToThe())}
+                {t(messages.iUnderstandThatGlitch())}
               </Text>
-              <Text
-                as="a"
-                target="_blank"
-                href="https://google.com"
-                ml="8px"
-                color={colors.primary}
-              >
-                {t(messages.termAndServices())}
-              </Text>
-            </Flex>
-          }
-        />
-
-        <CheckBox
-          id="i-understand"
-          checked={checked.understand}
-          mt="12px"
-          onChange={(e) =>
-            setChecked({ ...checked, understand: e.target.checked })
-          }
-          labelComponent={
-            <Text style={{ userSelect: 'none' }}>
-              {t(messages.iUnderstandThatGlitch())}
-            </Text>
-          }
-        />
+            }
+          />
+        </Box>
       </Box>
 
       <Box pt="24px" pb="16px">
