@@ -16,10 +16,12 @@ import { useLoadingApplication } from 'state/application/hooks';
 
 // Components
 import { PageLayout } from 'app/layouts';
-import { MnemonicPhraseStep } from './components/CreateStep/MnemonicPhraseStep';
-import { CreatePasswordStep } from './components/CreateStep/CreatePasswordStep';
-import { VerifyMnemonicStep } from './components/CreateStep/VerifyMnemonicStep';
-import { StepProgressLayout } from '../../components/StepProgressLayout';
+import {
+  CreatePasswordStep,
+  MnemonicPhraseStep,
+  VerifyMnemonicStep,
+  StepProgressLayout,
+} from 'app/components/Shared';
 
 const MAX_STEP = 3;
 

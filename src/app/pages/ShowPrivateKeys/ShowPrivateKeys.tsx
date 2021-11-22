@@ -21,9 +21,10 @@ import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { PageLayout } from 'app/layouts';
 import { Button, ButtonShadow } from 'app/components/Button';
-import { AvatarIcon, CheckIcon, CloseIcon, CopyIcon } from 'app/components/Svg';
+import { CheckIcon, CloseIcon, CopyIcon } from 'app/components/Svg';
 import { Input, Label, PasswordInput } from 'app/components/Form';
 import { MessageBox } from 'app/components/MessageBox';
+import { Avatar } from 'app/components/Shared';
 
 const ShowPrivateKeys: React.FC = () => {
   const history = useHistory();
@@ -84,14 +85,7 @@ const ShowPrivateKeys: React.FC = () => {
           background={colors.gray1}
         >
           <AccountWrapper>
-            <Flex
-              position="relative"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <AvatarIcon width="40px" />
-              <img style={{ position: 'absolute' }} src={avatar} width="32px" />
-            </Flex>
+            <Avatar src={avatar} />
 
             <Box ml="16px">
               <Text color={colors.gray7} bold>

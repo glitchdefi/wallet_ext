@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { SpaceProps } from 'styled-system';
 import { colors } from 'theme/colors';
-import { Box } from '../Box';
+
+import { Box } from 'app/components/Box';
 
 interface Props extends SpaceProps {
   percentage: number;

@@ -5,16 +5,11 @@ import { useWalletActionHandlers } from 'state/wallet/hooks';
 import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
 
-import { Flex, Box } from 'app/components/Box';
+import { Flex } from 'app/components/Box';
 import { Button } from 'app/components/Button';
-import {
-  LockIcon,
-  AvatarIcon,
-  LeftArrowIcon,
-  DownArrowIcon,
-} from 'app/components/Svg';
+import { LockIcon, LeftArrowIcon } from 'app/components/Svg';
 import { ManageAccountModal } from './ManageAccountModal';
-import { Text } from 'app/components/Text';
+import { Avatar, NetworkBox } from 'app/components/Shared';
 interface Props {
   account?: { avatar?: string };
   hasBackButton?: boolean;
@@ -28,7 +23,6 @@ export const Header: React.FC<Props> = ({
 }) => {
   const history = useHistory();
   const { avatar } = account;
-
   const { onLockWallet } = useWalletActionHandlers();
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
@@ -48,23 +42,7 @@ export const Header: React.FC<Props> = ({
             </Button>
           )}
 
-          <Flex
-            width="fit-content"
-            alignItems="center"
-            p="8px"
-            border={`1px solid ${colors.gray2}`}
-          >
-            <Box
-              width="10px"
-              height="10px"
-              borderRadius="5px"
-              background={colors.green}
-            />
-            <Text mx="8px" fontSize="12px">
-              Glitch Testnet
-            </Text>
-            <DownArrowIcon width="12px" color={colors.gray7} />
-          </Flex>
+          <NetworkBox />
         </Flex>
 
         <Flex alignItems="center" justifyContent="flex-end">
@@ -77,14 +55,7 @@ export const Header: React.FC<Props> = ({
             ml="24px"
             onClick={() => setIsOpenModal((prev) => !prev)}
           >
-            <Flex
-              position="relative"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <AvatarIcon width="40px" />
-              <img style={{ position: 'absolute' }} src={avatar} width="32px" />
-            </Flex>
+            <Avatar src={avatar} />
           </Button>
         </Flex>
       </Flex>

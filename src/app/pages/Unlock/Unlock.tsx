@@ -18,7 +18,7 @@ import { Button, ButtonShadow } from 'app/components/Button';
 import { Box, Flex } from 'app/components/Box';
 import { NeedHelpContact } from 'app/components/Footer';
 import { Label, PasswordInput } from 'app/components/Form';
-import { DownArrowIcon } from 'app/components/Svg';
+import { NetworkBox, TextGradient } from 'app/components/Shared';
 
 const Unlock: React.FC = () => {
   const { t } = useTranslation();
@@ -32,28 +32,12 @@ const Unlock: React.FC = () => {
   return (
     <Container>
       <Box p="16px">
-        <Flex
-          width="fit-content"
-          alignItems="center"
-          p="8px"
-          border={`1px solid ${colors.gray2}`}
-        >
-          <Box
-            width="10px"
-            height="10px"
-            borderRadius="5px"
-            background={colors.green}
-          />
-          <Text mx="8px" fontSize="12px">
-            Glitch Testnet
-          </Text>
-          <DownArrowIcon width="12px" color={colors.gray7} />
-        </Flex>
+        <NetworkBox />
       </Box>
 
       <Flex mt="16px" alignItems="center" flexDirection="column" px="32px">
         <img src={logo} width="200px" />
-        <TextGradient mt="12px" bold>
+        <TextGradient mt="12px" mb="32px" bold>
           {t(messages.title())}
         </TextGradient>
 
@@ -123,19 +107,6 @@ const Unlock: React.FC = () => {
 const Container = styled.div`
   width: 100%;
   height: 100%;
-`;
-
-const TextGradient = styled(Text)`
-  font-size: 20px;
-  background-image: linear-gradient(
-    45deg,
-    ${colors.shadow2} 20%,
-    ${colors.shadow1} 80%
-  );
-  -webkit-background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  margin-bottom: 32px;
 `;
 
 export default Unlock;

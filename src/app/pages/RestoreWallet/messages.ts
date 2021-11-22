@@ -11,7 +11,9 @@ export const messages = {
   stepTwoTitle: () => _t(translations.password.create_a_password),
   stepTwoDesc: () => _t(translations.createWalletPage.protect_your_wallet),
 
-  enterYourMnemonic: () =>
-    _t(translations.restoreWalletPage.enter_your_mnemonic),
+  mnemonic: () => _t(translations.mnemonicPhrase.mnemonic),
+  enterYourMnemonic: () => _t(translations.mnemonicPhrase.enter_your_mnemonic),
+  mnemonicContainInvalidWords: () =>
+    _t(translations.mnemonicPhrase.mnemonic_phrase_contain_invalid_words),
   startRestore: () => _t(translations.restoreWalletPage.start_restore),
 };

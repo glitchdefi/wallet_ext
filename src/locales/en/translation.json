@@ -13,7 +13,11 @@
         "create": "Create",
         "import": "Import",
         "account": "Account",
-        "account_details": "Account details"
+        "account_details": "Account details",
+        "copy": "Copy",
+        "download": "Download",
+        "confirm": "Confirm",
+        "logout": "Logout"
     },
     "internetWarningPage": {
         "title": "Internet connection not recommended",
@@ -37,7 +41,6 @@
     },
     "restoreWalletPage": {
        "start_restore": "Start restore",
-       "enter_your_mnemonic": "Enter your Mnemonic",
        "restore_wallet_from_mnemonic": "Restore wallet from Mnemonic",
        "you_already_have_a_wallet": "If you already have a wallet. Please enter your Mnemonic to restore your wallet"
     },
@@ -71,5 +74,30 @@
     },
     "aboutUs": {
         "title": "About Us"
+    },
+    "settings": {
+        "title": "Settings",
+        "language": "Language",
+        "currency": "Currency",
+        "auto_lock_timer": "Auto-lock timer",
+        "about_glitch": "About Glitch"
+    },
+    "mnemonicPhrase": {
+        "mnemonic": "Mnemonic",
+        "enter_your_mnemonic": "Enter your Mnemonic",
+        "never_share_your_mnemonic_phrase": "Never share your Mnemonic phrase with anyone! If you lose your Mnemonic phrase, you will not able to access your funds!",
+        "i_wrote_down_mnemonic": "I wrote down my Mnemonic",
+        "invalid_mnemonic_phrase": "Invalid Mnemonic phrase. Please check again",
+        "mnemonic_phrase_contain_invalid_words": "Mnemonic phrase contains an invalid word",
+        "reveal_mnemonic_phrase": "Reveal Mnemonic phrase",
+        "your_wallet_is_not_backup": "Your wallet is not backed up"
+    },
+    "accounts": {
+        "manage_account": "Manage Account",
+        "create_account": "Create Account"
+    },
+    "privateKey": {
+        "show_private_key": "Show Private Keys",
+        "import_private_key": " Import Private Keys"
     }
 }

@@ -3,10 +3,10 @@ import React from 'react';
 import { colors } from 'theme/colors';
 
 // Components
-import { Box, Flex } from '../Box';
-import { Button } from '../Button';
-import { LeftArrowIcon } from '../Svg';
-import { Text } from '../Text';
+import { Box, Flex } from 'app/components/Box';
+import { Button } from 'app/components/Button';
+import { LeftArrowIcon } from 'app/components/Svg';
+import { Text } from 'app/components/Text';
 import { ProgressBar } from './ProgressBar';
 
 interface Props {
@@ -29,8 +29,8 @@ function StepProgressLayout({
   stepDescription,
 }: Props) {
   return (
-    <Box pt="16px" px="16px">
-      <Box>
+    <Flex flexDirection="column" flex={1} pt="16px" pb="24px">
+      <Box px="16px">
         <Flex alignItems="center">
           <Button padding="0px" onClick={onBack}>
             <LeftArrowIcon />
@@ -42,7 +42,7 @@ function StepProgressLayout({
         <ProgressBar mt="16px" height="3px" percentage={stepProgress} />
       </Box>
 
-      <Flex mt="24px" alignItems="flex-start">
+      <Flex px="16px" mt="24px" alignItems="flex-start">
         <Flex>
           <Text color={colors.secondary} large bold>
             [
@@ -63,8 +63,10 @@ function StepProgressLayout({
           </Text>
         </Box>
       </Flex>
-      <Box mt="24px">{children}</Box>
-    </Box>
+      <Flex flex={1} flexDirection="column" mt="24px">
+        {children}
+      </Flex>
+    </Flex>
   );
 }
 

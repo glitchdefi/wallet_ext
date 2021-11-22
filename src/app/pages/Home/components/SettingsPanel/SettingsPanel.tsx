@@ -1,5 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
@@ -22,8 +23,10 @@ import {
 import { GlitchLogo } from 'app/components/Image';
 import { Dropdown } from 'app/components/Dropdown';
 import { SettingItem } from './SettingItem';
+import { messages } from '../../messages';
 
 export const SettingsPanel: React.FC = () => {
+  const { t } = useTranslation();
   const history = useHistory();
 
   const { isBackUp } = useIsBackup();
@@ -35,7 +38,7 @@ export const SettingsPanel: React.FC = () => {
       <Box px="16px">
         <Box borderBottom={`1px solid ${colors.magenta2}`} py="16px">
           <Text color={colors.gray7} fontSize="24px" bold>
-            Settings
+            {t(messages.settings())}
           </Text>
         </Box>
       </Box>
@@ -53,7 +56,7 @@ export const SettingsPanel: React.FC = () => {
         /> */}
         <SettingItem
           leftIcon={<ClockCircleIcon width="24px" />}
-          label="Auto-lock timer"
+          label={t(messages.autoLockTimer())}
           actionLabel="USD"
           rightComponent={
             <Dropdown
@@ -82,8 +85,8 @@ export const SettingsPanel: React.FC = () => {
           leftIcon={<OneToOneIcon width="24px" />}
           label={
             !isBackUp
-              ? 'Your wallet is not backed up'
-              : 'Reveal Mnemonic phrase'
+              ? t(messages.yourWalletNotBackup())
+              : t(messages.revealMnemonicPhrase())
           }
           actionLabel={!isBackUp && <ExclaimationCircleIcon />}
           onClick={() =>
@@ -94,12 +97,12 @@ export const SettingsPanel: React.FC = () => {
         />
         <SettingItem
           leftIcon={<LogoutIcon width="24px" />}
-          label="Log out"
+          label={t(messages.logout())}
           onClick={() => history.push(Routes.logoutWallet)}
         />
         <SettingItem
           leftIcon={<GlitchLogo width={24} height={24} />}
-          label="About Glitch"
+          label={t(messages.aboutGlitch())}
           onClick={() => history.push(Routes.aboutUs)}
         />
       </Box>

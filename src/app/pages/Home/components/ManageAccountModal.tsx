@@ -13,11 +13,12 @@ import { truncateAddress } from 'utils/strings';
 import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
-// import { Modal } from 'app/components/Modal';
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { Button } from 'app/components/Button';
 import { CheckIcon, CloseIcon } from 'app/components/Svg';
+import { useTranslation } from 'react-i18next';
+import { messages } from '../messages';
 
 interface Props {
   isOpen: boolean;
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
   const history = useHistory();
   const { onChangeAccount } = useAccountActionHandlers();
   const { selectedAddress } = useSelectedAddress();
@@ -43,7 +45,7 @@ export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
         justifyContent="space-between"
       >
         <Text color={colors.gray7} bold>
-          Manage Account
+          {t(messages.manageAccount())}
         </Text>
 
         <Button p="0px" onClick={onClose}>
@@ -91,7 +93,7 @@ export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
             history.push(Routes.createImportAccount, { activeTab: 0 })
           }
         >
-          Create Account
+          {t(messages.createAccount())}
         </Button>
         <Button
           mt="12px"
@@ -101,7 +103,7 @@ export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
             history.push(Routes.createImportAccount, { activeTab: 1 })
           }
         >
-          Import Private Keys
+          {t(messages.importPrivateKey())}
         </Button>
       </Box>
     </StyledModal>

@@ -8,9 +8,8 @@ import { messages } from './messages';
 import { useStepTitleDesc, useWalletActionHandlers } from 'state/wallet/hooks';
 
 import { PageLayout } from 'app/layouts';
-import { StepProgressLayout } from 'app/components/StepProgressLayout';
 import { EnterSeedPhraseStep } from './components/EnterSeedPhraseStep';
-import { CreatePasswordStep } from '../CreateWallet/components/CreateStep/CreatePasswordStep';
+import { CreatePasswordStep, StepProgressLayout } from 'app/components/Shared';
 
 const MAX_STEP = 2;
 
@@ -27,7 +26,7 @@ const RestoreWallet: React.FC = () => {
   const stepProgress = ((step + 1) / MAX_STEP) * 100;
 
   return (
-    <PageLayout minHeight="600px">
+    <PageLayout>
       <StepProgressLayout
         title={t(messages.title())}
         step={step + 1}

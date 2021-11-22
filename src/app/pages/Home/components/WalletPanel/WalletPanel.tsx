@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 import bg from '../../../../../assets/img/account_card_bg.jpg';
 
@@ -20,8 +21,10 @@ import { Dropdown } from 'app/components/Dropdown';
 import { AssetsSection } from '../AssetsSection';
 import { Header } from '../Header';
 import { BackedUpView } from './BackedUpView';
+import { messages } from '../../messages';
 
 export const WalletPanel: React.FC = () => {
+  const { t } = useTranslation();
   const history = useHistory();
 
   const account = useAccount();
@@ -54,11 +57,15 @@ export const WalletPanel: React.FC = () => {
                 </Flex>
               }
               items={[
-                { key: 0, icon: <ProfileIcon />, label: 'Account details' },
+                {
+                  key: 0,
+                  icon: <ProfileIcon />,
+                  label: t(messages.accountDetails()),
+                },
                 {
                   key: 1,
                   icon: <GatewayIcon />,
-                  label: 'Show Private Keys',
+                  label: t(messages.showPrivateKey()),
                 },
               ]}
             />

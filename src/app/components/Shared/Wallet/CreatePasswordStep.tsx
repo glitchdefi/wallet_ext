@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { colors } from 'theme/colors';
 
-import { messages } from '../../messages';
+import { messages } from '../messages';
 
 // Components
 import { Flex, Box } from 'app/components/Box';
@@ -11,14 +11,14 @@ import { Label, PasswordInput, CheckBox } from 'app/components/Form';
 import { Text } from 'app/components/Text';
 import { Button, ButtonShadow } from 'app/components/Button';
 import { MessageBox } from 'app/components/MessageBox';
-import { PasswordRulesTooltip } from '../PasswordRulesTooltip';
+import { PasswordRulesTooltip } from './PasswordRulesTooltip';
 
 interface Props {
   onSetupPassword: (password: string) => void;
   initValue?: string;
 }
 
-export const CreatePasswordStep: React.FC<Props> = ({
+const CreatePasswordStep: React.FC<Props> = ({
   initValue,
   onSetupPassword,
 }) => {
@@ -42,8 +42,8 @@ export const CreatePasswordStep: React.FC<Props> = ({
     checked.understand;
 
   return (
-    <>
-      <Box height="">
+    <Flex flex={1} flexDirection="column">
+      <Box px="16px" height="258px" overflowY="scroll">
         <Box>
           <Label>{t(messages.password())}</Label>
           <PasswordInput
@@ -73,49 +73,47 @@ export const CreatePasswordStep: React.FC<Props> = ({
         </Box>
 
         <MessageBox mt="24px" message={t(messages.warningPassword())} />
-
-        <Box mt="24px">
-          <CheckBox
-            id="terms-of-service"
-            checked={checked.agree}
-            onChange={(e) =>
-              setChecked({ ...checked, agree: e.target.checked })
-            }
-            labelComponent={
-              <Flex>
-                <Text style={{ userSelect: 'none' }}>
-                  {t(messages.iAgreeToThe())}
-                </Text>
-                <Text
-                  as="a"
-                  target="_blank"
-                  href="https://google.com"
-                  ml="8px"
-                  color={colors.primary}
-                >
-                  {t(messages.termAndServices())}
-                </Text>
-              </Flex>
-            }
-          />
-
-          <CheckBox
-            id="i-understand"
-            checked={checked.understand}
-            mt="12px"
-            onChange={(e) =>
-              setChecked({ ...checked, understand: e.target.checked })
-            }
-            labelComponent={
-              <Text style={{ userSelect: 'none' }}>
-                {t(messages.iUnderstandThatGlitch())}
-              </Text>
-            }
-          />
-        </Box>
       </Box>
 
-      <Box pt="24px" pb="16px">
+      <Box px="16px" mt="24px">
+        <CheckBox
+          id="terms-of-service"
+          checked={checked.agree}
+          onChange={(e) => setChecked({ ...checked, agree: e.target.checked })}
+          labelComponent={
+            <Flex>
+              <Text style={{ userSelect: 'none' }}>
+                {t(messages.iAgreeToThe())}
+              </Text>
+              <Text
+                as="a"
+                target="_blank"
+                href="https://google.com"
+                ml="8px"
+                color={colors.primary}
+              >
+                {t(messages.termAndServices())}
+              </Text>
+            </Flex>
+          }
+        />
+
+        <CheckBox
+          id="i-understand"
+          checked={checked.understand}
+          mt="12px"
+          onChange={(e) =>
+            setChecked({ ...checked, understand: e.target.checked })
+          }
+          labelComponent={
+            <Text style={{ userSelect: 'none' }}>
+              {t(messages.iUnderstandThatGlitch())}
+            </Text>
+          }
+        />
+      </Box>
+
+      <Box mt="auto" px="16px">
         {isEnableButton ? (
           <ButtonShadow width="100%" onClick={() => onSetupPassword(password)}>
             {t(messages.setupPassword())}
@@ -126,6 +124,8 @@ export const CreatePasswordStep: React.FC<Props> = ({
           </Button>
         )}
       </Box>
-    </>
+    </Flex>
   );
 };
+
+export default CreatePasswordStep;

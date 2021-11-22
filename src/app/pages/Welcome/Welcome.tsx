@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -7,15 +6,11 @@ import logo from '../../../assets/img/gl_logo.png';
 import { messages } from './messages';
 import { Routes } from 'constants/routes';
 
-// Theme
-import { colors } from 'theme/colors';
-
 // Components
-import { Text } from 'app/components/Text';
 import { Button, ButtonShadow } from 'app/components/Button';
 import { Box, Flex } from 'app/components/Box';
 import { NeedHelpContact } from 'app/components/Footer';
-import { NetworkBox } from 'app/components/Shared';
+import { NetworkBox, TextGradient } from 'app/components/Shared';
 import { PageLayout } from 'app/layouts';
 
 const Welcome: React.FC = () => {
@@ -24,7 +19,9 @@ const Welcome: React.FC = () => {
 
   return (
     <PageLayout hasOverlay={false}>
-      <NetworkBox />
+      <Box p="16px">
+        <NetworkBox />
+      </Box>
 
       <Flex
         flex={1}
@@ -37,7 +34,7 @@ const Welcome: React.FC = () => {
       >
         <Flex flexDirection="column" alignItems="center">
           <img src={logo} width="200px" />
-          <TextGradient mt="12px" bold>
+          <TextGradient mt="12px" mb="32px" bold>
             {t(messages.title())}
           </TextGradient>
 
@@ -71,20 +68,5 @@ const Welcome: React.FC = () => {
     </PageLayout>
   );
 };
-
-const TextGradient = styled(Text)`
-  font-size: 20px;
-  background-image: linear-gradient(
-    45deg,
-    ${colors.shadow2} 20%,
-    ${colors.shadow1} 80%
-  );
-  -webkit-background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  margin-bottom: 32px;
-
-  -webkit-animation: hue 5s infinite linear;
-`;
 
 export default Welcome;

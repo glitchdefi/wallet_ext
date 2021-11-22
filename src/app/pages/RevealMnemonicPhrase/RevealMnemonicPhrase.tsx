@@ -10,6 +10,7 @@ import {
   useWalletActionHandlers,
   useWrongPassword,
 } from 'state/wallet/hooks';
+import { useMakeTextFile } from 'hooks/useMakeTextFile';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -19,8 +20,7 @@ import { Text } from 'app/components/Text';
 import { Button, ButtonShadow, CopyButton } from 'app/components/Button';
 import { MessageBox } from 'app/components/MessageBox';
 import { Label, PasswordInput } from 'app/components/Form';
-import { MnemonicPhraseItem } from '../CreateWallet/components/MnemonicPhraseItem';
-import { useMakeTextFile } from 'hooks/useMakeTextFile';
+import { MnemonicPhraseItem } from 'app/components/Shared';
 
 const RevealMnemonicPhrase: React.FC = () => {
   const history = useHistory();

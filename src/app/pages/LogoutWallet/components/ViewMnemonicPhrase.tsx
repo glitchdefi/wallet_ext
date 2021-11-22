@@ -9,8 +9,7 @@ import { Text } from 'app/components/Text';
 import { Button, ButtonShadow, CopyButton } from 'app/components/Button';
 import { MessageBox } from 'app/components/MessageBox';
 import { CopyIcon, DownloadIcon } from 'app/components/Svg';
-import { MnemonicPhraseItem } from '../../CreateWallet/components/MnemonicPhraseItem';
-
+import { MnemonicPhraseItem } from 'app/components/Shared';
 interface Props {
   seedPhrases: string;
   onConfirm: () => void;

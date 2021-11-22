@@ -23,7 +23,7 @@ export const GlobalStyles = createGlobalStyle`
 
     ::-webkit-scrollbar {
         height: 5px;
-        width: 2px;
+        width: 1px;
       }
       
     ::-webkit-scrollbar-track {
@@ -41,7 +41,24 @@ export const GlobalStyles = createGlobalStyle`
           -webkit-filter: hue-rotate(0deg);
         }
         to {
-          -webkit-filter: hue-rotate(-360deg);
+          -webkit-filter: hue-rotate(180deg);
         }
+    }
+
+    @-webkit-keyframes gradient {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    @keyframes rotate {
+        0% {transform:rotate(0deg);}
+        100% {transform:rotate(360deg);}
     }
 `;

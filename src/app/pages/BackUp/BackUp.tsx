@@ -19,9 +19,8 @@ import { Box, Flex } from 'app/components/Box';
 import { LeftArrowIcon } from 'app/components/Svg';
 import { Text } from 'app/components/Text';
 import { Button } from 'app/components/Button';
+import { MnemonicPhraseStep, VerifyMnemonicStep } from 'app/components/Shared';
 import { EnterPassword } from './components/EnterPassword';
-import { MnemonicPhraseStep } from '../CreateWallet/components/CreateStep/MnemonicPhraseStep';
-import { VerifyMnemonicStep } from '../CreateWallet/components/CreateStep/VerifyMnemonicStep';
 
 const BackUp: React.FC = () => {
   const history = useHistory();

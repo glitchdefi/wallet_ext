@@ -16,6 +16,7 @@ import { Box, Flex } from 'app/components/Box';
 import { SnippetsIcon } from 'app/components/Svg';
 import { Button, ButtonShadow } from 'app/components/Button';
 import { Text } from 'app/components/Text';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   defaultSeedPhrase: string;
@@ -26,6 +27,7 @@ export const EnterSeedPhraseStep: React.FC<Props> = ({
   defaultSeedPhrase,
   onNextStep,
 }) => {
+  const { t } = useTranslation();
   const [seedPhrase, setSeedPhrase] = useState<string>(defaultSeedPhrase);
 
   const { isValidSeedPhrase } = useIsValidSeedPhrase();
@@ -37,8 +39,8 @@ export const EnterSeedPhraseStep: React.FC<Props> = ({
 
   return (
     <>
-      <Box>
-        <Label>Mnemonic</Label>
+      <Box px="16px">
+        <Label>{t(messages.mnemonic())}</Label>
         <InputWrapper
           isError={seedPhrase && !isValidSeedPhrase}
           alignItems="center"
@@ -48,7 +50,7 @@ export const EnterSeedPhraseStep: React.FC<Props> = ({
             id="seed-phrase-input"
             value={seedPhrase}
             as={TextareaAutosize}
-            placeholder="Enter your Mnemonic"
+            placeholder={t(messages.enterYourMnemonic())}
             onChange={(e: any) => setSeedPhrase(e.target.value?.trim())}
           />
           <Button
@@ -67,19 +69,19 @@ export const EnterSeedPhraseStep: React.FC<Props> = ({
         </InputWrapper>
         {seedPhrase && !isValidSeedPhrase && (
           <Text mt="2px" fontSize="12px" color={colors.error}>
-            Mnemonic phrase contains an invalid word
+            {t(messages.mnemonicContainInvalidWords())}
           </Text>
         )}
       </Box>
 
-      <Box mt="32px">
+      <Box mt="32px" px="16px">
         {!isValidSeedPhrase ? (
           <Button width="100%" variant="disable-primary">
-            Start restore
+            {t(messages.startRestore())}
           </Button>
         ) : (
           <ButtonShadow width="100%" onClick={() => onNextStep(seedPhrase)}>
-            Start restore
+            {t(messages.startRestore())}
           </ButtonShadow>
         )}
       </Box>

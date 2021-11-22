@@ -10,7 +10,7 @@ export { default as LockIcon } from './Icons/Lock';
 export { default as EllipsisIcon } from './Icons/Ellipsis';
 export { default as WalletIcon } from './Icons/Wallet';
 export { default as SettingIcon } from './Icons/Setting';
-export { default as AvatarIcon } from './Icons/Avatar';
+export { default as GradientBorder } from './Icons/GradientBorder';
 export { default as PlusIcon } from './Icons/Plus';
 export { default as SnippetsIcon } from './Icons/Snippets';
 export { default as ProfileIcon } from './Icons/Profile';

@@ -14,7 +14,7 @@ interface Props {
   onClick?: () => void;
 }
 
-export const MnemonicPhraseItem: React.FC<Props> = ({
+const MnemonicPhraseItem: React.FC<Props> = ({
   num,
   word,
   variants,
@@ -54,3 +54,5 @@ const StyledWrapper = styled(Flex)`
     opacity: 0.8;
   }
 `;
+
+export default MnemonicPhraseItem;
