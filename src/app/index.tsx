@@ -84,91 +84,52 @@ export const App: React.FC = () => {
       <ToastListener />
       <ContainerLayout>
         {isLoading && <LoadingApplication />}
+        <Switch>
+          <GRoute exact path={Routes.welcome} component={WelcomePage} />
 
-        <Route
-          render={({ location }) => {
-            const { key } = location;
+          <Route
+            path={Routes.internetWarning}
+            component={InternetWarningPage}
+          />
+          <Route path={Routes.restoreWallet} component={RestoreWalletPage} />
+          <Route path={Routes.createWallet} component={CreateWalletPage} />
 
-            return (
-              <TransitionGroup component={null}>
-                <Transition
-                  key={key}
-                  appear={true}
-                  timeout={{ enter: 750, exit: 0 }}
-                >
-                  <Switch>
-                    <GRoute
-                      exact
-                      path={Routes.welcome}
-                      component={WelcomePage}
-                    />
+          <Route path={Routes.unlock} component={UnlockPage} />
 
-                    <Route
-                      path={Routes.internetWarning}
-                      component={InternetWarningPage}
-                    />
-                    <Route
-                      path={Routes.restoreWallet}
-                      component={RestoreWalletPage}
-                    />
-                    <Route
-                      path={Routes.createWallet}
-                      component={CreateWalletPage}
-                    />
-
-                    <Route path={Routes.unlock} component={UnlockPage} />
-
-                    <Authenticated path={Routes.home} component={HomePage} />
-                    <Authenticated
-                      path={Routes.createImportAccount}
-                      component={CreateImportAccountPage}
-                    />
-                    <Authenticated
-                      path={Routes.accountDetails}
-                      component={AccountDetailsPage}
-                    />
-                    <Authenticated
-                      path={Routes.showPrivateKeys}
-                      component={ShowPrivateKeysPage}
-                    />
-                    <Authenticated
-                      path={Routes.aboutUs}
-                      component={AboutUsPage}
-                    />
-                    <Authenticated
-                      path={Routes.logoutWallet}
-                      component={LogoutWalletPage}
-                    />
-                    <Authenticated
-                      path={Routes.revealMnemonicPhrase}
-                      component={RevealMnemonicPhrasePage}
-                    />
-                    <Authenticated
-                      path={Routes.tokenDetails}
-                      component={TokenDetailsPage}
-                    />
-                    <Authenticated
-                      path={Routes.receiveToken}
-                      component={ReceiveTokenPage}
-                    />
-                    <Authenticated
-                      path={Routes.sendToken}
-                      component={SendTokenPage}
-                    />
-                    <Authenticated
-                      path={Routes.addAssets}
-                      component={AddAssetsPage}
-                    />
-                    <Authenticated
-                      path={Routes.backUp}
-                      component={BackUpPage}
-                    />
-                  </Switch>
-                </Transition>
-              </TransitionGroup>
-            );
-          }}
-        />
+          <Authenticated path={Routes.home} component={HomePage} />
+          <Authenticated
+            path={Routes.createImportAccount}
+            component={CreateImportAccountPage}
+          />
+          <Authenticated
+            path={Routes.accountDetails}
+            component={AccountDetailsPage}
+          />
+          <Authenticated
+            path={Routes.showPrivateKeys}
+            component={ShowPrivateKeysPage}
+          />
+          <Authenticated path={Routes.aboutUs} component={AboutUsPage} />
+          <Authenticated
+            path={Routes.logoutWallet}
+            component={LogoutWalletPage}
+          />
+          <Authenticated
+            path={Routes.revealMnemonicPhrase}
+            component={RevealMnemonicPhrasePage}
+          />
+          <Authenticated
+            path={Routes.tokenDetails}
+            component={TokenDetailsPage}
+          />
+          <Authenticated
+            path={Routes.receiveToken}
+            component={ReceiveTokenPage}
+          />
+          <Authenticated path={Routes.sendToken} component={SendTokenPage} />
+          <Authenticated path={Routes.addAssets} component={AddAssetsPage} />
+          <Authenticated path={Routes.backUp} component={BackUpPage} />
+        </Switch>
       </ContainerLayout>
     </Router>
   );

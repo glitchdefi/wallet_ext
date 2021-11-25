@@ -19,10 +19,14 @@ import { Box, Flex } from 'app/components/Box';
 import { LeftArrowIcon } from 'app/components/Svg';
 import { Text } from 'app/components/Text';
 import { Button } from 'app/components/Button';
-import { MnemonicPhraseStep, VerifyMnemonicStep } from 'app/components/Shared';
+import {
+  Header,
+  MnemonicPhraseStep,
+  VerifyMnemonicStep,
+} from 'app/components/Shared';
 import { EnterPassword } from './components/EnterPassword';
 
-const BackUp: React.FC = () => {
+const BackUp: React.FC = React.memo(() => {
   const history = useHistory();
   const { t } = useTranslation();
 
@@ -46,27 +50,16 @@ const BackUp: React.FC = () => {
 
   return (
     <PageLayout>
-      <Flex
-        alignItems="center"
-        borderBottom={`1px solid ${colors.magenta2}`}
-        p="16px"
-      >
-        <Button
-          p="0px"
-          onClick={() => {
-            if (step === 0) {
-              history.push(Routes.home);
-            } else {
-              setStep(step - 1);
-            }
-          }}
-        >
-          <LeftArrowIcon width="13px" />
-        </Button>
-        <Text mt="3px" bold ml="16px" color={colors.gray7}>
-          Back up
-        </Text>
-      </Flex>
+      <Header
+        onBack={() => {
+          if (step === 0) {
+            history.push(Routes.home);
+          } else {
+            setStep(step - 1);
+          }
+        }}
+        title="Back up"
+      />
 
       {step === 0 && (
         <EnterPassword
@@ -80,7 +73,7 @@ const BackUp: React.FC = () => {
       )}
 
       {(step === 1 || step === 2) && (
-        <Flex flexDirection="column" p="16px">
+        <Flex flex={1} flexDirection="column" p="16px">
           <Flex mb="24px" alignItems="flex-start">
             <Flex>
               <Text color={colors.secondary} large bold>
@@ -120,6 +113,6 @@ const BackUp: React.FC = () => {
       )}
     </PageLayout>
   );
-};
+});
 
 export default BackUp;

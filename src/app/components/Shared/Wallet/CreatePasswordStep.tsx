@@ -41,7 +41,7 @@ const CreatePasswordStep: React.FC<Props> = React.memo(
 
     return (
       <Flex flex={1} flexDirection="column">
-        <Box px="16px" height="258px" overflowY="scroll">
+        <Box px="16px" height="357px" overflowY="scroll">
           <Box>
             <Label>{t(messages.password())}</Label>
             <PasswordInput
@@ -71,46 +71,46 @@ const CreatePasswordStep: React.FC<Props> = React.memo(
           </Box>
 
           <MessageBox mt="24px" message={t(messages.warningPassword())} />
-        </Box>
 
-        <Box px="16px" mt="24px">
-          <CheckBox
-            id="terms-of-service"
-            checked={checked.agree}
-            onChange={(e) =>
-              setChecked({ ...checked, agree: e.target.checked })
-            }
-            labelComponent={
-              <Flex>
+          <Box mt="24px">
+            <CheckBox
+              id="terms-of-service"
+              checked={checked.agree}
+              onChange={(e) =>
+                setChecked({ ...checked, agree: e.target.checked })
+              }
+              labelComponent={
+                <Flex>
+                  <Text style={{ userSelect: 'none' }}>
+                    {t(messages.iAgreeToThe())}
+                  </Text>
+                  <Text
+                    as="a"
+                    target="_blank"
+                    href="https://glitch.finance/privacy-policy/"
+                    ml="8px"
+                    color={colors.primary}
+                  >
+                    {t(messages.termAndServices())}
+                  </Text>
+                </Flex>
+              }
+            />
+
+            <CheckBox
+              id="i-understand"
+              checked={checked.understand}
+              mt="12px"
+              onChange={(e) =>
+                setChecked({ ...checked, understand: e.target.checked })
+              }
+              labelComponent={
                 <Text style={{ userSelect: 'none' }}>
-                  {t(messages.iAgreeToThe())}
+                  {t(messages.iUnderstandThatGlitch())}
                 </Text>
-                <Text
-                  as="a"
-                  target="_blank"
-                  href="https://google.com"
-                  ml="8px"
-                  color={colors.primary}
-                >
-                  {t(messages.termAndServices())}
-                </Text>
-              </Flex>
-            }
-          />
-
-          <CheckBox
-            id="i-understand"
-            checked={checked.understand}
-            mt="12px"
-            onChange={(e) =>
-              setChecked({ ...checked, understand: e.target.checked })
-            }
-            labelComponent={
-              <Text style={{ userSelect: 'none' }}>
-                {t(messages.iUnderstandThatGlitch())}
-              </Text>
-            }
-          />
+              }
+            />
+          </Box>
         </Box>
 
         <Box mt="auto" px="16px">

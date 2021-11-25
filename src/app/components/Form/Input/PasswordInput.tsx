@@ -32,7 +32,7 @@ interface PasswordInputProps extends SpaceProps {
   msgError?: string;
 }
 
-const PasswordInput: React.FC<PasswordInputProps> = (props) => {
+const PasswordInput: React.FC<PasswordInputProps> = React.memo((props) => {
   const {
     onChange,
     placeholder,
@@ -81,7 +81,7 @@ const PasswordInput: React.FC<PasswordInputProps> = (props) => {
       )}
     </>
   );
-};
+});
 
 const StyledWrapper = styled(Flex)<{ isError?: boolean }>`
   border: 1px solid ${({ isError }) => (isError ? colors.error : colors.gray8)};
