@@ -23,7 +23,7 @@ import { Header } from '../Header';
 import { BackedUpView } from './BackedUpView';
 import { messages } from '../../messages';
 
-export const WalletPanel: React.FC = () => {
+export const WalletPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -101,7 +101,7 @@ export const WalletPanel: React.FC = () => {
       <AssetsSection />
     </Box>
   );
-};
+});
 
 const AccountCard = styled.div`
   padding: 16px;

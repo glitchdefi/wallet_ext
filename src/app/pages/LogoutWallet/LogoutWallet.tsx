@@ -2,40 +2,26 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { Routes } from 'constants/routes';
-import { colors } from 'theme/colors';
 
 // Components
 import { PageLayout } from 'app/layouts';
-import { Flex } from 'app/components/Box';
-import { LeftArrowIcon } from 'app/components/Svg';
-import { Text } from 'app/components/Text';
-import { Button } from 'app/components/Button';
+import { Header } from 'app/components/Shared';
 import { EnterPassword } from './components/EnterPassword';
 import { ViewMnemonicPhrase } from './components/ViewMnemonicPhrase';
 import { ConfirmLogout } from './components/ConfirmLogout';
 import { SelectedOption } from './components/SelectedOption';
 
-const LogoutWallet: React.FC = () => {
+const LogoutWallet: React.FC = React.memo(() => {
   const history = useHistory();
   const [isBackedUp, setIsBackedUp] = useState({ yes: false, no: false });
-  const [step, setStep] = useState(0);
-  const [seedPhrase, setSeedPhrase] = useState('');
-  const [password, setPassword] = useState('');
+  const [step, setStep] = useState<number>(0);
+  const [seedPhrase, setSeedPhrase] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
   return (
     <PageLayout>
-      <Flex
-        alignItems="center"
-        borderBottom={`1px solid ${colors.magenta2}`}
-        p="16px"
-      >
-        <Button p="0px" onClick={() => history.push(Routes.home)}>
-          <LeftArrowIcon width="13px" />
-        </Button>
-        <Text mt="3px" bold ml="16px" color={colors.gray7}>
-          Log out
-        </Text>
-      </Flex>
+      <Header onBack={() => history.push(Routes.home)} title="Logout" />
+
       {step === 0 && (
         <SelectedOption
           values={isBackedUp}
@@ -71,6 +57,6 @@ const LogoutWallet: React.FC = () => {
       )}
     </PageLayout>
   );
-};
+});
 
 export default LogoutWallet;

@@ -125,7 +125,7 @@ const ShowPrivateKeys: React.FC = () => {
                   onChange={(e) => {
                     const { value } = e.target;
 
-                    !value && onClearIsWrongPassword();
+                    isWrongPassword && onClearIsWrongPassword();
                     setPassword(value);
                   }}
                 />

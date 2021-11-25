@@ -11,26 +11,28 @@ interface Props {
   data: TransactionItemType[];
 }
 
-export const TransactionList: React.FC<Props> = ({ loading, data }) => {
-  if (loading) {
+export const TransactionList: React.FC<Props> = React.memo(
+  ({ loading, data }) => {
+    if (loading) {
+      return (
+        <Box>
+          {[1, 2, 3].map((o, i) => (
+            <PlaceHolder key={o} index={i} />
+          ))}
+        </Box>
+      );
+    }
+
+    if (!data?.length) {
+      return <Empty my="48px" message="You have no transactions" />;
+    }
+
     return (
       <Box>
-        {[1, 2, 3].map((o, i) => (
-          <PlaceHolder key={o} index={i} />
-        ))}
+        {data.map((tx, i) => {
+          return <TransactionItem key={i} data={tx} index={i} />;
+        })}
       </Box>
     );
   }
-
-  if (!data?.length) {
-    return <Empty my="48px" message="You have no transactions" />;
-  }
-
-  return (
-    <Box>
-      {data.map((tx, i) => {
-        return <TransactionItem key={i} data={tx} index={i} />;
-      })}
-    </Box>
-  );
-};
+);

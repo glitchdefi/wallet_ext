@@ -7,5 +7,4 @@ export default interface RootState {
   transactions?: TransactionsState;
   settings?: SettingState;
   application?: ApplicationState;
-  encryptKey?: string;
 }

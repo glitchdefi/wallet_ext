@@ -37,6 +37,7 @@ import { ReceiveTokenPage } from './pages/ReceiveToken';
 import { AddAssetsPage } from './pages/AddAssets';
 import { BackUpPage } from './pages/BackUp';
 import { SendTokenPage } from './pages/SendToken';
+import { Transition, TransitionGroup } from 'react-transition-group';
 
 const history = createMemoryHistory();
 
@@ -59,22 +60,22 @@ export const App: React.FC = () => {
     }
   }, [duration]);
 
-  useEffect(() => {
-    const job = setInterval(() => {
-      setTimeQuery((prev) => prev + 1);
-    }, UPDATE_TIME);
+  // useEffect(() => {
+  //   const job = setInterval(() => {
+  //     setTimeQuery((prev) => prev + 1);
+  //   }, UPDATE_TIME);
 
-    return () => {
-      clearInterval(job);
-    };
-  }, []);
+  //   return () => {
+  //     clearInterval(job);
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    if (isInitialized !== 'none') {
-      getBalance();
-      getTokenPrice('glitch-protocol', 'usd');
-    }
-  }, [timeQuery]);
+  // useEffect(() => {
+  //   if (isInitialized !== 'none') {
+  //     getBalance();
+  //     getTokenPrice('glitch-protocol', 'usd');
+  //   }
+  // }, [timeQuery]);
 
   return (
     <Router history={history}>
@@ -83,52 +84,91 @@ export const App: React.FC = () => {
       <ToastListener />
       <ContainerLayout>
         {isLoading && <LoadingApplication />}
-        <Switch>
-          <GRoute exact path={Routes.welcome} component={WelcomePage} />
 
-          <Route
-            path={Routes.internetWarning}
-            component={InternetWarningPage}
-          />
-          <Route path={Routes.restoreWallet} component={RestoreWalletPage} />
-          <Route path={Routes.createWallet} component={CreateWalletPage} />
+        <Route
+          render={({ location }) => {
+            const { key } = location;
 
-          <Route path={Routes.unlock} component={UnlockPage} />
+            return (
+              <TransitionGroup component={null}>
+                <Transition
+                  key={key}
+                  appear={true}
+                  timeout={{ enter: 750, exit: 0 }}
+                >
+                  <Switch>
+                    <GRoute
+                      exact
+                      path={Routes.welcome}
+                      component={WelcomePage}
+                    />
 
-          <Authenticated path={Routes.home} component={HomePage} />
-          <Authenticated
-            path={Routes.createImportAccount}
-            component={CreateImportAccountPage}
-          />
-          <Authenticated
-            path={Routes.accountDetails}
-            component={AccountDetailsPage}
-          />
-          <Authenticated
-            path={Routes.showPrivateKeys}
-            component={ShowPrivateKeysPage}
-          />
-          <Authenticated path={Routes.aboutUs} component={AboutUsPage} />
-          <Authenticated
-            path={Routes.logoutWallet}
-            component={LogoutWalletPage}
-          />
-          <Authenticated
-            path={Routes.revealMnemonicPhrase}
-            component={RevealMnemonicPhrasePage}
-          />
-          <Authenticated
-            path={Routes.tokenDetails}
-            component={TokenDetailsPage}
-          />
-          <Authenticated
-            path={Routes.receiveToken}
-            component={ReceiveTokenPage}
-          />
-          <Authenticated path={Routes.sendToken} component={SendTokenPage} />
-          <Authenticated path={Routes.addAssets} component={AddAssetsPage} />
-          <Authenticated path={Routes.backUp} component={BackUpPage} />
-        </Switch>
+                    <Route
+                      path={Routes.internetWarning}
+                      component={InternetWarningPage}
+                    />
+                    <Route
+                      path={Routes.restoreWallet}
+                      component={RestoreWalletPage}
+                    />
+                    <Route
+                      path={Routes.createWallet}
+                      component={CreateWalletPage}
+                    />
+
+                    <Route path={Routes.unlock} component={UnlockPage} />
+
+                    <Authenticated path={Routes.home} component={HomePage} />
+                    <Authenticated
+                      path={Routes.createImportAccount}
+                      component={CreateImportAccountPage}
+                    />
+                    <Authenticated
+                      path={Routes.accountDetails}
+                      component={AccountDetailsPage}
+                    />
+                    <Authenticated
+                      path={Routes.showPrivateKeys}
+                      component={ShowPrivateKeysPage}
+                    />
+                    <Authenticated
+                      path={Routes.aboutUs}
+                      component={AboutUsPage}
+                    />
+                    <Authenticated
+                      path={Routes.logoutWallet}
+                      component={LogoutWalletPage}
+                    />
+                    <Authenticated
+                      path={Routes.revealMnemonicPhrase}
+                      component={RevealMnemonicPhrasePage}
+                    />
+                    <Authenticated
+                      path={Routes.tokenDetails}
+                      component={TokenDetailsPage}
+                    />
+                    <Authenticated
+                      path={Routes.receiveToken}
+                      component={ReceiveTokenPage}
+                    />
+                    <Authenticated
+                      path={Routes.sendToken}
+                      component={SendTokenPage}
+                    />
+                    <Authenticated
+                      path={Routes.addAssets}
+                      component={AddAssetsPage}
+                    />
+                    <Authenticated
+                      path={Routes.backUp}
+                      component={BackUpPage}
+                    />
+                  </Switch>
+                </Transition>
+              </TransitionGroup>
+            );
+          }}
+        />
       </ContainerLayout>
     </Router>
   );

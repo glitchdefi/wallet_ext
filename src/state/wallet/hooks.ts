@@ -1,10 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'types';
 import { useToast } from 'hooks/useToast';
 import * as actions from './actions';
 import { AccountType } from 'types/WalletState';
+import { decryptMessage } from 'utils/strings';
+import { hexToU8a } from '@polkadot/util';
 
 const useWalletSelector = () =>
   useSelector((state: RootState) => {
@@ -16,11 +18,6 @@ export const useIsInitialized = () => {
   return { isInitialized };
 };
 
-export const useSeedPhrases = () => {
-  const { seedPhrases } = useWalletSelector();
-  return { seedPhrases };
-};
-
 export const useWrongPassword = () => {
   const { isWrongPassword } = useWalletSelector();
   return { isWrongPassword };
@@ -30,41 +27,35 @@ export const useAccount = (): AccountType => {
   const { accounts, selectedAddress, priceUsd } = useWalletSelector();
   if (accounts && selectedAddress) {
     const account = accounts[selectedAddress];
-
     if (account) {
       return { ...account, totalValue: Number(account.balance) * priceUsd };
-    } else {
-      return {
-        name: '--',
-        address: '--',
-        balance: '--',
-        avatar: null,
-        createdAt: null,
-        privateKey: null,
-        totalValue: '--',
-      };
     }
   }
+
+  return {
+    name: '--',
+    address: '--',
+    balance: '--',
+    avatar: null,
+    whenCreated: null,
+    totalValue: '--',
+    seed: null,
+  };
+};
+
+export const useSeedPhrase = () => {
+  const { seedPhrases } = useWalletSelector();
+  return { seedPhrase: seedPhrases };
 };
 
 export const useAccounts = () => {
   const { accounts } = useWalletSelector();
-  return { accounts };
+  return { accounts, accountLength: Object.entries(accounts).length };
 };
 
 export const useSelectedAddress = () => {
   const { selectedAddress } = useWalletSelector();
   return { selectedAddress };
-};
-
-export const useIsValidSeedPhrase = () => {
-  const { isValidSeedPhrase } = useWalletSelector();
-  return { isValidSeedPhrase };
-};
-
-export const useIsInvalidPrivateKey = () => {
-  const { isInvalidPrivateKey } = useWalletSelector();
-  return { isInvalidPrivateKey };
 };
 
 export const useShowPrivateKey = () => {
@@ -124,8 +115,7 @@ export const useTransferAction = (): {
 export const useWalletActionHandlers = (): {
   onCreateWallet: (password: string) => void;
   onUnlockWallet: (password: string) => void;
-  onCheckIsValidSeedPhrase: (seedPhrase: string) => void;
-  onRestoreWallet: (seedPhrase: string, password: string) => void;
+  onRestoreWallet: (seedPhrase: string, name: string, password: string) => void;
   onLogoutWallet: (password: string) => void;
   onShowSeedPhrase: (password: string) => void;
   onLockWallet: () => void;
@@ -166,15 +156,11 @@ export const useWalletActionHandlers = (): {
     [dispatch]
   );
 
-  const onCheckIsValidSeedPhrase = useCallback(
-    (seedPhrase?: string) =>
-      dispatch(actions.checkIsValidSeedPhraseAction(seedPhrase)),
-    [dispatch]
-  );
-
   const onRestoreWallet = useCallback(
-    (seedPhrase?: string, password?: string) =>
-      dispatch(actions.restoreWalletAction(seedPhrase, password, history)),
+    (seedPhrase: string, name: string, password: string) =>
+      dispatch(
+        actions.restoreWalletAction(seedPhrase, name, password, history)
+      ),
     [dispatch]
   );
 
@@ -220,7 +206,6 @@ export const useWalletActionHandlers = (): {
     onUnlockWallet,
     onCreateCompleted,
     onClearIsWrongPassword,
-    onCheckIsValidSeedPhrase,
     onRestoreWallet,
     onLockWallet,
     onLogoutWallet,
@@ -238,16 +223,22 @@ export const useWalletActionHandlers = (): {
  * @returns account actions
  */
 export const useAccountActionHandlers = (): {
+  onCreateAccount: (seed: string, name: string, password: string) => void;
   onAddNewAccount: (name: string) => void;
   onChangeAccount: (address: string) => void;
   onImportAccount: (name: string, privateKey: string) => void;
-  onClearIsInvalidPrivateKey: () => void;
   onShowPrivateKeys: (password: string) => void;
   onClearShowPrivateKey: () => void;
   onChangeAccountName: (name: string) => void;
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const onCreateAccount = useCallback(
+    (seed: string, name: string, password: string) =>
+      dispatch(actions.createAccountAction(seed, name, password)),
+    [dispatch]
+  );
 
   const onAddNewAccount = useCallback(
     (name: string) => dispatch(actions.addNewAccountAction(name, history)),
@@ -270,11 +261,6 @@ export const useAccountActionHandlers = (): {
     [dispatch]
   );
 
-  const onClearIsInvalidPrivateKey = useCallback(
-    () => dispatch(actions.clearIsInvalidPrivateKey()),
-    [dispatch]
-  );
-
   const onClearShowPrivateKey = useCallback(
     () => dispatch(actions.clearShowPrivateKey()),
     [dispatch]
@@ -286,10 +272,10 @@ export const useAccountActionHandlers = (): {
   );
 
   return {
+    onCreateAccount,
     onAddNewAccount,
     onChangeAccount,
     onImportAccount,
-    onClearIsInvalidPrivateKey,
     onShowPrivateKeys,
     onClearShowPrivateKey,
     onChangeAccountName,

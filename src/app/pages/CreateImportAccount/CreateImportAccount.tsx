@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useHistory, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-
-import {
-  useAccountActionHandlers,
-  useIsInvalidPrivateKey,
-} from 'state/wallet/hooks';
 
 import { messages } from './messages';
 
@@ -28,13 +23,7 @@ const CreateImportAccount: React.FC = () => {
 
   const { t } = useTranslation();
 
-  const { isInvalidPrivateKey } = useIsInvalidPrivateKey();
-  const { onClearIsInvalidPrivateKey } = useAccountActionHandlers();
   const [activeTab, setActiveTab] = useState<number>(location.state.activeTab);
-
-  useEffect(() => {
-    isInvalidPrivateKey && onClearIsInvalidPrivateKey();
-  }, [activeTab]);
 
   return (
     <PageLayout minHeight="600px">

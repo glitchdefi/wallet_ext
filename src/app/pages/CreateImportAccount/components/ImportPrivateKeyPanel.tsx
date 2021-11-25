@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import TextareaAutosize from 'react-autosize-textarea/lib';
@@ -7,11 +7,7 @@ import styled from 'styled-components';
 import { messages } from '../messages';
 import { Routes } from 'constants/routes';
 
-import {
-  useAccountActionHandlers,
-  useAccounts,
-  useIsInvalidPrivateKey,
-} from 'state/wallet/hooks';
+import { useAccountActionHandlers, useAccounts } from 'state/wallet/hooks';
 
 import { colors } from 'theme/colors';
 
@@ -22,18 +18,17 @@ import { MessageBox } from 'app/components/MessageBox';
 import { Text } from 'app/components/Text';
 import { SnippetsIcon } from 'app/components/Svg';
 
-export const ImportPrivateKeyPanel: React.FC = () => {
+export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
   const history = useHistory();
   const { t } = useTranslation();
 
   const { accounts } = useAccounts();
-  const { isInvalidPrivateKey } = useIsInvalidPrivateKey();
-  const { onClearIsInvalidPrivateKey, onImportAccount } =
-    useAccountActionHandlers();
+  const { onImportAccount } = useAccountActionHandlers();
   const totalAccount = Object.entries(accounts).length;
 
   const [name, setName] = useState<string>('');
   const [privateKey, setPrivateKey] = useState<string>('');
+  const [isValidPK, setIsValidPK] = useState<boolean>(false);
 
   return (
     <Box mt="32px">
@@ -50,7 +45,7 @@ export const ImportPrivateKeyPanel: React.FC = () => {
 
       <Box mt="24px">
         <Label>{t(messages.privateKeys())}</Label>
-        <InputWrapper isError={isInvalidPrivateKey} alignItems="center">
+        <InputWrapper isError={isValidPK} alignItems="center">
           <StyledInput
             hasBorder={false}
             id="private-key-input"
@@ -59,7 +54,7 @@ export const ImportPrivateKeyPanel: React.FC = () => {
             placeholder={t(messages.enterPrivateKeys())}
             onChange={(e: any) => {
               const { value } = e.target;
-              !value && isInvalidPrivateKey && onClearIsInvalidPrivateKey();
+              !value && isValidPK && setIsValidPK(false);
               setPrivateKey(value);
             }}
           />
@@ -78,7 +73,7 @@ export const ImportPrivateKeyPanel: React.FC = () => {
             <SnippetsIcon width="15px" />
           </Button>
         </InputWrapper>
-        {isInvalidPrivateKey && (
+        {isValidPK && (
           <Text mt="2px" fontSize="12px" color={colors.error}>
             {t(messages.invalidPrivateKeys())}
           </Text>
@@ -113,7 +108,7 @@ export const ImportPrivateKeyPanel: React.FC = () => {
       </Flex>
     </Box>
   );
-};
+});
 
 const InputWrapper = styled(Flex)<{ isError?: boolean }>`
   border: 1px solid ${colors.gray8};

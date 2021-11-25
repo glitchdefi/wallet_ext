@@ -7,7 +7,7 @@ import { Text } from 'app/components/Text';
 import { Box, Flex } from 'app/components/Box';
 import { DownArrowIcon } from 'app/components/Svg';
 
-const NetworkBox: React.FC = () => {
+const NetworkBox: React.FC = React.memo(() => {
   return (
     <Flex
       width="fit-content"
@@ -27,6 +27,6 @@ const NetworkBox: React.FC = () => {
       <DownArrowIcon width="12px" color={colors.gray7} />
     </Flex>
   );
-};
+});
 
 export default NetworkBox;

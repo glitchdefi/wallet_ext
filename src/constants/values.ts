@@ -1,3 +1,4 @@
+import { KeypairType } from '@polkadot/util-crypto/types';
 import moment from 'moment';
 
 export const LOCK_TIME_LIST = [
@@ -22,6 +23,7 @@ export const LOCK_TIME_LIST = [
   },
 ];
 
+export const DEFAULT_TYPE: KeypairType = 'sr25519';
 export const UPDATE_TIME = 5000;
 export const PAGE_SIZE = 1000;
 export const KIND_OF_TXN_LIST = [

@@ -9,28 +9,18 @@ import { Routes } from 'constants/routes';
 // Components
 import { PageLayout } from 'app/layouts';
 import { Box, Flex } from 'app/components/Box';
-import { LeftArrowIcon, RightArrowIcon } from 'app/components/Svg';
+import { RightArrowIcon } from 'app/components/Svg';
 import { Text } from 'app/components/Text';
 import { Image } from 'app/components/Image';
 import { Button } from 'app/components/Button';
+import { Header } from 'app/components/Shared';
 
 const AboutUs: React.FC = () => {
   const history = useHistory();
 
   return (
     <PageLayout>
-      <Flex
-        alignItems="center"
-        borderBottom={`1px solid ${colors.magenta2}`}
-        p="16px"
-      >
-        <Button p="0px" onClick={() => history.push(Routes.home)}>
-          <LeftArrowIcon width="13px" />
-        </Button>
-        <Text mt="3px" bold ml="16px" color={colors.gray7}>
-          About Glitch
-        </Text>
-      </Flex>
+      <Header onBack={() => history.push(Routes.home)} title="About Glitch" />
 
       <Box height="543px" overflowY="scroll">
         <Box p="16px">

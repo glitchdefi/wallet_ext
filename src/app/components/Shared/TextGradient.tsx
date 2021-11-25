@@ -12,9 +12,6 @@ const TextGradient = styled(Text)`
   -webkit-background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-
-  background-size: 400% 400%;
-  -webkit-animation: gradient 8s ease infinite;
 `;
 
 export default TextGradient;

@@ -55,4 +55,4 @@ const StyledWrapper = styled(Flex)`
   }
 `;
 
-export default MnemonicPhraseItem;
+export default React.memo(MnemonicPhraseItem);

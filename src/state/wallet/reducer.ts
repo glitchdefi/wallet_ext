@@ -27,12 +27,6 @@ export const slice = createSlice({
     setAccounts: (state, action) => {
       state.accounts = action.payload;
     },
-    setIsValidSeedPhrase: (state, action) => {
-      state.isValidSeedPhrase = action.payload;
-    },
-    setIsInvalidPrivateKey: (state, action) => {
-      state.isInvalidPrivateKey = action.payload;
-    },
     setShowPrivateKey: (state, action) => {
       state.showPrivateKey = action.payload;
     },
@@ -41,9 +35,6 @@ export const slice = createSlice({
     },
     setTokenPrices: (state, action) => {
       state.priceUsd = action.payload;
-    },
-    setIsValidAddress: (state, action) => {
-      state.isValidAddress = action.payload;
     },
   },
 });

@@ -8,18 +8,24 @@ import { WarningIcon } from '../Svg';
 import { Text } from '../Text';
 
 interface Props extends SpaceProps {
-  message: string;
+  message?: string;
+  textColor?: string;
+  textComponent?: React.ReactNode;
 }
 
 const MessageBox: React.FC<Props> = (props) => {
-  const { message, ...rest } = props;
+  const { message, textColor, textComponent, ...rest } = props;
 
   return (
     <MsgBoxContainer {...rest}>
-      <WarningIcon color="#d87a16" pt="3px" width="16px" />
-      <Text ml="10px" fontSize="12px">
-        {message}
-      </Text>
+      <WarningIcon color={colors.orange} pt="3px" width="16px" />
+      {React.isValidElement(textComponent) ? (
+        React.cloneElement(textComponent)
+      ) : (
+        <Text color={textColor} ml="10px" fontSize="12px">
+          {message}
+        </Text>
+      )}
     </MsgBoxContainer>
   );
 };
@@ -27,7 +33,7 @@ const MessageBox: React.FC<Props> = (props) => {
 const MsgBoxContainer = styled(Flex)`
   padding: 6px 16px;
   align-items: flex-start;
-  border: 1px solid #d87a16;
+  border: 1px solid ${colors.orange};
   background-color: ${colors.gray1};
 `;
 

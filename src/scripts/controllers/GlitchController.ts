@@ -4,47 +4,102 @@ import moment from 'moment';
 
 import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
+import { GlitchTest } from '../lib/web3/GlitchTest';
 
 // Types
 import { RootState } from 'types';
 import { getAvatar } from 'utils/drawAvatar';
+import { decryptMessage } from 'utils/strings';
 
 log.setDefaultLevel('debug');
 export class GlitchController {
   glitchWeb3: GlitchWeb3;
   appStateController: AppStateController;
-  memStore: {};
+  glitchTest: GlitchTest;
 
   constructor(otps: { initialState: RootState }) {
     const { initialState } = otps;
     this.glitchWeb3 = new GlitchWeb3();
+    this.glitchTest = new GlitchTest();
     this.appStateController = new AppStateController({ initialState });
-    this.memStore = {};
   }
 
   //=============================================================================
   // WALLET METHODS
   //=============================================================================
 
-  async initPrivateKeyToWeb3() {
-    const addressSelected = await this.appStateController.getAddressSelected();
-    const oldAccounts = await this.appStateController.getAccounts();
-
-    if (oldAccounts && addressSelected) {
-      const privateKey = await this.glitchWeb3.decrypt(
-        oldAccounts[addressSelected].privateKey,
-        addressSelected
+  async createAccount(
+    seed: string,
+    name: string,
+    password: string
+  ): Promise<object> {
+    try {
+      const { mnemonicEncrypted, json } = await this.glitchTest.createAccount(
+        seed,
+        name,
+        password
       );
-      this.glitchWeb3.importAccountToWeb3(privateKey);
+
+      const { address, meta } = json as unknown as {
+        address: string;
+        meta?: {
+          name: string;
+          avatar: string;
+          whenCreated: number;
+        };
+      };
+
+      const newState = await this.appStateController.updateState('wallet', {
+        isInitialized: 'pending',
+        isLocked: true,
+        selectedAddress: address,
+        firstAddress: address,
+        isBackUp: false,
+        accounts: {
+          [address]: {
+            address,
+            balance: 0,
+            name: meta.name,
+            avatar: meta.avatar,
+            whenCreated: meta.whenCreated,
+            seed: mnemonicEncrypted,
+          },
+        },
+      });
+
+      return newState;
+    } catch (e) {
+      throw new Error((e as Error).message);
     }
   }
 
   /**
    *
-   * @returns Generate 12 mnemonic phrases
+   *
    */
-  createSeedPhrases(): string {
-    return this.glitchWeb3.createSeedPhrases();
+  async createAccountCompleted(): Promise<object> {
+    try {
+      const addressSelected =
+        await this.appStateController.getAddressSelected();
+      const oldAccounts = await this.appStateController.getAccounts();
+      // const balance = await this.glitchWeb3.getBalance(addressSelected);
+
+      const newState = await this.appStateController.updateState('wallet', {
+        isInitialized: 'completed',
+        isLocked: false,
+        isBackUp: true,
+        accounts: {
+          [addressSelected]: {
+            ...oldAccounts[addressSelected],
+            balance: 0,
+          },
+        },
+      });
+
+      return newState;
+    } catch (e) {
+      throw new Error((e as Error).message);
+    }
   }
 
   /**
@@ -52,46 +107,7 @@ export class GlitchController {
    * @param password
    */
   async createNewWallet(password?: string): Promise<object> {
-    try {
-      const seedPhrases = this.createSeedPhrases();
-      const wallet = this.glitchWeb3.createNewWallet(seedPhrases);
-      this.glitchWeb3.importAccountToWeb3(wallet?.privateKey);
-
-      const encryptKey = await this.glitchWeb3.encrypt(seedPhrases, password);
-      const encryptPrivateKey = await this.glitchWeb3.encrypt(
-        wallet?.privateKey,
-        wallet?.address
-      );
-
-      const avatar = getAvatar();
-
-      // Update to store
-      await this.appStateController.setEncryptKey(encryptKey);
-
-      const newState = await this.appStateController.updateState('wallet', {
-        isInitialized: 'pending',
-        isLocked: true,
-        selectedAddress: wallet.address,
-        isBackUp: false,
-        accounts: {
-          [wallet.address]: {
-            address: wallet.address,
-            balance: 0,
-            name: 'Account 1',
-            avatar,
-            privateKey: encryptPrivateKey,
-            createdAt: moment().valueOf(),
-          },
-        },
-      });
-
-      return {
-        ...newState,
-        seedPhrases,
-      };
-    } catch (error) {
-      throw error;
-    }
+    return null;
   }
 
   /**
@@ -118,8 +134,8 @@ export class GlitchController {
       });
 
       return newState;
-    } catch (error) {
-      throw error;
+    } catch (e) {
+      throw new Error((e as Error).message);
     }
   }
 
@@ -142,32 +158,33 @@ export class GlitchController {
    * @returns
    */
   async unlockWallet(password?: string) {
-    let state = {};
-    const encryptKey = await this.appStateController.getEncryptKey();
-
-    if (encryptKey) {
-      const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
+    try {
+      let state = {};
+      const firstAddress = await this.appStateController.getFirstAddress();
       const settings = await this.appStateController.getSettingsState();
+      const isValid = this.glitchTest.unlockAccount(password, firstAddress);
 
       const newState = await this.appStateController.updateState('wallet', {
         ...state,
-        isLocked: false,
+        isLocked: !isValid,
       });
 
-      // Reset open time
-      await this.appStateController.updateState('settings', {
-        autoLock: {
-          ...settings.autoLock,
-          openTime: new Date().getTime(),
-        },
-      });
+      if (isValid) {
+        // Reset open time
+        await this.appStateController.updateState('settings', {
+          autoLock: {
+            ...settings.autoLock,
+            openTime: new Date().getTime(),
+          },
+        });
+      }
 
       return {
         ...newState,
-        isWrongPassword: !seedPhrase,
+        isWrongPassword: !isValid,
       };
-    } else {
-      throw Error('Encrypt key not found');
+    } catch (e) {
+      throw new Error((e as Error).message);
     }
   }
 
@@ -186,40 +203,41 @@ export class GlitchController {
     };
   }
 
-  /**
-   *
-   * @param password
-   */
-  async restoreWallet(seedPhrase?: string, password?: string): Promise<object> {
+  async restoreWallet(
+    seed?: string,
+    name?: string,
+    password?: string
+  ): Promise<object> {
+    const { mnemonicEncrypted, json } = await this.glitchTest.createAccount(
+      seed,
+      name,
+      password
+    );
+
+    const { address, meta } = json as unknown as {
+      address: string;
+      meta?: {
+        name: string;
+        avatar: string;
+        whenCreated: number;
+      };
+    };
+
     try {
-      const wallet = this.glitchWeb3.createNewWallet(seedPhrase);
-      this.glitchWeb3.importAccountToWeb3(wallet?.privateKey);
-
-      const encryptKey = await this.glitchWeb3.encrypt(seedPhrase, password);
-      const encryptPrivateKey = await this.glitchWeb3.encrypt(
-        wallet?.privateKey,
-        wallet?.address
-      );
-      const balance = await this.glitchWeb3.getBalance(wallet?.address);
-
-      const avatar = getAvatar();
-
-      // Update to store
-      await this.appStateController.setEncryptKey(encryptKey);
-
       const newState = await this.appStateController.updateState('wallet', {
         isInitialized: 'completed',
         isLocked: false,
-        selectedAddress: wallet.address,
+        selectedAddress: address,
+        firstAddress: address,
         isBackUp: true,
         accounts: {
-          [wallet.address]: {
-            address: wallet.address,
-            balance,
-            name: 'Account 1',
-            avatar,
-            privateKey: encryptPrivateKey,
-            createdAt: moment().valueOf(),
+          [address]: {
+            address: address,
+            balance: 0,
+            name: meta.name,
+            avatar: meta.avatar,
+            seed: mnemonicEncrypted,
+            whenCreated: meta.whenCreated,
           },
         },
       });
@@ -229,11 +247,9 @@ export class GlitchController {
         duration: null,
       });
 
-      return {
-        ...newState,
-      };
-    } catch (error) {
-      throw error;
+      return newState;
+    } catch (e) {
+      throw new Error((e as Error).message);
     }
   }
 
@@ -243,20 +259,18 @@ export class GlitchController {
    */
   async logoutWallet(password?: string): Promise<object> {
     try {
-      const encryptKey = await this.appStateController.getEncryptKey();
+      const firstAddress = await this.appStateController.getFirstAddress();
+      const isValid = this.glitchTest.unlockAccount(password, firstAddress);
 
-      if (encryptKey) {
-        const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
-        if (seedPhrase) await this.appStateController.setDefaultState();
-
-        return {
-          isWrongPassword: !seedPhrase,
-        };
-      } else {
-        throw Error('Encrypt key not found');
+      if (isValid) {
+        await this.appStateController.setDefaultState();
       }
-    } catch (error) {
-      throw error;
+
+      return {
+        isWrongPassword: !isValid,
+      };
+    } catch (e) {
+      throw new Error((e as Error).message);
     }
   }
 
@@ -266,20 +280,27 @@ export class GlitchController {
    */
   async showSeedPhrase(password?: string): Promise<object> {
     try {
-      const encryptKey = await this.appStateController.getEncryptKey();
+      const fistAddress = await this.appStateController.getFirstAddress();
+      const currentAddress = await this.appStateController.getAddressSelected();
+      const isValid = this.glitchTest.unlockAccount(password, fistAddress);
 
-      if (encryptKey) {
-        const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
+      if (isValid) {
+        const oldAccounts = await this.appStateController.getAccounts();
+        const currentAccount = oldAccounts[currentAddress];
+        const { seed } = currentAccount;
+        const decryptSeed = await decryptMessage(seed.encrypted, seed.secret);
 
         return {
-          isWrongPassword: !seedPhrase,
-          seedPhrase,
+          isWrongPassword: false,
+          seedPhrases: decryptSeed,
         };
-      } else {
-        throw Error('Encrypt key not found');
       }
-    } catch (error) {
-      throw error;
+
+      return {
+        isWrongPassword: true,
+      };
+    } catch (e) {
+      throw new Error((e as Error).message);
     }
   }
 
@@ -293,27 +314,33 @@ export class GlitchController {
    */
   async addNewAccount(name?: string): Promise<object> {
     try {
-      const account = await this.glitchWeb3.addNewAccount();
-      this.glitchWeb3.importAccountToWeb3(account?.privateKey);
-
-      const encryptPrivateKey = await this.glitchWeb3.encrypt(
-        account.privateKey,
-        account.address
+      const { mnemonicEncrypted, json } = await this.glitchTest.createAccount(
+        null,
+        name,
+        null
       );
 
+      const { address, meta } = json as unknown as {
+        address: string;
+        meta?: {
+          name: string;
+          avatar: string;
+          whenCreated: number;
+        };
+      };
+
       const oldAccounts = await this.appStateController.getAccounts();
-      const avatar = getAvatar();
 
       const newState = await this.appStateController.updateState('wallet', {
-        selectedAddress: account.address,
+        selectedAddress: address,
         accounts: {
-          [account.address]: {
-            name,
-            address: account.address,
-            avatar,
+          [address]: {
+            name: meta.name,
+            address: address,
+            avatar: meta.avatar,
             balance: 0,
-            privateKey: encryptPrivateKey,
-            createdAt: moment().valueOf(),
+            seed: mnemonicEncrypted,
+            whenCreated: meta.whenCreated,
           },
           ...oldAccounts,
         },
@@ -333,13 +360,6 @@ export class GlitchController {
     try {
       const oldAccounts = await this.appStateController.getAccounts();
       const balance = await this.glitchWeb3.getBalance(address);
-
-      const privateKey = await this.glitchWeb3.decrypt(
-        oldAccounts[address].privateKey,
-        address
-      );
-
-      this.glitchWeb3.importAccountToWeb3(privateKey);
 
       oldAccounts[address].balance = balance;
 
@@ -386,8 +406,7 @@ export class GlitchController {
               address,
               balance,
               avatar,
-              privateKey: encryptPrivateKey,
-              createdAt: moment().valueOf(),
+              whenCreated: moment().valueOf(),
             },
             ...oldAccounts,
           },
@@ -401,35 +420,41 @@ export class GlitchController {
   }
 
   /**
-   *  Change account
-   * @returns
+   *  Show current account private key from password
+   * @param password - current password
+   * @returns { isWrongPassword?: boolean; privateKey?: string }
    */
-  async showPrivateKeysAccount(password?: string): Promise<object> {
+  async showPrivateKeysAccount(
+    password?: string
+  ): Promise<{ isWrongPassword?: boolean; privateKey?: string }> {
     try {
-      const encryptKey = await this.appStateController.getEncryptKey();
+      const firstAddress = await this.appStateController.getFirstAddress();
+      const currentAddress = await this.appStateController.getAddressSelected();
+      const isValid = this.glitchTest.unlockAccount(password, firstAddress);
 
-      if (encryptKey) {
+      // Password correct
+      if (isValid) {
         const oldAccounts = await this.appStateController.getAccounts();
-
-        const addressSelected =
-          await this.appStateController.getAddressSelected();
-
-        const seedPhrase = await this.glitchWeb3.decrypt(encryptKey, password);
-
-        const privateKey = await this.glitchWeb3.decrypt(
-          oldAccounts[addressSelected].privateKey,
-          addressSelected
-        );
+        const currentAccount = oldAccounts[currentAddress];
+        const { seed } = currentAccount;
+        const decryptSeed = (await decryptMessage(
+          seed.encrypted,
+          seed.secret
+        )) as string;
+        const privateKey = this.glitchTest.getPrivateKeyFromSeed(decryptSeed);
 
         return {
-          isWrongPassword: !seedPhrase,
-          privateKey: seedPhrase ? privateKey : null,
+          isWrongPassword: false,
+          privateKey,
         };
-      } else {
-        throw Error('Encrypt key not found');
       }
-    } catch (error) {
-      throw error;
+
+      return {
+        isWrongPassword: true,
+        privateKey: null,
+      };
+    } catch (e) {
+      throw new Error((e as Error).message);
     }
   }
 
@@ -440,10 +465,10 @@ export class GlitchController {
   async changeAccountName(name?: string): Promise<object> {
     try {
       const oldAccounts = await this.appStateController.getAccounts();
-      const addressSelected =
-        await this.appStateController.getAddressSelected();
+      const address = await this.appStateController.getAddressSelected();
 
-      oldAccounts[addressSelected].name = name;
+      this.glitchTest.editAccount(name, address);
+      oldAccounts[address].name = name;
 
       const newState = await this.appStateController.updateState('wallet', {
         accounts: {
@@ -452,8 +477,8 @@ export class GlitchController {
       });
 
       return { ...newState };
-    } catch (error) {
-      throw error;
+    } catch (e) {
+      throw new Error((e as Error).message);
     }
   }
 
@@ -497,15 +522,6 @@ export class GlitchController {
     } catch (error) {
       throw error;
     }
-  }
-
-  /**
-   *
-   * @returns
-   */
-  checkIsValidSeedPhrase(seedPhrase?: string): { isValid?: boolean } {
-    const isValid = this.glitchWeb3.isValidSeedPhrase(seedPhrase);
-    return { isValid };
   }
 
   async getTokenPrice(tokenName?: string, currency?: string): Promise<object> {
@@ -600,10 +616,6 @@ export class GlitchController {
   //=============================================================================
   // STORE MANAGEMENT METHODS
   //=============================================================================
-
-  async getAppState() {
-    return await this.appStateController.getState();
-  }
 
   async setDefaultAppState(): Promise<object> {
     return await this.appStateController.setDefaultState();

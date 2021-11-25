@@ -1,5 +1,12 @@
 import { GlitchToken } from 'constants/tokens';
 import GlitchCommon from '@glitchdefi/common';
+import {
+  decodeAddress,
+  encodeAddress,
+  randomAsU8a,
+} from '@polkadot/util-crypto';
+import { isHex, u8aToHex, hexToU8a } from '@polkadot/util';
+import { decrypt, encrypt } from '@metamask/browser-passworder';
 
 export const truncateAddress = (
   address: string,
@@ -36,4 +43,39 @@ export const checkIsValidAddress = (
   } catch (error) {
     return false;
   }
+};
+
+export function isHexSeed(seed: string): boolean {
+  return isHex(seed) && seed.length === 66;
+}
+
+export function privateKeyValidate(privateKey: string): boolean {
+  return isHexSeed(privateKey);
+}
+
+export const isValidAddressPolkadotAddress = (address: string): boolean => {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const messageEncryption = async (
+  msg: string
+): Promise<{ encrypted: string; secret: string }> => {
+  const secret = u8aToHex(randomAsU8a());
+
+  // Encrypt the message
+  const encrypted = await encrypt(secret, msg);
+  return { encrypted, secret };
+};
+
+export const decryptMessage = async (encrypted: string, secret: string) => {
+  // Decrypt the message
+  const messageDecrypted = await decrypt(secret, encrypted);
+
+  return messageDecrypted;
 };

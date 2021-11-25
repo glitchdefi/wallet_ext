@@ -11,13 +11,12 @@ import { Box, Flex } from 'app/components/Box';
 import { Input, Label } from 'app/components/Form';
 import { Button, ButtonShadow } from 'app/components/Button';
 
-export const CreateAccountPanel: React.FC = () => {
+export const CreateAccountPanel: React.FC = React.memo(() => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const { accounts } = useAccounts();
+  const { accountLength } = useAccounts();
   const { onAddNewAccount } = useAccountActionHandlers();
-  const totalAccount = Object.entries(accounts).length;
 
   const [name, setName] = useState<string>('');
 
@@ -26,7 +25,7 @@ export const CreateAccountPanel: React.FC = () => {
       <Label>{t(messages.accountName())}</Label>
       <Input
         value={name}
-        placeholder={`${t(messages.account())} ${totalAccount + 1}`}
+        placeholder={`${t(messages.account())} ${accountLength + 1}`}
         onChange={(e) => setName(e.target.value)}
       />
 
@@ -43,7 +42,7 @@ export const CreateAccountPanel: React.FC = () => {
           ml="8px"
           width="50%"
           onClick={() => {
-            const accountName = name ? name : `Account ${totalAccount + 1}`;
+            const accountName = name ? name : `Account ${accountLength + 1}`;
             onAddNewAccount(accountName);
           }}
         >
@@ -52,4 +51,4 @@ export const CreateAccountPanel: React.FC = () => {
       </Flex>
     </Box>
   );
-};
+});

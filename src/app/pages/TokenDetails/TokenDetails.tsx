@@ -14,7 +14,7 @@ import { QrCodeIcon, SendIcon } from 'app/components/Svg';
 import { Button } from 'app/components/Button';
 import { TransactionHistorySection } from './components/TransactionHistorySection';
 
-const TokenDetails: React.FC = () => {
+const TokenDetails: React.FC = React.memo(() => {
   const history = useHistory();
 
   const account = useAccount();
@@ -78,6 +78,6 @@ const TokenDetails: React.FC = () => {
       </Flex>
     </PageLayout>
   );
-};
+});
 
 export default TokenDetails;

@@ -22,7 +22,6 @@ async function initialize(): Promise<any> {
 
   // Initializes the Glitch Controller with any initial state and default language.
   const controller = new GlitchController({ initialState: initState });
-  await controller.initPrivateKeyToWeb3();
 
   handleChromeListeners(controller);
 
@@ -111,15 +110,11 @@ function handleChromeListeners(controller: GlitchController) {
                 Handler.resetState(controller, sendResponse);
                 break;
 
-              case MessageTypes.BG_WALLET_CHECK_IS_VALID_SEED_PHRASE:
-                Handler.checkIsValidSeedPhrase(
-                  payload,
-                  controller,
-                  sendResponse
-                );
+              // Account
+              case MessageTypes.BG_WALLET_CREATE_ACCOUNT:
+                Handler.createAccount(payload, controller, sendResponse);
                 break;
 
-              // Account
               case MessageTypes.BG_ACCOUNT_ADD_ACCOUNT:
                 Handler.addNewAccount(payload, controller, sendResponse);
                 break;

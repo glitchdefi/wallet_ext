@@ -18,114 +18,118 @@ interface Props {
   initValue?: string;
 }
 
-const CreatePasswordStep: React.FC<Props> = ({
-  initValue,
-  onSetupPassword,
-}) => {
-  const { t } = useTranslation();
+const CreatePasswordStep: React.FC<Props> = React.memo(
+  ({ initValue, onSetupPassword }) => {
+    const { t } = useTranslation();
 
-  const [password, setPassword] = useState<string>(initValue);
-  const [confirmPassword, setConfirmPassword] = useState<string>(initValue);
-  const [isPassedRules, setIsPassedRules] = useState<boolean>(false);
-  const [checked, setChecked] = useState<{
-    agree: boolean;
-    understand: boolean;
-  }>({
-    agree: false,
-    understand: false,
-  });
+    const [password, setPassword] = useState<string>(initValue);
+    const [confirmPassword, setConfirmPassword] = useState<string>(initValue);
+    const [isPassedRules, setIsPassedRules] = useState<boolean>(false);
+    const [checked, setChecked] = useState<{
+      agree: boolean;
+      understand: boolean;
+    }>({
+      agree: false,
+      understand: false,
+    });
 
-  const isEnableButton =
-    confirmPassword === password &&
-    isPassedRules &&
-    checked.agree &&
-    checked.understand;
+    const isEnableButton =
+      confirmPassword === password &&
+      isPassedRules &&
+      checked.agree &&
+      checked.understand;
 
-  return (
-    <Flex flex={1} flexDirection="column">
-      <Box px="16px" height="258px" overflowY="scroll">
-        <Box>
-          <Label>{t(messages.password())}</Label>
-          <PasswordInput
-            value={password}
-            placeholder={t(messages.enterPassword())}
-            data-tip=""
-            data-for="password-input"
-            data-event="focus"
-            data-event-off="focusout"
-            onChange={(e) => setPassword(e.target.value?.trim())}
-          />
-          <PasswordRulesTooltip
-            value={password}
-            onPassed={(isPassed) => setIsPassedRules(isPassed)}
-          />
+    return (
+      <Flex flex={1} flexDirection="column">
+        <Box px="16px" height="258px" overflowY="scroll">
+          <Box>
+            <Label>{t(messages.password())}</Label>
+            <PasswordInput
+              value={password}
+              placeholder={t(messages.enterPassword())}
+              data-tip=""
+              data-for="password-input"
+              data-event="focus"
+              data-event-off="focusout"
+              onChange={(e) => setPassword(e.target.value?.trim())}
+            />
+            <PasswordRulesTooltip
+              value={password}
+              onPassed={(isPassed) => setIsPassedRules(isPassed)}
+            />
+          </Box>
+
+          <Box mt="24px">
+            <Label>{t(messages.confirmPassword())}</Label>
+            <PasswordInput
+              value={confirmPassword}
+              isError={confirmPassword && confirmPassword !== password}
+              msgError={t(messages.confirmPasswordNotMatch())}
+              placeholder={t(messages.reEnterPassword())}
+              onChange={(e) => setConfirmPassword(e.target.value?.trim())}
+            />
+          </Box>
+
+          <MessageBox mt="24px" message={t(messages.warningPassword())} />
         </Box>
 
-        <Box mt="24px">
-          <Label>{t(messages.confirmPassword())}</Label>
-          <PasswordInput
-            value={confirmPassword}
-            isError={confirmPassword && confirmPassword !== password}
-            msgError={t(messages.confirmPasswordNotMatch())}
-            placeholder={t(messages.reEnterPassword())}
-            onChange={(e) => setConfirmPassword(e.target.value?.trim())}
+        <Box px="16px" mt="24px">
+          <CheckBox
+            id="terms-of-service"
+            checked={checked.agree}
+            onChange={(e) =>
+              setChecked({ ...checked, agree: e.target.checked })
+            }
+            labelComponent={
+              <Flex>
+                <Text style={{ userSelect: 'none' }}>
+                  {t(messages.iAgreeToThe())}
+                </Text>
+                <Text
+                  as="a"
+                  target="_blank"
+                  href="https://google.com"
+                  ml="8px"
+                  color={colors.primary}
+                >
+                  {t(messages.termAndServices())}
+                </Text>
+              </Flex>
+            }
           />
-        </Box>
 
-        <MessageBox mt="24px" message={t(messages.warningPassword())} />
-      </Box>
-
-      <Box px="16px" mt="24px">
-        <CheckBox
-          id="terms-of-service"
-          checked={checked.agree}
-          onChange={(e) => setChecked({ ...checked, agree: e.target.checked })}
-          labelComponent={
-            <Flex>
+          <CheckBox
+            id="i-understand"
+            checked={checked.understand}
+            mt="12px"
+            onChange={(e) =>
+              setChecked({ ...checked, understand: e.target.checked })
+            }
+            labelComponent={
               <Text style={{ userSelect: 'none' }}>
-                {t(messages.iAgreeToThe())}
+                {t(messages.iUnderstandThatGlitch())}
               </Text>
-              <Text
-                as="a"
-                target="_blank"
-                href="https://google.com"
-                ml="8px"
-                color={colors.primary}
-              >
-                {t(messages.termAndServices())}
-              </Text>
-            </Flex>
-          }
-        />
+            }
+          />
+        </Box>
 
-        <CheckBox
-          id="i-understand"
-          checked={checked.understand}
-          mt="12px"
-          onChange={(e) =>
-            setChecked({ ...checked, understand: e.target.checked })
-          }
-          labelComponent={
-            <Text style={{ userSelect: 'none' }}>
-              {t(messages.iUnderstandThatGlitch())}
-            </Text>
-          }
-        />
-      </Box>
-
-      <Box mt="auto" px="16px">
-        {isEnableButton ? (
-          <ButtonShadow width="100%" onClick={() => onSetupPassword(password)}>
-            {t(messages.setupPassword())}
-          </ButtonShadow>
-        ) : (
-          <Button variant="disable-primary" width="100%">
-            {t(messages.setupPassword())}
-          </Button>
-        )}
-      </Box>
-    </Flex>
-  );
-};
+        <Box mt="auto" px="16px">
+          {isEnableButton ? (
+            <ButtonShadow
+              width="100%"
+              onClick={() => onSetupPassword(password)}
+            >
+              {t(messages.setupPassword())}
+            </ButtonShadow>
+          ) : (
+            <Button variant="disable-primary" width="100%">
+              {t(messages.setupPassword())}
+            </Button>
+          )}
+        </Box>
+      </Flex>
+    );
+  }
+);
 
 export default CreatePasswordStep;

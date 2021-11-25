@@ -83,4 +83,4 @@ const MnemonicPhraseStep: React.FC<Props> = ({ seedPhrases, onNextStep }) => {
   );
 };
 
-export default MnemonicPhraseStep;
+export default React.memo(MnemonicPhraseStep);

@@ -13,7 +13,7 @@ import { Button } from 'app/components/Button';
 import { TransactionList } from './TransactionList';
 import { FilterModal } from './FilterModal';
 
-export const TransactionHistorySection: React.FC = () => {
+export const TransactionHistorySection: React.FC = React.memo(() => {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [filter, setFilter] = useState({
@@ -82,4 +82,4 @@ export const TransactionHistorySection: React.FC = () => {
       />
     </>
   );
-};
+});

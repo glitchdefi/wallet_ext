@@ -22,69 +22,72 @@ type RuleTypes = {
   least8Char: boolean;
 };
 
-export const PasswordRulesTooltip: React.FC<Props> = ({ value, onPassed }) => {
-  const [rules, setRules] = useState<RuleTypes>({
-    lowercase: false,
-    uppercase: false,
-    number: false,
-    special: false,
-    least8Char: false,
-  });
-
-  useEffect(() => {
-    setRules({
-      ...rules,
-      lowercase: value ? /[a-z]/g.test(value) : false,
-      uppercase: /[A-Z]/g.test(value),
-      number: /[0-9]/g.test(value),
-      special: /[!@#$%^&*(),.?":{}|<>]/g.test(value),
-      least8Char: value?.length >= 7,
+export const PasswordRulesTooltip: React.FC<Props> = React.memo(
+  ({ value, onPassed }) => {
+    const [rules, setRules] = useState<RuleTypes>({
+      lowercase: false,
+      uppercase: false,
+      number: false,
+      special: false,
+      least8Char: false,
     });
-  }, [value]);
 
-  useEffect(() => {
-    const { lowercase, uppercase, number, special, least8Char } = rules;
-    const isPassed = lowercase && uppercase && number && special && least8Char;
-    onPassed(isPassed);
-  }, [rules]);
+    useEffect(() => {
+      setRules({
+        ...rules,
+        lowercase: value ? /[a-z]/g.test(value) : false,
+        uppercase: /[A-Z]/g.test(value),
+        number: /[0-9]/g.test(value),
+        special: /[!@#$%^&*(),.?":{}|<>]/g.test(value),
+        least8Char: value?.length >= 7,
+      });
+    }, [value]);
 
-  return (
-    <Container>
-      <ReactTooltip
-        id="password-input"
-        className="glch-tooltip"
-        overridePosition={({ top }) => {
-          return {
-            left: 16,
-            top,
-          };
-        }}
-        place="bottom"
-        backgroundColor={colors.gray2}
-      >
-        <Box>
-          <Rule checked={rules.lowercase} label="One lowercase character" />
-          <Rule checked={rules.number} mt="8px" label="One number" />
-          <Rule
-            checked={rules.least8Char}
-            mt="8px"
-            label="At least 8 characters"
-          />
-          <Rule
-            checked={rules.uppercase}
-            mt="8px"
-            label="One uppercase character"
-          />
-          <Rule
-            checked={rules.special}
-            mt="8px"
-            label="One special character"
-          />
-        </Box>
-      </ReactTooltip>
-    </Container>
-  );
-};
+    useEffect(() => {
+      const { lowercase, uppercase, number, special, least8Char } = rules;
+      const isPassed =
+        lowercase && uppercase && number && special && least8Char;
+      onPassed(isPassed);
+    }, [rules]);
+
+    return (
+      <Container>
+        <ReactTooltip
+          id="password-input"
+          className="glch-tooltip"
+          overridePosition={({ top }) => {
+            return {
+              left: 16,
+              top,
+            };
+          }}
+          place="bottom"
+          backgroundColor={colors.gray2}
+        >
+          <Box>
+            <Rule checked={rules.lowercase} label="One lowercase character" />
+            <Rule checked={rules.number} mt="8px" label="One number" />
+            <Rule
+              checked={rules.least8Char}
+              mt="8px"
+              label="At least 8 characters"
+            />
+            <Rule
+              checked={rules.uppercase}
+              mt="8px"
+              label="One uppercase character"
+            />
+            <Rule
+              checked={rules.special}
+              mt="8px"
+              label="One special character"
+            />
+          </Box>
+        </ReactTooltip>
+      </Container>
+    );
+  }
+);
 
 interface RuleProps extends SpaceProps {
   label: string;

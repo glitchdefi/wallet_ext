@@ -6,6 +6,7 @@ import { findIndex } from 'lodash';
 import BN from 'bn.js';
 import encryptor from '@metamask/browser-passworder';
 import GlitchCommon from '@glitchdefi/common';
+
 import { GlitchWeb3 as GlitchWeb3Base } from '@glitchdefi/web3';
 import { GlitchNetwork } from '../../../constants/networks';
 import { GlitchToken } from '../../../constants/tokens';

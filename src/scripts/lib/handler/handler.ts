@@ -21,6 +21,23 @@ export const createNewWallet = async (
   }
 };
 
+export const createAccount = async (
+  payload: { seed?: string; name?: string; password?: string },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { seed, name, password } = payload || {};
+
+    const state = await controller.createAccount(seed, name, password);
+    if (state) {
+      sendResponse({ ...successfulResponse, state });
+    }
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const createWalletCompleted = async (
   controller: GlitchController,
   sendResponse: SendResponse
@@ -66,32 +83,15 @@ export const unlockWallet = async (
   }
 };
 
-export const checkIsValidSeedPhrase = async (
-  payload: { seedPhrase?: string },
-  controller: GlitchController,
-  sendResponse: SendResponse
-) => {
-  try {
-    const { seedPhrase } = payload || {};
-
-    const state = controller.checkIsValidSeedPhrase(seedPhrase);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
-};
-
 export const restoreWallet = async (
-  payload: { seedPhrase?: string; password?: string },
+  payload: { seedPhrase?: string; name?: string; password?: string },
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
   try {
-    const { seedPhrase, password } = payload || {};
+    const { seedPhrase, name, password } = payload || {};
 
-    const state = await controller.restoreWallet(seedPhrase, password);
+    const state = await controller.restoreWallet(seedPhrase, name, password);
     if (state) {
       sendResponse({ ...successfulResponse, state });
     }

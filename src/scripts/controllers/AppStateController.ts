@@ -22,6 +22,7 @@ export class AppStateController {
         isLocked: false,
         accounts: {},
         selectedAddress: null,
+        firstAddress: null,
         priceUsd: null,
       },
       transactions: {},
@@ -33,7 +34,6 @@ export class AppStateController {
           duration: 60000,
         },
       },
-      encryptKey: null,
     };
 
     this.localStore = new ExtensionStore();
@@ -90,6 +90,10 @@ export class AppStateController {
 
   async getAddressSelected(): Promise<string> {
     return (await this.getWalletState()).selectedAddress;
+  }
+
+  async getFirstAddress(): Promise<string> {
+    return (await this.getWalletState()).firstAddress;
   }
 
   async getAccounts(): Promise<WalletState['accounts']> {

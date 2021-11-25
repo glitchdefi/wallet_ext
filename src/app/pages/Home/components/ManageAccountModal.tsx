@@ -25,90 +25,92 @@ interface Props {
   onClose?(): void;
 }
 
-export const ManageAccountModal: React.FC<Props> = ({ isOpen, onClose }) => {
-  const { t } = useTranslation();
-  const history = useHistory();
-  const { onChangeAccount } = useAccountActionHandlers();
-  const { selectedAddress } = useSelectedAddress();
-  const { accounts } = useAccounts();
+export const ManageAccountModal: React.FC<Props> = React.memo(
+  ({ isOpen, onClose }) => {
+    const { t } = useTranslation();
+    const history = useHistory();
+    const { onChangeAccount } = useAccountActionHandlers();
+    const { selectedAddress } = useSelectedAddress();
+    const { accounts } = useAccounts();
 
-  useEffect(() => {
-    onClose && onClose();
-  }, [selectedAddress]);
+    useEffect(() => {
+      onClose && onClose();
+    }, [selectedAddress]);
 
-  return (
-    <StyledModal show={isOpen}>
-      <Flex
-        borderBottom={`1px solid ${colors.gray8}`}
-        p="12px"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Text color={colors.gray7} bold>
-          {t(messages.manageAccount())}
-        </Text>
-
-        <Button p="0px" onClick={onClose}>
-          <CloseIcon width="13px" fill={colors.gray7} />
-        </Button>
-      </Flex>
-
-      <Flex height="330px" flexDirection="column" overflowY="scroll">
-        {Object.entries(accounts)
-          .sort(([, a], [, b]) => {
-            return b.createdAt - a.createdAt;
-          })
-          .map((val, i) => {
-            const account = val[1];
-            const checked = account.address === selectedAddress;
-
-            return (
-              <AccountWrapper
-                key={i}
-                onClick={() => {
-                  if (account.address !== selectedAddress) {
-                    onChangeAccount(account.address);
-                  }
-                }}
-              >
-                <Box>
-                  <Text color={colors.gray7} bold>
-                    {account?.name}
-                  </Text>
-                  <Text fontSize="12px" color={colors.gray7}>
-                    {truncateAddress(account?.address)}
-                  </Text>
-                </Box>
-                {checked && <CheckIcon width="18px" color={colors.primary} />}
-              </AccountWrapper>
-            );
-          })}
-      </Flex>
-
-      <Box p="16px">
-        <Button
-          variant="primary"
-          width="100%"
-          onClick={() =>
-            history.push(Routes.createImportAccount, { activeTab: 0 })
-          }
+    return (
+      <StyledModal show={isOpen}>
+        <Flex
+          borderBottom={`1px solid ${colors.gray8}`}
+          p="12px"
+          alignItems="center"
+          justifyContent="space-between"
         >
-          {t(messages.createAccount())}
-        </Button>
-        <Button
-          mt="12px"
-          variant="secondary"
-          width="100%"
-          onClick={() =>
-            history.push(Routes.createImportAccount, { activeTab: 1 })
-          }
-        >
-          {t(messages.importPrivateKey())}
-        </Button>
-      </Box>
-    </StyledModal>
-  );
-};
+          <Text color={colors.gray7} bold>
+            {t(messages.manageAccount())}
+          </Text>
+
+          <Button p="0px" onClick={onClose}>
+            <CloseIcon width="13px" fill={colors.gray7} />
+          </Button>
+        </Flex>
+
+        <Flex height="330px" flexDirection="column" overflowY="scroll">
+          {Object.entries(accounts)
+            .sort(([, a], [, b]) => {
+              return b.whenCreated - a.whenCreated;
+            })
+            .map((val, i) => {
+              const account = val[1];
+              const checked = account.address === selectedAddress;
+
+              return (
+                <AccountWrapper
+                  key={i}
+                  onClick={() => {
+                    if (account.address !== selectedAddress) {
+                      onChangeAccount(account.address);
+                    }
+                  }}
+                >
+                  <Box>
+                    <Text color={colors.gray7} bold>
+                      {account?.name}
+                    </Text>
+                    <Text fontSize="12px" color={colors.gray7}>
+                      {truncateAddress(account?.address)}
+                    </Text>
+                  </Box>
+                  {checked && <CheckIcon width="18px" color={colors.primary} />}
+                </AccountWrapper>
+              );
+            })}
+        </Flex>
+
+        <Box p="16px">
+          <Button
+            variant="primary"
+            width="100%"
+            onClick={() =>
+              history.push(Routes.createImportAccount, { activeTab: 0 })
+            }
+          >
+            {t(messages.createAccount())}
+          </Button>
+          <Button
+            mt="12px"
+            variant="secondary"
+            width="100%"
+            onClick={() =>
+              history.push(Routes.createImportAccount, { activeTab: 1 })
+            }
+          >
+            {t(messages.importPrivateKey())}
+          </Button>
+        </Box>
+      </StyledModal>
+    );
+  }
+);
 
 const StyledModal = styled(Modal)`
   padding-right: 0px !important;

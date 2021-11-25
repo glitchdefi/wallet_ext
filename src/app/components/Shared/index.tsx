@@ -6,3 +6,4 @@ export { default as MnemonicPhraseItem } from './Wallet/MnemonicPhraseItem';
 export { default as StepProgressLayout } from './StepProgressLayout/StepProgressLayout';
 export { default as TextGradient } from './TextGradient';
 export { default as Avatar } from './Avatar';
+export { default as Header } from './Header';

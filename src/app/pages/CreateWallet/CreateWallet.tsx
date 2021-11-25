@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { mnemonicGenerate } from '@polkadot/util-crypto';
 
+import { GlitchToken } from 'constants/tokens';
 import { Routes } from 'constants/routes';
 import { messages } from './messages';
 
@@ -9,8 +11,10 @@ import { messages } from './messages';
 import {
   useStepTitleDesc,
   useWalletActionHandlers,
-  useSeedPhrases,
+  useAccountActionHandlers,
+  useSeedPhrase,
   useIsInitialized,
+  useAccount,
 } from 'state/wallet/hooks';
 import { useLoadingApplication } from 'state/application/hooks';
 
@@ -31,12 +35,13 @@ const CreateWallet: React.FC = () => {
 
   const [step, setStep] = useState<number>(0);
   const [password, setPassword] = useState<string>('');
+  const [seedPhrase, setSeedPhrase] = useState<string>('');
 
   const { isLoading } = useLoadingApplication();
   const { isInitialized } = useIsInitialized();
-  const { seedPhrases } = useSeedPhrases();
   const { onResetState, onCreateCompleted, onCreateWallet } =
     useWalletActionHandlers();
+  const { onCreateAccount } = useAccountActionHandlers();
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'create');
 
   const stepProgress = ((step + 1) / MAX_STEP) * 100;
@@ -51,6 +56,12 @@ const CreateWallet: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [step]);
+
+  useEffect(() => {
+    if (seedPhrase) {
+      onCreateAccount(seedPhrase, 'Account 1', password);
+    }
+  }, [seedPhrase]);
 
   return (
     <PageLayout>
@@ -73,20 +84,22 @@ const CreateWallet: React.FC = () => {
             initValue={password}
             onSetupPassword={(password) => {
               setPassword(password);
-              onCreateWallet(password);
+              setSeedPhrase(
+                mnemonicGenerate(GlitchToken.default_mnemonic_length)
+              );
               setStep(1);
             }}
           />
         )}
         {step === 1 && (
           <MnemonicPhraseStep
-            seedPhrases={seedPhrases}
+            seedPhrases={seedPhrase}
             onNextStep={() => setStep(2)}
           />
         )}
         {step === 2 && (
           <VerifyMnemonicStep
-            seedPhrases={seedPhrases}
+            seedPhrases={seedPhrase}
             onSubmit={onCreateCompleted}
           />
         )}

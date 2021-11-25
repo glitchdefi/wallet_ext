@@ -6,7 +6,7 @@ import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
 import {
-  useSeedPhrases,
+  useSeedPhrase,
   useWalletActionHandlers,
   useStepTitleDesc,
 } from 'state/wallet/hooks';
@@ -31,12 +31,12 @@ const BackUp: React.FC = () => {
 
   const { onShowSeedPhrase, onClearSeedPhrase, onBackupWalletAction } =
     useWalletActionHandlers();
-  const { seedPhrases } = useSeedPhrases();
+  const { seedPhrase } = useSeedPhrase();
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'create');
 
   useEffect(() => {
-    if (seedPhrases && step === 0) setStep(1);
-  }, [seedPhrases]);
+    if (seedPhrase && step === 0) setStep(1);
+  }, [seedPhrase]);
 
   useEffect(() => {
     return () => {
@@ -72,7 +72,7 @@ const BackUp: React.FC = () => {
         <EnterPassword
           initValue={password}
           onChange={(password) => {
-            seedPhrases && onClearSeedPhrase();
+            seedPhrase && onClearSeedPhrase();
             setPassword(password);
             onShowSeedPhrase(password);
           }}
@@ -105,14 +105,14 @@ const BackUp: React.FC = () => {
 
           {step === 1 && (
             <MnemonicPhraseStep
-              seedPhrases={seedPhrases}
+              seedPhrases={seedPhrase}
               onNextStep={() => setStep(2)}
             />
           )}
 
           {step === 2 && (
             <VerifyMnemonicStep
-              seedPhrases={seedPhrases}
+              seedPhrases={seedPhrase}
               onSubmit={onBackupWalletAction}
             />
           )}

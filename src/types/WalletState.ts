@@ -6,6 +6,7 @@ export interface WalletState {
     [key: string]: AccountType;
   };
   selectedAddress?: any;
+  firstAddress?: any;
   isBackUp?: boolean;
   isValidAddress?: boolean;
   priceUsd?: number;
@@ -13,8 +14,6 @@ export interface WalletState {
   // Not save to ext storage
   seedPhrases?: string;
   isWrongPassword?: boolean;
-  isValidSeedPhrase?: boolean;
-  isInvalidPrivateKey?: boolean;
   showPrivateKey?: string;
 }
 
@@ -22,8 +21,8 @@ export type AccountType = {
   name?: string;
   avatar?: string;
   address?: string;
+  whenCreated?: number;
+  seed?: any;
   balance?: any;
   totalValue?: any;
-  privateKey?: string;
-  createdAt?: number;
 };

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -19,6 +18,7 @@ import { Box, Flex } from 'app/components/Box';
 import { NeedHelpContact } from 'app/components/Footer';
 import { Label, PasswordInput } from 'app/components/Form';
 import { NetworkBox, TextGradient } from 'app/components/Shared';
+import { PageLayout } from 'app/layouts';
 
 const Unlock: React.FC = () => {
   const { t } = useTranslation();
@@ -30,55 +30,63 @@ const Unlock: React.FC = () => {
   const [password, setPassword] = useState<string>('');
 
   return (
-    <Container>
+    <PageLayout hasOverlay={false}>
       <Box p="16px">
         <NetworkBox />
       </Box>
 
-      <Flex mt="16px" alignItems="center" flexDirection="column" px="32px">
-        <img src={logo} width="200px" />
-        <TextGradient mt="12px" mb="32px" bold>
-          {t(messages.title())}
-        </TextGradient>
+      <Flex
+        flex={1}
+        alignItems="center"
+        flexDirection="column"
+        justifyContent="space-between"
+        px="32px"
+        pb="24px"
+      >
+        <Flex alignItems="center" flexDirection="column">
+          <img src={logo} width="200px" />
+          <TextGradient mt="12px" mb="16px" bold>
+            {t(messages.title())}
+          </TextGradient>
 
-        <Box mt="16px" py="16px">
-          <Text fontSize="12px" color={colors.cyan5}>
-            {t(messages.lockedMsg())}
-          </Text>
+          <Box mt="16px" py="16px">
+            <Text fontSize="12px" color={colors.cyan5}>
+              {t(messages.lockedMsg())}
+            </Text>
 
-          <Box mt="16px">
-            <Label>{t(messages.glitchPassword())}</Label>
-            <PasswordInput
-              isError={isWrongPassword}
-              value={password}
-              placeholder={t(messages.password())}
-              onChange={(e) => {
-                const { value } = e.target;
+            <Box mt="16px">
+              <Label>{t(messages.glitchPassword())}</Label>
+              <PasswordInput
+                isError={isWrongPassword}
+                value={password}
+                placeholder={t(messages.password())}
+                onChange={(e) => {
+                  const { value } = e.target;
+                  setPassword(value);
+                  isWrongPassword && onClearIsWrongPassword();
+                }}
+                msgError={t(messages.incorrectPassword())}
+              />
 
-                setPassword(e.target.value);
-                !value && onClearIsWrongPassword();
-              }}
-              msgError={t(messages.incorrectPassword())}
-            />
-
-            <Box mt="32px">
-              {!password ? (
-                <Button width="100%" variant="disable-primary">
-                  {t(messages.unlock())}
-                </Button>
-              ) : (
-                <ButtonShadow
-                  width="100%"
-                  onClick={() => onUnlockWallet(password)}
-                >
-                  {t(messages.unlock())}
-                </ButtonShadow>
-              )}
+              <Box mt="32px">
+                {!password ? (
+                  <Button width="100%" variant="disable-primary">
+                    {t(messages.unlock())}
+                  </Button>
+                ) : (
+                  <ButtonShadow
+                    width="100%"
+                    onClick={() => onUnlockWallet(password)}
+                  >
+                    {t(messages.unlock())}
+                  </ButtonShadow>
+                )}
+              </Box>
             </Box>
           </Box>
-        </Box>
+        </Flex>
 
-        <Box pb="24px" mt="32px">
+        <Box>
           <Flex justifyContent="center" alignItems="center">
             <Text fontSize="12px">{t(messages.or())}</Text>
             <Button
@@ -100,13 +108,8 @@ const Unlock: React.FC = () => {
           </Box>
         </Box>
       </Flex>
-    </Container>
+    </PageLayout>
   );
 };
 
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-`;
-
-export default Unlock;
+export default React.memo(Unlock);
