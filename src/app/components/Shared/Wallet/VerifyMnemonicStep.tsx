@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { shuffle } from 'lodash';
-import { colors } from 'theme/colors';
-import styled from 'styled-components';
 
 import { messages } from '../messages';
 
 // Components
 import { Box, Flex } from 'app/components/Box';
 import { Button, ButtonShadow } from 'app/components/Button';
-import { Text } from 'app/components/Text';
-import MnemonicPhraseItem from './MnemonicPhraseItem';
-
+import VerifyMnemonicView from './VerifyMnemonicView';
 interface Props {
   seedPhrases: string;
   onSubmit?: () => void;
@@ -35,49 +31,13 @@ const VerifyMnemonicStep: React.FC<Props> = React.memo(
     return (
       <Flex flexDirection="column" flex={1}>
         <Box height="315px" px="16px" overflowY="scroll">
-          <MpWrapper>
-            {confirmSeedPhraseList?.map((word: string, i) => (
-              <MnemonicPhraseItem
-                variants="selected"
-                word={word}
-                num={i + 1}
-                key={i}
-                onClick={() => {
-                  const newList = confirmSeedPhraseList.filter(
-                    (cWord) => cWord !== word
-                  );
-                  setConfirmSeedPhraseList(newList);
-                }}
-              />
-            ))}
-          </MpWrapper>
-          {!isValid && confirmSeedPhraseList?.length >= 12 && (
-            <Text
-              fontSize="12px"
-              mt="4px"
-              color={colors.error}
-              textAlign="center"
-            >
-              {t(messages.invalidMnemonicPhrase())}
-            </Text>
-          )}
-
-          <MpWrapper mt="32px">
-            {seedPhrasesList?.map((word: string, i) => (
-              <MnemonicPhraseItem
-                variants={
-                  confirmSeedPhraseList.includes(word) ? 'disable' : 'default'
-                }
-                word={word}
-                num={i}
-                key={i}
-                onClick={() => {
-                  if (!confirmSeedPhraseList.includes(word))
-                    setConfirmSeedPhraseList([...confirmSeedPhraseList, word]);
-                }}
-              />
-            ))}
-          </MpWrapper>
+          <VerifyMnemonicView
+            isValid={isValid}
+            list={seedPhrasesList}
+            confirmList={confirmSeedPhraseList}
+            onItemClick={(list) => setConfirmSeedPhraseList(list)}
+            onItemConfirmClick={(list) => setConfirmSeedPhraseList(list)}
+          />
         </Box>
 
         <Box mt="auto" pt="24px" px="16px">
@@ -95,17 +55,5 @@ const VerifyMnemonicStep: React.FC<Props> = React.memo(
     );
   }
 );
-
-const MpWrapper = styled(Flex)`
-  padding-top: 6px;
-  padding-bottom: 6px;
-  padding-left: 12px;
-  padding-right: 12px;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  min-height: 120px;
-  background-color: ${colors.gray1};
-`;
 
 export default VerifyMnemonicStep;

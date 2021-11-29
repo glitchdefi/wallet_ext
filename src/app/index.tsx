@@ -37,7 +37,6 @@ import { ReceiveTokenPage } from './pages/ReceiveToken';
 import { AddAssetsPage } from './pages/AddAssets';
 import { BackUpPage } from './pages/BackUp';
 import { SendTokenPage } from './pages/SendToken';
-import { Transition, TransitionGroup } from 'react-transition-group';
 
 const history = createMemoryHistory();
 
@@ -60,22 +59,22 @@ export const App: React.FC = () => {
     }
   }, [duration]);
 
-  // useEffect(() => {
-  //   const job = setInterval(() => {
-  //     setTimeQuery((prev) => prev + 1);
-  //   }, UPDATE_TIME);
+  useEffect(() => {
+    const job = setInterval(() => {
+      setTimeQuery((prev) => prev + 1);
+    }, UPDATE_TIME);
 
-  //   return () => {
-  //     clearInterval(job);
-  //   };
-  // }, []);
+    return () => {
+      clearInterval(job);
+    };
+  }, []);
 
-  // useEffect(() => {
-  //   if (isInitialized !== 'none') {
-  //     getBalance();
-  //     getTokenPrice('glitch-protocol', 'usd');
-  //   }
-  // }, [timeQuery]);
+  useEffect(() => {
+    if (isInitialized !== 'none') {
+      getBalance();
+      getTokenPrice('glitch-protocol', 'usd');
+    }
+  }, [timeQuery]);
 
   return (
     <Router history={history}>

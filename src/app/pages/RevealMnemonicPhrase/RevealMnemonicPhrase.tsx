@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import crypto from 'crypto';
 import { useHistory } from 'react-router';
 
 import { Routes } from 'constants/routes';
@@ -10,17 +9,15 @@ import {
   useWalletActionHandlers,
   useWrongPassword,
 } from 'state/wallet/hooks';
-import { useMakeTextFile } from 'hooks/useMakeTextFile';
 
 // Components
 import { PageLayout } from 'app/layouts';
 import { Box, Flex } from 'app/components/Box';
-import { CopyIcon, DownloadIcon } from 'app/components/Svg';
 import { Text } from 'app/components/Text';
-import { Button, ButtonShadow, CopyButton } from 'app/components/Button';
+import { Button, ButtonShadow } from 'app/components/Button';
 import { MessageBox } from 'app/components/MessageBox';
 import { Label, PasswordInput } from 'app/components/Form';
-import { Header, MnemonicPhraseItem } from 'app/components/Shared';
+import { Header, MnemonicPhraseView } from 'app/components/Shared';
 
 const RevealMnemonicPhrase: React.FC = React.memo(() => {
   const history = useHistory();
@@ -29,10 +26,6 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
   const { seedPhrase } = useSeedPhrase();
   const { onShowSeedPhrase, onClearIsWrongPassword, onClearSeedPhrase } =
     useWalletActionHandlers();
-
-  const seedPhrasesList: string[] = seedPhrase?.split(' ');
-  const { downloadLink } = useMakeTextFile(seedPhrasesList);
-  const fileName = crypto.randomBytes(6).toString('hex');
 
   const [password, setPassword] = useState('');
   const [showSeedPhrase, setShowSeedPhrase] = useState(false);
@@ -74,64 +67,12 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
             }
           />
           {showSeedPhrase ? (
-            <Box>
-              <Box p="16px" mt="16px" background={colors.geekBlue}>
-                <Text fontSize="12px" color={colors.cyan5}>
-                  Your Mnemonic phrase
-                </Text>
-                <Flex
-                  mt="16px"
-                  flexWrap="wrap"
-                  alignItems="center"
-                  justifyContent="center"
-                  minHeight="120px"
-                >
-                  {seedPhrasesList?.map((word: string, i: number) => (
-                    <MnemonicPhraseItem
-                      variants="selected"
-                      word={word}
-                      num={i}
-                      key={i}
-                    />
-                  ))}
-                </Flex>
-              </Box>
-
-              <Flex
-                alignItems="center"
-                mt="16px"
-                mb="33px"
-                justifyContent="space-around"
-              >
-                <Button p="0px">
-                  <Flex>
-                    <DownloadIcon width="16px" />
-                    <Text
-                      as="a"
-                      download={`${fileName}.txt`}
-                      href={downloadLink}
-                      ml="8px"
-                      color={colors.primary}
-                      bold
-                    >
-                      Download
-                    </Text>
-                  </Flex>
-                </Button>
-
-                <CopyButton
-                  id="copy-mnemonic"
-                  component={
-                    <Flex>
-                      <CopyIcon width="12px" />
-                      <Text ml="8px" color={colors.primary} bold>
-                        Copy
-                      </Text>
-                    </Flex>
-                  }
-                  value={seedPhrase}
-                />
-              </Flex>
+            <Box mt="16px">
+              <MnemonicPhraseView
+                label="Your Mnemonic phrase"
+                seed={seedPhrase}
+                background={colors.geekBlue}
+              />
             </Box>
           ) : (
             <Box p="16px" background={colors.geekBlue} mt="16px">

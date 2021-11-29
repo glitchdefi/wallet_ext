@@ -26,7 +26,7 @@ const CreateImportAccount: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(location.state.activeTab);
 
   return (
-    <PageLayout minHeight="600px">
+    <PageLayout>
       <Box p="16px">
         <Flex
           background={colors.gray2}

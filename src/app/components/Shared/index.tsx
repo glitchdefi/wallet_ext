@@ -1,9 +1,11 @@
-export { default as NetworkBox } from './NetworkBox';
 export { default as CreatePasswordStep } from './Wallet/CreatePasswordStep';
 export { default as MnemonicPhraseStep } from './Wallet/MnemonicPhraseStep';
 export { default as VerifyMnemonicStep } from './Wallet/VerifyMnemonicStep';
 export { default as MnemonicPhraseItem } from './Wallet/MnemonicPhraseItem';
+export { default as VerifyMnemonicView } from './Wallet/VerifyMnemonicView';
+export { default as MnemonicPhraseView } from './Wallet/MnemonicPhraseView';
 export { default as StepProgressLayout } from './StepProgressLayout/StepProgressLayout';
 export { default as TextGradient } from './TextGradient';
 export { default as Avatar } from './Avatar';
 export { default as Header } from './Header';
+export { default as NetworkBox } from './NetworkBox';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import TextareaAutosize from 'react-autosize-textarea/lib';
@@ -10,6 +10,7 @@ import { Routes } from 'constants/routes';
 import { useAccountActionHandlers, useAccounts } from 'state/wallet/hooks';
 
 import { colors } from 'theme/colors';
+import { privateKeyValidate } from 'utils/strings';
 
 import { Box, Flex } from 'app/components/Box';
 import { Input, Label } from 'app/components/Form';
@@ -22,65 +23,73 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const { accounts } = useAccounts();
+  const { accountLength } = useAccounts();
   const { onImportAccount } = useAccountActionHandlers();
-  const totalAccount = Object.entries(accounts).length;
 
   const [name, setName] = useState<string>('');
   const [privateKey, setPrivateKey] = useState<string>('');
   const [isValidPK, setIsValidPK] = useState<boolean>(false);
+  const isError = privateKey && !isValidPK;
+  const isEnableImport = privateKey && isValidPK;
+
+  useEffect(() => {
+    setIsValidPK(privateKeyValidate(privateKey));
+  }, [privateKey]);
 
   return (
-    <Box mt="32px">
-      <MessageBox message={t(messages.importAccountWarning())} />
+    <Flex flexDirection="column" height="455px" pt="32px" pb="16px">
+      <Flex flexDirection="column" flex={1} overflowY="scroll">
+        <MessageBox message={t(messages.importAccountWarning())} />
 
-      <Box mt="24px">
-        <Label>{t(messages.accountName())}</Label>
-        <Input
-          value={name}
-          placeholder={`${t(messages.account())} ${totalAccount + 1}`}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </Box>
-
-      <Box mt="24px">
-        <Label>{t(messages.privateKeys())}</Label>
-        <InputWrapper isError={isValidPK} alignItems="center">
-          <StyledInput
-            hasBorder={false}
-            id="private-key-input"
-            value={privateKey}
-            as={TextareaAutosize}
-            placeholder={t(messages.enterPrivateKeys())}
-            onChange={(e: any) => {
-              const { value } = e.target;
-              !value && isValidPK && setIsValidPK(false);
-              setPrivateKey(value);
-            }}
+        <Box mt="24px">
+          <Label>{t(messages.accountName())}</Label>
+          <Input
+            value={name}
+            placeholder={`${t(messages.account())} ${accountLength + 1}`}
+            onChange={(e) => setName(e.target.value)}
           />
-          <Button
-            p="0px"
-            pl="12px"
-            onClick={() => {
-              var pasteText = document.getElementById('private-key-input');
-              pasteText.focus();
-              document.execCommand('paste');
+        </Box>
 
-              pasteText.textContent &&
-                setPrivateKey(`${privateKey}${pasteText.textContent?.trim()}`);
-            }}
-          >
-            <SnippetsIcon width="15px" />
-          </Button>
-        </InputWrapper>
-        {isValidPK && (
-          <Text mt="2px" fontSize="12px" color={colors.error}>
-            {t(messages.invalidPrivateKeys())}
-          </Text>
-        )}
-      </Box>
+        <Box mt="24px">
+          <Label>{t(messages.privateKeys())}</Label>
+          <InputWrapper isError={isError} alignItems="center">
+            <StyledInput
+              hasBorder={false}
+              id="private-key-input"
+              value={privateKey}
+              as={TextareaAutosize}
+              placeholder={t(messages.enterPrivateKeys())}
+              onChange={(e: any) => {
+                const { value } = e.target;
+                setPrivateKey(value);
+              }}
+            />
+            <Button
+              p="0px"
+              pl="12px"
+              onClick={() => {
+                var pasteText = document.getElementById('private-key-input');
+                pasteText.focus();
+                document.execCommand('paste');
 
-      <Flex mt="89px" pb="16px">
+                pasteText.textContent &&
+                  setPrivateKey(
+                    `${privateKey}${pasteText.textContent?.trim()}`
+                  );
+              }}
+            >
+              <SnippetsIcon width="15px" />
+            </Button>
+          </InputWrapper>
+          {isError && (
+            <Text mt="2px" fontSize="12px" color={colors.error}>
+              {t(messages.invalidPrivateKeys())}
+            </Text>
+          )}
+        </Box>
+      </Flex>
+
+      <Flex mt="16px">
         <Button
           mr="8px"
           width="50%"
@@ -89,12 +98,12 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
         >
           {t(messages.cancel())}
         </Button>
-        {privateKey ? (
+        {isEnableImport ? (
           <ButtonShadow
             ml="8px"
             width="50%"
             onClick={() => {
-              const accountName = name ? name : `Account ${totalAccount + 1}`;
+              const accountName = name ? name : `Account ${accountLength + 1}`;
               onImportAccount(accountName, privateKey);
             }}
           >
@@ -106,7 +115,7 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
           </Button>
         )}
       </Flex>
-    </Box>
+    </Flex>
   );
 });
 

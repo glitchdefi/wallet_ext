@@ -53,11 +53,16 @@ export function privateKeyValidate(privateKey: string): boolean {
   return isHexSeed(privateKey);
 }
 
-export const isValidAddressPolkadotAddress = (address: string): boolean => {
+export const isValidAddressPolkadotAddress = (
+  fromAddress: string,
+  toAddress: string
+): boolean => {
   try {
-    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
+    const isValid = encodeAddress(
+      isHex(toAddress) ? hexToU8a(toAddress) : decodeAddress(toAddress)
+    );
 
-    return true;
+    return isValid && fromAddress !== toAddress;
   } catch (error) {
     return false;
   }

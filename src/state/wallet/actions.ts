@@ -359,44 +359,44 @@ export const transferAction =
     password: string,
     toAddress: string,
     amount: any,
-    toastSuccess: any,
+    toast: any,
     history: any
   ) =>
   async (dispatch: Dispatch<any>) => {
-    try {
-      dispatch(applicationActions.setIsLoadingApp(true));
+    dispatch(applicationActions.setIsLoadingApp(true));
+    const { toastSuccess, toastError } = toast;
 
-      const data = await sendMessage({
-        type: MessageTypes.BG_WALLET_TRANSFER_TOKEN,
-        payload: {
-          password,
-          toAddress,
-          amount,
-        },
-      });
+    const data = await sendMessage({
+      type: MessageTypes.BG_WALLET_TRANSFER_TOKEN,
+      payload: {
+        password,
+        toAddress,
+        amount,
+      },
+    });
 
-      const { isWrongPassword, isTransferSuccess } = data?.state || {};
+    const { state, status, error } = data;
+    const { isWrongPassword, isTransferSuccess } = state || {};
 
-      if (isWrongPassword) {
-        dispatch(actions.setWrongPassword(isWrongPassword));
-      }
-
-      if (isTransferSuccess) {
-        dispatch(transactionActions.setIsTransferSuccess(true));
-        dispatch(getBalanceAction());
-        toastSuccess(
-          'Success',
-          'Sent has been successfully! It might take some time for changes to take affect.'
-        );
-
-        history.push(Routes.tokenDetails);
-      }
-    } catch (error) {
-      console.log(error);
-      // Handle Error
-    } finally {
-      dispatch(applicationActions.setIsLoadingApp(false));
+    if (isWrongPassword) {
+      dispatch(actions.setWrongPassword(isWrongPassword));
     }
+
+    if (isTransferSuccess) {
+      dispatch(transactionActions.setIsTransferSuccess(true));
+      toastSuccess(
+        'Success',
+        'Sent has been successfully! It might take some time for changes to take affect.'
+      );
+
+      history.push(Routes.tokenDetails);
+    }
+
+    if (status === 'error') {
+      toastError('Sending failed', 'Oop! Have an error');
+    }
+
+    dispatch(applicationActions.setIsLoadingApp(false));
   };
 
 export const changeAccountNameAction =

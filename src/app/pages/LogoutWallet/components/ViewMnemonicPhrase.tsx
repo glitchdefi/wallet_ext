@@ -1,15 +1,12 @@
 import React from 'react';
-import crypto from 'crypto';
 
-import { useMakeTextFile } from 'hooks/useMakeTextFile';
 import { colors } from 'theme/colors';
 
 import { Flex, Box } from 'app/components/Box';
 import { Text } from 'app/components/Text';
-import { Button, ButtonShadow, CopyButton } from 'app/components/Button';
+import { ButtonShadow } from 'app/components/Button';
 import { MessageBox } from 'app/components/MessageBox';
-import { CopyIcon, DownloadIcon } from 'app/components/Svg';
-import { MnemonicPhraseItem } from 'app/components/Shared';
+import { MnemonicPhraseView } from 'app/components/Shared';
 interface Props {
   seedPhrases: string;
   onConfirm: () => void;
@@ -17,10 +14,6 @@ interface Props {
 
 export const ViewMnemonicPhrase: React.FC<Props> = React.memo(
   ({ seedPhrases, onConfirm }) => {
-    const seedPhrasesList: string[] = seedPhrases?.split(' ');
-    const { downloadLink } = useMakeTextFile(seedPhrasesList);
-    const fileName = crypto.randomBytes(6).toString('hex');
-
     return (
       <Flex flex={1} flexDirection="column" pt="32px" pb="24px" px="32px">
         <Flex>
@@ -47,58 +40,13 @@ export const ViewMnemonicPhrase: React.FC<Props> = React.memo(
           textColor={colors.orange}
         />
 
-        <Box p="16px" mt="16px" background={colors.geekBlue}>
-          <Text fontSize="12px" color={colors.cyan5}>
-            Your Mnemonic phrase
-          </Text>
-          <Flex
-            mt="16px"
-            flexWrap="wrap"
-            alignItems="center"
-            justifyContent="center"
-            minHeight="120px"
-          >
-            {seedPhrasesList?.map((word: string, i: number) => (
-              <MnemonicPhraseItem
-                variants="selected"
-                word={word}
-                num={i}
-                key={i}
-              />
-            ))}
-          </Flex>
-        </Box>
-
-        <Flex alignItems="center" mt="16px" justifyContent="space-around">
-          <Button p="0px">
-            <Flex>
-              <DownloadIcon width="16px" />
-              <Text
-                as="a"
-                download={`${fileName}.txt`}
-                href={downloadLink}
-                ml="8px"
-                color={colors.primary}
-                bold
-              >
-                Download
-              </Text>
-            </Flex>
-          </Button>
-
-          <CopyButton
-            id="copy-mnemonic"
-            component={
-              <Flex>
-                <CopyIcon width="12px" />
-                <Text ml="8px" color={colors.primary} bold>
-                  Copy
-                </Text>
-              </Flex>
-            }
-            value={seedPhrases}
+        <Box mt="16px">
+          <MnemonicPhraseView
+            label="Your Mnemonic phrase"
+            seed={seedPhrases}
+            background={colors.geekBlue}
           />
-        </Flex>
+        </Box>
 
         <Box mt="auto">
           <ButtonShadow width="100%" mt="16px" onClick={onConfirm}>

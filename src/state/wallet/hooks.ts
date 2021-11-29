@@ -87,19 +87,15 @@ export const useTransferAction = (): {
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { toastSuccess } = useToast();
+  const toast = useToast();
 
   const onTransfer = useCallback(
-    (password: string, toAddress: string, amount: any) =>
+    (password: string, toAddress: string, amount: any) => {
       dispatch(
-        actions.transferAction(
-          password,
-          toAddress,
-          amount,
-          toastSuccess,
-          history
-        )
-      ),
+        actions.transferAction(password, toAddress, amount, toast, history)
+      );
+      dispatch(actions.getBalanceAction());
+    },
     [dispatch]
   );
 

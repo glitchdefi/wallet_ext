@@ -13,13 +13,13 @@ import { GlitchLogo } from 'app/components/Image';
 import { Label, Input } from 'app/components/Form';
 import { AmountInput } from './AmountInput';
 import { NetworkFee } from './NetworkFee';
-import { checkIsValidAddress } from 'utils/strings';
+import { isValidAddressPolkadotAddress } from 'utils/strings';
 interface Props {
   initData: { amount: any; toAddress: string };
   onNext: (amount: any, toAddress: string) => void;
 }
 
-export const SendForm: React.FC<Props> = ({ initData, onNext }) => {
+export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
   const { address, balance } = useAccount();
   const { priceUsd } = useTokenPrice();
 
@@ -39,7 +39,7 @@ export const SendForm: React.FC<Props> = ({ initData, onNext }) => {
   }, [initData]);
 
   useEffect(() => {
-    setIsValidAddress(checkIsValidAddress(address, toAddress));
+    setIsValidAddress(isValidAddressPolkadotAddress(address, toAddress));
   }, [toAddress]);
 
   return (
@@ -122,4 +122,4 @@ export const SendForm: React.FC<Props> = ({ initData, onNext }) => {
       </Box>
     </>
   );
-};
+});
