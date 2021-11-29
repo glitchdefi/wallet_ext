@@ -34,7 +34,7 @@ const VerifyMnemonicView: React.FC<Props> = ({
           <MnemonicPhraseItem
             variants="selected"
             word={word}
-            num={i + 1}
+            num={i}
             key={i}
             onClick={() => {
               const newList = confirmList.filter((cWord) => cWord !== word);

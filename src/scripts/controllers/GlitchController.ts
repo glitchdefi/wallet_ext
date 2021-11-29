@@ -270,13 +270,12 @@ export class GlitchController {
   async showSeedPhrase(password?: string): Promise<object> {
     try {
       const fistAddress = await this.appStateController.getFirstAddress();
-      const currentAddress = await this.appStateController.getAddressSelected();
       const isValid = this.glitchWeb3.unlockAccount(password, fistAddress);
 
       if (isValid) {
         const oldAccounts = await this.appStateController.getAccounts();
-        const currentAccount = oldAccounts[currentAddress];
-        const { seed } = currentAccount;
+        const firstAccount = oldAccounts[fistAddress];
+        const { seed } = firstAccount;
         const decryptSeed = await decryptMessage(seed.encrypted, seed.secret);
 
         return {

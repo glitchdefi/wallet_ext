@@ -4,6 +4,8 @@ import { GlitchToken } from '../../../../constants/tokens';
 
 import { colors } from 'theme/colors';
 import { useTokenPrice, useAccount } from 'state/wallet/hooks';
+import { isValidAddressPolkadotAddress } from 'utils/strings';
+import { formatNumberDownRoundWithExtractMax } from 'utils/number';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -13,7 +15,6 @@ import { GlitchLogo } from 'app/components/Image';
 import { Label, Input } from 'app/components/Form';
 import { AmountInput } from './AmountInput';
 import { NetworkFee } from './NetworkFee';
-import { isValidAddressPolkadotAddress } from 'utils/strings';
 interface Props {
   initData: { amount: any; toAddress: string };
   onNext: (amount: any, toAddress: string) => void;
@@ -83,10 +84,10 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
         <Box mt="24px">
           <Flex alignItems="center" justifyContent="space-between">
             <Label>Amount</Label>
-            <Flex>
+            <Flex mb="8px">
               <Text color={colors.gray6}>Balance:</Text>
               <Text bold ml="8px">
-                {balance}
+                {formatNumberDownRoundWithExtractMax(balance, 6)}
               </Text>
               <Text bold ml="8px">
                 GLCH
