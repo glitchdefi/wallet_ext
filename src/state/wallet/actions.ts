@@ -12,30 +12,6 @@ const actions = slice.actions;
 const applicationActions = appSlice.actions;
 const transactionActions = transactionSlice.actions;
 
-export const createWalletAction =
-  (password: string) => async (dispatch: Dispatch<any>) => {
-    try {
-      dispatch(applicationActions.setIsLoadingApp(true));
-
-      const data = await sendMessage({
-        type: MessageTypes.BG_WALLET_CREATE_WALLET,
-        payload: {
-          password,
-        },
-      });
-
-      if (data?.state) {
-        const { state } = data;
-        dispatch(actions.seedPhrasesLoaded(state?.seedPhrases));
-        dispatch(setWalletState(state));
-      }
-    } catch (error) {
-      // Handle Error
-    } finally {
-      dispatch(applicationActions.setIsLoadingApp(false));
-    }
-  };
-
 export const createCompletedAction = () => async (dispatch: Dispatch<any>) => {
   try {
     dispatch(applicationActions.setIsLoadingApp(true));

@@ -12,9 +12,7 @@ import {
   useStepTitleDesc,
   useWalletActionHandlers,
   useAccountActionHandlers,
-  useSeedPhrase,
   useIsInitialized,
-  useAccount,
 } from 'state/wallet/hooks';
 import { useLoadingApplication } from 'state/application/hooks';
 
@@ -39,8 +37,7 @@ const CreateWallet: React.FC = () => {
 
   const { isLoading } = useLoadingApplication();
   const { isInitialized } = useIsInitialized();
-  const { onResetState, onCreateCompleted, onCreateWallet } =
-    useWalletActionHandlers();
+  const { onResetState, onCreateCompleted } = useWalletActionHandlers();
   const { onCreateAccount } = useAccountActionHandlers();
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'create');
 
@@ -108,4 +105,4 @@ const CreateWallet: React.FC = () => {
   );
 };
 
-export default CreateWallet;
+export default React.memo(CreateWallet);

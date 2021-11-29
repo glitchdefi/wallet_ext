@@ -25,12 +25,14 @@ import { Dropdown } from 'app/components/Dropdown';
 import { SettingItem } from './SettingItem';
 import { messages } from '../../messages';
 
-export const SettingsPanel: React.FC = () => {
+export const SettingsPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const history = useHistory();
 
   const { isBackUp } = useIsBackup();
   const { duration, onSetAutoLockTimer } = useAutoLockTimer();
+
+  console.log(duration)
   const activeTimer = LOCK_TIME_LIST.find((o) => o.time === duration);
 
   return (
@@ -108,4 +110,4 @@ export const SettingsPanel: React.FC = () => {
       </Box>
     </Box>
   );
-};
+});

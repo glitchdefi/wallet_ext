@@ -62,10 +62,6 @@ function handleChromeListeners(controller: GlitchController) {
           try {
             switch (type) {
               // Wallet
-              case MessageTypes.BG_WALLET_CREATE_WALLET:
-                Handler.createNewWallet(payload, controller, sendResponse);
-                break;
-
               case MessageTypes.BG_WALLET_CREATE_WALLET_COMPLETED:
                 Handler.createWalletCompleted(controller, sendResponse);
                 break;

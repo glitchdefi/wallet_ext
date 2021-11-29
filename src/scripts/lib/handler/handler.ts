@@ -4,23 +4,6 @@ import { successfulResponse, errorResponse } from './responseMessage';
 type Request = { type: string; payload?: object };
 type SendResponse = (response: any) => void;
 
-export const createNewWallet = async (
-  payload: { password?: string },
-  controller: GlitchController,
-  sendResponse: SendResponse
-) => {
-  try {
-    const { password } = payload || {};
-
-    const state = await controller.createNewWallet(password);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
-};
-
 export const createAccount = async (
   payload: { seed?: string; name?: string; password?: string },
   controller: GlitchController,

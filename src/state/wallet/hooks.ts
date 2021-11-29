@@ -1,12 +1,10 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'types';
 import { useToast } from 'hooks/useToast';
 import * as actions from './actions';
 import { AccountType } from 'types/WalletState';
-import { decryptMessage } from 'utils/strings';
-import { hexToU8a } from '@polkadot/util';
 
 const useWalletSelector = () =>
   useSelector((state: RootState) => {
@@ -109,7 +107,6 @@ export const useTransferAction = (): {
  * @returns wallet actions
  */
 export const useWalletActionHandlers = (): {
-  onCreateWallet: (password: string) => void;
   onUnlockWallet: (password: string) => void;
   onRestoreWallet: (seedPhrase: string, name: string, password: string) => void;
   onLogoutWallet: (password: string) => void;
@@ -125,11 +122,6 @@ export const useWalletActionHandlers = (): {
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
-
-  const onCreateWallet = useCallback(
-    (password: string) => dispatch(actions.createWalletAction(password)),
-    [dispatch]
-  );
 
   const onLockWallet = useCallback(
     () => dispatch(actions.lockWalletAction(history)),
@@ -198,7 +190,6 @@ export const useWalletActionHandlers = (): {
   );
 
   return {
-    onCreateWallet,
     onUnlockWallet,
     onCreateCompleted,
     onClearIsWrongPassword,

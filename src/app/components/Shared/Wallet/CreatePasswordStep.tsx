@@ -22,8 +22,8 @@ const CreatePasswordStep: React.FC<Props> = React.memo(
   ({ initValue, onSetupPassword }) => {
     const { t } = useTranslation();
 
-    const [password, setPassword] = useState<string>(initValue);
-    const [confirmPassword, setConfirmPassword] = useState<string>(initValue);
+    const [password, setPassword] = useState<string>(initValue || '');
+    const [confirmPassword, setConfirmPassword] = useState<string>(initValue || '');
     const [isPassedRules, setIsPassedRules] = useState<boolean>(false);
     const [checked, setChecked] = useState<{
       agree: boolean;
