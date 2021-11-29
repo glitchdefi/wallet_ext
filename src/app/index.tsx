@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Router, Route, Switch, useHistory } from 'react-router';
+import { Router, Route, Switch } from 'react-router';
 import { createMemoryHistory } from 'history';
 
 import { GlobalStyles } from '../theme/GlobalStyle';

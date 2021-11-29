@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { colors } from 'theme/colors';
 import { Text } from '../Text';
-import { CheckIcon, CloseIcon } from '../Svg';
+import { CheckIcon, CloseIcon, WarningIcon } from '../Svg';
 import Flex from '../Box/Flex';
 import { AlertProps } from './types';
 import { Button } from '../Button';
@@ -17,7 +17,7 @@ const Alert: React.FC<AlertProps> = ({ title, children, variant, onClick }) => {
         return null;
 
       case 'danger':
-        return null;
+        return <WarningIcon mt="1px" width="18px" color={colors.error} />;
 
       case 'warning':
         return null;
@@ -25,7 +25,7 @@ const Alert: React.FC<AlertProps> = ({ title, children, variant, onClick }) => {
   };
 
   return (
-    <StyledAlert>
+    <StyledAlert variant={variant}>
       <Details hasHandler={!!onClick}>
         {/* {title && <Text bold>{title}</Text>} */}
         <Flex alignItems="flex-start" mr="10px">
@@ -55,11 +55,12 @@ const Details = styled.div<{ hasHandler: boolean }>`
   width: 100%;
 `;
 
-const StyledAlert = styled(Flex)`
+const StyledAlert = styled(Flex)<{ variant?: string }>`
   position: relative;
   padding: 16px;
   background-color: ${colors.gray1};
-  border: 1px solid ${colors.green};
+  border: 1px solid
+    ${({ variant }) => (variant === 'success' ? colors.green : colors.error)};
 `;
 
 export default Alert;

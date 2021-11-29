@@ -14,7 +14,7 @@ import { DEFAULT_TYPE } from 'constants/values';
 import { GlitchToken } from '../../../constants/tokens';
 import { getAvatar } from 'utils/drawAvatar';
 import { u8aToHex } from '@polkadot/util';
-import { messageEncryption } from 'utils/strings';
+import { messageEncryption, privateKeyValidate } from 'utils/strings';
 
 log.setDefaultLevel('debug');
 
@@ -42,7 +42,7 @@ export class GlitchTest {
 
       this.api = api;
 
-      console.log(
+      log.info(
         `You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`
       );
 
@@ -128,6 +128,10 @@ export class GlitchTest {
   }
 
   getPrivateKeyFromSeed(seed: string) {
+    if (privateKeyValidate(seed)) {
+      return seed;
+    }
+
     // Create valid Substrate-compatible seed from mnemonic
     const miniSecret = mnemonicToMiniSecret(seed);
     const { secretKey } = naclKeypairFromSeed(miniSecret);
