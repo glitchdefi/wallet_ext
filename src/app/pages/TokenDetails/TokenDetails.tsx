@@ -1,9 +1,12 @@
 import React from 'react';
 import { useHistory } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Routes } from 'constants/routes';
 
 import { colors } from 'theme/colors';
 import { useAccount } from 'state/wallet/hooks';
+
+import { messages } from './messages';
 
 import { Flex } from 'app/components/Box';
 import { PageLayout } from 'app/layouts';
@@ -15,6 +18,7 @@ import { Button } from 'app/components/Button';
 import { TransactionHistorySection } from './components/TransactionHistorySection';
 
 const TokenDetails: React.FC = React.memo(() => {
+  const { t } = useTranslation();
   const history = useHistory();
 
   const account = useAccount();
@@ -56,7 +60,7 @@ const TokenDetails: React.FC = React.memo(() => {
             <Flex alignItems="center" justifyContent="center" width="115px">
               <SendIcon />
               <Text bold color={colors.gray1} ml="9px">
-                Send
+                {t(messages.send())}
               </Text>
             </Flex>
           </Button>
@@ -68,7 +72,7 @@ const TokenDetails: React.FC = React.memo(() => {
             <Flex alignItems="center" justifyContent="center" width="115px">
               <QrCodeIcon />
               <Text bold color={colors.gray1} ml="9px">
-                Receive
+                {t(messages.receive())}
               </Text>
             </Flex>
           </Button>

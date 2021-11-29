@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useTransactions } from 'state/transactions/hooks';
 
 import { colors } from 'theme/colors';
 import { PAGE_SIZE } from 'constants/values';
 import { useSelectedAddress } from 'state/wallet/hooks';
+import { messages } from '../messages';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -14,6 +16,7 @@ import { TransactionList } from './TransactionList';
 import { FilterModal } from './FilterModal';
 
 export const TransactionHistorySection: React.FC = React.memo(() => {
+  const { t } = useTranslation();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [filter, setFilter] = useState({
@@ -50,7 +53,7 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
         justifyContent="space-between"
       >
         <Text color={colors.gray7} bold>
-          Transaction history
+          {t(messages.transactionHistory())}
         </Text>
 
         {transactions?.length ? (
@@ -58,7 +61,7 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
             <Flex alignItems="center">
               <FilterIcon width="14px" />
               <Text bold color={colors.primary} ml="8px">
-                Filter
+                {t(messages.filter())}
               </Text>
             </Flex>
           </Button>

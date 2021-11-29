@@ -18,33 +18,31 @@ interface Props {
   activeKey: any;
 }
 
-export const FilterButtonList: React.FC<Props> = ({
-  list,
-  activeKey,
-  onItemClick,
-}) => {
-  return (
-    <ListWrapper>
-      {list.map((o, i) => {
-        const isActive = o?.startTime
-          ? o.startTime === activeKey
-          : activeKey == o.key;
-        const hasBorderRight = i < list.length - 1;
+export const FilterButtonList: React.FC<Props> = React.memo(
+  ({ list, activeKey, onItemClick }) => {
+    return (
+      <ListWrapper>
+        {list.map((o, i) => {
+          const isActive = o?.startTime
+            ? o.startTime === activeKey
+            : activeKey == o.key;
+          const hasBorderRight = i < list.length - 1;
 
-        return (
-          <StyledButton
-            isActive={isActive}
-            hasBorderRight={hasBorderRight}
-            key={i}
-            onClick={() => onItemClick(o.key)}
-          >
-            <Label isActive={isActive}>{o.label}</Label>
-          </StyledButton>
-        );
-      })}
-    </ListWrapper>
-  );
-};
+          return (
+            <StyledButton
+              isActive={isActive}
+              hasBorderRight={hasBorderRight}
+              key={i}
+              onClick={() => onItemClick(o.key)}
+            >
+              <Label isActive={isActive}>{o.label}</Label>
+            </StyledButton>
+          );
+        })}
+      </ListWrapper>
+    );
+  }
+);
 
 const ListWrapper = styled.div`
   display: flex;

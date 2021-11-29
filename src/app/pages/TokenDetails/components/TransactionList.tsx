@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { TransactionItemType } from 'types/TransactionsState';
+import { messages } from '../messages';
 
 import { Empty } from 'app/components/Empty';
 import { PlaceHolder, TransactionItem } from './TransactionItem';
@@ -13,6 +15,8 @@ interface Props {
 
 export const TransactionList: React.FC<Props> = React.memo(
   ({ loading, data }) => {
+    const { t } = useTranslation();
+
     if (loading) {
       return (
         <Box>
@@ -24,7 +28,7 @@ export const TransactionList: React.FC<Props> = React.memo(
     }
 
     if (!data?.length) {
-      return <Empty my="48px" message="You have no transactions" />;
+      return <Empty my="48px" message={t(messages.txEmpty())} />;
     }
 
     return (

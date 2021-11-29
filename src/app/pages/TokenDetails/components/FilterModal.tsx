@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from 'react-bootstrap/Modal';
 import styled from 'styled-components';
 
@@ -8,6 +9,8 @@ import {
   STATUS_TYPE_LIST,
 } from 'constants/values';
 import { colors } from 'theme/colors';
+
+import { messages } from '../messages';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -48,6 +51,7 @@ export const FilterModal: React.FC<Props> = React.memo(
     initDateType,
     onChangeDateType,
   }) => {
+    const { t } = useTranslation();
     const [filter, setFilter] = useState({
       txStatus: 2,
       txType: 0,
@@ -79,7 +83,7 @@ export const FilterModal: React.FC<Props> = React.memo(
           justifyContent="space-between"
         >
           <Text color={colors.gray7} bold>
-            Filter
+            {t(messages.filter())}
           </Text>
 
           <Button p="0px" onClick={onClose}>
@@ -90,7 +94,7 @@ export const FilterModal: React.FC<Props> = React.memo(
         <Box p="16px" mt="16px">
           {/* Date */}
           <Box>
-            <Text>Date</Text>
+            <Text>{t(messages.date())}</Text>
             <Box mt="8px">
               <FilterButtonList
                 list={DATE_LIST}
@@ -131,7 +135,7 @@ export const FilterModal: React.FC<Props> = React.memo(
 
           {/* Kind of Txn */}
           <Box mt="32px">
-            <Text>Kind of txn</Text>
+            <Text>{t(messages.kindOfTxn())}</Text>
             <Box mt="8px">
               <FilterButtonList
                 list={KIND_OF_TXN_LIST}
@@ -143,7 +147,7 @@ export const FilterModal: React.FC<Props> = React.memo(
 
           {/* Status */}
           <Box mt="32px">
-            <Text>Status</Text>
+            <Text>{t(messages.status())}</Text>
             <Box mt="8px">
               <FilterButtonList
                 list={STATUS_TYPE_LIST}
@@ -161,7 +165,7 @@ export const FilterModal: React.FC<Props> = React.memo(
                 onChangeDateType(dateType);
               }}
             >
-              Show results
+              {t(messages.showResults())}
             </ButtonShadow>
           </Box>
         </Box>

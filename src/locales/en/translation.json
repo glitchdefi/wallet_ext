@@ -17,7 +17,12 @@
         "copy": "Copy",
         "download": "Download",
         "confirm": "Confirm",
-        "logout": "Logout"
+        "logout": "Logout",
+        "send": "Send",
+        "receive": "Receive",
+        "status": "Status",
+        "success": "Success",
+        "failed": "Failed"
     },
     "internetWarningPage": {
         "title": "Internet connection not recommended",
@@ -40,9 +45,9 @@
         "i_agree_to_the": "I agree to the"
     },
     "restoreWalletPage": {
-       "start_restore": "Start restore",
-       "restore_wallet_from_mnemonic": "Restore wallet from Mnemonic",
-       "you_already_have_a_wallet": "If you already have a wallet. Please enter your Mnemonic to restore your wallet"
+        "start_restore": "Start restore",
+        "restore_wallet_from_mnemonic": "Restore wallet from Mnemonic",
+        "you_already_have_a_wallet": "If you already have a wallet. Please enter your Mnemonic to restore your wallet"
     },
     "unlockPage": {
         "your_wallet_is_currently_locked": "Your wallet is currently locked. Please enter Glitch password to unlock.",
@@ -99,5 +104,22 @@
     "privateKey": {
         "show_private_key": "Show Private Keys",
         "import_private_key": " Import Private Keys"
+    },
+    "transaction": {
+        "txn": "Txn",
+        "history": "Transaction history",
+        "you_have_no_tx": "You have no transactions",
+        "kind_of_txn": "Kind of txn",
+        "date": "Date",
+        "view_on_glitch_explorer": "View on Glitch Explorer",
+        "amount": "Amount",
+        "time": "Time"
+    },
+    "filter": {
+        "filter": "Filter",
+        "select_time": "Select time"
+    },
+    "button": {
+        "show_results": "Show results"
     }
 }

@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import PickerPanel from 'rc-picker/lib/PickerPanel';
-import 'rc-picker/assets/index.css';
 import enUS from 'rc-picker/lib/locale/en_US';
 import momentGenerateConfig from 'rc-picker/lib/generate/moment';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { colors } from 'theme/colors';
+
+import { messages } from '../messages';
 
 import { Box, Flex } from 'app/components/Box';
 import { Button } from 'app/components/Button';
@@ -13,6 +15,7 @@ import { Text } from 'app/components/Text';
 import { CalendarIcon, CloseIcon, SwapRightIcon } from 'app/components/Svg';
 import { useOnClickOutside } from 'hooks/useOnClickOutside';
 
+import 'rc-picker/assets/index.css';
 interface Props {
   values: { startTime: number; endTime: number };
   onCalendarChange: (startTime: number, endTime: number) => void;
@@ -21,6 +24,7 @@ interface Props {
 export const DateRangePicker: React.FC<Props> = React.memo(
   ({ values, onCalendarChange }) => {
     const ref = useRef();
+    const { t } = useTranslation();
     const [startTime, setStartTime] = useState<number>();
     const [endTime, setEndTime] = useState<number>();
     const [isStartTime, setIsStartTime] = useState<boolean>(false);
@@ -50,7 +54,7 @@ export const DateRangePicker: React.FC<Props> = React.memo(
               >
                 {startTime
                   ? moment(startTime).format('YYYY-MM-DD')
-                  : 'Select time'}
+                  : t(messages.selectTime())}
               </Label>
             </Button>
 
@@ -70,7 +74,9 @@ export const DateRangePicker: React.FC<Props> = React.memo(
                 active={showDatePicker && !isStartTime}
                 color={endTime ? colors.gray9 : colors.gray5}
               >
-                {endTime ? moment(endTime).format('YYYY-MM-DD') : 'Select time'}
+                {endTime
+                  ? moment(endTime).format('YYYY-MM-DD')
+                  : t(messages.selectTime())}
               </Label>
             </Button>
           </Flex>
@@ -143,7 +149,7 @@ export const DateRangePicker: React.FC<Props> = React.memo(
 
                 setShowDatePicker(false);
               }}
-              dateRender={(currentDate, today) => {
+              dateRender={(currentDate) => {
                 const isRange =
                   startTime && endTime
                     ? currentDate.valueOf() > moment(startTime).valueOf() &&
