@@ -16,7 +16,10 @@ Execute the following to clone, install dependencies, and run a development serv
     cd wallet_ext
     yarn install
     yarn start
-    
+
+### Build App
+`yarn install`
+
 ### Tester
 
     git clone https://github.com/glitchdefi/wallet_ext
