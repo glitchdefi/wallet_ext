@@ -31,6 +31,7 @@ export const AmountInput: React.FC<Props> = ({
   const [amount, setAmount] = useState<any>('');
   const [isValid, setIsValid] = useState(false);
   const [hasDecimalsError, setHasDecimalsError] = useState(false);
+  const [isMaxClicked, setIsMaxClicked] = useState(false);
 
   useEffect(() => {
     initAmount && setAmount(initAmount);
@@ -57,6 +58,7 @@ export const AmountInput: React.FC<Props> = ({
 
     setHasDecimalsError(isDecimalsError);
     setAmount(value);
+    isMaxClicked && setIsMaxClicked(false);
   };
 
   /**
@@ -65,15 +67,16 @@ export const AmountInput: React.FC<Props> = ({
    */
   const onMaxClick = () => {
     if (Number(balance) <= 0) return;
-
+    
     // Reset error
     setHasDecimalsError(false);
-
+    
     const balanceToBN = new BN(web3Utils.toWei(balance));
     const feeToBN = new BN(web3Utils.toWei(GlitchToken.fee.toString()));
-
+    
     // amount =  balance - fee
     setAmount(web3Utils.fromWei(balanceToBN.sub(feeToBN)));
+    setIsMaxClicked(true);
   };
 
   return (
@@ -107,11 +110,25 @@ export const AmountInput: React.FC<Props> = ({
             <Text large mx="12px" color={colors.gray4}>
               |
             </Text>
-            <Button py="2px" px="8px" variant="secondary" onClick={onMaxClick}>
-              <Text color={colors.primary} fontSize="12px">
-                Max
-              </Text>
-            </Button>
+            <MaxButtonWrap
+              disabled={Number(balance) <= 0}
+              isMaxClicked={isMaxClicked}
+            >
+              <Button
+                className="max-button"
+                py="2px"
+                px="8px"
+                variant="secondary"
+                onClick={onMaxClick}
+              >
+                <Text
+                  color={isMaxClicked ? colors.white : colors.primary}
+                  fontSize="12px"
+                >
+                  Max
+                </Text>
+              </Button>
+            </MaxButtonWrap>
           </Flex>
         </Box>
       </InputWrap>
@@ -160,5 +177,16 @@ const InputWrap = styled.div<{ isError?: boolean }>`
   input {
     width: 100%;
     flex: 1;
+  }
+`;
+
+const MaxButtonWrap = styled.div<{
+  isMaxClicked?: boolean;
+  disabled?: boolean;
+}>`
+  .max-button {
+    ${({ disabled }) => disabled && 'cursor: not-allowed !important'};
+    ${({ isMaxClicked }) =>
+      isMaxClicked && `background-color: rgba(0, 255, 255, 0.8)`};
   }
 `;

@@ -31,9 +31,9 @@ export const NetworkFee: React.FC<Props> = ({ fee }) => {
           </Text>
         </Flex>
 
-        <Box ml="8px">
+        {/* <Box ml="8px">
           <DownArrowIcon color={colors.primary} width="16px" />
-        </Box>
+        </Box> */}
       </Flex>
     </Flex>
   );

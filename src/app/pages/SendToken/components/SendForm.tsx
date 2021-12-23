@@ -60,7 +60,7 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
             </Text>
           </Flex>
 
-          <DownArrowIcon width="16px" color={colors.primary} />
+          {/* <DownArrowIcon width="16px" color={colors.primary} /> */}
         </Flex>
 
         <Box mt="24px">
