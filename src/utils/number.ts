@@ -6,12 +6,14 @@ export const formatNumberDownRoundWithExtractMax = (
   number: string | number,
   decimal: number
 ) => {
-  return exactMath
-    .div(
-      exactMath.floor(exactMath.mul(number, exactMath.pow(10, decimal))),
-      exactMath.pow(10, decimal)
-    )
-    .toFixed(decimal);
+  if (number) {
+    return exactMath
+      .div(
+        exactMath.floor(exactMath.mul(number, exactMath.pow(10, decimal))),
+        exactMath.pow(10, decimal)
+      )
+      .toFixed(decimal);
+  }
 };
 
 export function isValidAmountSend(amount: any, balance: any, fee: any) {

@@ -9,6 +9,7 @@ import {
 import { CreateResult } from '@polkadot/ui-keyring/types';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import web3Utils from 'web3-utils';
+import secrets from 'secrets';
 
 import { DEFAULT_TYPE } from 'constants/values';
 import { GlitchToken } from '../../../constants/tokens';
@@ -28,7 +29,7 @@ export class GlitchWeb3 {
   constructor() {
     cryptoWaitReady().then(async () => {
       // Initialise the provider to connect to the local node
-      const provider = new WsProvider('ws://13.229.207.100:9944');
+      const provider = new WsProvider(secrets.wsProvider);
 
       // Create the API and wait until ready
       const api = await ApiPromise.create({ provider });
@@ -54,7 +55,7 @@ export class GlitchWeb3 {
 
   async createAccount(seed: string, name: string, password: string) {
     const mnemonic =
-      seed || mnemonicGenerate(GlitchToken.default_mnemonic_length);
+      seed?.trim() || mnemonicGenerate(GlitchToken.default_mnemonic_length);
 
     const { json }: CreateResult = keyring.addUri(
       mnemonic,

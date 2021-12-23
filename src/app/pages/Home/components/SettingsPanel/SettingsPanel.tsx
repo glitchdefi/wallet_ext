@@ -32,7 +32,6 @@ export const SettingsPanel: React.FC = React.memo(() => {
   const { isBackUp } = useIsBackup();
   const { duration, onSetAutoLockTimer } = useAutoLockTimer();
 
-  console.log(duration)
   const activeTimer = LOCK_TIME_LIST.find((o) => o.time === duration);
 
   return (

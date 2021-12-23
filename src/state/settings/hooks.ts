@@ -1,8 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'types';
-import { useToast } from 'hooks/useToast';
-import { slice } from './reducer';
 import * as actions from './actions';
 
 const useSettingsSelector = () =>
