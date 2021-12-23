@@ -4,9 +4,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import QRCode from 'qrcode.react';
 
-import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
-import { useSelectedAddress } from 'state/wallet/hooks';
+import { useAccount } from 'state/wallet/hooks';
 
 import { Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -18,7 +17,7 @@ const ReceiveToken: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const { selectedAddress } = useSelectedAddress();
+  const { name, address } = useAccount();
   const [copied, setCopied] = useState<boolean>(false);
 
   useEffect(() => {
@@ -30,7 +29,7 @@ const ReceiveToken: React.FC = () => {
   }, [copied]);
 
   const onCopy = () => {
-    navigator.clipboard.writeText('');
+    navigator.clipboard.writeText(address);
     setCopied(true);
   };
 
@@ -58,12 +57,12 @@ const ReceiveToken: React.FC = () => {
       >
         <Flex alignItems="center">
           <Text color={colors.gray7} bold>
-            Account 1
+            {name}
           </Text>
         </Flex>
 
         <StyledBorder>
-          <QRCode value={selectedAddress} size={160} />
+          <QRCode value={address} size={160} />
         </StyledBorder>
 
         <Flex
@@ -74,7 +73,7 @@ const ReceiveToken: React.FC = () => {
           px="26px"
         >
           <Text textAlign="center" color={colors.gray7} large>
-            {selectedAddress}
+            {address}
           </Text>
         </Flex>
 

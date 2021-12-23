@@ -2,6 +2,7 @@ import React, {
   useState,
   ChangeEventHandler,
   FocusEventHandler,
+  KeyboardEventHandler,
   Ref,
 } from 'react';
 import styled from 'styled-components';
@@ -20,6 +21,7 @@ interface PasswordInputProps extends SpaceProps {
   value?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onFocus?: FocusEventHandler<HTMLInputElement>;
+  onKeyPress?: KeyboardEventHandler<HTMLInputElement>;
   inputMode?:
     | 'none'
     | 'text'

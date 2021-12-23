@@ -29,6 +29,14 @@ const Unlock: React.FC = () => {
 
   const [password, setPassword] = useState<string>('');
 
+  // Trigger when user enter
+  const onKeyPress = (event: { keyCode: any; which: any }) => {
+    const code = event.keyCode || event.which;
+    if (code === 13 && password) {
+      onUnlockWallet(password);
+    }
+  };
+
   return (
     <PageLayout hasOverlay={false}>
       <Box p="16px">
@@ -66,6 +74,7 @@ const Unlock: React.FC = () => {
                   isWrongPassword && onClearIsWrongPassword();
                 }}
                 msgError={t(messages.incorrectPassword())}
+                onKeyPress={onKeyPress}
               />
 
               <Box mt="32px">

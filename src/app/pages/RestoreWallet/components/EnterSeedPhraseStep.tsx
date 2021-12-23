@@ -23,24 +23,26 @@ export const EnterSeedPhraseStep: React.FC<Props> = React.memo(
     const { t } = useTranslation();
     const [seedPhrase, setSeedPhrase] = useState<string>(defaultSeedPhrase);
     const [isValid, setIsValid] = useState(false);
-
-    useEffect(() => {
-      const isValidMnemonic = mnemonicValidate(seedPhrase);
-      setIsValid(isValidMnemonic);
-    }, [seedPhrase]);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     return (
       <>
         <Box px="16px">
           <Label>{t(messages.mnemonic())}</Label>
-          <InputWrapper isError={seedPhrase && !isValid} alignItems="center">
+          <InputWrapper
+            isError={seedPhrase && !isValid && isSubmitted}
+            alignItems="center"
+          >
             <StyledInput
               hasBorder={false}
               id="seed-phrase-input"
               value={seedPhrase}
               as={TextareaAutosize}
               placeholder={t(messages.enterYourMnemonic())}
-              onChange={(e: any) => setSeedPhrase(e.target.value?.trim())}
+              onChange={(e: any) => {
+                setSeedPhrase(e.target.value);
+                isSubmitted && setIsSubmitted(false);
+              }}
             />
             <Button
               p="0px"
@@ -58,7 +60,7 @@ export const EnterSeedPhraseStep: React.FC<Props> = React.memo(
               <SnippetsIcon width="15px" />
             </Button>
           </InputWrapper>
-          {seedPhrase && !isValid && (
+          {seedPhrase && !isValid && isSubmitted && (
             <Text mt="2px" fontSize="12px" color={colors.error}>
               {t(messages.mnemonicContainInvalidWords())}
             </Text>
@@ -66,12 +68,21 @@ export const EnterSeedPhraseStep: React.FC<Props> = React.memo(
         </Box>
 
         <Box mt="32px" px="16px">
-          {!isValid ? (
+          {!seedPhrase ? (
             <Button width="100%" variant="disable-primary">
               {t(messages.startRestore())}
             </Button>
           ) : (
-            <ButtonShadow width="100%" onClick={() => onNextStep(seedPhrase)}>
+            <ButtonShadow
+              width="100%"
+              onClick={() => {
+                const isValidMnemonic = mnemonicValidate(seedPhrase?.trim());
+                setIsValid(isValidMnemonic);
+                setIsSubmitted(true);
+
+                isValidMnemonic && onNextStep(seedPhrase);
+              }}
+            >
               {t(messages.startRestore())}
             </ButtonShadow>
           )}

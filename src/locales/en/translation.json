@@ -89,7 +89,7 @@
     },
     "mnemonicPhrase": {
         "mnemonic": "Mnemonic",
-        "enter_your_mnemonic": "Enter your Mnemonic",
+        "enter_your_mnemonic": "Enter your Mnemonic separated by spaces",
         "never_share_your_mnemonic_phrase": "Never share your Mnemonic phrase with anyone! If you lose your Mnemonic phrase, you will not able to access your funds!",
         "i_wrote_down_mnemonic": "I wrote down my Mnemonic",
         "invalid_mnemonic_phrase": "Invalid Mnemonic phrase. Please check again",
