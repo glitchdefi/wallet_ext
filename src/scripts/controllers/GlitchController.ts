@@ -213,7 +213,7 @@ export class GlitchController {
     const balance = await this.glitchWeb3.getBalance(address);
 
     try {
-      const newState = await this.appStateController.updateState('wallet', {
+      const walletState = await this.appStateController.updateState('wallet', {
         isInitialized: 'completed',
         isLocked: false,
         selectedAddress: address,
@@ -233,10 +233,10 @@ export class GlitchController {
 
       await this.setAutoLockTimer({
         openTime: new Date().getTime(),
-        duration: null,
+        duration: 60000,
       });
 
-      return newState;
+      return walletState;
     } catch (e) {
       throw new Error((e as Error).message);
     }
@@ -252,7 +252,8 @@ export class GlitchController {
       const isValid = this.glitchWeb3.unlockAccount(password, firstAddress);
 
       if (isValid) {
-        await this.appStateController.setDefaultState();
+        const state = await this.appStateController.setDefaultState();
+        return { ...state };
       }
 
       return {

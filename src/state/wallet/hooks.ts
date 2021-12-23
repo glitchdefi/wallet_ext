@@ -33,10 +33,10 @@ export const useAccount = (): AccountType => {
   return {
     name: '--',
     address: '--',
-    balance: '--',
+    balance: 0,
     avatar: null,
     whenCreated: null,
-    totalValue: '--',
+    totalValue: 0,
     seed: null,
   };
 };

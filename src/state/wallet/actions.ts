@@ -2,6 +2,7 @@ import { Dispatch } from 'redux';
 import { slice } from './reducer';
 import { slice as appSlice } from '../application/reducer';
 import { slice as transactionSlice } from '../transactions/reducer';
+import { slice as settingsSlice } from '../settings/reducer';
 
 import { sendMessage } from '../../scripts/lib/messages';
 import { MessageTypes } from 'types';
@@ -11,6 +12,7 @@ import { Routes } from 'constants/routes';
 const actions = slice.actions;
 const applicationActions = appSlice.actions;
 const transactionActions = transactionSlice.actions;
+const settingsActions = settingsSlice.actions;
 
 export const createCompletedAction = () => async (dispatch: Dispatch<any>) => {
   try {
@@ -119,8 +121,15 @@ export const logoutWalletAction =
       if (state?.isWrongPassword) {
         dispatch(actions.setWrongPassword(state.isWrongPassword));
       } else {
-        dispatch(setWalletState(state?.wallet));
+        const { settings, wallet } = state;
+
+        // Reset state
+        dispatch(setWalletState(wallet));
+        dispatch(settingsActions.setAutoLock(settings.autoLock));
+        dispatch(settingsActions.setCurrency(settings.currency));
+        dispatch(settingsActions.setLocale(settings.locale));
         dispatch(applicationActions.setActiveTabHomePage(0));
+
         history.push(Routes.welcome);
       }
     } catch (error) {
