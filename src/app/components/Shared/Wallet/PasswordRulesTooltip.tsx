@@ -15,7 +15,6 @@ interface Props {
 }
 
 type RuleTypes = {
-  lowercase: boolean;
   uppercase: boolean;
   number: boolean;
   special: boolean;
@@ -25,7 +24,6 @@ type RuleTypes = {
 export const PasswordRulesTooltip: React.FC<Props> = React.memo(
   ({ value, onPassed }) => {
     const [rules, setRules] = useState<RuleTypes>({
-      lowercase: false,
       uppercase: false,
       number: false,
       special: false,
@@ -35,7 +33,6 @@ export const PasswordRulesTooltip: React.FC<Props> = React.memo(
     useEffect(() => {
       setRules({
         ...rules,
-        lowercase: value ? /[a-z]/g.test(value) : false,
         uppercase: /[A-Z]/g.test(value),
         number: /[0-9]/g.test(value),
         special: /[!@#$%^&*(),.?":{}|<>]/g.test(value),
@@ -44,9 +41,8 @@ export const PasswordRulesTooltip: React.FC<Props> = React.memo(
     }, [value]);
 
     useEffect(() => {
-      const { lowercase, uppercase, number, special, least8Char } = rules;
-      const isPassed =
-        lowercase && uppercase && number && special && least8Char;
+      const { uppercase, number, special, least8Char } = rules;
+      const isPassed = uppercase && number && special && least8Char;
       onPassed(isPassed);
     }, [rules]);
 
@@ -65,8 +61,7 @@ export const PasswordRulesTooltip: React.FC<Props> = React.memo(
           backgroundColor={colors.gray2}
         >
           <Box>
-            <Rule checked={rules.lowercase} label="One lowercase character" />
-            <Rule checked={rules.number} mt="8px" label="One number" />
+            <Rule checked={rules.number} label="One number" />
             <Rule
               checked={rules.least8Char}
               mt="8px"
