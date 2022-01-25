@@ -29,7 +29,7 @@ function StepProgressLayout({
   stepDescription,
 }: Props) {
   return (
-    <Flex flexDirection="column" flex={1} pt="16px" pb="24px">
+    <Flex flexDirection="column" flex={1} py="16px">
       <Box px="16px">
         <Flex alignItems="center">
           <Button padding="0px" onClick={onBack}>

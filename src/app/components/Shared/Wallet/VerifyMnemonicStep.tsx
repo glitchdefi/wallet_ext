@@ -29,7 +29,7 @@ const VerifyMnemonicStep: React.FC<Props> = ({ seedPhrases, onSubmit }) => {
 
   return (
     <Flex flexDirection="column" flex={1}>
-      <Box height="315px" px="16px" overflowY="scroll">
+      <Box height="100%" px="16px">
         <VerifyMnemonicView
           isValid={isValid}
           list={seedPhrasesList}
@@ -39,7 +39,7 @@ const VerifyMnemonicStep: React.FC<Props> = ({ seedPhrases, onSubmit }) => {
         />
       </Box>
 
-      <Box mt="auto" pt="24px" px="16px">
+      <Box mt="16px" px="16px">
         {isValid ? (
           <ButtonShadow width="100%" onClick={onSubmit}>
             {t(messages.confirm())}

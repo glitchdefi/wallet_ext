@@ -49,7 +49,7 @@ const VerifyMnemonicView: React.FC<Props> = ({
         </Text>
       )}
 
-      <MpWrapper mt="32px">
+      <MpWrapper mt="16px">
         {list?.map((word: string, i) => (
           <MnemonicPhraseItem
             variants={confirmList.includes(word) ? 'disable' : 'default'}

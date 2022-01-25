@@ -36,7 +36,7 @@ export const PasswordRulesTooltip: React.FC<Props> = React.memo(
         uppercase: /[A-Z]/g.test(value),
         number: /[0-9]/g.test(value),
         special: /[!@#$%^&*(),.?":{}|<>]/g.test(value),
-        least8Char: value?.length >= 7,
+        least8Char: value?.length >= 8,
       });
     }, [value]);
 

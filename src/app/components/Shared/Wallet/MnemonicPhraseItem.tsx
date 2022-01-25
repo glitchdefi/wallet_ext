@@ -34,8 +34,15 @@ const MnemonicPhraseItem: React.FC<Props> = ({
         opacity: variants === 'disable' ? 0.3 : 1,
       }}
     >
-      {variants === 'selected' && <Text color={colors.green}>{num + 1}.</Text>}
-      <Text color={variants === 'disable' ? colors.gray7 : colors.gray9}>
+      {variants === 'selected' && (
+        <Text fontSize="12px" color={colors.green}>
+          {num + 1}.
+        </Text>
+      )}
+      <Text
+        fontSize="12px"
+        color={variants === 'disable' ? colors.gray7 : colors.gray9}
+      >
         {word}
       </Text>
     </StyledWrapper>

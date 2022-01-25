@@ -1,2 +1,2 @@
 /* eslint-disable import/no-anonymous-default-export */
-export default { wsProvider: 'ws://13.229.207.100:9944' };
+export default { wsProvider: 'ws://13.212.197.46:9944' };

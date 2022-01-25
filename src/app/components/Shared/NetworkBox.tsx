@@ -22,7 +22,7 @@ const NetworkBox: React.FC = React.memo(() => {
         background={colors.green}
       />
       <Text mx="8px" fontSize="12px">
-        Glitch Testnet
+        Glitch UAT
       </Text>
       <DownArrowIcon width="12px" color={colors.gray7} />
     </Flex>
