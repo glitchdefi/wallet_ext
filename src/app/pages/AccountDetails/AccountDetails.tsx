@@ -42,7 +42,7 @@ const AccountDetails: React.FC = () => {
   }, [copied]);
 
   const onCopy = () => {
-    navigator.clipboard.writeText('');
+    navigator.clipboard.writeText(address);
     setCopied(true);
   };
 
