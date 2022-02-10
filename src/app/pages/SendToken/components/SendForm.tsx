@@ -40,7 +40,7 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
   }, [initData]);
 
   useEffect(() => {
-    setIsValidAddress(isValidAddressPolkadotAddress(address, toAddress));
+    setIsValidAddress(isValidAddressPolkadotAddress(toAddress));
   }, [toAddress]);
 
   return (

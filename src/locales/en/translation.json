@@ -28,7 +28,7 @@
         "title": "Internet connection not recommended",
         "desc": "Do you know that you can {{type}} wallet without an Internet connection? You are encouraged to do this in an offline environment, as it could reduce the risk of your mnemonic phrase and your funds being stolen. After this step, you can go online again to enjoy the Glitch wallet.",
         "create_a_new": "create a new",
-        "import_a": "import a"
+        "import_a": "restore an existing"
     },
     "welcomePage": {
         "a_crypto_wallet_for_defi": "A crypto wallet for DeFi"

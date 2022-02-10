@@ -67,13 +67,13 @@ export const AmountInput: React.FC<Props> = ({
    */
   const onMaxClick = () => {
     if (Number(balance) <= 0) return;
-    
+
     // Reset error
     setHasDecimalsError(false);
-    
+
     const balanceToBN = new BN(web3Utils.toWei(balance));
     const feeToBN = new BN(web3Utils.toWei(GlitchToken.fee.toString()));
-    
+
     // amount =  balance - fee
     setAmount(web3Utils.fromWei(balanceToBN.sub(feeToBN)));
     setIsMaxClicked(true);
@@ -135,7 +135,7 @@ export const AmountInput: React.FC<Props> = ({
 
       {Number(amount) > 0 && !isValid && (
         <Text fontSize="12px" mt="2px" color={colors.error}>
-          Insufficient token
+          Insufficient funds
         </Text>
       )}
       {Number(amount) < 0 && (

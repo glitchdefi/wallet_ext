@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { colors } from 'theme/colors';
+import { formatDollarAmount, formatNumberDownRoundWithExtractMax } from 'utils/number';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -36,7 +37,7 @@ export const AssetItem: React.FC<Props> = ({
             </NetworkType> */}
           </Flex>
           <Text large bold>
-            {amount}
+            {formatNumberDownRoundWithExtractMax(amount, 6)}
           </Text>
         </Flex>
         <Flex alignItems="center" justifyContent="space-between">
@@ -45,7 +46,7 @@ export const AssetItem: React.FC<Props> = ({
           </Text>
 
           <Text fontSize="12px" color={colors.gray6}>
-            {`$${totalValue} USD`}
+            {`${formatDollarAmount(totalValue)} USD`}
           </Text>
         </Flex>
       </Box>
@@ -55,7 +56,7 @@ export const AssetItem: React.FC<Props> = ({
 
 const Wrapper = styled(Flex)`
   cursor: pointer;
-  
+
   &:hover {
     transition: all 0.3s;
     background-color: rgba(255, 255, 255, 0.03);

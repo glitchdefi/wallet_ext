@@ -80,9 +80,16 @@ export const lockWalletAction =
   };
 
 export const restoreWalletAction =
-  (seedPhrase: string, name: string, password: string, history: any) =>
+  (
+    seedPhrase: string,
+    name: string,
+    password: string,
+    history: any,
+    toast: any
+  ) =>
   async (dispatch: Dispatch<any>) => {
     try {
+      const { toastSuccess } = toast;
       dispatch(applicationActions.setIsLoadingApp(true));
 
       const data = await sendMessage({
@@ -96,6 +103,10 @@ export const restoreWalletAction =
 
       const { state } = data || {};
       dispatch(setWalletState(state?.wallet));
+      toastSuccess(
+        'Congrats!',
+        'Congrats! Your wallet has been restored successfully.'
+      );
       history.push(Routes.home);
     } catch (error) {
       // Handle Error
@@ -156,8 +167,9 @@ export const resetStateAction =
   };
 
 export const backupWalletAction =
-  (history: any) => async (dispatch: Dispatch<any>) => {
+  (history: any, toast: any) => async (dispatch: Dispatch<any>) => {
     try {
+      const { toastSuccess } = toast;
       dispatch(applicationActions.setIsLoadingApp(true));
 
       const data = await sendMessage({
@@ -169,6 +181,10 @@ export const backupWalletAction =
       if (wallet) {
         dispatch(actions.setIsInitialized(wallet.isInitialized));
         dispatch(actions.setIsBackUp(wallet.isBackUp));
+        toastSuccess(
+          'Congrats!',
+          'Congrats! Your wallet has been backed up successfully.'
+        );
         history.push(Routes.home);
       }
     } catch (error) {

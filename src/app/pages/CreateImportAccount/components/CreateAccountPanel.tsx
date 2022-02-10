@@ -1,35 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { messages } from '../messages';
 import { Routes } from 'constants/routes';
+import { validateNameExist } from 'utils/strings';
+import { colors } from 'theme/colors';
 
 import { useAccountActionHandlers, useAccounts } from 'state/wallet/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Input, Label } from 'app/components/Form';
 import { Button, ButtonShadow } from 'app/components/Button';
+import { Text } from 'app/components/Text';
 
 export const CreateAccountPanel: React.FC = React.memo(() => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const { accountLength } = useAccounts();
+  const { accounts, accountLength } = useAccounts();
   const { onAddNewAccount } = useAccountActionHandlers();
 
   const [name, setName] = useState<string>('');
+  const [isNameExist, setIsNameExist] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Reset validate
+    if (isNameExist) setIsNameExist(false);
+
+    if (name) {
+      // Validate name
+      const isError = validateNameExist(accounts, name, '');
+      isError && setIsNameExist(true);
+    }
+  }, [name]);
 
   return (
-    <Box mt="32px">
-      <Label>{t(messages.accountName())}</Label>
-      <Input
-        value={name}
-        placeholder={`${t(messages.account())} ${accountLength + 1}`}
-        onChange={(e) => setName(e.target.value)}
-      />
+    <Flex flex={1} flexDirection="column" mt="32px">
+      <Flex flex={1} flexDirection="column">
+        <Label>{t(messages.accountName())}</Label>
+        <Input
+          isError={isNameExist}
+          value={name}
+          placeholder={`${t(messages.account())} ${accountLength + 1}`}
+          onChange={(e) => setName(e.target.value)}
+        />
+        {isNameExist && (
+          <Text mt="2px" color={colors.error}>
+            This account name already exists
+          </Text>
+        )}
+      </Flex>
 
-      <Flex mt="294px" pb="16px">
+      <Flex py="16px">
         <Button
           mr="8px"
           width="50%"
@@ -38,17 +61,23 @@ export const CreateAccountPanel: React.FC = React.memo(() => {
         >
           {t(messages.cancel())}
         </Button>
-        <ButtonShadow
-          ml="8px"
-          width="50%"
-          onClick={() => {
-            const accountName = name ? name : `Account ${accountLength + 1}`;
-            onAddNewAccount(accountName);
-          }}
-        >
-          {t(messages.create())}
-        </ButtonShadow>
+        {isNameExist ? (
+          <Button ml="8px" width="50%" variant="disable-primary">
+            {t(messages.create())}
+          </Button>
+        ) : (
+          <ButtonShadow
+            ml="8px"
+            width="50%"
+            onClick={() => {
+              const accountName = name ? name : `Account ${accountLength + 1}`;
+              onAddNewAccount(accountName);
+            }}
+          >
+            {t(messages.create())}
+          </ButtonShadow>
+        )}
       </Flex>
-    </Box>
+    </Flex>
   );
 });

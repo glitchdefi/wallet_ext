@@ -122,6 +122,7 @@ export const useWalletActionHandlers = (): {
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const toast = useToast();
 
   const onLockWallet = useCallback(
     () => dispatch(actions.lockWalletAction(history)),
@@ -147,7 +148,7 @@ export const useWalletActionHandlers = (): {
   const onRestoreWallet = useCallback(
     (seedPhrase: string, name: string, password: string) =>
       dispatch(
-        actions.restoreWalletAction(seedPhrase, name, password, history)
+        actions.restoreWalletAction(seedPhrase, name, password, history, toast)
       ),
     [dispatch]
   );
@@ -169,7 +170,7 @@ export const useWalletActionHandlers = (): {
   );
 
   const onBackupWalletAction = useCallback(
-    () => dispatch(actions.backupWalletAction(history)),
+    () => dispatch(actions.backupWalletAction(history, toast)),
     [dispatch]
   );
 

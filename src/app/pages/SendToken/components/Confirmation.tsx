@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { GlitchToken } from '../../../../constants/tokens';
 
 import { colors } from 'theme/colors';
-import { truncateAddress } from 'utils/strings';
 import {
   useSelectedAddress,
   useTokenPrice,
@@ -11,6 +10,7 @@ import {
   useWrongPassword,
   useTransferAction,
 } from 'state/wallet/hooks';
+import { formatDollarAmount } from 'utils/number';
 
 // Components
 import { Box, Flex } from 'app/components/Box';
@@ -52,7 +52,7 @@ export const Confirmation: React.FC<Props> = React.memo(
                 From
               </Text>
               <Text mt="4px" color={colors.gray7}>
-                {truncateAddress(selectedAddress)}
+                {selectedAddress}
               </Text>
             </Box>
 
@@ -61,7 +61,7 @@ export const Confirmation: React.FC<Props> = React.memo(
                 To
               </Text>
               <Text mt="4px" color={colors.gray7}>
-                {truncateAddress(toAddress)}
+                {toAddress}
               </Text>
             </Box>
 
@@ -73,7 +73,7 @@ export const Confirmation: React.FC<Props> = React.memo(
                 <GlitchLogo width={24} height={24} />
                 <Text ml="8px">{amount} GLCH</Text>
                 <Text ml="8px" color={colors.gray5}>
-                  {`~ $${priceUsd * amount} USD`}
+                  {`~ ${formatDollarAmount(priceUsd * amount)} USD`}
                 </Text>
               </Flex>
             </Box>
@@ -85,7 +85,7 @@ export const Confirmation: React.FC<Props> = React.memo(
               <Flex mt="4px">
                 <Text>{`${GlitchToken.fee} GLCH`}</Text>
                 <Text ml="8px" color={colors.gray5}>
-                  {`~ $${(GlitchToken.fee * priceUsd).toFixed(9)} USD`}
+                  {`~ ${formatDollarAmount(GlitchToken.fee * priceUsd)} USD`}
                 </Text>
               </Flex>
             </Box>

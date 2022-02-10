@@ -15,6 +15,7 @@ import {
   useIsInitialized,
 } from 'state/wallet/hooks';
 import { useLoadingApplication } from 'state/application/hooks';
+import { useToast } from 'hooks/useToast';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -36,6 +37,7 @@ const CreateWallet: React.FC = () => {
   const [seedPhrase, setSeedPhrase] = useState<string>('');
 
   const { isLoading } = useLoadingApplication();
+  const { toastSuccess } = useToast();
   const { isInitialized } = useIsInitialized();
   const { onResetState, onCreateCompleted } = useWalletActionHandlers();
   const { onCreateAccount } = useAccountActionHandlers();
@@ -46,6 +48,7 @@ const CreateWallet: React.FC = () => {
   useEffect(() => {
     // Create completed -> push to home page
     if (!isLoading && isInitialized === 'completed') {
+      toastSuccess('Success!', 'Success! Your wallet has been created!');
       history.push(Routes.home);
     }
   }, [isLoading, step]);

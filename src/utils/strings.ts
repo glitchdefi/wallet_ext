@@ -53,16 +53,13 @@ export function privateKeyValidate(privateKey: string): boolean {
   return isHexSeed(privateKey);
 }
 
-export const isValidAddressPolkadotAddress = (
-  fromAddress: string,
-  toAddress: string
-): boolean => {
+export const isValidAddressPolkadotAddress = (toAddress: string): boolean => {
   try {
     const isValid = encodeAddress(
       isHex(toAddress) ? hexToU8a(toAddress) : decodeAddress(toAddress)
     );
 
-    return isValid && fromAddress !== toAddress;
+    return !!isValid;
   } catch (error) {
     return false;
   }
@@ -83,4 +80,20 @@ export const decryptMessage = async (encrypted: string, secret: string) => {
   const messageDecrypted = await decrypt(secret, encrypted);
 
   return messageDecrypted;
+};
+
+export const validateNameExist = (
+  accounts: any,
+  name: string,
+  address: string
+): boolean => {
+  let isError = false;
+
+  Object.keys(accounts).map(function (key: string) {
+    if (accounts[key]?.name === name && accounts[key]?.address !== address) {
+      isError = true;
+    }
+  });
+
+  return isError;
 };

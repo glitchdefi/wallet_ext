@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import secrets from 'secrets';
 
 import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
@@ -104,6 +105,7 @@ export const SettingsPanel: React.FC = React.memo(() => {
         <SettingItem
           leftIcon={<GlitchLogo width={24} height={24} />}
           label={t(messages.aboutGlitch())}
+          actionLabel={`v${secrets.walletVersion}`}
           onClick={() => history.push(Routes.aboutUs)}
         />
       </Box>

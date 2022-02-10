@@ -5,6 +5,10 @@ import { Routes } from 'constants/routes';
 
 import { colors } from 'theme/colors';
 import { useAccount } from 'state/wallet/hooks';
+import {
+  formatDollarAmount,
+  formatNumberDownRoundWithExtractMax,
+} from 'utils/number';
 
 import { messages } from './messages';
 
@@ -34,7 +38,7 @@ const TokenDetails: React.FC = React.memo(() => {
 
           <Flex mt="12px" alignItems="flex-end">
             <Text fontSize="24px" bold color={colors.white}>
-              {balance}
+              {formatNumberDownRoundWithExtractMax(balance, 6)}
             </Text>
             <Text pb="4px" ml="8px" color={colors.white}>
               GLCH
@@ -42,7 +46,7 @@ const TokenDetails: React.FC = React.memo(() => {
           </Flex>
 
           <Text fontSize="12px" color={colors.gray6}>
-            {`~ $${totalValue} USD`}
+            {`~ ${formatDollarAmount(totalValue)} USD`}
           </Text>
         </Flex>
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { colors } from 'theme/colors';
 import { useHistory } from 'react-router';
+import secrets from 'secrets';
 
 import logo from '../../../assets/img/gl_logo.png';
 
@@ -38,16 +39,12 @@ const AboutUs: React.FC = () => {
               Glitch Wallet
             </Text>
             <Text fontSize="12px" color={colors.gray5}>
-              Current version 0.0.1
+              Current version {secrets.walletVersion}
             </Text>
           </Flex>
         </Box>
 
-        <Box px="16px" mt="16px">
-          <Item
-            label="Terms of Service"
-            href="https://glitch.finance/privacy-policy/"
-          />
+        <Box px="16px">
           <Item
             label="Privacy Policy"
             href="https://glitch.finance/privacy-policy/"
@@ -65,7 +62,7 @@ const AboutUs: React.FC = () => {
           />
           <Item
             label="Follow us on Twitter"
-            href="https://twitter.com/GlitchProtocol"
+            href="https://twitter.com/glitchprotocol"
           />
           <Item
             label="Follow us on Medium"

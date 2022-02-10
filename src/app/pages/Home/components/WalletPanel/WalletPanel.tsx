@@ -8,7 +8,10 @@ import bg from '../../../../../assets/img/account_card_bg.jpg';
 import { useAccount, useIsBackup } from 'state/wallet/hooks';
 
 import { truncateAddress } from 'utils/strings';
-import { formatNumberDownRoundWithExtractMax } from 'utils/number';
+import {
+  formatDollarAmount,
+  formatNumberDownRoundWithExtractMax,
+} from 'utils/number';
 import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
@@ -94,7 +97,7 @@ export const WalletPanel: React.FC = React.memo(() => {
           </Flex>
 
           <Text mt="4px" fontSize="12px" color={colors.gray6}>
-            {`~ $${totalValue} USD`}
+            {`~ ${formatDollarAmount(totalValue)} USD`}
           </Text>
         </AccountCard>
       </Box>

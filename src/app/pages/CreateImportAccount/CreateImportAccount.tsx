@@ -27,7 +27,7 @@ const CreateImportAccount: React.FC = () => {
 
   return (
     <PageLayout>
-      <Box p="16px">
+      <Flex flexDirection="column" height="100%" p="16px">
         <Flex
           background={colors.gray2}
           alignItems="center"
@@ -43,7 +43,7 @@ const CreateImportAccount: React.FC = () => {
           </Button>
         </Flex>
 
-        <Box px="16px" background={colors.gray1}>
+        <Box height="100%" px="16px" background={colors.gray1}>
           <StyledTabs
             selectedIndex={activeTab}
             onSelect={(index) => setActiveTab(index)}
@@ -65,12 +65,16 @@ const CreateImportAccount: React.FC = () => {
             </TabPanel>
           </StyledTabs>
         </Box>
-      </Box>
+      </Flex>
     </PageLayout>
   );
 };
 
 const StyledTabs = styled(Tabs)`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   ul {
     list-style: none;
     display: flex;
@@ -80,6 +84,12 @@ const StyledTabs = styled(Tabs)`
     justify-content: space-between;
     padding-top: 16px;
     border-bottom: 1px solid ${colors.gray8};
+  }
+
+  .react-tabs__tab-panel--selected {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 `;
 

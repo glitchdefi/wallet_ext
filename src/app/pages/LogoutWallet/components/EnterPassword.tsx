@@ -67,7 +67,9 @@ export const EnterPassword: React.FC<Props> = React.memo(
 
         <Box p="16px" background={colors.geekBlue}>
           <Text fontSize="12px" color={colors.cyan5}>
-            Are you sure that you want to log out your wallet from Glitch?
+            {isNoBackedUp
+              ? 'Please enter the Glitch password to proceed.'
+              : 'Are you sure that you want to log out your wallet from Glitch?'}
           </Text>
 
           <Box mt="16px">

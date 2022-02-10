@@ -10,7 +10,7 @@ import { Routes } from 'constants/routes';
 import { useAccountActionHandlers, useAccounts } from 'state/wallet/hooks';
 
 import { colors } from 'theme/colors';
-import { privateKeyValidate } from 'utils/strings';
+import { privateKeyValidate, validateNameExist } from 'utils/strings';
 
 import { Box, Flex } from 'app/components/Box';
 import { Input, Label } from 'app/components/Form';
@@ -23,18 +23,30 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const { accountLength } = useAccounts();
+  const { accounts, accountLength } = useAccounts();
   const { onImportAccount } = useAccountActionHandlers();
 
   const [name, setName] = useState<string>('');
   const [privateKey, setPrivateKey] = useState<string>('');
   const [isValidPK, setIsValidPK] = useState<boolean>(false);
+  const [isNameExist, setIsNameExist] = useState<boolean>(false);
   const isError = privateKey && !isValidPK;
-  const isEnableImport = privateKey && isValidPK;
+  const isEnableImport = privateKey && isValidPK && !isNameExist;
 
   useEffect(() => {
     setIsValidPK(privateKeyValidate(privateKey));
   }, [privateKey]);
+
+  useEffect(() => {
+    // Reset validate
+    if (isNameExist) setIsNameExist(false);
+
+    if (name) {
+      // Validate name
+      const isError = validateNameExist(accounts, name, '');
+      isError && setIsNameExist(true);
+    }
+  }, [name]);
 
   return (
     <Flex flexDirection="column" height="455px" pt="32px" pb="16px">
@@ -44,10 +56,16 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
         <Box mt="24px">
           <Label>{t(messages.accountName())}</Label>
           <Input
+            isError={isNameExist}
             value={name}
             placeholder={`${t(messages.account())} ${accountLength + 1}`}
             onChange={(e) => setName(e.target.value)}
           />
+          {isNameExist && (
+            <Text mt="2px" fontSize="12px" color={colors.error}>
+              This account name already exists
+            </Text>
+          )}
         </Box>
 
         <Box mt="24px">

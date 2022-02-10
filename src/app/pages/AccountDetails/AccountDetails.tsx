@@ -7,7 +7,11 @@ import QRCode from 'qrcode.react';
 import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
-import { useAccount, useAccountActionHandlers } from 'state/wallet/hooks';
+import {
+  useAccount,
+  useAccountActionHandlers,
+  useAccounts,
+} from 'state/wallet/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -16,22 +20,36 @@ import { Button } from 'app/components/Button';
 import { CheckIcon, CloseIcon, CopyIcon, EditIcon } from 'app/components/Svg';
 import { messages } from './messages';
 import { Input } from 'app/components/Form';
+import { validateNameExist } from 'utils/strings';
 
 const AccountDetails: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
+  const { accounts } = useAccounts();
   const account = useAccount();
   const { name: accountName, address } = account;
   const { onChangeAccountName } = useAccountActionHandlers();
 
   const [copied, setCopied] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<boolean>(false);
+  const [isNameExist, setIsNameExist] = useState<boolean>(false);
   const [name, setName] = useState<string>(accountName || '');
 
   useEffect(() => {
     showEdit && setShowEdit(false);
   }, [accountName]);
+
+  useEffect(() => {
+    // Reset validate
+    if (isNameExist) setIsNameExist(false);
+
+    if (name) {
+      // Validate name
+      const isError = validateNameExist(accounts, name, address);
+      isError && setIsNameExist(true);
+    }
+  }, [name]);
 
   useEffect(() => {
     if (copied) {
@@ -73,30 +91,39 @@ const AccountDetails: React.FC = () => {
           background={colors.gray1}
         >
           {showEdit ? (
-            <Flex width="100%" alignItems="center">
-              <Input
-                value={name}
-                placeholder="Enter account name"
-                onChange={(e) => setName(e.target.value)}
-              />
-
-              <Button
-                ml="16px"
-                p="0px"
-                onClick={() => {
-                  if (name) {
-                    name !== accountName
-                      ? onChangeAccountName(name)
-                      : setShowEdit(false);
-                  }
-                }}
-              >
-                <CheckIcon
-                  width="20px"
-                  color={name ? colors.primary : colors.gray}
+            <Box width="100%">
+              <Flex width="100%" alignItems="center">
+                <Input
+                  isError={isNameExist}
+                  value={name}
+                  placeholder="Enter account name"
+                  onChange={(e) => setName(e.target.value)}
                 />
-              </Button>
-            </Flex>
+
+                <Button
+                  ml="16px"
+                  p="0px"
+                  onClick={() => {
+                    if (name && !isNameExist) {
+                      name !== accountName
+                        ? onChangeAccountName(name)
+                        : setShowEdit(false);
+                    }
+                  }}
+                >
+                  <CheckIcon
+                    width="20px"
+                    color={name && !isNameExist ? colors.primary : colors.gray}
+                  />
+                </Button>
+              </Flex>
+
+              {isNameExist && (
+                <Text mt="2px" color={colors.error}>
+                  This account name already exists
+                </Text>
+              )}
+            </Box>
           ) : (
             <Flex alignItems="center">
               <Button p="0px" mr="10px" onClick={() => setShowEdit(true)}>

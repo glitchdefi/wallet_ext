@@ -6,6 +6,7 @@ import { colors } from 'theme/colors';
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { DownArrowIcon } from 'app/components/Svg';
+import { formatDollarAmount } from 'utils/number';
 
 interface Props {
   fee?: string | number;
@@ -27,7 +28,7 @@ export const NetworkFee: React.FC<Props> = ({ fee }) => {
         <Flex alignItems="flex-end" flexDirection="column">
           <Text>{GlitchToken.fee} GLCH</Text>
           <Text fontSize="12px" color={colors.gray5}>
-            {`~ $${fee} USD`}
+            {`~ ${formatDollarAmount(fee)} USD`}
           </Text>
         </Flex>
 
