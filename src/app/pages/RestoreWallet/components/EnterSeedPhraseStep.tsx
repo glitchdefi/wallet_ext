@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import TextareaAutosize from 'react-autosize-textarea/lib';
 import styled from 'styled-components';
 import { mnemonicValidate } from '@polkadot/util-crypto';

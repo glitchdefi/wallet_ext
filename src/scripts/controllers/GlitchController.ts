@@ -53,40 +53,11 @@ export class GlitchController {
         accounts: {
           [address]: {
             address,
-            balance: 0,
+            balance: '0',
             name: meta.name,
             avatar: meta.avatar,
             whenCreated: meta.whenCreated,
             seed: mnemonicEncrypted,
-          },
-        },
-      });
-
-      return newState;
-    } catch (e) {
-      throw new Error((e as Error).message);
-    }
-  }
-
-  /**
-   *
-   *
-   */
-  async createAccountCompleted(): Promise<object> {
-    try {
-      const addressSelected =
-        await this.appStateController.getAddressSelected();
-      const oldAccounts = await this.appStateController.getAccounts();
-      const balance = await this.glitchWeb3.getBalance(addressSelected);
-
-      const newState = await this.appStateController.updateState('wallet', {
-        isInitialized: 'completed',
-        isLocked: false,
-        isBackUp: true,
-        accounts: {
-          [addressSelected]: {
-            ...oldAccounts[addressSelected],
-            balance,
           },
         },
       });
@@ -106,7 +77,6 @@ export class GlitchController {
       const addressSelected =
         await this.appStateController.getAddressSelected();
       const oldAccounts = await this.appStateController.getAccounts();
-      const balance = await this.glitchWeb3.getBalance(addressSelected);
 
       const newState = await this.appStateController.updateState('wallet', {
         isInitialized: 'completed',
@@ -115,7 +85,6 @@ export class GlitchController {
         accounts: {
           [addressSelected]: {
             ...oldAccounts[addressSelected],
-            balance,
           },
         },
       });
@@ -210,8 +179,6 @@ export class GlitchController {
       };
     };
 
-    const balance = await this.glitchWeb3.getBalance(address);
-
     try {
       const walletState = await this.appStateController.updateState('wallet', {
         isInitialized: 'completed',
@@ -222,7 +189,7 @@ export class GlitchController {
         accounts: {
           [address]: {
             address: address,
-            balance,
+            balance: '0',
             name: meta.name,
             avatar: meta.avatar,
             seed: mnemonicEncrypted,

@@ -47,6 +47,7 @@ export const App: React.FC = () => {
   const { openTime, duration } = useAutoLockTimer();
 
   const [timeQuery, setTimeQuery] = useState(0);
+  const [hasInternet, setHasInternet] = useState(true);
 
   useEffect(() => {
     if (
@@ -60,7 +61,9 @@ export const App: React.FC = () => {
   }, [duration]);
 
   useEffect(() => {
-    const job = setInterval(() => {
+    let job: NodeJS.Timer;
+
+    job = setInterval(() => {
       setTimeQuery((prev) => prev + 1);
     }, UPDATE_TIME);
 
@@ -70,11 +73,21 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isInitialized !== 'none') {
+    if (isInitialized !== 'none' && hasInternet && navigator.onLine) {
       getBalance();
       getTokenPrice('glitch-protocol', 'usd');
     }
-  }, [timeQuery]);
+  }, [timeQuery, hasInternet]);
+
+  useEffect(() => {
+    addEventListener('offline', () => setHasInternet(false));
+    addEventListener('online', () => setHasInternet(true));
+
+    return () => {
+      removeEventListener('online', () => setHasInternet(true));
+      removeEventListener('offline', () => setHasInternet(false));
+    };
+  }, []);
 
   return (
     <Router history={history}>

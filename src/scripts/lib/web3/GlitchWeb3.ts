@@ -49,7 +49,7 @@ export class GlitchWeb3 {
 
       // load all available addresses and accounts
       keyring.loadAll({ ss58Format: 42, type: DEFAULT_TYPE });
-      log.info('Glitch Test initialization complete.');
+      log.info('Glitch Wallet initialization complete.');
     });
   }
 
