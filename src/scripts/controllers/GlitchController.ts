@@ -1,5 +1,6 @@
 import log from 'loglevel';
 import axios from 'axios';
+import secrets from 'secrets';
 
 import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
@@ -286,7 +287,6 @@ export class GlitchController {
       };
 
       const oldAccounts = await this.appStateController.getAccounts();
-      const balance = await this.glitchWeb3.getBalance(address);
 
       const newState = await this.appStateController.updateState('wallet', {
         selectedAddress: address,
@@ -295,7 +295,7 @@ export class GlitchController {
             name: meta.name,
             address: address,
             avatar: meta.avatar,
-            balance,
+            balance: '0',
             seed: mnemonicEncrypted,
             whenCreated: meta.whenCreated,
           },
@@ -355,7 +355,13 @@ export class GlitchController {
       };
 
       const oldAccounts = await this.appStateController.getAccounts();
-      const balance = await this.glitchWeb3.getBalance(address);
+
+      // Account exists
+      if (oldAccounts[address]) {
+        return {
+          privateKeyExists: true,
+        };
+      }
 
       const newState = await this.appStateController.updateState('wallet', {
         selectedAddress: address,
@@ -364,7 +370,7 @@ export class GlitchController {
             name: meta.name,
             address: address,
             avatar: meta.avatar,
-            balance,
+            balance: '0',
             seed: mnemonicEncrypted,
             whenCreated: meta.whenCreated,
           },
@@ -448,8 +454,11 @@ export class GlitchController {
   async transfer(
     password?: string,
     toAddress?: string,
-    amount?: any
-  ): Promise<object> {
+    amount?: any,
+    onFailedCb?: (msg: string) => void,
+    onSuccessCb?: () => void,
+    onWrongPassCb?: () => void
+  ): Promise<void> {
     try {
       const firstAddress = await this.appStateController.getFirstAddress();
       const currentAddress = await this.appStateController.getAddressSelected();
@@ -457,19 +466,25 @@ export class GlitchController {
 
       if (isValid) {
         this.glitchWeb3.unlockAccount('', currentAddress);
-        await this.glitchWeb3.transfer(currentAddress, toAddress, amount);
 
-        return {
-          isWrongPassword: false,
-          isTransferSuccess: true,
-        };
+        await this.glitchWeb3.transfer(
+          currentAddress,
+          toAddress,
+          amount,
+          onFailedCb,
+          onSuccessCb
+        );
+      } else {
+        onWrongPassCb();
       }
-
-      return {
-        isWrongPassword: true,
-      };
-    } catch (e) {
-      throw new Error((e as Error).message);
+    } catch (e: any) {
+      log.info('transfer', e);
+      const msg =
+        e.message ===
+        '1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low'
+          ? 'Insufficient balance for transaction fee'
+          : e.message;
+      onFailedCb(msg);
     }
   }
 
@@ -525,7 +540,7 @@ export class GlitchController {
 
     try {
       const res = await axios.get(
-        `https://api-testnet.glitch.finance/address/${address}/tx?page_index=${pageIndex}&page_size=${pageSize}&txStatus=${txStatus}&txType=${txType}${dateParams}`
+        `${secrets.baseApiUrl}/address/${address}/tx?page_index=${pageIndex}&page_size=${pageSize}&txStatus=${txStatus}&txType=${txType}${dateParams}`
       );
 
       return res?.data;

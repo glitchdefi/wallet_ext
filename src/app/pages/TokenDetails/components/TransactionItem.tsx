@@ -14,6 +14,7 @@ import { OutlineSelectIcon } from 'app/components/Svg';
 import { Skeleton } from 'app/components/Skeleton';
 import { Button } from 'app/components/Button';
 import { TransactionStatus } from './TransactionStatus';
+import { useAccount } from 'state/wallet/hooks';
 
 const FORMAT_TIME = 'MMM DD, YYYY • HH:mm';
 
@@ -26,9 +27,10 @@ interface Props {
 export const TransactionItem: React.FC<Props> = React.memo(
   ({ data, index }) => {
     const { t } = useTranslation();
-    const { hash, create_at, type, result_log, value } = data || {};
+    const { address } = useAccount();
+    const { hash, time, to, status, value } = data || {};
 
-    const isReceive = type?.toLowerCase() === 'in';
+    const isReceive = to === address;
     const amount = web3Utils.fromWei(value);
 
     return (
@@ -50,12 +52,12 @@ export const TransactionItem: React.FC<Props> = React.memo(
 
           <Flex mt="4px" alignItems="center" justifyContent="space-between">
             <Text color={colors.gray6}>{t(messages.status())}</Text>
-            <TransactionStatus status={result_log} />
+            <TransactionStatus status={status} />
           </Flex>
 
           <Flex mt="4px" alignItems="center" justifyContent="space-between">
             <Text color={colors.gray6}>{t(messages.time())}</Text>
-            <Text>{moment.utc(create_at).format(FORMAT_TIME)}</Text>
+            <Text>{moment.utc(time).format(FORMAT_TIME)}</Text>
           </Flex>
         </Box>
 

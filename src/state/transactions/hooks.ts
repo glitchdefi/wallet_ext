@@ -49,7 +49,12 @@ export const useTransactions = (filter: {
 
   useEffect(() => {
     if (transactionsError) {
-      toastError('Error', transactionsError?.message);
+      const msg =
+        transactionsError?.message ===
+        'The message port closed before a response was received.'
+          ? 'No Internet connection'
+          : transactionsError?.message;
+      toastError('Error', msg);
     }
   }, [transactionsError]);
 

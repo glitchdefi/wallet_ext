@@ -15,6 +15,7 @@ import { GlitchLogo } from 'app/components/Image';
 import { Label, Input } from 'app/components/Form';
 import { AmountInput } from './AmountInput';
 import { NetworkFee } from './NetworkFee';
+import { MessageBox } from 'app/components/MessageBox';
 interface Props {
   initData: { amount: any; toAddress: string };
   onNext: (amount: any, toAddress: string) => void;
@@ -28,6 +29,7 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
   const [amount, setAmount] = useState<any>('');
   const [isValidAmount, setIsValidAmount] = useState(false);
   const [isValidAddress, setIsValidAddress] = useState(false);
+  const [isMaxClicked, setIsMaxClicked] = useState(false);
 
   const feeToUsd = GlitchToken.fee * priceUsd;
   const isEnableSendButton = isValidAddress && isValidAmount;
@@ -97,9 +99,10 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
 
           <AmountInput
             initAmount={amount}
-            onChange={({ amount, isValid }) => {
+            onChange={({ amount, isValid, isMaxClicked }) => {
               setAmount(amount);
               setIsValidAmount(isValid);
+              setIsMaxClicked(isMaxClicked);
             }}
             balance={balance}
           />
@@ -108,6 +111,13 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
         <Box mt="24px">
           <NetworkFee fee={feeToUsd?.toFixed(9)} />
         </Box>
+
+        {isMaxClicked && (
+          <MessageBox
+            mt="16px"
+            message="When the balance is available to afford the transaction fees, the system will deduct the charges from the balance. If not, the system will deduct it from the total volume."
+          />
+        )}
       </Flex>
 
       <Box px="16px" pb="16px" mt="auto">

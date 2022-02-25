@@ -257,6 +257,10 @@ export const clearIsWrongPassword = () => (dispatch: Dispatch<any>) => {
   dispatch(actions.setWrongPassword(false));
 };
 
+export const clearPrivateKeyExists = () => (dispatch: Dispatch<any>) => {
+  dispatch(actions.setPrivateKeyExists(false));
+};
+
 export const addNewAccountAction =
   (name: string, history: any) => async (dispatch: Dispatch<any>) => {
     try {
@@ -317,7 +321,11 @@ export const importAccountAction =
       });
 
       if (data?.state) {
-        const { wallet } = data?.state || {};
+        const { wallet, privateKeyExists } = data?.state || {};
+
+        if (privateKeyExists) {
+          dispatch(actions.setPrivateKeyExists(true));
+        }
 
         if (wallet) {
           dispatch(setWalletState(wallet));
@@ -376,14 +384,15 @@ export const transferAction =
       },
     });
 
-    const { state, status, error } = data;
-    const { isWrongPassword, isTransferSuccess } = state || {};
+    const { state } = data;
+    const { isWrongPassword, status, message } = state || {};
 
     if (isWrongPassword) {
       dispatch(actions.setWrongPassword(isWrongPassword));
     }
 
-    if (isTransferSuccess) {
+    // Success
+    if (status) {
       dispatch(transactionActions.setIsTransferSuccess(true));
       toastSuccess(
         'Success',
@@ -393,8 +402,10 @@ export const transferAction =
       history.push(Routes.tokenDetails);
     }
 
-    if (status === 'error') {
-      toastError('Sending failed', 'Oop! Have an error');
+    // Error
+    if (!status) {
+      toastError('Failed', message);
+      history.push(Routes.tokenDetails);
     }
 
     dispatch(applicationActions.setIsLoadingApp(false));

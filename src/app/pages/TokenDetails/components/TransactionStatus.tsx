@@ -9,12 +9,12 @@ import { Text } from 'app/components/Text';
 import { CheckIcon, WarningIcon } from 'app/components/Svg';
 
 interface Props {
-  status: number;
+  status: string;
 }
 
 export const TransactionStatus: React.FC<Props> = React.memo(({ status }) => {
   const { t } = useTranslation();
-  const isSuccess = status === 1;
+  const isSuccess = status === 'success';
 
   return (
     <Flex>

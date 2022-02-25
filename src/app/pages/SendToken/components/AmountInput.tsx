@@ -15,6 +15,7 @@ import { Input } from 'app/components/Form';
 type Value = {
   amount: any;
   isValid: boolean;
+  isMaxClicked?: boolean;
 };
 
 interface Props {
@@ -43,7 +44,7 @@ export const AmountInput: React.FC<Props> = ({
   }, [balance, amount]);
 
   useEffect(() => {
-    onChange({ amount, isValid: isValid && !hasDecimalsError });
+    onChange({ amount, isValid: isValid && !hasDecimalsError, isMaxClicked });
   }, [amount, isValid]);
 
   /**
@@ -133,11 +134,14 @@ export const AmountInput: React.FC<Props> = ({
         </Box>
       </InputWrap>
 
-      {Number(amount) > 0 && !isValid && (
-        <Text fontSize="12px" mt="2px" color={colors.error}>
-          Insufficient funds
-        </Text>
-      )}
+      {Number(amount) > 0 &&
+        Number(balance) > 0 &&
+        !isValid &&
+        !hasDecimalsError && (
+          <Text fontSize="12px" mt="2px" color={colors.error}>
+            Insufficient funds
+          </Text>
+        )}
       {Number(amount) < 0 && (
         <Text fontSize="12px" mt="2px" color={colors.error}>
           Invalid amount

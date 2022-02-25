@@ -94,7 +94,7 @@ export const FilterModal: React.FC<Props> = React.memo(
         <Box p="16px" mt="16px">
           {/* Date */}
           <Box>
-            <Text>{t(messages.date())}</Text>
+            <Text>{t(messages.selectTime())}</Text>
             <Box mt="8px">
               <FilterButtonList
                 list={DATE_LIST}

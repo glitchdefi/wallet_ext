@@ -15,6 +15,7 @@ export interface WalletState {
   seedPhrases?: string;
   isWrongPassword?: boolean;
   showPrivateKey?: string;
+  privateKeyExists?: boolean;
 }
 
 export type AccountType = {

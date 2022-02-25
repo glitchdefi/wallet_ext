@@ -1,5 +1,5 @@
 export type TransactionItemType = {
-  create_at?: string;
+  time?: string;
   data_mode?: any;
   data_name?: number;
   data_op?: number;
@@ -13,13 +13,11 @@ export type TransactionItemType = {
   index?: string;
   nonce?: number;
   payer?: string;
-  result_code?: string;
-  result_data?: string;
-  result_log?: number;
   returnvalue?: string;
   to?: string;
   type?: string;
   value?: string;
+  status?: string;
 };
 export interface TransactionsState {
   transactions?: TransactionItemType[];

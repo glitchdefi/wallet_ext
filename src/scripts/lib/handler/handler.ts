@@ -269,11 +269,29 @@ export const transfer = async (
   try {
     const { password, toAddress, amount } = payload || {};
 
-    const state = await controller.transfer(password, toAddress, amount);
-
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
+    await controller.transfer(
+      password,
+      toAddress,
+      amount,
+      (msg) => {
+        sendResponse({
+          ...successfulResponse,
+          state: { isWrongPassword: false, status: false, message: msg },
+        });
+      },
+      () => {
+        sendResponse({
+          ...successfulResponse,
+          state: { isWrongPassword: false, status: true, message: null },
+        });
+      },
+      () => {
+        sendResponse({
+          ...successfulResponse,
+          state: { isWrongPassword: true },
+        });
+      }
+    );
   } catch (error) {
     sendResponse({ ...errorResponse, error });
   }

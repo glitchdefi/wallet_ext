@@ -36,5 +36,8 @@ export const slice = createSlice({
     setTokenPrices: (state, action) => {
       state.priceUsd = action.payload;
     },
+    setPrivateKeyExists: (state, action) => {
+      state.privateKeyExists = action.payload;
+    },
   },
 });

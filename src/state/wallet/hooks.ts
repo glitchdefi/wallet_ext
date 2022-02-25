@@ -76,6 +76,11 @@ export const useIsValidAddress = () => {
   return { isValidAddress };
 };
 
+export const usePrivateKeyExists = () => {
+  const { privateKeyExists } = useWalletSelector();
+  return { privateKeyExists };
+};
+
 export const useWallet = () => {
   return useWalletSelector();
 };
@@ -218,6 +223,7 @@ export const useAccountActionHandlers = (): {
   onShowPrivateKeys: (password: string) => void;
   onClearShowPrivateKey: () => void;
   onChangeAccountName: (name: string) => void;
+  onClearPrivateKeyExists: () => void;
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -239,8 +245,9 @@ export const useAccountActionHandlers = (): {
   );
 
   const onImportAccount = useCallback(
-    (name: string, privateKey: string) =>
-      dispatch(actions.importAccountAction(name, privateKey, history)),
+    (name: string, privateKey: string) => {
+      dispatch(actions.importAccountAction(name, privateKey, history));
+    },
     [dispatch]
   );
 
@@ -251,6 +258,11 @@ export const useAccountActionHandlers = (): {
 
   const onClearShowPrivateKey = useCallback(
     () => dispatch(actions.clearShowPrivateKey()),
+    [dispatch]
+  );
+
+  const onClearPrivateKeyExists = useCallback(
+    () => dispatch(actions.clearPrivateKeyExists()),
     [dispatch]
   );
 
@@ -267,6 +279,7 @@ export const useAccountActionHandlers = (): {
     onShowPrivateKeys,
     onClearShowPrivateKey,
     onChangeAccountName,
+    onClearPrivateKeyExists,
   };
 };
 

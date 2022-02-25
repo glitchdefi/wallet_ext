@@ -102,7 +102,13 @@ export class GlitchWeb3 {
     }
   }
 
-  async transfer(fromAddress: string, toAddress: string, _amount: string) {
+  async transfer(
+    fromAddress: string,
+    toAddress: string,
+    _amount: string,
+    onFailedCb: (msg: string) => void,
+    onSuccessCb: () => void
+  ) {
     try {
       // Find the actual keypair in the keyring
       const fromAddressPair = keyring.getPair(fromAddress);
@@ -117,12 +123,49 @@ export class GlitchWeb3 {
         toAddress
       );
 
-      const hash = await this.api.tx.balances
-        .transfer(toAddress, amount)
-        .signAndSend(fromAddressPair);
+      // amount < existential deposit
+      // if (Number(_amount) < GlitchToken.existential_deposit) {
+      //   onFailedCb('The amount should be larger than 0.0005 GLCH.');
+      //   return;
+      // }
 
-      log.info('Transfer success: ', hash.toHex());
-    } catch (e) {
+      await this.api.tx.balances
+        .transfer(toAddress, amount)
+        .signAndSend(fromAddressPair, ({ dispatchError, isCompleted }) => {
+          // status would still be set, but in the case of error we can shortcut
+          // to just check it (so an error would indicate InBlock or Finalized)
+          if (dispatchError) {
+            if (dispatchError.isModule) {
+              // for module errors, we have the section indexed, lookup
+              const decoded = this.api.registry.findMetaError(
+                dispatchError.asModule
+              );
+              const { docs, name, section } = decoded;
+              const msg = docs.join(' ');
+              const codeError = `${section}.${name}`;
+
+              log.info(`${codeError}: ${msg}`);
+
+              onFailedCb(
+                codeError === 'balances.InsufficientBalance'
+                  ? 'Insufficient funds'
+                  : codeError === 'balances.ExistentialDeposit'
+                  ? 'The amount should be larger than 0.0005 GLCH.'
+                  : msg
+              );
+            } else {
+              // Other, CannotLookup, BadOrigin, no extra info
+              log.info('dispatchError', dispatchError.toString());
+              onFailedCb(dispatchError.toString());
+            }
+          }
+
+          if (!dispatchError && isCompleted) {
+            log.info('Transfer success');
+            onSuccessCb();
+          }
+        });
+    } catch (e: any) {
       log.info('Transfer Error:', e);
       throw new Error((e as Error).message);
     }

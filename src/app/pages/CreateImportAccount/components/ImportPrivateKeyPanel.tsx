@@ -7,7 +7,11 @@ import styled from 'styled-components';
 import { messages } from '../messages';
 import { Routes } from 'constants/routes';
 
-import { useAccountActionHandlers, useAccounts } from 'state/wallet/hooks';
+import {
+  useAccountActionHandlers,
+  useAccounts,
+  usePrivateKeyExists,
+} from 'state/wallet/hooks';
 
 import { colors } from 'theme/colors';
 import { privateKeyValidate, validateNameExist } from 'utils/strings';
@@ -24,7 +28,9 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
 
   const { accounts, accountLength } = useAccounts();
-  const { onImportAccount } = useAccountActionHandlers();
+  const { privateKeyExists } = usePrivateKeyExists();
+  const { onImportAccount, onClearPrivateKeyExists } =
+    useAccountActionHandlers();
 
   const [name, setName] = useState<string>('');
   const [privateKey, setPrivateKey] = useState<string>('');
@@ -35,6 +41,7 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
 
   useEffect(() => {
     setIsValidPK(privateKeyValidate(privateKey));
+    if (privateKeyExists) onClearPrivateKeyExists();
   }, [privateKey]);
 
   useEffect(() => {
@@ -70,7 +77,10 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
 
         <Box mt="24px">
           <Label>{t(messages.privateKeys())}</Label>
-          <InputWrapper isError={isError} alignItems="center">
+          <InputWrapper
+            isError={isError || privateKeyExists}
+            alignItems="center"
+          >
             <StyledInput
               hasBorder={false}
               id="private-key-input"
@@ -102,6 +112,11 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
           {isError && (
             <Text mt="2px" fontSize="12px" color={colors.error}>
               {t(messages.invalidPrivateKeys())}
+            </Text>
+          )}
+          {privateKeyExists && (
+            <Text mt="2px" fontSize="12px" color={colors.error}>
+              The account you're are trying to import is a duplicate
             </Text>
           )}
         </Box>

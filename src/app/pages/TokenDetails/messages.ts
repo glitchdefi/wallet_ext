@@ -15,7 +15,6 @@ export const messages = {
   time: () => _t(translations.transaction.time),
   txn: () => _t(translations.transaction.txn),
   filter: () => _t(translations.filter.filter),
-  date: () => _t(translations.filter.date),
   selectTime: () => _t(translations.filter.select_time),
   showResults: () => _t(translations.button.show_results),
 };
