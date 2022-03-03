@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-
-import { GlitchToken } from '../../../../constants/tokens';
+import { useDebounce } from 'use-lodash-debounce';
 
 import { colors } from 'theme/colors';
-import { useTokenPrice, useAccount } from 'state/wallet/hooks';
+import {
+  useTokenPrice,
+  useAccount,
+  useTransferAction,
+} from 'state/wallet/hooks';
 import { isValidAddressPolkadotAddress } from 'utils/strings';
 import { formatNumberDownRoundWithExtractMax } from 'utils/number';
 
@@ -18,21 +21,30 @@ import { NetworkFee } from './NetworkFee';
 import { MessageBox } from 'app/components/MessageBox';
 interface Props {
   initData: { amount: any; toAddress: string };
-  onNext: (amount: any, toAddress: string) => void;
+  onNext: (amount: any, estimateFee: string, toAddress: string) => void;
 }
 
 export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
   const { address, balance } = useAccount();
   const { priceUsd } = useTokenPrice();
+  const { getEstimateFee } = useTransferAction();
 
   const [toAddress, setToAddress] = useState<string>('');
   const [amount, setAmount] = useState<any>('');
   const [isValidAmount, setIsValidAmount] = useState(false);
   const [isValidAddress, setIsValidAddress] = useState(false);
   const [isMaxClicked, setIsMaxClicked] = useState(false);
+  const [estimateFee, setEstimateFee] = useState<string>('0');
+  const [isFeeLoading, setIsFeeLoading] = useState<boolean>(false);
+  const debouncedAmount = useDebounce(amount, 500);
+  const debouncedToAddress = useDebounce(toAddress, 500);
 
-  const feeToUsd = GlitchToken.fee * priceUsd;
-  const isEnableSendButton = isValidAddress && isValidAmount;
+  const feeToUsd = estimateFee ? parseFloat(estimateFee) * priceUsd : null;
+  const isEnableSendButton =
+    isValidAddress &&
+    isValidAmount &&
+    !isFeeLoading &&
+    parseFloat(estimateFee) > 0;
 
   useEffect(() => {
     if (initData) {
@@ -44,6 +56,25 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
   useEffect(() => {
     setIsValidAddress(isValidAddressPolkadotAddress(toAddress));
   }, [toAddress]);
+
+  useEffect(() => {
+    if (toAddress && isValidAddress && amount && !isFeeLoading) {
+      setIsFeeLoading(true);
+    }
+  }, [amount, toAddress]);
+
+  useEffect(() => {
+    async function getFee() {
+      if (toAddress && isValidAddress && parseFloat(amount) > 0) {
+        const { fee } = await getEstimateFee(toAddress, amount);
+        setEstimateFee(fee);
+      } else {
+        setEstimateFee('0');
+      }
+      setIsFeeLoading(false);
+    }
+    getFee();
+  }, [debouncedAmount, debouncedToAddress]);
 
   return (
     <>
@@ -99,6 +130,8 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
 
           <AmountInput
             initAmount={amount}
+            isFeeLoading={isFeeLoading}
+            estimateFee={estimateFee}
             onChange={({ amount, isValid, isMaxClicked }) => {
               setAmount(amount);
               setIsValidAmount(isValid);
@@ -109,7 +142,11 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
         </Box>
 
         <Box mt="24px">
-          <NetworkFee fee={feeToUsd?.toFixed(9)} />
+          <NetworkFee
+            loading={isFeeLoading}
+            fee={estimateFee}
+            feeToUsd={feeToUsd?.toFixed(9)}
+          />
         </Box>
 
         {isMaxClicked && (
@@ -122,7 +159,10 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
 
       <Box px="16px" pb="16px" mt="auto">
         {isEnableSendButton ? (
-          <ButtonShadow width="100%" onClick={() => onNext(amount, toAddress)}>
+          <ButtonShadow
+            width="100%"
+            onClick={() => onNext(amount, estimateFee, toAddress)}
+          >
             Send
           </ButtonShadow>
         ) : (

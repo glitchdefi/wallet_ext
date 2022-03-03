@@ -87,6 +87,7 @@ export const useWallet = () => {
 
 export const useTransferAction = (): {
   onTransfer: (password: string, toAddress: string, amount: any) => void;
+  getEstimateFee: (toAddress: string, amount: any) => Promise<{ fee?: any }>;
 } => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -102,8 +103,17 @@ export const useTransferAction = (): {
     [dispatch]
   );
 
+  const getEstimateFee = useCallback(
+    async (toAddress: string, amount: any) => {
+      const fee = await actions.getEstimateFeeAction(toAddress, amount);
+      return { fee };
+    },
+    [dispatch]
+  );
+
   return {
     onTransfer,
+    getEstimateFee,
   };
 };
 

@@ -488,6 +488,25 @@ export class GlitchController {
     }
   }
 
+  /**
+   *  gets the fee estimation via RPC.
+   * @returns
+   */
+  async getEstimateFee(toAddress?: string, amount?: any): Promise<string> {
+    try {
+      const currentAddress = await this.appStateController.getAddressSelected();
+      const fee = await this.glitchWeb3.getEstimateFee(
+        currentAddress,
+        toAddress,
+        amount
+      );
+
+      return fee;
+    } catch (e: any) {
+      log.info('getEstimateFeeError', e);
+    }
+  }
+
   async getTokenPrice(tokenName?: string, currency?: string): Promise<object> {
     try {
       const res = await axios.get(

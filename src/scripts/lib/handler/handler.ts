@@ -297,6 +297,20 @@ export const transfer = async (
   }
 };
 
+export const getEstimateFee = async (
+  payload: { toAddress?: string; amount?: any },
+  controller: GlitchController,
+  sendResponse: SendResponse
+) => {
+  try {
+    const { toAddress, amount } = payload || {};
+    const fee = await controller.getEstimateFee(toAddress, amount);
+    sendResponse({ ...successfulResponse, state: { fee } });
+  } catch (error) {
+    sendResponse({ ...errorResponse, error });
+  }
+};
+
 export const fetchTransactions = async (
   payload: {
     params?: {

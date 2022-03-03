@@ -102,6 +102,10 @@ function handleChromeListeners(controller: GlitchController) {
                 Handler.transfer(payload, controller, sendResponse);
                 break;
 
+              case MessageTypes.BG_WALLET_GET_ESTIMATE_FEE:
+                Handler.getEstimateFee(payload, controller, sendResponse);
+                break;
+
               case MessageTypes.BG_WALLET_RESET_STATE:
                 Handler.resetState(controller, sendResponse);
                 break;

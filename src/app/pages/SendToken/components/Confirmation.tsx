@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import { GlitchToken } from '../../../../constants/tokens';
-
 import { colors } from 'theme/colors';
 import {
   useSelectedAddress,
@@ -21,10 +19,11 @@ import { Button, ButtonShadow } from 'app/components/Button';
 interface Props {
   amount?: any;
   toAddress?: any;
+  estimateFee?: string;
 }
 
 export const Confirmation: React.FC<Props> = React.memo(
-  ({ amount, toAddress }) => {
+  ({ amount, estimateFee, toAddress }) => {
     const [password, setPassword] = useState<string>('');
 
     const { selectedAddress } = useSelectedAddress();
@@ -83,9 +82,11 @@ export const Confirmation: React.FC<Props> = React.memo(
                 Network fee
               </Text>
               <Flex mt="4px">
-                <Text>{`${GlitchToken.fee} GLCH`}</Text>
+                <Text>{`${estimateFee} GLCH`}</Text>
                 <Text ml="8px" color={colors.gray5}>
-                  {`~ ${formatDollarAmount(GlitchToken.fee * priceUsd)} USD`}
+                  {`~ ${formatDollarAmount(
+                    parseFloat(estimateFee) * priceUsd
+                  )} USD`}
                 </Text>
               </Flex>
             </Box>

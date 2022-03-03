@@ -8,13 +8,13 @@ import {
 } from '@polkadot/util-crypto';
 import { CreateResult } from '@polkadot/ui-keyring/types';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { u8aToHex } from '@polkadot/util';
 import web3Utils from 'web3-utils';
 import secrets from 'secrets';
 
 import { DEFAULT_TYPE } from 'constants/values';
 import { GlitchToken } from '../../../constants/tokens';
 import { getAvatar } from 'utils/drawAvatar';
-import { u8aToHex } from '@polkadot/util';
 import { messageEncryption, privateKeyValidate } from 'utils/strings';
 
 log.setDefaultLevel('debug');
@@ -28,28 +28,32 @@ export class GlitchWeb3 {
    */
   constructor() {
     cryptoWaitReady().then(async () => {
-      // Initialise the provider to connect to the local node
-      const provider = new WsProvider(secrets.wsProvider);
+      try {
+        // Initialise the provider to connect to the local node
+        const provider = new WsProvider(secrets.wsProvider);
 
-      // Create the API and wait until ready
-      const api = await ApiPromise.create({ provider });
+        // Create the API and wait until ready
+        const api = await ApiPromise.create({ provider });
 
-      // Retrieve the chain & node information information via rpc calls
-      const [chain, nodeName, nodeVersion] = await Promise.all([
-        api.rpc.system.chain(),
-        api.rpc.system.name(),
-        api.rpc.system.version(),
-      ]);
+        // Retrieve the chain & node information information via rpc calls
+        const [chain, nodeName, nodeVersion] = await Promise.all([
+          api.rpc.system.chain(),
+          api.rpc.system.name(),
+          api.rpc.system.version(),
+        ]);
 
-      this.api = api;
+        this.api = api;
 
-      log.info(
-        `You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`
-      );
+        log.info(
+          `You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`
+        );
 
-      // load all available addresses and accounts
-      keyring.loadAll({ ss58Format: 42, type: DEFAULT_TYPE });
-      log.info('Glitch Wallet initialization complete.');
+        // load all available addresses and accounts
+        keyring.loadAll({ ss58Format: 42, type: DEFAULT_TYPE });
+        log.info('Glitch Wallet initialization complete.');
+      } catch (error) {
+        log.info('initError', error);
+      }
     });
   }
 
@@ -102,6 +106,24 @@ export class GlitchWeb3 {
     }
   }
 
+  async getEstimateFee(
+    fromAddress: string,
+    toAddress: string,
+    _amount: string
+  ) {
+    try {
+      const amount = web3Utils.toWei(_amount).toString();
+      const { partialFee } = await this.api.tx.balances
+        .transfer(toAddress, amount)
+        .paymentInfo(fromAddress);
+
+      return web3Utils.fromWei(partialFee);
+    } catch (e: any) {
+      log.info('getEstimateFeeError:', e);
+      throw new Error((e as Error).message);
+    }
+  }
+
   async transfer(
     fromAddress: string,
     toAddress: string,
@@ -122,12 +144,6 @@ export class GlitchWeb3 {
         'to',
         toAddress
       );
-
-      // amount < existential deposit
-      // if (Number(_amount) < GlitchToken.existential_deposit) {
-      //   onFailedCb('The amount should be larger than 0.0005 GLCH.');
-      //   return;
-      // }
 
       await this.api.tx.balances
         .transfer(toAddress, amount)

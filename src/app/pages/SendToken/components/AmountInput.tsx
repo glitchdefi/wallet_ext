@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import BN from 'bn.js';
 import web3Utils from 'web3-utils';
+import { BN_HUNDRED } from '@polkadot/util';
 
-import { GlitchToken } from '../../../../constants/tokens';
 import { colors } from 'theme/colors';
 import { isValidAmountSend } from 'utils/number';
 
@@ -11,6 +11,7 @@ import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { Button } from 'app/components/Button';
 import { Input } from 'app/components/Form';
+import { Spinner } from 'app/components/Loading';
 
 type Value = {
   amount: any;
@@ -22,17 +23,22 @@ interface Props {
   initAmount?: any;
   balance?: any;
   onChange: ({ amount, isValid }: Value) => void;
+  isFeeLoading?: boolean;
+  estimateFee?: string;
 }
 
 export const AmountInput: React.FC<Props> = ({
   initAmount,
   onChange,
   balance,
+  isFeeLoading,
+  estimateFee,
 }) => {
   const [amount, setAmount] = useState<any>('');
-  const [isValid, setIsValid] = useState(false);
-  const [hasDecimalsError, setHasDecimalsError] = useState(false);
-  const [isMaxClicked, setIsMaxClicked] = useState(false);
+  const [isValid, setIsValid] = useState<boolean>(false);
+  const [hasDecimalsError, setHasDecimalsError] = useState<boolean>(false);
+  const [isMaxClicked, setIsMaxClicked] = useState<boolean>(false);
+  const [isMaxLoading, setIsMaxLoading] = useState<boolean>(false);
 
   useEffect(() => {
     initAmount && setAmount(initAmount);
@@ -40,12 +46,32 @@ export const AmountInput: React.FC<Props> = ({
 
   // Check validate
   useEffect(() => {
-    setIsValid(isValidAmountSend(amount, balance, GlitchToken.fee.toString()));
-  }, [balance, amount]);
+    !isMaxLoading &&
+      setIsValid(isValidAmountSend(amount || '0', balance, estimateFee));
+  }, [isFeeLoading, balance, amount, estimateFee, isMaxLoading]);
 
   useEffect(() => {
-    onChange({ amount, isValid: isValid && !hasDecimalsError, isMaxClicked });
-  }, [amount, isValid]);
+    onChange({
+      amount,
+      isValid: isValid && !hasDecimalsError,
+      isMaxClicked,
+    });
+  }, [amount, isValid, estimateFee]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (isMaxLoading && !isFeeLoading && parseFloat(estimateFee) > 0) {
+        const balanceToBN = new BN(web3Utils.toWei(balance));
+        const feeToBN = new BN(web3Utils.toWei(estimateFee));
+        const adjFee = feeToBN.muln(110).div(BN_HUNDRED);
+
+        setIsMaxClicked(true);
+        // amount =  balance - fee
+        setAmount(web3Utils.fromWei(balanceToBN.sub(adjFee)));
+        setIsMaxLoading(false);
+      }
+    }, 500);
+  }, [isFeeLoading, estimateFee, isMaxLoading]);
 
   /**
    *
@@ -67,17 +93,13 @@ export const AmountInput: React.FC<Props> = ({
    *
    */
   const onMaxClick = () => {
-    if (Number(balance) <= 0) return;
+    if (Number(balance) <= 0 || isMaxClicked) return;
 
+    setIsMaxLoading(true);
+    setAmount(balance);
     // Reset error
+    setIsValid(true);
     setHasDecimalsError(false);
-
-    const balanceToBN = new BN(web3Utils.toWei(balance));
-    const feeToBN = new BN(web3Utils.toWei(GlitchToken.fee.toString()));
-
-    // amount =  balance - fee
-    setAmount(web3Utils.fromWei(balanceToBN.sub(feeToBN)));
-    setIsMaxClicked(true);
   };
 
   return (
@@ -91,7 +113,7 @@ export const AmountInput: React.FC<Props> = ({
         }
       >
         <Input
-          value={amount}
+          value={isMaxLoading ? '' : amount}
           type="number"
           hasBorder={false}
           placeholder="0"
@@ -122,12 +144,18 @@ export const AmountInput: React.FC<Props> = ({
                 variant="secondary"
                 onClick={onMaxClick}
               >
-                <Text
-                  color={isMaxClicked ? colors.white : colors.primary}
-                  fontSize="12px"
-                >
-                  Max
-                </Text>
+                {isMaxLoading ? (
+                  <Flex py="2px">
+                    <Spinner size="12px" />
+                  </Flex>
+                ) : (
+                  <Text
+                    color={isMaxClicked ? colors.white : colors.primary}
+                    fontSize="12px"
+                  >
+                    Max
+                  </Text>
+                )}
               </Button>
             </MaxButtonWrap>
           </Flex>
@@ -189,6 +217,7 @@ const MaxButtonWrap = styled.div<{
   disabled?: boolean;
 }>`
   .max-button {
+    display: flex;
     ${({ disabled }) => disabled && 'cursor: not-allowed !important'};
     ${({ isMaxClicked }) =>
       isMaxClicked && `background-color: rgba(0, 255, 255, 0.8)`};

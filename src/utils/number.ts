@@ -19,7 +19,11 @@ export const formatNumberDownRoundWithExtractMax = (
 
 export const isValidAmountSend = (amount: any, balance: any, fee: any) => {
   try {
-    if (Number(amount) <= 0) {
+    if (
+      parseFloat(balance) <= 0 &&
+      parseFloat(amount) <= 0 &&
+      parseFloat(fee) <= 0
+    ) {
       return false;
     }
 

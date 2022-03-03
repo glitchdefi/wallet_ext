@@ -56,7 +56,7 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
           {t(messages.transactionHistory())}
         </Text>
 
-        {transactions?.length ? (
+        {/* {transactions?.length ? (
           <Button p="0px" onClick={() => setShowFilterModal(true)}>
             <Flex alignItems="center">
               <FilterIcon width="14px" />
@@ -65,14 +65,14 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
               </Text>
             </Flex>
           </Button>
-        ) : null}
+        ) : null} */}
       </Flex>
 
       <Box mt="16px" mb="16px">
         <TransactionList loading={isFetchingTransactions} data={transactions} />
       </Box>
 
-      <FilterModal
+      {/* <FilterModal
         initFilter={filter}
         initDateType={dateType}
         isOpen={showFilterModal}
@@ -82,7 +82,7 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
           setShowFilterModal(false);
         }}
         onChangeDateType={(type) => setDateType(type)}
-      />
+      /> */}
     </>
   );
 });

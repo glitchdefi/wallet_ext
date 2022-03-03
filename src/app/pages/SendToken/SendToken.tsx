@@ -13,6 +13,7 @@ const SendToken: React.FC = React.memo(() => {
 
   const [amount, setAmount] = useState('');
   const [toAddress, setToAddress] = useState('');
+  const [fee, setFee] = useState<string>('0');
   const [step, setStep] = useState(0);
 
   return (
@@ -31,14 +32,21 @@ const SendToken: React.FC = React.memo(() => {
       {step === 0 && (
         <SendForm
           initData={{ amount, toAddress }}
-          onNext={(amount, toAddress) => {
+          onNext={(amount, estimateFee, toAddress) => {
             setAmount(amount);
             setToAddress(toAddress);
+            setFee(estimateFee);
             setStep(1);
           }}
         />
       )}
-      {step === 1 && <Confirmation amount={amount} toAddress={toAddress} />}
+      {step === 1 && (
+        <Confirmation
+          amount={amount}
+          estimateFee={fee}
+          toAddress={toAddress}
+        />
+      )}
     </PageLayout>
   );
 });

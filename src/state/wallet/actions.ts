@@ -411,6 +411,18 @@ export const transferAction =
     dispatch(applicationActions.setIsLoadingApp(false));
   };
 
+export const getEstimateFeeAction = async (toAddress: string, amount: any) => {
+  const data = await sendMessage({
+    type: MessageTypes.BG_WALLET_GET_ESTIMATE_FEE,
+    payload: {
+      toAddress,
+      amount,
+    },
+  });
+
+  return data?.state?.fee;
+};
+
 export const changeAccountNameAction =
   (name: string) => async (dispatch: Dispatch<any>) => {
     try {
