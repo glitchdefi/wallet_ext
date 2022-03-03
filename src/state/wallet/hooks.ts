@@ -26,17 +26,29 @@ export const useAccount = (): AccountType => {
   if (accounts && selectedAddress) {
     const account = accounts[selectedAddress];
     if (account) {
-      return { ...account, totalValue: Number(account.balance) * priceUsd };
+      const balance = account.balance || '0';
+      const reservedBalance = account.reservedBalance || '0';
+      const totalBalance = `${
+        parseFloat(balance) + parseFloat(reservedBalance)
+      }`;
+
+      return {
+        ...account,
+        totalBalance,
+        totalValue: Number(totalBalance) * priceUsd,
+      };
     }
   }
 
   return {
     name: '--',
     address: '--',
-    balance: 0,
+    balance: '0',
+    reservedBalance: '0',
+    totalBalance: '0',
     avatar: null,
     whenCreated: null,
-    totalValue: 0,
+    totalValue: '0',
     seed: null,
   };
 };

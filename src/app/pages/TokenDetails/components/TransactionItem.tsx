@@ -47,7 +47,7 @@ export const TransactionItem: React.FC<Props> = React.memo(
             <Text color={colors.gray6}>{t(messages.amount())}</Text>
             <Text color={isReceive ? colors.blue6 : colors.secondary}>{`${
               isReceive ? '+' : '-'
-            }${amount}`}</Text>
+            }${amount} GLCH`}</Text>
           </Flex>
 
           <Flex mt="4px" alignItems="center" justifyContent="space-between">

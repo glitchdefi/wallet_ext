@@ -25,5 +25,7 @@ export type AccountType = {
   whenCreated?: number;
   seed?: any;
   balance?: any;
+  reservedBalance?: any;
+  totalBalance?: any;
   totalValue?: any;
 };

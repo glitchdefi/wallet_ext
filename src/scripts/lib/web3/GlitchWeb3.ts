@@ -100,7 +100,14 @@ export class GlitchWeb3 {
   async getBalance(address: string) {
     try {
       const { data: balance } = await this.api.query.system.account(address);
-      return `${balance.free}` ? web3Utils.fromWei(`${balance.free}`) : '0';
+      return {
+        freeBalance: `${balance.free}`
+          ? web3Utils.fromWei(`${balance.free}`)
+          : '0',
+        reservedBalance: `${balance.reserved}`
+          ? web3Utils.fromWei(`${balance.reserved}`)
+          : '0',
+      };
     } catch (e) {
       throw new Error((e as Error).message);
     }

@@ -26,7 +26,7 @@ const TokenDetails: React.FC = React.memo(() => {
   const history = useHistory();
 
   const account = useAccount();
-  const { balance, totalValue } = account;
+  const { totalBalance, totalValue } = account;
 
   return (
     <PageLayout>
@@ -38,7 +38,7 @@ const TokenDetails: React.FC = React.memo(() => {
 
           <Flex mt="12px" alignItems="flex-end">
             <Text fontSize="24px" bold color={colors.white}>
-              {formatNumberDownRoundWithExtractMax(balance, 6)}
+              {formatNumberDownRoundWithExtractMax(totalBalance, 6)}
             </Text>
             <Text pb="4px" ml="8px" color={colors.white}>
               GLCH

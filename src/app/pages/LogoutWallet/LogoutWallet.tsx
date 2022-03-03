@@ -20,7 +20,16 @@ const LogoutWallet: React.FC = React.memo(() => {
 
   return (
     <PageLayout>
-      <Header onBack={() => history.push(Routes.home)} title="Logout" />
+      <Header
+        onBack={() => {
+          if (step === 0) {
+            history.push(Routes.home);
+          } else {
+            setStep(step - 1);
+          }
+        }}
+        title="Logout"
+      />
 
       {step === 0 && (
         <SelectedOption
@@ -36,7 +45,7 @@ const LogoutWallet: React.FC = React.memo(() => {
         <EnterPassword
           isNoBackedUp={isBackedUp.no}
           step={step}
-          onCancel={() => setStep(step - 1)}
+          onCancel={() => history.push(Routes.home)}
           onShow={(seed, password) => {
             setSeedPhrase(seed);
             setPassword(password);

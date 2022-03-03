@@ -52,7 +52,7 @@ export const useTransactions = (filter: {
       const msg =
         transactionsError?.message ===
         'The message port closed before a response was received.'
-          ? 'No Internet connection'
+          ? 'Get transaction list error'
           : transactionsError?.message;
       toastError('Error', msg);
     }

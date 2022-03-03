@@ -13,7 +13,7 @@ import { Routes } from 'constants/routes';
 
 export const AssetsSection: React.FC = () => {
   const history = useHistory();
-  const { totalValue, balance } = useAccount();
+  const { totalValue, totalBalance } = useAccount();
 
   return (
     <Box mt="24px">
@@ -27,7 +27,7 @@ export const AssetsSection: React.FC = () => {
       <Box mt="8px">
         <AssetItem
           name="Glitch"
-          amount={balance}
+          amount={totalBalance}
           totalValue={totalValue}
           onClick={() => history.push(Routes.tokenDetails)}
         />

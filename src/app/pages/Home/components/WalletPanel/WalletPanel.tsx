@@ -31,7 +31,7 @@ export const WalletPanel: React.FC = React.memo(() => {
   const history = useHistory();
 
   const account = useAccount();
-  const { name, balance, totalValue, address } = account;
+  const { name, totalBalance, totalValue, address } = account;
   const { isBackUp } = useIsBackup();
 
   return (
@@ -88,7 +88,7 @@ export const WalletPanel: React.FC = React.memo(() => {
 
             <Flex ml="8px" alignItems="flex-end">
               <Text color={colors.white} fontSize="24px" bold>
-                {formatNumberDownRoundWithExtractMax(balance, 6)}
+                {formatNumberDownRoundWithExtractMax(totalBalance, 6)}
               </Text>
               <Text ml="8px" pb="5px" color={colors.white}>
                 GLCH
