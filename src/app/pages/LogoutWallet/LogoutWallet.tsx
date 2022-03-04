@@ -62,7 +62,10 @@ const LogoutWallet: React.FC = React.memo(() => {
         />
       )}
       {step === 3 && (
-        <ConfirmLogout password={password} onCancel={() => setStep(step - 1)} />
+        <ConfirmLogout
+          password={password}
+          onCancel={() => history.push(Routes.home)}
+        />
       )}
     </PageLayout>
   );
