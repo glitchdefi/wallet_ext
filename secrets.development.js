@@ -1,6 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 export default {
-  wsProvider: 'ws://13.212.197.46:9944',
-  baseApiUrl: 'https://api-uat-explorer.glitch.finance',
+  wsProvider: 'ws://fullnodes-testnet-1.glitch.finance:9944',
+  baseApiUrl: 'https://api-testnet-v2.glitch.finance',
+  explorerUrl: 'https://testnet-explorer.glitch.finance',
   walletVersion: '1.0.0',
 };

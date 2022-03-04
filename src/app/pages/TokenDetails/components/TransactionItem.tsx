@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import web3Utils from 'web3-utils';
 import { useTranslation } from 'react-i18next';
+import secrets from 'secrets';
 
 import { colors } from 'theme/colors';
 import { TransactionItemType } from 'types/TransactionsState';
@@ -70,7 +71,7 @@ export const TransactionItem: React.FC<Props> = React.memo(
           <Button
             p="0px"
             onClick={() => {
-              window.open(`https://testnet-explorer.glitch.finance/tx/${hash}`);
+              window.open(`${secrets.explorerUrl}/tx/${hash}`);
             }}
           >
             <Flex alignItems="center">
