@@ -387,25 +387,26 @@ export const transferAction =
     const { state } = data;
     const { isWrongPassword, status, message } = state || {};
 
+    // Wrong password
     if (isWrongPassword) {
       dispatch(actions.setWrongPassword(isWrongPassword));
-    }
+    } else {
+      // Success
+      if (status) {
+        dispatch(transactionActions.setIsTransferSuccess(true));
+        toastSuccess(
+          'Success',
+          'Sent has been successfully! It might take some time for changes to take affect.'
+        );
 
-    // Success
-    if (status) {
-      dispatch(transactionActions.setIsTransferSuccess(true));
-      toastSuccess(
-        'Success',
-        'Sent has been successfully! It might take some time for changes to take affect.'
-      );
+        history.push(Routes.tokenDetails);
+      }
 
-      history.push(Routes.tokenDetails);
-    }
-
-    // Error
-    if (!status) {
-      toastError('Failed', message);
-      history.push(Routes.tokenDetails);
+      // Error
+      if (!status) {
+        toastError('Failed', message);
+        history.push(Routes.tokenDetails);
+      }
     }
 
     dispatch(applicationActions.setIsLoadingApp(false));

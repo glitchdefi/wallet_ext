@@ -287,7 +287,7 @@ export const transfer = async (
       },
       () => {
         sendResponse({
-          ...successfulResponse,
+          ...errorResponse,
           state: { isWrongPassword: true },
         });
       }
