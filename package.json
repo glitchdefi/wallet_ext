@@ -1,6 +1,6 @@
 {
   "name": "glch-wallet-extension",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "GLCH Wallet Extension",
   "license": "MIT",
   "scripts": {
