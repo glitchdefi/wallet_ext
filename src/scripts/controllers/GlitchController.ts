@@ -316,12 +316,9 @@ export class GlitchController {
   async changeAccount(address?: string): Promise<object> {
     try {
       const oldAccounts = await this.appStateController.getAccounts();
-      const { freeBalance, reservedBalance } = await this.glitchWeb3.getBalance(
-        address
-      );
 
-      oldAccounts[address].balance = freeBalance;
-      oldAccounts[address].reservedBalance = reservedBalance;
+      oldAccounts[address].balance = '0';
+      oldAccounts[address].reservedBalance = '0';
 
       const newState = await this.appStateController.updateState('wallet', {
         selectedAddress: address,

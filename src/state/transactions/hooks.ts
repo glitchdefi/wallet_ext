@@ -1,8 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'types';
 import { useToast } from 'hooks/useToast';
-import { fetchTransactionsAction, setIsFetchingTransactions } from './actions';
+import {
+  clearTransactionsAction,
+  fetchTransactionsAction,
+  setIsFetchingTransactions,
+} from './actions';
 import { useSelectedAddress } from 'state/wallet/hooks';
 
 const useTransactionSelector = () =>
@@ -29,23 +33,37 @@ export const useTransactions = (filter: {
     useTransactionSelector();
   const { selectedAddress } = useSelectedAddress();
   const { pageIndex, pageSize, txStatus, txType, startTime, endTime } = filter;
+  const [hasInternet, setHasInternet] = useState(true);
 
   useEffect(() => {
-    dispatch(setIsFetchingTransactions());
+    dispatch(setIsFetchingTransactions(true));
 
-    setTimeout(() => {
-      dispatch(
-        fetchTransactionsAction({
-          pageIndex,
-          pageSize,
-          txStatus,
-          txType,
-          startTime,
-          endTime,
-        })
-      );
-    }, 200);
-  }, [dispatch, selectedAddress, txStatus, txType, startTime, endTime]);
+    if (hasInternet && navigator.onLine) {
+      setTimeout(() => {
+        dispatch(
+          fetchTransactionsAction({
+            pageIndex,
+            pageSize,
+            txStatus,
+            txType,
+            startTime,
+            endTime,
+          })
+        );
+      }, 200);
+    } else {
+      dispatch(clearTransactionsAction());
+      dispatch(setIsFetchingTransactions(false));
+    }
+  }, [
+    dispatch,
+    selectedAddress,
+    txStatus,
+    txType,
+    startTime,
+    endTime,
+    hasInternet,
+  ]);
 
   useEffect(() => {
     if (transactionsError) {
@@ -57,6 +75,16 @@ export const useTransactions = (filter: {
       toastError('Error', msg);
     }
   }, [transactionsError]);
+
+  useEffect(() => {
+    addEventListener('offline', () => setHasInternet(false));
+    addEventListener('online', () => setHasInternet(true));
+
+    return () => {
+      removeEventListener('online', () => setHasInternet(true));
+      removeEventListener('offline', () => setHasInternet(false));
+    };
+  }, []);
 
   return { isFetchingTransactions, transactions };
 };

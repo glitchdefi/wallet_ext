@@ -32,12 +32,6 @@ export const Confirmation: React.FC<Props> = React.memo(
     const { onClearIsWrongPassword } = useWalletActionHandlers();
     const { onTransfer } = useTransferAction();
 
-    useEffect(() => {
-      () => {
-        onClearIsWrongPassword();
-      };
-    }, []);
-
     return (
       <Box height="543px" overflowY="scroll">
         <Flex height="471px" flexDirection="column" overflowY="scroll">
@@ -105,7 +99,7 @@ export const Confirmation: React.FC<Props> = React.memo(
                 placeholder="Password"
                 onChange={(e) => {
                   const { value } = e.target;
-                  !value && onClearIsWrongPassword();
+                  isWrongPassword && onClearIsWrongPassword();
                   setPassword(value);
                 }}
                 msgError="Incorrect password"

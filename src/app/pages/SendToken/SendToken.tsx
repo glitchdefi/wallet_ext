@@ -7,6 +7,7 @@ import { PageLayout } from 'app/layouts';
 import { Confirmation } from './components/Confirmation';
 import { SendForm } from './components/SendForm';
 import { Header } from 'app/components/Shared';
+import { useWalletActionHandlers, useWrongPassword } from 'state/wallet/hooks';
 
 const SendToken: React.FC = React.memo(() => {
   const history = useHistory();
@@ -15,6 +16,9 @@ const SendToken: React.FC = React.memo(() => {
   const [toAddress, setToAddress] = useState('');
   const [fee, setFee] = useState<string>('0');
   const [step, setStep] = useState(0);
+
+  const { isWrongPassword } = useWrongPassword();
+  const { onClearIsWrongPassword } = useWalletActionHandlers();
 
   return (
     <PageLayout>
@@ -33,6 +37,7 @@ const SendToken: React.FC = React.memo(() => {
         <SendForm
           initData={{ amount, toAddress }}
           onNext={(amount, estimateFee, toAddress) => {
+            isWrongPassword && onClearIsWrongPassword();
             setAmount(amount);
             setToAddress(toAddress);
             setFee(estimateFee);
@@ -41,11 +46,7 @@ const SendToken: React.FC = React.memo(() => {
         />
       )}
       {step === 1 && (
-        <Confirmation
-          amount={amount}
-          estimateFee={fee}
-          toAddress={toAddress}
-        />
+        <Confirmation amount={amount} estimateFee={fee} toAddress={toAddress} />
       )}
     </PageLayout>
   );

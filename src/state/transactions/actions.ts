@@ -6,8 +6,13 @@ import { MessageTypes } from 'types';
 const actions = slice.actions;
 
 export const setIsFetchingTransactions =
+  (loading?: boolean) => async (dispatch: Dispatch<any>) => {
+    dispatch(actions.setIsFetchingTransactions(loading));
+  };
+
+export const clearTransactionsAction =
   () => async (dispatch: Dispatch<any>) => {
-    dispatch(actions.setIsFetchingTransactions(true));
+    dispatch(actions.setTransactions([]));
   };
 
 export const fetchTransactionsAction =

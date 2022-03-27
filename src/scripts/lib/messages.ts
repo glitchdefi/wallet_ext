@@ -7,13 +7,13 @@ export const sendMessage = (message: {
   payload?: object;
 }): Promise<any> => {
   const { runtime } = chrome;
-  log.info('UI sendMessage: ', message);
+  // log.info('UI sendMessage: ', message);
 
   return new Promise((resolve, reject) => {
     runtime.sendMessage(message, (result) => {
       const err = runtime.lastError;
       if (!err) {
-        log.info('UI Receive: ', result);
+        // log.info('UI Receive: ', result);
         resolve(result);
       }
 
