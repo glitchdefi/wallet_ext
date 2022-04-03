@@ -3,26 +3,22 @@ import styled from 'styled-components';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import { colors } from 'theme/colors';
-import {
-  useActiveTabHome,
-  useAppActionHandlers,
-} from 'state/application/hooks';
 
 // Components
 import { PageLayout } from 'app/layouts';
 import { SettingIcon, WalletIcon } from 'app/components/Svg';
 import { WalletPanel } from './components/WalletPanel/WalletPanel';
 import { SettingsPanel } from './components/SettingsPanel/SettingsPanel';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
 
 const Home: React.FC = () => {
-  const { onSetActiveTabHome } = useAppActionHandlers();
-  const { activeTabHomePage } = useActiveTabHome();
+  const { activeTabHomePage, onSetActiveTabHomePage } = useApplication();
 
   return (
     <PageLayout>
       <StyledTabs
         selectedIndex={activeTabHomePage}
-        onSelect={(index) => onSetActiveTabHome(index)}
+        onSelect={(index) => onSetActiveTabHomePage(index)}
       >
         <TabPanel>
           <WalletPanel />

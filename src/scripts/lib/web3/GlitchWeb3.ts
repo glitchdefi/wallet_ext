@@ -6,9 +6,9 @@ import {
   mnemonicToMiniSecret,
   naclKeypairFromSeed,
 } from '@polkadot/util-crypto';
-import { CreateResult } from '@polkadot/ui-keyring/types';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { u8aToHex } from '@polkadot/util';
+import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import web3Utils from 'web3-utils';
 import secrets from 'secrets';
 
@@ -16,6 +16,7 @@ import { DEFAULT_TYPE } from 'constants/values';
 import { GlitchToken } from '../../../constants/tokens';
 import { getAvatar } from 'utils/drawAvatar';
 import { messageEncryption, privateKeyValidate } from 'utils/strings';
+import { RequestWalletCreate } from 'scripts/types';
 
 log.setDefaultLevel('debug');
 
@@ -57,18 +58,18 @@ export class GlitchWeb3 {
     });
   }
 
-  async createAccount(seed: string, name: string, password: string) {
+  async createAccount(request: RequestWalletCreate): Promise<{
+    mnemonicEncrypted: { encrypted: string; secret: string };
+    json: KeyringPair$Json;
+  }> {
+    const { seed, name, password } = request;
     const mnemonic =
       seed?.trim() || mnemonicGenerate(GlitchToken.default_mnemonic_length);
 
-    const { json }: CreateResult = keyring.addUri(
-      mnemonic,
-      password || undefined,
-      {
-        avatar: getAvatar(),
-        name,
-      }
-    );
+    const { json } = keyring.addUri(mnemonic, password || undefined, {
+      avatar: getAvatar(),
+      name,
+    });
 
     const mnemonicEncrypted = await messageEncryption(mnemonic);
 

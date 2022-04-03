@@ -1,6 +1,12 @@
 import exactMath from 'exact-math';
 import BN from 'bn.js';
-import web3Utils from 'web3-utils';
+import {
+  toWei,
+  toBN,
+  fromWei,
+  isHexStrict,
+  hexToNumberString,
+} from 'web3-utils';
 import numbro from 'numbro';
 
 export const formatNumberDownRoundWithExtractMax = (
@@ -27,10 +33,8 @@ export const isValidAmountSend = (amount: any, balance: any, fee: any) => {
       return false;
     }
 
-    const bigAmount = new BN(web3Utils.toWei(amount));
-    const bigBalance = new BN(web3Utils.toWei(balance)).sub(
-      new BN(web3Utils.toWei(fee))
-    );
+    const bigAmount = new BN(toWei(amount));
+    const bigBalance = new BN(toWei(balance)).sub(new BN(toWei(fee)));
 
     return bigBalance.gte(bigAmount) && bigAmount.lte(bigBalance);
   } catch (err) {
@@ -54,4 +58,52 @@ export const formatDollarAmount = (num: any, digits = 2, round = true) => {
     return '<$0.001';
   }
   return numbro(num).formatCurrency({ average: round, mantissa: digits });
+};
+
+const toNumber = (num: any) => {
+  if (num == 0) return '0';
+  if (!num) return null;
+
+  const numToStr = num?.toString();
+
+  if (numToStr?.includes('e')) {
+    return Number(numToStr).toLocaleString().replaceAll(',', '');
+  }
+
+  return numToStr;
+};
+
+export function numberWithCommas(n: any) {
+  var parts = n?.toString()?.split('.');
+  return (
+    parts[0]?.replace(/\B(?=(\d{3})+(?!\d))/g, ',') +
+    (parts[1] ? '.' + parts[1] : '')
+  );
+}
+
+export const formatWei = (number: any, isFormatNumber = true) => {
+  if (isHexStrict(number)) {
+    number = hexToNumberString(number);
+  }
+  const num = toNumber(number);
+  if (num == 0) return '0';
+  if (!num) return '0';
+
+  const numWei = fromWei(num, 'ether');
+
+  return isFormatNumber ? numberWithCommas(numWei) : numWei;
+};
+
+export const calcTotalBalance = (balance: {
+  freeBalance?: any;
+  reservedBalance?: any;
+}): string => {
+  const { freeBalance = '0', reservedBalance = '0' } = balance || {};
+
+  return formatWei(
+    toBN(toWei(formatWei(freeBalance, false))).add(
+      toBN(toWei(formatWei(reservedBalance, false)))
+    ),
+    false
+  );
 };

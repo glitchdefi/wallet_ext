@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -6,8 +6,9 @@ import logo from '../../../assets/img/gl_logo.png';
 import { messages } from './messages';
 import { Routes } from 'constants/routes';
 
-import { useWalletActionHandlers, useWrongPassword } from 'state/wallet/hooks';
+import { useWallet } from 'contexts/WalletContext/hooks';
 
+import { walletValidate } from 'scripts/ui/messaging';
 // Theme
 import { colors } from 'theme/colors';
 
@@ -21,19 +22,30 @@ import { NetworkBox, TextGradient } from 'app/components/Shared';
 import { PageLayout } from 'app/layouts';
 
 const Unlock: React.FC = () => {
-  const { t } = useTranslation();
   const history = useHistory();
-
-  const { isWrongPassword } = useWrongPassword();
-  const { onClearIsWrongPassword, onUnlockWallet } = useWalletActionHandlers();
+  const { t } = useTranslation();
+  const { walletCtx } = useWallet();
+  const { onUnlockWallet } = useWallet();
 
   const [password, setPassword] = useState<string>('');
+  const [isPassValid, setIsPassValid] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (!walletCtx?.isLocked) {
+      history.push(Routes.home);
+    }
+  }, [walletCtx]);
 
   // Trigger when user enter
   const onKeyPress = (event: { keyCode: any; which: any }) => {
     const code = event.keyCode || event.which;
     if (code === 13 && password) {
-      onUnlockWallet(password);
+      walletValidate({ password }).then((isValid: boolean) => {
+        if (isValid) {
+          onUnlockWallet();
+        }
+        setIsPassValid(isValid);
+      });
     }
   };
 
@@ -65,13 +77,13 @@ const Unlock: React.FC = () => {
             <Box mt="16px">
               <Label>{t(messages.glitchPassword())}</Label>
               <PasswordInput
-                isError={isWrongPassword}
+                isError={!isPassValid}
                 value={password}
                 placeholder={t(messages.password())}
                 onChange={(e) => {
                   const { value } = e.target;
                   setPassword(value);
-                  isWrongPassword && onClearIsWrongPassword();
+                  !isPassValid && setIsPassValid(true);
                 }}
                 msgError={t(messages.incorrectPassword())}
                 onKeyPress={onKeyPress}
@@ -85,7 +97,14 @@ const Unlock: React.FC = () => {
                 ) : (
                   <ButtonShadow
                     width="100%"
-                    onClick={() => onUnlockWallet(password)}
+                    onClick={() => {
+                      walletValidate({ password }).then((isValid: boolean) => {
+                        if (isValid) {
+                          onUnlockWallet();
+                        }
+                        setIsPassValid(isValid);
+                      });
+                    }}
                   >
                     {t(messages.unlock())}
                   </ButtonShadow>
@@ -102,7 +121,6 @@ const Unlock: React.FC = () => {
               ml="8px"
               py="0px"
               onClick={() => {
-                isWrongPassword && onClearIsWrongPassword();
                 history.push(Routes.restoreWallet);
               }}
             >

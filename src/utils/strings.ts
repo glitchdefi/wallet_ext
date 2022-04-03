@@ -1,4 +1,3 @@
-import { GlitchToken } from 'constants/tokens';
 import {
   decodeAddress,
   encodeAddress,

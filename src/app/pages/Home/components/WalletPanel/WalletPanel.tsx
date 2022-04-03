@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 
 import bg from '../../../../../assets/img/account_card_bg.jpg';
 
-import { useAccount, useIsBackup } from 'state/wallet/hooks';
+import { useWallet, useAccount } from 'contexts/WalletContext/hooks';
 
 import { truncateAddress } from 'utils/strings';
 import {
+  calcTotalBalance,
   formatDollarAmount,
   formatNumberDownRoundWithExtractMax,
 } from 'utils/number';
@@ -29,16 +30,18 @@ import { messages } from '../../messages';
 export const WalletPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const history = useHistory();
-
   const account = useAccount();
-  const { name, totalBalance, totalValue, address } = account;
-  const { isBackUp } = useIsBackup();
+  const { walletCtx } = useWallet();
+  const { isBackup } = walletCtx || {};
+  const { name, balance, address } = account;
+  const totalBalance = calcTotalBalance(balance);
+  const totalValue = '0';
 
   return (
     <Box height="540.94px" overflowY="scroll">
       <Header account={account} />
 
-      {!isBackUp && (
+      {!isBackup && (
         <BackedUpView onBackup={() => history.push(Routes.backUp)} />
       )}
 

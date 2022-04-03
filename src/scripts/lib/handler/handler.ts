@@ -9,16 +9,15 @@ export const createAccount = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { seed, name, password } = payload || {};
-
-    const state = await controller.createAccount(seed, name, password);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { seed, name, password } = payload || {};
+  //   const state = await controller.createAccount(seed, name, password);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const createWalletCompleted = async (
@@ -54,16 +53,15 @@ export const unlockWallet = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { password } = payload || {};
-
-    const state = await controller.unlockWallet(password);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { password } = payload || {};
+  //   const state = await controller.unlockWallet(password);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const restoreWallet = async (
@@ -71,16 +69,15 @@ export const restoreWallet = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { seedPhrase, name, password } = payload || {};
-
-    const state = await controller.restoreWallet(seedPhrase, name, password);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { seedPhrase, name, password } = payload || {};
+  //   const state = await controller.restoreWallet(seedPhrase, name, password);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const logoutWallet = async (

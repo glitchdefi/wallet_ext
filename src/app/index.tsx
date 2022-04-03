@@ -7,16 +7,16 @@ import { UPDATE_TIME } from 'constants/values';
 import { Routes } from '../constants/routes';
 
 import { ToastListener } from 'contexts/ToastsContext';
+import { ExtensionStore } from '../scripts/lib/localStore';
 
 // Hooks
 import { useLoadingApplication } from 'state/application/hooks';
-import { useIsInitialized, useWalletActionHandlers } from 'state/wallet/hooks';
+import { useWalletActionHandlers } from 'state/wallet/hooks';
 import { useAutoLockTimer } from 'state/settings/hooks';
 
 // Components
 import { ContainerLayout } from './layouts';
 import { LoadingApplication } from './components/Loading';
-import { GRoute, Authenticated } from './components/CustomRoute';
 import { ScrollToTop } from './components/ScrollToTop';
 
 // Pages
@@ -37,18 +37,63 @@ import { ReceiveTokenPage } from './pages/ReceiveToken';
 import { AddAssetsPage } from './pages/AddAssets';
 import { BackUpPage } from './pages/BackUp';
 import { SendTokenPage } from './pages/SendToken';
+import { AuthorizePage } from './pages/Authorize';
+import { useWallet } from 'contexts/WalletContext/hooks';
+import { AuthorizeRequest } from 'scripts/types';
+import { subscribeAuthorizeRequests } from 'scripts/ui/messaging';
 
 const history = createMemoryHistory();
 
 export const App: React.FC = () => {
   const { isLoading } = useLoadingApplication();
-  const { isInitialized } = useIsInitialized();
   const { onLockWallet, getBalance, getTokenPrice } = useWalletActionHandlers();
   const { openTime, duration } = useAutoLockTimer();
+  const { walletCtx, setWalletCtx } = useWallet();
+  const { isInitialized } = walletCtx || {};
 
-  const [timeQuery, setTimeQuery] = useState(0);
-  const [hasInternet, setHasInternet] = useState(true);
+  const [timeQuery, setTimeQuery] = useState<number>(0);
+  const [hasInternet, setHasInternet] = useState<boolean>(true);
+  const [authRequests, setAuthRequests] = useState<null | AuthorizeRequest[]>(
+    null
+  );
 
+  useEffect((): void => {
+    Promise.all([subscribeAuthorizeRequests(setAuthRequests)]).catch(
+      console.error
+    );
+  }, []);
+
+  useEffect(() => {
+    async function getInitialState() {
+      const localStore = new ExtensionStore();
+      const initState = await localStore.getAllStorageData();
+      const { wallet } = initState;
+
+      if (
+        (wallet?.isInitialized === 'pending' ||
+          wallet?.isInitialized === 'completed') &&
+        !wallet?.isLocked
+      ) {
+        history.push(Routes.home);
+      }
+
+      if (wallet?.isLocked) {
+        history.push(Routes.unlock);
+      }
+
+      setWalletCtx(wallet);
+    }
+
+    getInitialState();
+  }, []);
+
+  useEffect(() => {
+    if (authRequests && authRequests.length) {
+      history.push(Routes.authorize);
+    }
+  }, [authRequests]);
+
+  // TODO: check again
   useEffect(() => {
     if (
       isInitialized !== 'none' &&
@@ -72,6 +117,7 @@ export const App: React.FC = () => {
     };
   }, []);
 
+  // TODO: check again
   useEffect(() => {
     if (isInitialized !== 'none' && hasInternet && navigator.onLine) {
       getBalance();
@@ -97,50 +143,36 @@ export const App: React.FC = () => {
       <ContainerLayout>
         {isLoading && <LoadingApplication />}
         <Switch>
-          <GRoute exact path={Routes.welcome} component={WelcomePage} />
-
+          <Route exact path={Routes.welcome} component={WelcomePage} />
+          <Route path={Routes.authorize} component={AuthorizePage} />
           <Route
             path={Routes.internetWarning}
             component={InternetWarningPage}
           />
           <Route path={Routes.restoreWallet} component={RestoreWalletPage} />
           <Route path={Routes.createWallet} component={CreateWalletPage} />
-
           <Route path={Routes.unlock} component={UnlockPage} />
-
-          <Authenticated path={Routes.home} component={HomePage} />
-          <Authenticated
+          <Route path={Routes.home} component={HomePage} />
+          <Route
             path={Routes.createImportAccount}
             component={CreateImportAccountPage}
           />
-          <Authenticated
-            path={Routes.accountDetails}
-            component={AccountDetailsPage}
-          />
-          <Authenticated
+          <Route path={Routes.accountDetails} component={AccountDetailsPage} />
+          <Route
             path={Routes.showPrivateKeys}
             component={ShowPrivateKeysPage}
           />
-          <Authenticated path={Routes.aboutUs} component={AboutUsPage} />
-          <Authenticated
-            path={Routes.logoutWallet}
-            component={LogoutWalletPage}
-          />
-          <Authenticated
+          <Route path={Routes.aboutUs} component={AboutUsPage} />
+          <Route path={Routes.logoutWallet} component={LogoutWalletPage} />
+          <Route
             path={Routes.revealMnemonicPhrase}
             component={RevealMnemonicPhrasePage}
           />
-          <Authenticated
-            path={Routes.tokenDetails}
-            component={TokenDetailsPage}
-          />
-          <Authenticated
-            path={Routes.receiveToken}
-            component={ReceiveTokenPage}
-          />
-          <Authenticated path={Routes.sendToken} component={SendTokenPage} />
-          <Authenticated path={Routes.addAssets} component={AddAssetsPage} />
-          <Authenticated path={Routes.backUp} component={BackUpPage} />
+          <Route path={Routes.tokenDetails} component={TokenDetailsPage} />
+          <Route path={Routes.receiveToken} component={ReceiveTokenPage} />
+          <Route path={Routes.sendToken} component={SendTokenPage} />
+          <Route path={Routes.addAssets} component={AddAssetsPage} />
+          <Route path={Routes.backUp} component={BackUpPage} />
         </Switch>
       </ContainerLayout>
     </Router>

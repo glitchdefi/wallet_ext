@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { messages } from './messages';
 
 // Hooks
-import { useStepTitleDesc, useWalletActionHandlers } from 'state/wallet/hooks';
+import { useStepTitleDesc } from 'state/wallet/hooks';
+import { useWallet } from 'contexts/WalletContext/hooks';
 
 import { PageLayout } from 'app/layouts';
 import { EnterSeedPhraseStep } from './components/EnterSeedPhraseStep';
@@ -17,10 +18,11 @@ const RestoreWallet: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const [step, setStep] = useState<number>(0);
-  const [seedPhrase, setSeedPhrase] = useState<string>('');
+  const { onRestoreWallet } = useWallet();
 
-  const { onRestoreWallet } = useWalletActionHandlers();
+  const [step, setStep] = useState<number>(0);
+  const [seed, setSeed] = useState<string>('');
+
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'restore');
 
   const stepProgress = ((step + 1) / MAX_STEP) * 100;
@@ -43,9 +45,9 @@ const RestoreWallet: React.FC = () => {
       >
         {step === 0 && (
           <EnterSeedPhraseStep
-            defaultSeedPhrase={seedPhrase}
-            onNextStep={(seedPhrase) => {
-              setSeedPhrase(seedPhrase);
+            defaultSeedPhrase={seed}
+            onNextStep={(seed) => {
+              setSeed(seed);
               setStep(1);
             }}
           />
@@ -53,7 +55,7 @@ const RestoreWallet: React.FC = () => {
         {step === 1 && (
           <CreatePasswordStep
             onSetupPassword={(password) =>
-              onRestoreWallet(seedPhrase, 'Account 1', password)
+              onRestoreWallet({ seed, name: 'Account 1', password })
             }
           />
         )}

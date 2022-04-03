@@ -27,12 +27,33 @@ var alias = {
   'constants/values': path.join(__dirname, 'src', 'constants', 'values.ts'),
   'constants/tokens': path.join(__dirname, 'src', 'constants', 'tokens.ts'),
   'app/layouts': path.join(__dirname, 'src', 'app', 'layouts', 'index.ts'),
+  'scripts/ui/messaging': path.join(
+    __dirname,
+    'src',
+    'scripts',
+    'ui',
+    'messaging.ts'
+  ),
   'contexts/ToastsContext': path.join(
     __dirname,
     'src',
     'contexts',
     'ToastsContext',
     'index.tsx'
+  ),
+  'contexts/WalletContext/hooks': path.join(
+    __dirname,
+    'src',
+    'contexts',
+    'WalletContext',
+    'hooks.ts'
+  ),
+  'contexts/ApplicationContext/hooks': path.join(
+    __dirname,
+    'src',
+    'contexts',
+    'ApplicationContext',
+    'hooks.ts'
   ),
   'hooks/useToast': path.join(__dirname, 'src', 'hooks', 'useToast.ts'),
   'hooks/useScrollBlock': path.join(
@@ -196,7 +217,12 @@ var alias = {
     'index.tsx'
   ),
   types: path.join(__dirname, 'src', 'types', 'index.ts'),
-  'types/TransactionsState': path.join(__dirname, 'src', 'types', 'TransactionsState.ts'),
+  'types/TransactionsState': path.join(
+    __dirname,
+    'src',
+    'types',
+    'TransactionsState.ts'
+  ),
   'state/wallet/hooks': path.join(
     __dirname,
     'src',
@@ -253,6 +279,7 @@ var options = {
     popup: path.join(__dirname, 'src', 'index.tsx'),
     background: path.join(__dirname, 'src', 'scripts', 'background.ts'),
     contentScript: path.join(__dirname, 'src', 'scripts', 'content.ts'),
+    page: path.join(__dirname, 'src', 'scripts', 'page.ts'),
   },
   chromeExtensionBoilerplate: {
     notHotReload: ['contentScript', 'devtools'],
@@ -319,11 +346,7 @@ var options = {
     fallback: {
       crypto: require.resolve('crypto-browserify'),
       stream: require.resolve('stream-browserify'),
-      assert: false,
-      util: false,
-      http: false,
-      https: false,
-      os: false,
+      path: require.resolve('path-browserify'),
     },
   },
   plugins: [
@@ -378,6 +401,12 @@ var options = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'popup.html'),
       filename: 'popup.html',
+      chunks: ['popup'],
+      cache: false,
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src', 'notification.html'),
+      filename: 'notification.html',
       chunks: ['popup'],
       cache: false,
     }),

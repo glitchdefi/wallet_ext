@@ -7,6 +7,7 @@ export interface WalletState {
   };
   selectedAddress?: any;
   firstAddress?: any;
+  parentAddress?: any;
   isBackUp?: boolean;
   isValidAddress?: boolean;
   priceUsd?: number;

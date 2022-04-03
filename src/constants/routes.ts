@@ -1,6 +1,7 @@
 export const Routes = {
   welcome: '/',
   home: '/home',
+  authorize: '/authorize',
   internetWarning: '/internet-warning',
   createWallet: '/create-wallet',
   restoreWallet: '/restore-wallet',

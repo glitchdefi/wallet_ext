@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 
 import { configureAppStore } from './store/configureStore';
 
-import { ExtensionStore } from './scripts/lib/localStore';
 import { ToastsProvider } from 'contexts/ToastsContext';
+import { WalletProvider } from './contexts/WalletContext';
+import { ApplicationProvider } from './contexts/ApplicationContext';
 
 // App
 import { App } from './app';
@@ -15,23 +16,14 @@ import './locales/i18n';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Root: React.FC = () => {
-  const [store, setStore] = useState(configureAppStore());
-
-  useEffect(() => {
-    async function getInitialState() {
-      const localStore = new ExtensionStore();
-      const initState = await localStore.getAllStorageData();
-
-      setStore(configureAppStore(initState));
-    }
-
-    getInitialState();
-  }, []);
-
   return (
-    <Provider store={store}>
+    <Provider store={configureAppStore()}>
       <ToastsProvider>
-        <App />
+        <ApplicationProvider>
+          <WalletProvider>
+            <App />
+          </WalletProvider>
+        </ApplicationProvider>
       </ToastsProvider>
     </Provider>
   );

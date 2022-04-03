@@ -1,17 +1,17 @@
 import log from 'loglevel';
 import { Handler } from './lib/handler';
-import { ExtensionPlatform } from './platforms/extension';
 import { ExtensionStore } from './lib/localStore';
-// import { getFirstPreferredLangCode } from './lib/getFirstPreferredLangCode';
 import { GlitchController } from './controllers/GlitchController';
 import { RootState, MessageTypes } from 'types';
+import handlers from './lib/handler/handlers';
+import { withErrorLog } from '../utils/withErrorLog';
 
 log.setDefaultLevel('debug');
 
-const extPlatform = new ExtensionPlatform();
-const extStore = new ExtensionStore();
-
-initialize();
+// setup the notification (same a FF default background, white text)
+withErrorLog(() =>
+  chrome.browserAction.setBadgeBackgroundColor({ color: '#d90000' })
+);
 
 /**
  * Initializes the Glitch controller, and sets up all platform configuration.
@@ -19,15 +19,13 @@ initialize();
  */
 async function initialize(): Promise<any> {
   const initState = await loadStateFromPersistence();
-
   // Initializes the Glitch Controller with any initial state and default language.
   const controller = new GlitchController({ initialState: initState });
-
-  handleChromeListeners(controller);
-
-  log.info('Glitch initialization complete.');
+  // handleChromeListeners(controller);
+  handleChromePortListener(controller);
 }
 
+const extStore = new ExtensionStore();
 /**
  * Loads any stored data, prioritizing the latest storage strategy.
  * Migrates that data schema in case it was last loaded on an older version.
@@ -42,6 +40,19 @@ async function loadStateFromPersistence(): Promise<RootState> {
   // return just the data
   return oldState;
 }
+
+function handleChromePortListener(controller: GlitchController) {
+  // listen to all messages and handle appropriately
+  chrome.runtime.onConnect.addListener((port): void => {
+    // message and disconnect handlers
+    port.onMessage.addListener((data: any) => handlers(data, port, controller));
+    port.onDisconnect.addListener(() =>
+      console.log(`Disconnected from ${port.name}`)
+    );
+  });
+}
+
+initialize();
 
 function handleChromeListeners(controller: GlitchController) {
   log.info('background.handleChromeListeners');

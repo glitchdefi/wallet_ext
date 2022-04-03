@@ -3,11 +3,8 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router';
 import Modal from 'react-bootstrap/Modal';
 
-import {
-  useAccountActionHandlers,
-  useAccounts,
-  useSelectedAddress,
-} from 'state/wallet/hooks';
+import { useAccountActionHandlers } from 'state/wallet/hooks';
+import { useWallet } from 'contexts/WalletContext/hooks';
 
 import { truncateAddress } from 'utils/strings';
 import { Routes } from 'constants/routes';
@@ -27,11 +24,12 @@ interface Props {
 
 export const ManageAccountModal: React.FC<Props> = React.memo(
   ({ isOpen, onClose }) => {
-    const { t } = useTranslation();
     const history = useHistory();
+    const { t } = useTranslation();
+    const { walletCtx } = useWallet();
     const { onChangeAccount } = useAccountActionHandlers();
-    const { selectedAddress } = useSelectedAddress();
-    const { accounts } = useAccounts();
+
+    const { selectedAddress, accounts } = walletCtx || {};
 
     useEffect(() => {
       onClose && onClose();
@@ -55,35 +53,38 @@ export const ManageAccountModal: React.FC<Props> = React.memo(
         </Flex>
 
         <Flex height="330px" flexDirection="column" overflowY="scroll">
-          {Object.entries(accounts)
-            .sort(([, a], [, b]) => {
-              return b.whenCreated - a.whenCreated;
-            })
-            .map((val, i) => {
-              const account = val[1];
-              const checked = account.address === selectedAddress;
+          {accounts &&
+            Object.entries(accounts)
+              .sort(([, a], [, b]) => {
+                return b.whenCreated - a.whenCreated;
+              })
+              .map((val, i) => {
+                const account = val[1];
+                const checked = account.address === selectedAddress;
 
-              return (
-                <AccountWrapper
-                  key={i}
-                  onClick={() => {
-                    if (account.address !== selectedAddress) {
-                      onChangeAccount(account.address);
-                    }
-                  }}
-                >
-                  <Box>
-                    <Text color={colors.gray7} bold>
-                      {account?.name}
-                    </Text>
-                    <Text fontSize="12px" color={colors.gray7}>
-                      {truncateAddress(account?.address)}
-                    </Text>
-                  </Box>
-                  {checked && <CheckIcon width="18px" color={colors.primary} />}
-                </AccountWrapper>
-              );
-            })}
+                return (
+                  <AccountWrapper
+                    key={i}
+                    onClick={() => {
+                      if (account.address !== selectedAddress) {
+                        onChangeAccount(account.address);
+                      }
+                    }}
+                  >
+                    <Box>
+                      <Text color={colors.gray7} bold>
+                        {account?.name}
+                      </Text>
+                      <Text fontSize="12px" color={colors.gray7}>
+                        {truncateAddress(account?.address)}
+                      </Text>
+                    </Box>
+                    {checked && (
+                      <CheckIcon width="18px" color={colors.primary} />
+                    )}
+                  </AccountWrapper>
+                );
+              })}
         </Flex>
 
         <Box p="16px">

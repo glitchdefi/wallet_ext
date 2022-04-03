@@ -4,6 +4,8 @@ import { TransactionsState } from 'types/TransactionsState';
 import { WalletState } from 'types/WalletState';
 import { ExtensionStore } from '../lib/localStore';
 
+import { ResponseWallet } from '../types';
+
 export class AppStateController {
   store: RootState;
   localStore: ExtensionStore;
@@ -23,7 +25,6 @@ export class AppStateController {
         accounts: {},
         selectedAddress: null,
         firstAddress: null,
-        priceUsd: null,
       },
       transactions: {},
       settings: {
@@ -88,12 +89,16 @@ export class AppStateController {
     return await this.localStore.get('keyAccounts');
   }
 
-  async getAddressSelected(): Promise<string> {
+  async getSelectedAddress(): Promise<string> {
     return (await this.getWalletState()).selectedAddress;
   }
 
   async getFirstAddress(): Promise<string> {
     return (await this.getWalletState()).firstAddress;
+  }
+
+  async getParentAddress(): Promise<string> {
+    return (await this.getWalletState()).parentAddress;
   }
 
   async getAccounts(): Promise<WalletState['accounts']> {
@@ -102,14 +107,18 @@ export class AppStateController {
 
   async updateState(
     key: 'wallet' | 'transactions' | 'settings',
-    obj: WalletState | TransactionsState | SettingState
-  ): Promise<object> {
+    obj: WalletState | ResponseWallet | TransactionsState | SettingState
+  ): Promise<any> {
     const oldState = await this.getState();
-    return await this.localStore.set({
+    const response = (await this.localStore.set({
       [key]: {
         ...oldState[key],
         ...obj,
       },
-    });
+    })) as {
+      wallet: WalletState | ResponseWallet | TransactionsState | SettingState;
+    };
+
+    return response[key];
   }
 }
