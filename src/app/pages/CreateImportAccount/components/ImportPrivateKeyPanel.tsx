@@ -7,14 +7,10 @@ import styled from 'styled-components';
 import { messages } from '../messages';
 import { Routes } from 'constants/routes';
 
-import {
-  useAccountActionHandlers,
-  useAccounts,
-  usePrivateKeyExists,
-} from 'state/wallet/hooks';
+import { useWallet } from 'contexts/WalletContext/hooks';
 
 import { colors } from 'theme/colors';
-import { privateKeyValidate, validateNameExist } from 'utils/strings';
+import { isHexSeed, validateNameExist } from 'utils/strings';
 
 import { Box, Flex } from 'app/components/Box';
 import { Input, Label } from 'app/components/Form';
@@ -22,26 +18,25 @@ import { Button, ButtonShadow } from 'app/components/Button';
 import { MessageBox } from 'app/components/MessageBox';
 import { Text } from 'app/components/Text';
 import { SnippetsIcon } from 'app/components/Svg';
+import { privateKeyValidate } from 'scripts/ui/messaging';
 
 export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
   const history = useHistory();
   const { t } = useTranslation();
-
-  const { accounts, accountLength } = useAccounts();
-  const { privateKeyExists } = usePrivateKeyExists();
-  const { onImportAccount, onClearPrivateKeyExists } =
-    useAccountActionHandlers();
+  const { walletCtx, onImportAccount } = useWallet();
+  const { accounts } = walletCtx || {};
+  const accountLength = Object.keys(accounts)?.length;
 
   const [name, setName] = useState<string>('');
   const [privateKey, setPrivateKey] = useState<string>('');
   const [isValidPK, setIsValidPK] = useState<boolean>(false);
+  const [privateKeyExist, setPrivateKeyExist] = useState<boolean>(false);
   const [isNameExist, setIsNameExist] = useState<boolean>(false);
   const isError = privateKey && !isValidPK;
   const isEnableImport = privateKey && isValidPK && !isNameExist;
 
   useEffect(() => {
-    setIsValidPK(privateKeyValidate(privateKey));
-    if (privateKeyExists) onClearPrivateKeyExists();
+    setIsValidPK(isHexSeed(privateKey));
   }, [privateKey]);
 
   useEffect(() => {
@@ -54,6 +49,16 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
       isError && setIsNameExist(true);
     }
   }, [name]);
+
+  const _onImportAccount = () => {
+    const accountName = name ? name : `Account ${accountLength + 1}`;
+    privateKeyValidate({ privateKey }).then((pkExist: boolean) => {
+      if (!pkExist) {
+        onImportAccount({ name: accountName, privateKey }, history);
+      }
+      setPrivateKeyExist(pkExist);
+    });
+  };
 
   return (
     <Flex flexDirection="column" height="455px" pt="32px" pb="16px">
@@ -78,7 +83,7 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
         <Box mt="24px">
           <Label>{t(messages.privateKeys())}</Label>
           <InputWrapper
-            isError={isError || privateKeyExists}
+            isError={isError || privateKeyExist}
             alignItems="center"
           >
             <StyledInput
@@ -90,6 +95,7 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
               onChange={(e: any) => {
                 const { value } = e.target;
                 setPrivateKey(value);
+                privateKeyExist && setPrivateKeyExist(false);
               }}
             />
             <Button
@@ -114,7 +120,7 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
               {t(messages.invalidPrivateKeys())}
             </Text>
           )}
-          {privateKeyExists && (
+          {privateKeyExist && (
             <Text mt="2px" fontSize="12px" color={colors.error}>
               The account you're are trying to import is a duplicate
             </Text>
@@ -132,14 +138,7 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
           {t(messages.cancel())}
         </Button>
         {isEnableImport ? (
-          <ButtonShadow
-            ml="8px"
-            width="50%"
-            onClick={() => {
-              const accountName = name ? name : `Account ${accountLength + 1}`;
-              onImportAccount(accountName, privateKey);
-            }}
-          >
+          <ButtonShadow ml="8px" width="50%" onClick={_onImportAccount}>
             {t(messages.import())}
           </ButtonShadow>
         ) : (

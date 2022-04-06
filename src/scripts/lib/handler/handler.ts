@@ -178,16 +178,15 @@ export const addNewAccount = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { name } = payload || {};
-
-    const state = await controller.addNewAccount(name);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { name } = payload || {};
+  //   const state = await controller.addNewAccount(name);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const changeAccount = async (
@@ -212,16 +211,15 @@ export const importAccount = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { name, privateKey } = payload || {};
-
-    const state = await controller.importAccount(name, privateKey);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { name, privateKey } = payload || {};
+  //   const state = await controller.importAccount(name, privateKey);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const showPrivateKeys = async (

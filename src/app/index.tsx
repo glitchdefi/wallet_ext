@@ -69,6 +69,8 @@ export const App: React.FC = () => {
       const initState = await localStore.getAllStorageData();
       const { wallet } = initState;
 
+      console.log(initState);
+
       if (
         (wallet?.isInitialized === 'pending' ||
           wallet?.isInitialized === 'completed') &&

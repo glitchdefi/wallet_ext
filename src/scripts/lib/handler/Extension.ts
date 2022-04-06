@@ -7,6 +7,9 @@ import type {
   RequestWalletRestore,
   AuthorizeRequest,
   RequestWalletValidate,
+  RequestAccountCreate,
+  RequestAccountImport,
+  RequestPrivatekeyValidate,
 } from '../../types';
 import State from './State';
 import { GlitchController } from '../../controllers/GlitchController';
@@ -40,7 +43,7 @@ export default class Extension {
   }
 
   private createWallet(request: RequestWalletCreate): Promise<ResponseWallet> {
-    return this.controller.createAccount(request);
+    return this.controller.createWallet(request);
   }
 
   private createWalletCompleted(): Promise<ResponseWallet> {
@@ -59,6 +62,24 @@ export default class Extension {
 
   private walletValidate(request: RequestWalletValidate): Promise<boolean> {
     return this.controller.walletValidate(request);
+  }
+
+  private createAccount(
+    request: RequestAccountCreate
+  ): Promise<ResponseWallet> {
+    return this.controller.createAccount(request);
+  }
+
+  private importAccount(
+    request: RequestAccountImport
+  ): Promise<ResponseWallet> {
+    return this.controller.importAccount(request);
+  }
+
+  private privateKeyValidate(
+    request: RequestPrivatekeyValidate
+  ): Promise<boolean> {
+    return this.controller.privateKeyValidate(request);
   }
 
   private resetAppState(): Promise<ResponseWallet> {
@@ -85,6 +106,12 @@ export default class Extension {
         return this.unlockWallet();
       case 'pri(wallet.validate)':
         return this.walletValidate(request as RequestWalletValidate);
+      case 'pri(wallet.account.create)':
+        return this.createAccount(request as RequestAccountCreate);
+      case 'pri(wallet.account.import)':
+        return this.importAccount(request as RequestAccountImport);
+      case 'pri(wallet.account.privatekey.validate)':
+        return this.privateKeyValidate(request as RequestPrivatekeyValidate);
       case 'pri(reset.app.state)':
         return this.resetAppState();
 

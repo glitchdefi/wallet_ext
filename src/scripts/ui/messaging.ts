@@ -11,6 +11,9 @@ import type {
   RequestWalletCreate,
   AuthorizeRequest,
   RequestWalletValidate,
+  RequestAccountCreate,
+  RequestAccountImport,
+  RequestPrivatekeyValidate,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -110,6 +113,24 @@ export async function walletValidate(
   request: RequestWalletValidate
 ): Promise<boolean> {
   return sendMessage('pri(wallet.validate)', request);
+}
+
+export async function createAccount(
+  request: RequestAccountCreate
+): Promise<ResponseWallet> {
+  return sendMessage('pri(wallet.account.create)', request);
+}
+
+export async function importAccount(
+  request: RequestAccountImport
+): Promise<ResponseWallet> {
+  return sendMessage('pri(wallet.account.import)', request);
+}
+
+export async function privateKeyValidate(
+  request: RequestPrivatekeyValidate
+): Promise<boolean> {
+  return sendMessage('pri(wallet.account.privatekey.validate)', request);
 }
 
 export async function resetAppState(): Promise<ResponseWallet> {

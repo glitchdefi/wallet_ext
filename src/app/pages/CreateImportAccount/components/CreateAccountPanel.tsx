@@ -6,10 +6,9 @@ import { messages } from '../messages';
 import { Routes } from 'constants/routes';
 import { validateNameExist } from 'utils/strings';
 import { colors } from 'theme/colors';
+import { useWallet } from 'contexts/WalletContext/hooks';
 
-import { useAccountActionHandlers, useAccounts } from 'state/wallet/hooks';
-
-import { Box, Flex } from 'app/components/Box';
+import { Flex } from 'app/components/Box';
 import { Input, Label } from 'app/components/Form';
 import { Button, ButtonShadow } from 'app/components/Button';
 import { Text } from 'app/components/Text';
@@ -17,9 +16,9 @@ import { Text } from 'app/components/Text';
 export const CreateAccountPanel: React.FC = React.memo(() => {
   const history = useHistory();
   const { t } = useTranslation();
-
-  const { accounts, accountLength } = useAccounts();
-  const { onAddNewAccount } = useAccountActionHandlers();
+  const { walletCtx, onCreateAccount } = useWallet();
+  const { accounts } = walletCtx || {};
+  const accountLength = Object.keys(accounts)?.length;
 
   const [name, setName] = useState<string>('');
   const [isNameExist, setIsNameExist] = useState<boolean>(false);
@@ -71,7 +70,7 @@ export const CreateAccountPanel: React.FC = React.memo(() => {
             width="50%"
             onClick={() => {
               const accountName = name ? name : `Account ${accountLength + 1}`;
-              onAddNewAccount(accountName);
+              onCreateAccount({ name: accountName }, history);
             }}
           >
             {t(messages.create())}

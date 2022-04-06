@@ -9,6 +9,9 @@ import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
 import { RootState } from 'types';
 import { decryptMessage } from 'utils/strings';
 import {
+  RequestAccountCreate,
+  RequestAccountImport,
+  RequestPrivatekeyValidate,
   RequestWalletCreate,
   RequestWalletValidate,
   ResponseWallet,
@@ -29,7 +32,7 @@ export class GlitchController {
   // WALLET METHODS
   //=============================================================================
 
-  async createAccount(request: RequestWalletCreate): Promise<ResponseWallet> {
+  async createWallet(request: RequestWalletCreate): Promise<ResponseWallet> {
     const data = await this.glitchWeb3.createAccount(request);
     const { mnemonicEncrypted, json } = data;
     const { address, meta } = json as unknown as {
@@ -54,7 +57,7 @@ export class GlitchController {
           name: meta.name,
           avatar: meta.avatar,
           whenCreated: meta.whenCreated,
-          balance: {},
+          balance: { reservedBalance: '0', freeBalance: '0' },
           seed: mnemonicEncrypted,
         },
       },
@@ -104,7 +107,7 @@ export class GlitchController {
       accounts: {
         [address]: {
           address: address,
-          balance: {},
+          balance: { reservedBalance: '0', freeBalance: '0' },
           name: meta.name,
           avatar: meta.avatar,
           whenCreated: meta.whenCreated,
@@ -200,121 +203,101 @@ export class GlitchController {
   // ACCOUNT METHODS
   //=============================================================================
 
-  /**
-   *  Add new account
-   * @returns
-   */
-  async addNewAccount(name?: string): Promise<object> {
-    // try {
-    //   const { mnemonicEncrypted, json } = await this.glitchWeb3.createAccount(
-    //     null,
-    //     name,
-    //     null
-    //   );
-    //   const { address, meta } = json as unknown as {
-    //     address: string;
-    //     meta?: {
-    //       name: string;
-    //       avatar: string;
-    //       whenCreated: number;
-    //     };
-    //   };
-    //   const oldAccounts = await this.appStateController.getAccounts();
-    //   const newState = await this.appStateController.updateState('wallet', {
-    //     selectedAddress: address,
-    //     accounts: {
-    //       [address]: {
-    //         name: meta.name,
-    //         address: address,
-    //         avatar: meta.avatar,
-    //         balance: '0',
-    //         seed: mnemonicEncrypted,
-    //         whenCreated: meta.whenCreated,
-    //       },
-    //       ...oldAccounts,
-    //     },
-    //   });
-    //   return { ...newState };
-    // } catch (error) {
-    //   throw error;
-    // }
-    return {};
-  }
-
-  /**
-   *  Change account
-   * @returns
-   */
-  async changeAccount(address?: string): Promise<object> {
-    try {
-      const oldAccounts = await this.appStateController.getAccounts();
-
-      oldAccounts[address].balance = '0';
-      oldAccounts[address].reservedBalance = '0';
-
-      const newState = await this.appStateController.updateState('wallet', {
-        selectedAddress: address,
-        accounts: {
-          ...oldAccounts,
+  async createAccount({ name }: RequestAccountCreate): Promise<ResponseWallet> {
+    const data = await this.glitchWeb3.createAccount({
+      seed: null,
+      name,
+      password: null,
+    });
+    const { mnemonicEncrypted, json } = data;
+    const { address, meta } = json as unknown as {
+      address: string;
+      meta?: {
+        name: string;
+        avatar: string;
+        whenCreated: number;
+      };
+    };
+    const oldAccounts = await this.appStateController.getAccounts();
+    return await this.appStateController.updateState('wallet', {
+      selectedAddress: address,
+      accounts: {
+        [address]: {
+          name: meta.name,
+          address: address,
+          avatar: meta.avatar,
+          balance: { reservedBalance: '0', freeBalance: '0' },
+          seed: mnemonicEncrypted,
+          whenCreated: meta.whenCreated,
         },
-      });
-
-      return { ...newState };
-    } catch (error) {
-      throw error;
-    }
+        ...oldAccounts,
+      },
+    });
   }
 
-  /**
-   *  Import account
-   * @returns
-   */
-  async importAccount(name?: string, privateKey?: string): Promise<object> {
-    // try {
-    //   const { mnemonicEncrypted, json } = await this.glitchWeb3.createAccount(
-    //     privateKey,
-    //     name,
-    //     null
-    //   );
+  async importAccount({
+    name,
+    privateKey,
+  }: RequestAccountImport): Promise<ResponseWallet> {
+    const data = await this.glitchWeb3.createAccount({
+      seed: privateKey,
+      name,
+      password: null,
+    });
+    const { mnemonicEncrypted, json } = data;
+    const { address, meta } = json as unknown as {
+      address: string;
+      meta?: {
+        name: string;
+        avatar: string;
+        whenCreated: number;
+      };
+    };
+    const oldAccounts = await this.appStateController.getAccounts();
 
-    //   const { address, meta } = json as unknown as {
-    //     address: string;
-    //     meta?: {
-    //       name: string;
-    //       avatar: string;
-    //       whenCreated: number;
-    //     };
-    //   };
+    return await this.appStateController.updateState('wallet', {
+      selectedAddress: address,
+      accounts: {
+        [address]: {
+          name: meta.name,
+          address: address,
+          avatar: meta.avatar,
+          balance: { freeBalance: '0', reservedBalance: '0' },
+          seed: mnemonicEncrypted,
+          whenCreated: meta.whenCreated,
+        },
+        ...oldAccounts,
+      },
+    });
+  }
 
-    //   const oldAccounts = await this.appStateController.getAccounts();
+  async privateKeyValidate({
+    privateKey,
+  }: RequestPrivatekeyValidate): Promise<boolean> {
+    const { json } = await this.glitchWeb3.createAccount({
+      seed: privateKey,
+      name: '',
+      password: null,
+    });
+    const { address } = json as unknown as {
+      address: string;
+    };
+    const oldAccounts = await this.appStateController.getAccounts();
 
-    //   // Account exists
-    //   if (oldAccounts[address]) {
-    //     return {
-    //       privateKeyExists: true,
-    //     };
-    //   }
+    return !!oldAccounts[address];
+  }
 
-    //   const newState = await this.appStateController.updateState('wallet', {
-    //     selectedAddress: address,
-    //     accounts: {
-    //       [address]: {
-    //         name: meta.name,
-    //         address: address,
-    //         avatar: meta.avatar,
-    //         balance: '0',
-    //         seed: mnemonicEncrypted,
-    //         whenCreated: meta.whenCreated,
-    //       },
-    //       ...oldAccounts,
-    //     },
-    //   });
+  async changeAccount(address?: string): Promise<ResponseWallet> {
+    const oldAccounts = await this.appStateController.getAccounts();
 
-    //   return { ...newState };
-    // } catch (e) {
-    //   throw new Error((e as Error).message);
-    // }
-    return {};
+    oldAccounts[address].balance = { freeBalance: '0', reservedBalance: '0' };
+
+    return await this.appStateController.updateState('wallet', {
+      selectedAddress: address,
+      accounts: {
+        ...oldAccounts,
+      },
+    });
   }
 
   /**

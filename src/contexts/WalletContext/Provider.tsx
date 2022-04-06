@@ -1,12 +1,17 @@
 import React, { createContext, useCallback, useState } from 'react';
+import { Routes } from 'constants/routes';
 import {
+  RequestAccountCreate,
+  RequestAccountImport,
   RequestWalletCreate,
   RequestWalletRestore,
   ResponseWallet,
 } from 'scripts/types';
 import {
+  createAccount,
   createWallet,
   createWalletCompleted,
+  importAccount,
   resetAppState,
   restoreWallet,
   unlockWallet,
@@ -18,7 +23,9 @@ export type WalletContextType = {
   setWalletCtx?: (wallet: ResponseWallet) => void;
   onCreateWallet?: (request: RequestWalletCreate) => void;
   onRestoreWallet?: (request: RequestWalletRestore) => void;
-  onUnlockWallet?: () => void;
+  onCreateAccount?: (request: RequestAccountCreate, history: any) => void;
+  onUnlockWallet?: (history: any) => void;
+  onImportAccount?: (request: RequestAccountImport, history: any) => void;
   onCreateWalletCompleted?: () => void;
   onLockWallet?: () => void;
   onResetAppState?: () => void;
@@ -52,9 +59,39 @@ export const WalletProvider: React.FC = ({ children }) => {
 
   const onLockWallet = useCallback(() => {}, []);
 
-  const onUnlockWallet = useCallback(() => {
-    unlockWallet().then(setWallet);
+  const onUnlockWallet = useCallback((history: any) => {
+    unlockWallet()
+      .then(setWallet)
+      .finally(() => history.push(Routes.home));
   }, []);
+
+  const onCreateAccount = useCallback(
+    (request: RequestAccountCreate, history: any) => {
+      setLoading(true);
+
+      createAccount(request)
+        .then(setWallet)
+        .finally(() => {
+          setLoading(false);
+          history.push(Routes.home);
+        });
+    },
+    []
+  );
+
+  const onImportAccount = useCallback(
+    (request: RequestAccountImport, history: any) => {
+      setLoading(true);
+
+      importAccount(request)
+        .then(setWallet)
+        .finally(() => {
+          setLoading(false);
+          history.push(Routes.home);
+        });
+    },
+    []
+  );
 
   const onResetAppState = useCallback(() => {
     resetAppState().then((data: any) => {
@@ -71,6 +108,8 @@ export const WalletProvider: React.FC = ({ children }) => {
         onCreateWallet,
         onCreateWalletCompleted,
         onRestoreWallet,
+        onCreateAccount,
+        onImportAccount,
         onLockWallet,
         onUnlockWallet,
         onResetAppState,

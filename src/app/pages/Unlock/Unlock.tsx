@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -24,17 +24,10 @@ import { PageLayout } from 'app/layouts';
 const Unlock: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
-  const { walletCtx } = useWallet();
   const { onUnlockWallet } = useWallet();
 
   const [password, setPassword] = useState<string>('');
   const [isPassValid, setIsPassValid] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (!walletCtx?.isLocked) {
-      history.push(Routes.home);
-    }
-  }, [walletCtx]);
 
   // Trigger when user enter
   const onKeyPress = (event: { keyCode: any; which: any }) => {
@@ -42,7 +35,7 @@ const Unlock: React.FC = () => {
     if (code === 13 && password) {
       walletValidate({ password }).then((isValid: boolean) => {
         if (isValid) {
-          onUnlockWallet();
+          onUnlockWallet(history);
         }
         setIsPassValid(isValid);
       });
@@ -100,7 +93,7 @@ const Unlock: React.FC = () => {
                     onClick={() => {
                       walletValidate({ password }).then((isValid: boolean) => {
                         if (isValid) {
-                          onUnlockWallet();
+                          onUnlockWallet(history);
                         }
                         setIsPassValid(isValid);
                       });

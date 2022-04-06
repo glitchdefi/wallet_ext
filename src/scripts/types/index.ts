@@ -27,6 +27,12 @@ export interface RequestSignatures {
   'pri(wallet.lock)': [null, ResponseWallet];
   'pri(wallet.unlock)': [null, ResponseWallet];
   'pri(wallet.validate)': [RequestWalletValidate, boolean];
+  'pri(wallet.account.create)': [RequestAccountCreate, ResponseWallet];
+  'pri(wallet.account.import)': [RequestAccountImport, ResponseWallet];
+  'pri(wallet.account.privatekey.validate)': [
+    RequestPrivatekeyValidate,
+    boolean
+  ];
   'pri(reset.app.state)': [null, ResponseWallet];
 
   // public/external requests, i.e. from a page
@@ -54,9 +60,9 @@ export type MessageTypesWithNoSubscriptions = Exclude<
 >;
 
 export interface RequestWalletCreate {
-  seed: string;
-  name: string;
-  password: string;
+  seed?: string;
+  name?: string;
+  password?: string;
 }
 
 export interface RequestWalletRestore {
@@ -68,7 +74,16 @@ export interface RequestWalletRestore {
 export interface RequestWalletValidate {
   password: string;
 }
-
+export interface RequestAccountCreate {
+  name: string;
+}
+export interface RequestAccountImport {
+  name: string;
+  privateKey: string;
+}
+export interface RequestPrivatekeyValidate {
+  privateKey: string;
+}
 export interface RequestAuthorizeTab {
   origin: string;
 }
