@@ -9,22 +9,20 @@ import { Box, Flex } from 'app/components/Box';
 import { Button, ButtonShadow } from 'app/components/Button';
 import VerifyMnemonicView from './VerifyMnemonicView';
 interface Props {
-  seedPhrases: string;
+  seed: string;
   onSubmit?: () => void;
 }
 
-const VerifyMnemonicStep: React.FC<Props> = ({ seedPhrases, onSubmit }) => {
+const VerifyMnemonicStep: React.FC<Props> = ({ seed, onSubmit }) => {
   const { t } = useTranslation();
-  const [seedPhrasesList, setSeedPhrasesList] = useState<string[]>([]);
-  const [confirmSeedPhraseList, setConfirmSeedPhraseList] = useState<string[]>(
-    []
-  );
+  const [seedList, setSeedList] = useState<string[]>([]);
+  const [confirmSeedList, setConfirmSeedList] = useState<string[]>([]);
+
   const isValid =
-    JSON.stringify(seedPhrases?.split(' ')) ===
-    JSON.stringify(confirmSeedPhraseList);
+    JSON.stringify(seed?.split(' ')) === JSON.stringify(confirmSeedList);
 
   useEffect(() => {
-    setSeedPhrasesList(shuffle(seedPhrases?.split(' ')));
+    setSeedList(shuffle(seed?.split(' ')));
   }, []);
 
   return (
@@ -32,10 +30,10 @@ const VerifyMnemonicStep: React.FC<Props> = ({ seedPhrases, onSubmit }) => {
       <Box height="100%" px="16px">
         <VerifyMnemonicView
           isValid={isValid}
-          list={seedPhrasesList}
-          confirmList={confirmSeedPhraseList}
-          onItemClick={(list) => setConfirmSeedPhraseList(list)}
-          onItemConfirmClick={(list) => setConfirmSeedPhraseList(list)}
+          list={seedList}
+          confirmList={confirmSeedList}
+          onItemClick={setConfirmSeedList}
+          onItemConfirmClick={setConfirmSeedList}
         />
       </Box>
 

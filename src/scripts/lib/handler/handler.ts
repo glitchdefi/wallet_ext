@@ -85,16 +85,15 @@ export const logoutWallet = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { password } = payload || {};
-
-    const state = await controller.logoutWallet(password);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { password } = payload || {};
+  //   const state = await controller.logoutWallet(password);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const backupWallet = async (
@@ -130,16 +129,15 @@ export const showSeedPhrase = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { password } = payload || {};
-
-    const state = await controller.showSeedPhrase(password);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { password } = payload || {};
+  //   const state = await controller.showSeedPhrase(password);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const getBalance = async (
@@ -161,16 +159,15 @@ export const getTokenPrice = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { tokenName, currency } = payload || {};
-    const state = await controller.getTokenPrice(tokenName, currency);
-
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { tokenName, currency } = payload || {};
+  //   const state = await controller.getTokenPrice(tokenName, currency);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const addNewAccount = async (
@@ -194,16 +191,15 @@ export const changeAccount = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { address } = payload || {};
-
-    const state = await controller.changeAccount(address);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { address } = payload || {};
+  //   const state = await controller.changeAccount(address);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const importAccount = async (
@@ -227,16 +223,15 @@ export const showPrivateKeys = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { password } = payload || {};
-
-    const state = await controller.showPrivateKeysAccount(password);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { password } = payload || {};
+  //   const state = await controller.showPrivateKeysAccount(password);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const changeAccountName = async (
@@ -244,16 +239,15 @@ export const changeAccountName = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { name } = payload || {};
-
-    const state = await controller.changeAccountName(name);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { name } = payload || {};
+  //   const state = await controller.changeAccountName(name);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const transfer = async (
@@ -297,13 +291,13 @@ export const getEstimateFee = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { toAddress, amount } = payload || {};
-    const fee = await controller.getEstimateFee(toAddress, amount);
-    sendResponse({ ...successfulResponse, state: { fee } });
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { toAddress, amount } = payload || {};
+  //   const fee = await controller.getEstimateFee(toAddress, amount);
+  //   sendResponse({ ...successfulResponse, state: { fee } });
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const fetchTransactions = async (
@@ -320,17 +314,15 @@ export const fetchTransactions = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { params } = payload || {};
-
-    const state = await controller.getTransactionHistory(params);
-
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const { params } = payload || {};
+  //   const state = await controller.getTransactionHistory(params);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const setAutoLockTimer = async (
@@ -338,14 +330,14 @@ export const setAutoLockTimer = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const state = await controller.setAutoLockTimer(payload);
-    if (state) {
-      sendResponse({ ...successfulResponse, state });
-    }
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  // try {
+  //   const state = await controller.setAutoLockTimer(payload);
+  //   if (state) {
+  //     sendResponse({ ...successfulResponse, state });
+  //   }
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const handleDefault = (request: Request, sendResponse: SendResponse) => {

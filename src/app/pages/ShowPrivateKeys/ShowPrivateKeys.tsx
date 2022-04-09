@@ -9,13 +9,8 @@ import { colors } from 'theme/colors';
 import { truncateAddress } from 'utils/strings';
 import { messages } from './messages';
 
-import {
-  useAccount,
-  useAccountActionHandlers,
-  useShowPrivateKey,
-  useWalletActionHandlers,
-  useWrongPassword,
-} from 'state/wallet/hooks';
+import { useAccount } from 'contexts/WalletContext/hooks';
+import { showAccountPrivateKey, walletValidate } from 'scripts/ui/messaging';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -31,14 +26,11 @@ const ShowPrivateKeys: React.FC = () => {
   const { t } = useTranslation();
 
   const { name, avatar, address } = useAccount();
-  const { showPrivateKey } = useShowPrivateKey();
-  const { isWrongPassword } = useWrongPassword();
-  const { onClearShowPrivateKey, onShowPrivateKeys } =
-    useAccountActionHandlers();
-  const { onClearIsWrongPassword } = useWalletActionHandlers();
 
   const [copied, setCopied] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
+  const [validPassword, setValidPassword] = useState<boolean>(true);
+  const [privateKey, setPrivateKey] = useState<string>('');
 
   useEffect(() => {
     if (copied) {
@@ -49,16 +41,19 @@ const ShowPrivateKeys: React.FC = () => {
   }, [copied]);
 
   const onCopy = () => {
-    navigator.clipboard.writeText(showPrivateKey);
+    navigator.clipboard.writeText(privateKey);
     setCopied(true);
   };
 
-  useEffect(() => {
-    return () => {
-      onClearIsWrongPassword();
-      onClearShowPrivateKey();
-    };
-  }, []);
+  const onConfirm = () => {
+    walletValidate({ password }).then(async (valid: boolean) => {
+      if (valid) {
+        const pk = await showAccountPrivateKey();
+        setPrivateKey(pk);
+      }
+      setValidPassword(valid);
+    });
+  };
 
   return (
     <PageLayout minHeight="600px">
@@ -98,12 +93,12 @@ const ShowPrivateKeys: React.FC = () => {
           </AccountWrapper>
 
           <Box mt="32px">
-            {!isWrongPassword && showPrivateKey ? (
+            {privateKey ? (
               <InputWrapper alignItems="center">
                 <StyledInput
                   disabled
                   hasBorder={false}
-                  value={showPrivateKey}
+                  value={privateKey}
                   as={TextareaAutosize}
                 />
                 <Button ml="12px" p="0px" onClick={onCopy}>
@@ -118,14 +113,13 @@ const ShowPrivateKeys: React.FC = () => {
               <>
                 <Label>Glitch password</Label>
                 <PasswordInput
-                  isError={isWrongPassword}
+                  isError={!validPassword}
                   msgError="Incorrect password"
                   value={password}
                   placeholder="Enter Glitch password"
                   onChange={(e) => {
                     const { value } = e.target;
-
-                    isWrongPassword && onClearIsWrongPassword();
+                    !validPassword && setValidPassword(true);
                     setPassword(value);
                   }}
                 />
@@ -138,7 +132,7 @@ const ShowPrivateKeys: React.FC = () => {
           </Box>
 
           <Flex mt="auto">
-            {!isWrongPassword && showPrivateKey ? (
+            {privateKey ? (
               <Button
                 width="100%"
                 variant="cancel"
@@ -157,10 +151,7 @@ const ShowPrivateKeys: React.FC = () => {
                   Cancel
                 </Button>
                 {password ? (
-                  <ButtonShadow
-                    width="50%"
-                    onClick={() => onShowPrivateKeys(password)}
-                  >
+                  <ButtonShadow width="50%" onClick={onConfirm}>
                     Confirm
                   </ButtonShadow>
                 ) : (

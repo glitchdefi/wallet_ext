@@ -9,16 +9,16 @@ import { MessageBox } from 'app/components/MessageBox';
 import { ButtonShadow } from 'app/components/Button';
 import MnemonicPhraseView from './MnemonicPhraseView';
 interface Props {
-  seedPhrases: string;
+  seed: string;
   onNextStep: () => void;
 }
 
-const MnemonicPhraseStep: React.FC<Props> = ({ seedPhrases, onNextStep }) => {
+const MnemonicPhraseStep: React.FC<Props> = ({ seed, onNextStep }) => {
   const { t } = useTranslation();
 
   return (
     <Flex flex={1} flexDirection="column" px="16px">
-      <MnemonicPhraseView seed={seedPhrases} />
+      <MnemonicPhraseView seed={seed} />
 
       <MessageBox mt="24px" message={t(messages.neverShareYourMnemonic())} />
 

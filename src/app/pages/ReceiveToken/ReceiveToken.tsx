@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import QRCode from 'qrcode.react';
 
 import { colors } from 'theme/colors';
-import { useAccount } from 'state/wallet/hooks';
+import { useAccount } from 'contexts/WalletContext/hooks';
 
 import { Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';

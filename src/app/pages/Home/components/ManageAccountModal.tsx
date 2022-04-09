@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router';
 import Modal from 'react-bootstrap/Modal';
 
-import { useAccountActionHandlers } from 'state/wallet/hooks';
 import { useWallet } from 'contexts/WalletContext/hooks';
 
 import { truncateAddress } from 'utils/strings';
@@ -26,8 +25,7 @@ export const ManageAccountModal: React.FC<Props> = React.memo(
   ({ isOpen, onClose }) => {
     const history = useHistory();
     const { t } = useTranslation();
-    const { walletCtx } = useWallet();
-    const { onChangeAccount } = useAccountActionHandlers();
+    const { walletCtx, onChangeAccount } = useWallet();
 
     const { selectedAddress, accounts } = walletCtx || {};
 
@@ -67,7 +65,7 @@ export const ManageAccountModal: React.FC<Props> = React.memo(
                     key={i}
                     onClick={() => {
                       if (account.address !== selectedAddress) {
-                        onChangeAccount(account.address);
+                        onChangeAccount({ address: account.address });
                       }
                     }}
                   >

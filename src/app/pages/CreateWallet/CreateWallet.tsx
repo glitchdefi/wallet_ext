@@ -9,7 +9,6 @@ import { messages } from './messages';
 
 // Hooks
 import { useStepTitleDesc } from 'state/wallet/hooks';
-import { useToast } from 'hooks/useToast';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -27,29 +26,16 @@ const CreateWallet: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const {
-    walletCtx,
-    onCreateWallet,
-    onCreateWalletCompleted,
-    onResetAppState,
-  } = useWallet();
+  const { onCreateWallet, onCreateWalletCompleted, onResetAppState } =
+    useWallet();
 
   const [step, setStep] = useState<number>(0);
   const [password, setPassword] = useState<string>('');
   const [mnemonic, setMnemonic] = useState<string>('');
 
-  const { toastSuccess } = useToast();
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'create');
 
   const stepProgress = ((step + 1) / MAX_STEP) * 100;
-
-  useEffect(() => {
-    // Create completed -> push to home page
-    if (walletCtx?.isInitialized === 'completed') {
-      toastSuccess('Success!', 'Success! Your wallet has been created!');
-      history.push(Routes.home);
-    }
-  }, [walletCtx]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -91,15 +77,14 @@ const CreateWallet: React.FC = () => {
           />
         )}
         {step === 1 && (
-          <MnemonicPhraseStep
-            seedPhrases={mnemonic}
-            onNextStep={() => setStep(2)}
-          />
+          <MnemonicPhraseStep seed={mnemonic} onNextStep={() => setStep(2)} />
         )}
         {step === 2 && (
           <VerifyMnemonicStep
-            seedPhrases={mnemonic}
-            onSubmit={onCreateWalletCompleted}
+            seed={mnemonic}
+            onSubmit={() => {
+              onCreateWalletCompleted(history);
+            }}
           />
         )}
       </StepProgressLayout>

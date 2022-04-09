@@ -97,7 +97,7 @@ export const formatWei = (number: any, isFormatNumber = true) => {
 export const calcTotalBalance = (balance: {
   freeBalance?: any;
   reservedBalance?: any;
-}): string => {
+}): any => {
   const { freeBalance = '0', reservedBalance = '0' } = balance || {};
 
   return formatWei(

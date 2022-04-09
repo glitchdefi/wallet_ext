@@ -11,8 +11,13 @@ import { ExtensionStore } from '../scripts/lib/localStore';
 
 // Hooks
 import { useLoadingApplication } from 'state/application/hooks';
-import { useWalletActionHandlers } from 'state/wallet/hooks';
-import { useAutoLockTimer } from 'state/settings/hooks';
+import { useSettings } from 'contexts/SettingsContext/hooks';
+import { useWallet } from 'contexts/WalletContext/hooks';
+import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
+import {
+  getTokenPrice,
+  subscribeAuthorizeRequests,
+} from 'scripts/ui/messaging';
 
 // Components
 import { ContainerLayout } from './layouts';
@@ -38,17 +43,16 @@ import { AddAssetsPage } from './pages/AddAssets';
 import { BackUpPage } from './pages/BackUp';
 import { SendTokenPage } from './pages/SendToken';
 import { AuthorizePage } from './pages/Authorize';
-import { useWallet } from 'contexts/WalletContext/hooks';
 import { AuthorizeRequest } from 'scripts/types';
-import { subscribeAuthorizeRequests } from 'scripts/ui/messaging';
 
 const history = createMemoryHistory();
 
 export const App: React.FC = () => {
   const { isLoading } = useLoadingApplication();
-  const { onLockWallet, getBalance, getTokenPrice } = useWalletActionHandlers();
-  const { openTime, duration } = useAutoLockTimer();
-  const { walletCtx, setWalletCtx } = useWallet();
+  const { setSettingsCtx } = useSettings();
+  const { setTokenPrice } = useTokenPrice();
+  const { walletCtx, setWalletCtx, onLockWallet, onGetAccountBalance } =
+    useWallet();
   const { isInitialized } = walletCtx || {};
 
   const [timeQuery, setTimeQuery] = useState<number>(0);
@@ -67,23 +71,34 @@ export const App: React.FC = () => {
     async function getInitialState() {
       const localStore = new ExtensionStore();
       const initState = await localStore.getAllStorageData();
-      const { wallet } = initState;
-
-      console.log(initState);
+      const { wallet, settings } = initState;
+      const { isInitialized, isLocked } = wallet;
+      const { autoLock } = settings;
+      const { duration, openTime } = autoLock;
 
       if (
-        (wallet?.isInitialized === 'pending' ||
-          wallet?.isInitialized === 'completed') &&
-        !wallet?.isLocked
+        (isInitialized === 'pending' || isInitialized === 'completed') &&
+        !isLocked
       ) {
         history.push(Routes.home);
       }
 
+      // wallet locked -> redirect to unlock page
       if (wallet?.isLocked) {
         history.push(Routes.unlock);
       }
 
+      // check autolock -> redirect to unlock page
+      if (
+        isInitialized !== 'none' &&
+        duration &&
+        new Date().getTime() - openTime > duration
+      ) {
+        onLockWallet(history);
+      }
+
       setWalletCtx(wallet);
+      setSettingsCtx(settings);
     }
 
     getInitialState();
@@ -94,18 +109,6 @@ export const App: React.FC = () => {
       history.push(Routes.authorize);
     }
   }, [authRequests]);
-
-  // TODO: check again
-  useEffect(() => {
-    if (
-      isInitialized !== 'none' &&
-      duration &&
-      new Date().getTime() - openTime > duration
-    ) {
-      onLockWallet();
-      history.push(Routes.unlock);
-    }
-  }, [duration]);
 
   useEffect(() => {
     let job: NodeJS.Timer;
@@ -122,8 +125,10 @@ export const App: React.FC = () => {
   // TODO: check again
   useEffect(() => {
     if (isInitialized !== 'none' && hasInternet && navigator.onLine) {
-      getBalance();
-      getTokenPrice('glitch-protocol', 'usd');
+      onGetAccountBalance();
+      getTokenPrice({ name: 'glitch-protocol', currency: 'usd' }).then(
+        setTokenPrice
+      );
     }
   }, [timeQuery, hasInternet]);
 

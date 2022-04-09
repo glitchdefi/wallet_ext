@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
-
-import {
-  useSeedPhrase,
-  useWalletActionHandlers,
-  useWrongPassword,
-} from 'state/wallet/hooks';
+import { showWalletSeed, walletValidate } from 'scripts/ui/messaging';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -22,25 +17,19 @@ import { Header, MnemonicPhraseView } from 'app/components/Shared';
 const RevealMnemonicPhrase: React.FC = React.memo(() => {
   const history = useHistory();
 
-  const { isWrongPassword } = useWrongPassword();
-  const { seedPhrase } = useSeedPhrase();
-  const { onShowSeedPhrase, onClearIsWrongPassword, onClearSeedPhrase } =
-    useWalletActionHandlers();
+  const [password, setPassword] = useState<string>('');
+  const [seed, setSeed] = useState<string>('');
+  const [validPassword, setValidPassword] = useState<boolean>(true);
 
-  const [password, setPassword] = useState('');
-  const [showSeedPhrase, setShowSeedPhrase] = useState(false);
-
-  useEffect(() => {
-    if (seedPhrase) setShowSeedPhrase(true);
-  }, [seedPhrase]);
-
-  useEffect(() => {
-    return () => {
-      onClearIsWrongPassword();
-      onClearSeedPhrase();
-    };
-  }, []);
-
+  const _onShowWalletSeed = () => {
+    walletValidate({ password }).then(async (valid: boolean) => {
+      if (valid) {
+        const seed = await showWalletSeed();
+        setSeed(seed);
+      }
+      setValidPassword(valid);
+    });
+  };
   return (
     <PageLayout>
       <Header
@@ -66,11 +55,11 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
               </Box>
             }
           />
-          {showSeedPhrase ? (
+          {seed ? (
             <Box mt="16px">
               <MnemonicPhraseView
                 label="Your Mnemonic phrase"
-                seed={seedPhrase}
+                seed={seed}
                 background={colors.geekBlue}
               />
             </Box>
@@ -83,11 +72,11 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
               <Box mt="16px">
                 <Label>Glitch password</Label>
                 <PasswordInput
-                  isError={isWrongPassword}
+                  isError={!validPassword}
                   placeholder="Password"
                   onChange={(e) => {
                     const { value } = e.target;
-                    isWrongPassword && onClearIsWrongPassword();
+                    !validPassword && setValidPassword(true);
                     setPassword(value);
                   }}
                   msgError="Incorrect password"
@@ -98,7 +87,7 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
         </Box>
 
         <Box px="32px" pb="24px">
-          {showSeedPhrase ? (
+          {seed ? (
             <Box mt="auto" onClick={() => history.push(Routes.home)}>
               <ButtonShadow width="100%">Done</ButtonShadow>
             </Box>
@@ -113,10 +102,7 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
                 Cancel
               </Button>
               {password ? (
-                <ButtonShadow
-                  width="50%"
-                  onClick={() => onShowSeedPhrase(password)}
-                >
+                <ButtonShadow width="50%" onClick={_onShowWalletSeed}>
                   Show
                 </ButtonShadow>
               ) : (

@@ -14,6 +14,15 @@ import type {
   RequestAccountCreate,
   RequestAccountImport,
   RequestPrivatekeyValidate,
+  RequestAccountChange,
+  ResponseAppStore,
+  RequestAutoLockSet,
+  ResponseSettings,
+  RequestAccountEdit,
+  RequestTransactionsGet,
+  ResponseTransactionsGet,
+  RequestEstimateFeeGet,
+  RequestTokenPriceGet,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -83,12 +92,14 @@ function sendMessage<TMessageType extends MessageTypes>(
   });
 }
 
+//Authorize
 export async function subscribeAuthorizeRequests(
   cb: (accounts: AuthorizeRequest[]) => void
 ): Promise<boolean> {
   return sendMessage('pri(authorize.requests)', null, cb);
 }
 
+// Wallet
 export async function createWallet(
   request: RequestWalletCreate
 ): Promise<ResponseWallet> {
@@ -105,8 +116,20 @@ export async function restoreWallet(
   return sendMessage('pri(wallet.restore)', request);
 }
 
+export async function logoutWallet(): Promise<ResponseAppStore> {
+  return sendMessage('pri(wallet.logout)');
+}
+
+export async function lockWallet(): Promise<ResponseWallet> {
+  return sendMessage('pri(wallet.lock)');
+}
+
 export async function unlockWallet(): Promise<ResponseWallet> {
   return sendMessage('pri(wallet.unlock)');
+}
+
+export async function backupWallet(): Promise<ResponseWallet> {
+  return sendMessage('pri(wallet.backup)');
 }
 
 export async function walletValidate(
@@ -115,6 +138,11 @@ export async function walletValidate(
   return sendMessage('pri(wallet.validate)', request);
 }
 
+export async function showWalletSeed(): Promise<string> {
+  return sendMessage('pri(wallet.seed.show)');
+}
+
+// Account
 export async function createAccount(
   request: RequestAccountCreate
 ): Promise<ResponseWallet> {
@@ -127,10 +155,56 @@ export async function importAccount(
   return sendMessage('pri(wallet.account.import)', request);
 }
 
+export async function changeAccount(
+  request: RequestAccountChange
+): Promise<ResponseWallet> {
+  return sendMessage('pri(wallet.account.change)', request);
+}
+
+export async function editAccount(
+  request: RequestAccountEdit
+): Promise<ResponseWallet> {
+  return sendMessage('pri(wallet.account.edit)', request);
+}
+
+export async function getAccountBalance(): Promise<ResponseWallet> {
+  return sendMessage('pri(wallet.account.balance.get)');
+}
+
 export async function privateKeyValidate(
   request: RequestPrivatekeyValidate
 ): Promise<boolean> {
   return sendMessage('pri(wallet.account.privatekey.validate)', request);
+}
+
+export async function showAccountPrivateKey(): Promise<string> {
+  return sendMessage('pri(wallet.account.privatekey.show)');
+}
+
+// Settings
+export async function setAutoLock(
+  request: RequestAutoLockSet
+): Promise<ResponseSettings> {
+  return sendMessage('pri(settings.autolock.set)', request);
+}
+
+// Transactions
+export async function getTransactions(
+  request: RequestTransactionsGet
+): Promise<ResponseTransactionsGet> {
+  return sendMessage('pri(transactions.list.get)', request);
+}
+
+export async function getEstimateFee(
+  request: RequestEstimateFeeGet
+): Promise<string> {
+  return sendMessage('pri(estimate.fee.get)', request);
+}
+
+export async function getTokenPrice(
+  request: RequestTokenPriceGet
+): Promise<string | number> {
+  return sendMessage('pri(token.price.get)', request);
 }
 
 export async function resetAppState(): Promise<ResponseWallet> {

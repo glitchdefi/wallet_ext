@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import bg from '../../../../../assets/img/account_card_bg.jpg';
 
 import { useWallet, useAccount } from 'contexts/WalletContext/hooks';
+import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 
 import { truncateAddress } from 'utils/strings';
 import {
@@ -30,16 +31,17 @@ import { messages } from '../../messages';
 export const WalletPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const history = useHistory();
+  const { tokenPrice } = useTokenPrice();
+  const { walletCtx, onLockWallet } = useWallet();
   const account = useAccount();
-  const { walletCtx } = useWallet();
   const { isBackup } = walletCtx || {};
   const { name, balance, address } = account;
   const totalBalance = calcTotalBalance(balance);
-  const totalValue = '0';
+  const totalValue = totalBalance * tokenPrice;
 
   return (
     <Box height="540.94px" overflowY="scroll">
-      <Header account={account} />
+      <Header account={account} onLockWallet={onLockWallet} />
 
       {!isBackup && (
         <BackedUpView onBackup={() => history.push(Routes.backUp)} />

@@ -53,7 +53,10 @@ export const messageEncryption = async (
   return { encrypted, secret };
 };
 
-export const decryptMessage = async (encrypted: string, secret: string) => {
+export const decryptMessage = async (
+  encrypted: string,
+  secret: string
+): Promise<unknown> => {
   // Decrypt the message
   const messageDecrypted = await decrypt(secret, encrypted);
 

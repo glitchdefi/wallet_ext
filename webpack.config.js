@@ -55,7 +55,27 @@ var alias = {
     'ApplicationContext',
     'hooks.ts'
   ),
+  'contexts/SettingsContext/hooks': path.join(
+    __dirname,
+    'src',
+    'contexts',
+    'SettingsContext',
+    'hooks.ts'
+  ),
+  'contexts/TokenPriceContext/hooks': path.join(
+    __dirname,
+    'src',
+    'contexts',
+    'TokenPriceContext',
+    'hooks.ts'
+  ),
   'hooks/useToast': path.join(__dirname, 'src', 'hooks', 'useToast.ts'),
+  'hooks/useTransactions': path.join(
+    __dirname,
+    'src',
+    'hooks',
+    'useTransactions.ts'
+  ),
   'hooks/useScrollBlock': path.join(
     __dirname,
     'src',

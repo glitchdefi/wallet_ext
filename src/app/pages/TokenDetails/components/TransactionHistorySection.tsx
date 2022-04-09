@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useTransactions } from 'state/transactions/hooks';
-
 import { colors } from 'theme/colors';
 import { PAGE_SIZE } from 'constants/values';
 import { useSelectedAddress } from 'state/wallet/hooks';
 import { messages } from '../messages';
+import { useTransactions } from 'hooks/useTransactions';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
-import { FilterIcon } from 'app/components/Svg';
-import { Button } from 'app/components/Button';
+// import { FilterIcon } from 'app/components/Svg';
+// import { Button } from 'app/components/Button';
 import { TransactionList } from './TransactionList';
-import { FilterModal } from './FilterModal';
+// import { FilterModal } from './FilterModal';
 
 export const TransactionHistorySection: React.FC = React.memo(() => {
   const { t } = useTranslation();
@@ -29,7 +28,7 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
 
   const { selectedAddress } = useSelectedAddress();
 
-  const { isFetchingTransactions, transactions } = useTransactions({
+  const { isLoading, transactions } = useTransactions({
     pageIndex,
     pageSize: PAGE_SIZE,
     txStatus: filter.txStatus,
@@ -69,7 +68,7 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
       </Flex>
 
       <Box mt="16px" mb="16px">
-        <TransactionList loading={isFetchingTransactions} data={transactions} />
+        <TransactionList loading={isLoading} data={transactions} />
       </Box>
 
       {/* <FilterModal

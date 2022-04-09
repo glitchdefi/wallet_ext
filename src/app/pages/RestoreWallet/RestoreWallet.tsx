@@ -55,7 +55,7 @@ const RestoreWallet: React.FC = () => {
         {step === 1 && (
           <CreatePasswordStep
             onSetupPassword={(password) =>
-              onRestoreWallet({ seed, name: 'Account 1', password })
+              onRestoreWallet({ seed, name: 'Account 1', password }, history)
             }
           />
         )}

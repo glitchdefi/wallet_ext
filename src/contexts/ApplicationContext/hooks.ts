@@ -9,8 +9,3 @@ export const useApplication = (): ApplicationContextType => {
 
   return context;
 };
-
-// export const useAccount = () => {
-//   const { walletCtx } = useApplication();
-//   const { accounts, selectedAddress } = walletCtx || {};
-// };

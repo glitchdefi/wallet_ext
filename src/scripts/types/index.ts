@@ -26,13 +26,27 @@ export interface RequestSignatures {
   'pri(wallet.restore)': [RequestWalletRestore, ResponseWallet];
   'pri(wallet.lock)': [null, ResponseWallet];
   'pri(wallet.unlock)': [null, ResponseWallet];
+  'pri(wallet.logout)': [null, ResponseAppStore];
   'pri(wallet.validate)': [RequestWalletValidate, boolean];
+  'pri(wallet.seed.show)': [null, string];
+  'pri(wallet.backup)': [null, ResponseWallet];
   'pri(wallet.account.create)': [RequestAccountCreate, ResponseWallet];
   'pri(wallet.account.import)': [RequestAccountImport, ResponseWallet];
+  'pri(wallet.account.change)': [RequestAccountChange, ResponseWallet];
+  'pri(wallet.account.edit)': [RequestAccountEdit, ResponseWallet];
+  'pri(wallet.account.balance.get)': [null, ResponseWallet];
   'pri(wallet.account.privatekey.validate)': [
     RequestPrivatekeyValidate,
     boolean
   ];
+  'pri(wallet.account.privatekey.show)': [null, string];
+  'pri(settings.autolock.set)': [RequestAutoLockSet, ResponseSettings];
+  'pri(transactions.list.get)': [
+    RequestTransactionsGet,
+    ResponseTransactionsGet
+  ];
+  'pri(estimate.fee.get)': [RequestEstimateFeeGet, string];
+  'pri(token.price.get)': [RequestTokenPriceGet, string | number];
   'pri(reset.app.state)': [null, ResponseWallet];
 
   // public/external requests, i.e. from a page
@@ -64,25 +78,51 @@ export interface RequestWalletCreate {
   name?: string;
   password?: string;
 }
-
 export interface RequestWalletRestore {
   seed: string;
   name: string;
   password: string;
 }
-
 export interface RequestWalletValidate {
   password: string;
 }
 export interface RequestAccountCreate {
   name: string;
 }
+export interface RequestAccountChange {
+  address: string;
+}
 export interface RequestAccountImport {
   name: string;
   privateKey: string;
 }
+export interface RequestAccountEdit {
+  name: string;
+}
 export interface RequestPrivatekeyValidate {
   privateKey: string;
+}
+export interface RequestAutoLockSet {
+  openTime: number;
+  duration: number;
+}
+
+export interface RequestTransactionsGet {
+  pageIndex: number;
+  pageSize: number;
+  txStatus: number;
+  txType: number;
+  startTime: number;
+  endTime: number;
+}
+export interface RequestEstimateFeeGet {
+  toAddress: string;
+  amount: any;
+}
+
+export interface RequestTokenPriceGet {
+  name: string;
+  currency: string;
 }
 export interface RequestAuthorizeTab {
   origin: string;
@@ -96,6 +136,11 @@ export interface AuthorizeRequest {
 
 export type RequestAuthorizeSubscribe = null;
 
+export interface ResponseTransactionsGet {
+  data: any[];
+  total: number;
+  pagination: number;
+}
 export interface ResponseWallet {
   isInitialized?: 'none' | 'pending' | 'completed';
   isLocked?: boolean;
@@ -107,7 +152,18 @@ export interface ResponseWallet {
     [key: string]: AccountTypes;
   };
 }
-
+export interface ResponseSettings {
+  autoLock?: {
+    duration?: number;
+    openTime?: number;
+  };
+  currency?: string;
+  locale?: string;
+}
+export interface ResponseAppStore {
+  settings: ResponseSettings;
+  wallet: ResponseWallet;
+}
 export interface AccountTypes {
   address?: string;
   name?: string;

@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { colors } from 'theme/colors';
 import {
-  useSelectedAddress,
-  useTokenPrice,
   useWalletActionHandlers,
   useWrongPassword,
   useTransferAction,
 } from 'state/wallet/hooks';
 import { formatDollarAmount } from 'utils/number';
+import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 
 // Components
 import { Box, Flex } from 'app/components/Box';
@@ -16,6 +15,7 @@ import { Text } from 'app/components/Text';
 import { GlitchLogo } from 'app/components/Image';
 import { Label, PasswordInput } from 'app/components/Form';
 import { Button, ButtonShadow } from 'app/components/Button';
+import { useWallet } from 'contexts/WalletContext/hooks';
 interface Props {
   amount?: any;
   toAddress?: any;
@@ -24,10 +24,11 @@ interface Props {
 
 export const Confirmation: React.FC<Props> = React.memo(
   ({ amount, estimateFee, toAddress }) => {
+    const { walletCtx } = useWallet();
     const [password, setPassword] = useState<string>('');
 
-    const { selectedAddress } = useSelectedAddress();
-    const { priceUsd } = useTokenPrice();
+    const { selectedAddress } = walletCtx || {};
+    const { tokenPrice } = useTokenPrice();
     const { isWrongPassword } = useWrongPassword();
     const { onClearIsWrongPassword } = useWalletActionHandlers();
     const { onTransfer } = useTransferAction();
@@ -66,7 +67,7 @@ export const Confirmation: React.FC<Props> = React.memo(
                 <GlitchLogo width={24} height={24} />
                 <Text ml="8px">{amount} GLCH</Text>
                 <Text ml="8px" color={colors.gray5}>
-                  {`~ ${formatDollarAmount(priceUsd * amount)} USD`}
+                  {`~ ${formatDollarAmount(tokenPrice * amount)} USD`}
                 </Text>
               </Flex>
             </Box>
@@ -79,7 +80,7 @@ export const Confirmation: React.FC<Props> = React.memo(
                 <Text>{`${estimateFee} GLCH`}</Text>
                 <Text ml="8px" color={colors.gray5}>
                   {`~ ${formatDollarAmount(
-                    parseFloat(estimateFee) * priceUsd
+                    parseFloat(estimateFee) * tokenPrice
                   )} USD`}
                 </Text>
               </Flex>
