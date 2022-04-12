@@ -6,7 +6,6 @@ import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
 
 // Types
-import { RootState } from 'types';
 import { decryptMessage } from 'utils/strings';
 import {
   RequestAccountChange,
@@ -32,7 +31,7 @@ export class GlitchController {
   glitchWeb3: GlitchWeb3;
   appStateController: AppStateController;
 
-  constructor(otps: { initialState: RootState }) {
+  constructor(otps: { initialState: ResponseAppStore }) {
     const { initialState } = otps;
     this.glitchWeb3 = new GlitchWeb3();
     this.appStateController = new AppStateController({ initialState });
@@ -157,8 +156,7 @@ export class GlitchController {
   }
 
   async logoutWallet(): Promise<ResponseAppStore> {
-    return {} as any;
-    // return await this.appStateController.setDefaultState();
+    return await this.appStateController.setDefaultState();
   }
 
   async walletValidate({ password }: RequestWalletValidate): Promise<boolean> {

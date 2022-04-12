@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
 
 import { Flex, Box } from 'app/components/Box';
@@ -17,6 +18,7 @@ interface Props {
 
 export const EnterPassword: React.FC<Props> = React.memo(
   ({ step, isNoBackedUp, onShow, onCancel }) => {
+    const history = useHistory();
     const { setAppLoading } = useApplication();
     const { onLogoutWallet } = useWallet();
 

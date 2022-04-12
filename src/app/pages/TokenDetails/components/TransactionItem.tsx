@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import secrets from 'secrets';
 
 import { colors } from 'theme/colors';
-import { TransactionItemType } from 'types/TransactionsState';
+import { useAccount } from 'contexts/WalletContext/hooks';
 
 import { messages } from '../messages';
 
@@ -15,12 +15,11 @@ import { OutlineSelectIcon } from 'app/components/Svg';
 import { Skeleton } from 'app/components/Skeleton';
 import { Button } from 'app/components/Button';
 import { TransactionStatus } from './TransactionStatus';
-import { useAccount } from 'state/wallet/hooks';
 
 const FORMAT_TIME = 'MMM DD, YYYY • HH:mm';
 
 interface Props {
-  data: TransactionItemType;
+  data: any;
   index: number;
   Placeholder?: React.ReactNode;
 }

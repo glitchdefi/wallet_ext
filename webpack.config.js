@@ -94,6 +94,12 @@ var alias = {
     'hooks',
     'useMakeTextFile.ts'
   ),
+  'hooks/useStepTitleDesc': path.join(
+    __dirname,
+    'src',
+    'hooks',
+    'useStepTitleDesc.ts'
+  ),
   'locales/translations': path.join(
     __dirname,
     'src',
@@ -235,41 +241,6 @@ var alias = {
     'components',
     'Shared',
     'index.tsx'
-  ),
-  types: path.join(__dirname, 'src', 'types', 'index.ts'),
-  'types/TransactionsState': path.join(
-    __dirname,
-    'src',
-    'types',
-    'TransactionsState.ts'
-  ),
-  'state/wallet/hooks': path.join(
-    __dirname,
-    'src',
-    'state',
-    'wallet',
-    'hooks.ts'
-  ),
-  'state/application/hooks': path.join(
-    __dirname,
-    'src',
-    'state',
-    'application',
-    'hooks.ts'
-  ),
-  'state/transactions/hooks': path.join(
-    __dirname,
-    'src',
-    'state',
-    'transactions',
-    'hooks.ts'
-  ),
-  'state/settings/hooks': path.join(
-    __dirname,
-    'src',
-    'state',
-    'settings',
-    'hooks.ts'
   ),
 };
 

@@ -1,8 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-
-import { configureAppStore } from './store/configureStore';
 
 import { ToastsProvider } from 'contexts/ToastsContext';
 import { WalletProvider } from './contexts/WalletContext';
@@ -19,19 +16,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Root: React.FC = () => {
   return (
-    <Provider store={configureAppStore()}>
-      <ToastsProvider>
-        <ApplicationProvider>
-          <SettingsProvider>
-            <WalletProvider>
-              <TokenPriceProvider>
-                <App />
-              </TokenPriceProvider>
-            </WalletProvider>
-          </SettingsProvider>
-        </ApplicationProvider>
-      </ToastsProvider>
-    </Provider>
+    <ToastsProvider>
+      <ApplicationProvider>
+        <SettingsProvider>
+          <WalletProvider>
+            <TokenPriceProvider>
+              <App />
+            </TokenPriceProvider>
+          </WalletProvider>
+        </SettingsProvider>
+      </ApplicationProvider>
+    </ToastsProvider>
   );
 };
 

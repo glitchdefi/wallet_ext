@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { messages } from './messages';
 
 // Hooks
-import { useStepTitleDesc } from 'state/wallet/hooks';
+import { useStepTitleDesc } from 'hooks/useStepTitleDesc';
 import { useWallet } from 'contexts/WalletContext/hooks';
 
 import { PageLayout } from 'app/layouts';

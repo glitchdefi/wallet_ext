@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { TransactionItemType } from 'types/TransactionsState';
 import { messages } from '../messages';
 
 import { Empty } from 'app/components/Empty';
@@ -10,7 +9,7 @@ import { Box } from 'app/components/Box';
 
 interface Props {
   loading: boolean;
-  data: TransactionItemType[];
+  data: any[];
 }
 
 export const TransactionList: React.FC<Props> = React.memo(

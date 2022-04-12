@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
-import { useStepTitleDesc } from 'state/wallet/hooks';
 import { useWallet } from 'contexts/WalletContext/hooks';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
 import { showWalletSeed, walletValidate } from 'scripts/ui/messaging';
+import { useStepTitleDesc } from 'hooks/useStepTitleDesc';
 
 import { messages } from './messages';
 

@@ -8,7 +8,7 @@ import { Routes } from 'constants/routes';
 import { messages } from './messages';
 
 // Hooks
-import { useStepTitleDesc } from 'state/wallet/hooks';
+import { useStepTitleDesc } from 'hooks/useStepTitleDesc';
 
 // Components
 import { PageLayout } from 'app/layouts';

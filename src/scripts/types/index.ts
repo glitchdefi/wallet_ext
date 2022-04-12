@@ -181,7 +181,7 @@ export interface AccountTypes {
   name?: string;
   avatar?: string;
   whenCreated?: number;
-  seed?: string;
+  seed?: { encrypted: string; secret: string };
   balance?: {
     freeBalance?: any;
     reservedBalance?: any;

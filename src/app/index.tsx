@@ -77,6 +77,8 @@ export const App: React.FC = () => {
       const { autoLock } = settings;
       const { duration, openTime } = autoLock;
 
+      console.log(initState);
+
       if (
         (isInitialized === 'pending' || isInitialized === 'completed') &&
         !isLocked

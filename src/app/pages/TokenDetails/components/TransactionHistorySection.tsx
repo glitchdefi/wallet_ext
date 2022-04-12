@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 
 import { colors } from 'theme/colors';
 import { PAGE_SIZE } from 'constants/values';
-import { useSelectedAddress } from 'state/wallet/hooks';
 import { messages } from '../messages';
 import { useTransactions } from 'hooks/useTransactions';
+import { useWallet } from 'contexts/WalletContext/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -16,6 +16,8 @@ import { TransactionList } from './TransactionList';
 
 export const TransactionHistorySection: React.FC = React.memo(() => {
   const { t } = useTranslation();
+  const { walletCtx } = useWallet();
+  const { selectedAddress } = walletCtx || {};
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [filter, setFilter] = useState({
@@ -25,8 +27,6 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
     endTime: null,
   }); // Status 2 -> all, TxType 0 -> all
   const [dateType, setDateType] = useState<'select' | 'calendar'>('select');
-
-  const { selectedAddress } = useSelectedAddress();
 
   const { isLoading, transactions } = useTransactions({
     pageIndex,
