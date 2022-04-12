@@ -16,7 +16,6 @@ const LogoutWallet: React.FC = React.memo(() => {
   const [isBackedUp, setIsBackedUp] = useState({ yes: false, no: false });
   const [step, setStep] = useState<number>(0);
   const [seed, setSeed] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
 
   return (
     <PageLayout>
@@ -46,9 +45,8 @@ const LogoutWallet: React.FC = React.memo(() => {
           isNoBackedUp={isBackedUp.no}
           step={step}
           onCancel={() => history.push(Routes.home)}
-          onShow={(seed, password) => {
+          onShow={(seed) => {
             setSeed(seed);
-            setPassword(password);
             setStep(2);
           }}
         />
@@ -62,10 +60,7 @@ const LogoutWallet: React.FC = React.memo(() => {
         />
       )}
       {step === 3 && (
-        <ConfirmLogout
-          password={password}
-          onCancel={() => history.push(Routes.home)}
-        />
+        <ConfirmLogout onCancel={() => history.push(Routes.home)} />
       )}
     </PageLayout>
   );

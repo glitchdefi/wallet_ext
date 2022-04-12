@@ -255,35 +255,35 @@ export const transfer = async (
   controller: GlitchController,
   sendResponse: SendResponse
 ) => {
-  try {
-    const { password, toAddress, amount } = payload || {};
+  // try {
+  //   const { password, toAddress, amount } = payload || {};
 
-    await controller.transfer(
-      password,
-      toAddress,
-      amount,
-      (msg) => {
-        sendResponse({
-          ...successfulResponse,
-          state: { isWrongPassword: false, status: false, message: msg },
-        });
-      },
-      () => {
-        sendResponse({
-          ...successfulResponse,
-          state: { isWrongPassword: false, status: true, message: null },
-        });
-      },
-      () => {
-        sendResponse({
-          ...errorResponse,
-          state: { isWrongPassword: true },
-        });
-      }
-    );
-  } catch (error) {
-    sendResponse({ ...errorResponse, error });
-  }
+  //   await controller.transfer(
+  //     password,
+  //     toAddress,
+  //     amount,
+  //     (msg) => {
+  //       sendResponse({
+  //         ...successfulResponse,
+  //         state: { isWrongPassword: false, status: false, message: msg },
+  //       });
+  //     },
+  //     () => {
+  //       sendResponse({
+  //         ...successfulResponse,
+  //         state: { isWrongPassword: false, status: true, message: null },
+  //       });
+  //     },
+  //     () => {
+  //       sendResponse({
+  //         ...errorResponse,
+  //         state: { isWrongPassword: true },
+  //       });
+  //     }
+  //   );
+  // } catch (error) {
+  //   sendResponse({ ...errorResponse, error });
+  // }
 };
 
 export const getEstimateFee = async (

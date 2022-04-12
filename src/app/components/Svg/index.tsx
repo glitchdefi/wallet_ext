@@ -33,6 +33,7 @@ export { default as OutlineSelectIcon } from './Icons/OutlineSelect';
 export { default as FilterIcon } from './Icons/Filter';
 export { default as CalendarIcon } from './Icons/Calendar';
 export { default as SwapRightIcon } from './Icons/SwapRight';
+export { default as LinkIcon } from './Icons/LinkIcon';
 
 export { default as Svg } from './Svg';
 export type { SvgProps } from './types';

@@ -36,14 +36,16 @@ export default function handler(
   if (promise)
     promise
       .then((response: any): void => {
-        console.log('UI received: ', response);
-        console.log(`[out] ${source}`); // :: ${JSON.stringify(response)}`);
+        if (response !== 'pending') {
+          console.log('UI received: ', response);
+          console.log(`[out] ${source}`); // :: ${JSON.stringify(response)}`);
 
-        // between the start and the end of the promise, the user may have closed
-        // the tab, in which case port will be undefined
-        assert(port, 'Port has been disconnected');
+          // between the start and the end of the promise, the user may have closed
+          // the tab, in which case port will be undefined
+          assert(port, 'Port has been disconnected');
 
-        port.postMessage({ id, response });
+          port.postMessage({ id, response });
+        }
       })
       .catch((error: Error): void => {
         console.log(`[err] ${source}:: ${error.message}`);

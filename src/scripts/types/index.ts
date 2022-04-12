@@ -34,6 +34,10 @@ export interface RequestSignatures {
   'pri(wallet.account.import)': [RequestAccountImport, ResponseWallet];
   'pri(wallet.account.change)': [RequestAccountChange, ResponseWallet];
   'pri(wallet.account.edit)': [RequestAccountEdit, ResponseWallet];
+  'pri(wallet.account.transfer)': [
+    RequestAccountTransfer,
+    ResponseAccountTransfer
+  ];
   'pri(wallet.account.balance.get)': [null, ResponseWallet];
   'pri(wallet.account.privatekey.validate)': [
     RequestPrivatekeyValidate,
@@ -124,6 +128,11 @@ export interface RequestTokenPriceGet {
   name: string;
   currency: string;
 }
+
+export interface RequestAccountTransfer {
+  toAddress: string;
+  amount: any;
+}
 export interface RequestAuthorizeTab {
   origin: string;
 }
@@ -135,7 +144,10 @@ export interface AuthorizeRequest {
 }
 
 export type RequestAuthorizeSubscribe = null;
-
+export interface ResponseAccountTransfer {
+  success: boolean;
+  message: string;
+}
 export interface ResponseTransactionsGet {
   data: any[];
   total: number;

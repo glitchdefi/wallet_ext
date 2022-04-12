@@ -21,15 +21,15 @@ const Root: React.FC = () => {
   return (
     <Provider store={configureAppStore()}>
       <ToastsProvider>
-        <SettingsProvider>
-          <WalletProvider>
-            <ApplicationProvider>
+        <ApplicationProvider>
+          <SettingsProvider>
+            <WalletProvider>
               <TokenPriceProvider>
                 <App />
               </TokenPriceProvider>
-            </ApplicationProvider>
-          </WalletProvider>
-        </SettingsProvider>
+            </WalletProvider>
+          </SettingsProvider>
+        </ApplicationProvider>
       </ToastsProvider>
     </Provider>
   );

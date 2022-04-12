@@ -7,6 +7,7 @@ import { colors } from 'theme/colors';
 
 import { useStepTitleDesc } from 'state/wallet/hooks';
 import { useWallet } from 'contexts/WalletContext/hooks';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
 import { showWalletSeed, walletValidate } from 'scripts/ui/messaging';
 
 import { messages } from './messages';
@@ -27,6 +28,7 @@ import { EnterPassword } from './components/EnterPassword';
 const BackUp: React.FC = React.memo(() => {
   const history = useHistory();
   const { t } = useTranslation();
+  const { setAppLoading } = useApplication();
   const { onBackupWallet } = useWallet();
 
   const [step, setStep] = useState<number>(0);
@@ -37,6 +39,7 @@ const BackUp: React.FC = React.memo(() => {
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'create');
 
   const _onShowWalletSeed = (password: string) => {
+    setAppLoading(true);
     setPassword(password);
     walletValidate({ password }).then(async (valid) => {
       if (valid) {
@@ -44,6 +47,7 @@ const BackUp: React.FC = React.memo(() => {
         setSeed(seed);
         setStep(1);
       }
+      setAppLoading(false);
       setValidPassword(valid);
     });
   };
@@ -95,10 +99,7 @@ const BackUp: React.FC = React.memo(() => {
           </Flex>
 
           {step === 1 && (
-            <MnemonicPhraseStep
-              seed={seed}
-              onNextStep={() => setStep(2)}
-            />
+            <MnemonicPhraseStep seed={seed} onNextStep={() => setStep(2)} />
           )}
 
           {step === 2 && (

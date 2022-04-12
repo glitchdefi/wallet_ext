@@ -99,19 +99,11 @@ export class GlitchWeb3 {
   }
 
   async getBalance(address: string) {
-    try {
-      const { data: balance } = await this.api.query.system.account(address);
-      return {
-        freeBalance: `${balance.free}`
-          ? web3Utils.fromWei(`${balance.free}`)
-          : '0',
-        reservedBalance: `${balance.reserved}`
-          ? web3Utils.fromWei(`${balance.reserved}`)
-          : '0',
-      };
-    } catch (e) {
-      throw new Error((e as Error).message);
-    }
+    const { data: balance } = await this.api.query.system.account(address);
+    return {
+      freeBalance: `${balance.free ? `${balance.free}` : '0'}`,
+      reservedBalance: `${balance.reserved ? `${balance.reserved}` : '0'}`,
+    };
   }
 
   async getEstimateFee(
@@ -169,7 +161,7 @@ export class GlitchWeb3 {
               const codeError = `${section}.${name}`;
 
               log.info(`${codeError}: ${msg}`);
-
+              
               onFailedCb(
                 codeError === 'balances.InsufficientBalance'
                   ? 'Insufficient funds'

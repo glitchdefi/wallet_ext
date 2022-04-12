@@ -1,6 +1,6 @@
 import { ComponentProps, ElementType, ReactElement } from 'react';
 import { Link } from 'react-router-dom';
-import { LayoutProps, SpaceProps } from 'styled-system';
+import { LayoutProps, SpaceProps, TypographyProps } from 'styled-system';
 
 export const variants = {
   PRIMARY: 'primary',
@@ -32,7 +32,10 @@ export type PolymorphicComponent<P, D extends ElementType = 'button'> = <
   props: PolymorphicComponentProps<E, P>
 ) => ReactElement | null;
 
-export interface BaseButtonProps extends LayoutProps, SpaceProps {
+export interface BaseButtonProps
+  extends LayoutProps,
+    SpaceProps,
+    TypographyProps {
   as?: 'a' | 'button' | typeof Link | 'div';
   variant?: Variant;
   external?: boolean;

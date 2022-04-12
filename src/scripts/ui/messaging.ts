@@ -23,6 +23,8 @@ import type {
   ResponseTransactionsGet,
   RequestEstimateFeeGet,
   RequestTokenPriceGet,
+  RequestAccountTransfer,
+  ResponseAccountTransfer,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -205,6 +207,12 @@ export async function getTokenPrice(
   request: RequestTokenPriceGet
 ): Promise<string | number> {
   return sendMessage('pri(token.price.get)', request);
+}
+
+export async function transfer(
+  request: RequestAccountTransfer
+): Promise<ResponseAccountTransfer> {
+  return sendMessage('pri(wallet.account.transfer)', request);
 }
 
 export async function resetAppState(): Promise<ResponseWallet> {

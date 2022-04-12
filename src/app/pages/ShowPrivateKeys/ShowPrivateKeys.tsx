@@ -10,6 +10,7 @@ import { truncateAddress } from 'utils/strings';
 import { messages } from './messages';
 
 import { useAccount } from 'contexts/WalletContext/hooks';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
 import { showAccountPrivateKey, walletValidate } from 'scripts/ui/messaging';
 
 import { Box, Flex } from 'app/components/Box';
@@ -25,6 +26,7 @@ const ShowPrivateKeys: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
+  const { setAppLoading } = useApplication();
   const { name, avatar, address } = useAccount();
 
   const [copied, setCopied] = useState<boolean>(false);
@@ -46,11 +48,14 @@ const ShowPrivateKeys: React.FC = () => {
   };
 
   const onConfirm = () => {
+    setAppLoading(true);
+
     walletValidate({ password }).then(async (valid: boolean) => {
       if (valid) {
         const pk = await showAccountPrivateKey();
         setPrivateKey(pk);
       }
+      setAppLoading(false);
       setValidPassword(valid);
     });
   };

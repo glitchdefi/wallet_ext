@@ -7,7 +7,7 @@ import { messages } from './messages';
 import { Routes } from 'constants/routes';
 
 import { useWallet } from 'contexts/WalletContext/hooks';
-
+import { useApplication } from 'contexts/ApplicationContext/hooks';
 import { walletValidate } from 'scripts/ui/messaging';
 // Theme
 import { colors } from 'theme/colors';
@@ -23,22 +23,31 @@ import { PageLayout } from 'app/layouts';
 
 const Unlock: React.FC = () => {
   const history = useHistory();
+  const { setAppLoading } = useApplication();
   const { t } = useTranslation();
   const { onUnlockWallet } = useWallet();
 
   const [password, setPassword] = useState<string>('');
   const [isPassValid, setIsPassValid] = useState<boolean>(true);
 
+  const _unlockWallet = () => {
+    setAppLoading(true);
+
+    walletValidate({ password }).then((isValid: boolean) => {
+      if (isValid) {
+        onUnlockWallet(history);
+      } else {
+        setAppLoading(false);
+      }
+      setIsPassValid(isValid);
+    });
+  };
+
   // Trigger when user enter
   const onKeyPress = (event: { keyCode: any; which: any }) => {
     const code = event.keyCode || event.which;
     if (code === 13 && password) {
-      walletValidate({ password }).then((isValid: boolean) => {
-        if (isValid) {
-          onUnlockWallet(history);
-        }
-        setIsPassValid(isValid);
-      });
+      _unlockWallet();
     }
   };
 
@@ -88,17 +97,7 @@ const Unlock: React.FC = () => {
                     {t(messages.unlock())}
                   </Button>
                 ) : (
-                  <ButtonShadow
-                    width="100%"
-                    onClick={() => {
-                      walletValidate({ password }).then((isValid: boolean) => {
-                        if (isValid) {
-                          onUnlockWallet(history);
-                        }
-                        setIsPassValid(isValid);
-                      });
-                    }}
-                  >
+                  <ButtonShadow width="100%" onClick={_unlockWallet}>
                     {t(messages.unlock())}
                   </ButtonShadow>
                 )}

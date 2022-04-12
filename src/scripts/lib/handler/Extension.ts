@@ -19,6 +19,7 @@ import type {
   ResponseTransactionsGet,
   RequestEstimateFeeGet,
   RequestTokenPriceGet,
+  RequestAccountTransfer,
 } from '../../types';
 import State from './State';
 import { GlitchController } from '../../controllers/GlitchController';
@@ -139,6 +140,26 @@ export default class Extension {
     return this.controller.getEstimateFee(request);
   }
 
+  private async transfer(
+    request: RequestAccountTransfer,
+    id: string,
+    port: chrome.runtime.Port
+  ): Promise<any> {
+    await this.controller.transfer(
+      request,
+      // Failed
+      (msg: string) => {
+        port.postMessage({ id, response: { success: false, message: msg } });
+      },
+      // Success
+      () => {
+        port.postMessage({ id, response: { success: true, message: null } });
+      }
+    );
+
+    return Promise.resolve('pending');
+  }
+
   private getTokenPrice(
     request: RequestTokenPriceGet
   ): Promise<string | number> {
@@ -191,6 +212,8 @@ export default class Extension {
         return this.privateKeyValidate(request as RequestPrivatekeyValidate);
       case 'pri(wallet.account.privatekey.show)':
         return this.showAccountPrivateKey();
+      case 'pri(wallet.account.transfer)':
+        return this.transfer(request as RequestAccountTransfer, id, port);
       case 'pri(settings.autolock.set)':
         return this.setAutoLock(request as RequestAutoLockSet);
       case 'pri(transactions.list.get)':

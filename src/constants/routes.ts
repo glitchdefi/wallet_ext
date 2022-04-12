@@ -17,4 +17,5 @@ export const Routes = {
   addAssets: '/add-assets',
   backUp: '/back-up',
   sendToken: '/send-token',
+  connectedDapps: '/connected-dapps',
 };

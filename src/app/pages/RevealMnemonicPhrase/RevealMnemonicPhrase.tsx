@@ -4,6 +4,7 @@ import { useHistory } from 'react-router';
 import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 import { showWalletSeed, walletValidate } from 'scripts/ui/messaging';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -17,16 +18,20 @@ import { Header, MnemonicPhraseView } from 'app/components/Shared';
 const RevealMnemonicPhrase: React.FC = React.memo(() => {
   const history = useHistory();
 
+  const { setAppLoading } = useApplication();
   const [password, setPassword] = useState<string>('');
   const [seed, setSeed] = useState<string>('');
   const [validPassword, setValidPassword] = useState<boolean>(true);
 
   const _onShowWalletSeed = () => {
+    setAppLoading(true);
+
     walletValidate({ password }).then(async (valid: boolean) => {
       if (valid) {
         const seed = await showWalletSeed();
         setSeed(seed);
       }
+      setAppLoading(false);
       setValidPassword(valid);
     });
   };

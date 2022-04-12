@@ -10,10 +10,10 @@ import { ToastListener } from 'contexts/ToastsContext';
 import { ExtensionStore } from '../scripts/lib/localStore';
 
 // Hooks
-import { useLoadingApplication } from 'state/application/hooks';
 import { useSettings } from 'contexts/SettingsContext/hooks';
 import { useWallet } from 'contexts/WalletContext/hooks';
 import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
 import {
   getTokenPrice,
   subscribeAuthorizeRequests,
@@ -44,11 +44,12 @@ import { BackUpPage } from './pages/BackUp';
 import { SendTokenPage } from './pages/SendToken';
 import { AuthorizePage } from './pages/Authorize';
 import { AuthorizeRequest } from 'scripts/types';
+import { ConnectedDapps } from './pages/ConnectedDapps';
 
 const history = createMemoryHistory();
 
 export const App: React.FC = () => {
-  const { isLoading } = useLoadingApplication();
+  const { appLoading } = useApplication();
   const { setSettingsCtx } = useSettings();
   const { setTokenPrice } = useTokenPrice();
   const { walletCtx, setWalletCtx, onLockWallet, onGetAccountBalance } =
@@ -148,10 +149,11 @@ export const App: React.FC = () => {
       <ScrollToTop />
       <ToastListener />
       <ContainerLayout>
-        {isLoading && <LoadingApplication />}
+        {appLoading && <LoadingApplication />}
         <Switch>
           <Route exact path={Routes.welcome} component={WelcomePage} />
           <Route path={Routes.authorize} component={AuthorizePage} />
+          <Route path={Routes.connectedDapps} component={ConnectedDapps} />
           <Route
             path={Routes.internetWarning}
             component={InternetWarningPage}

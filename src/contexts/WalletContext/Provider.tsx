@@ -26,9 +26,9 @@ import {
 } from 'scripts/ui/messaging';
 import { useToast } from 'hooks/useToast';
 import { useSettings } from 'contexts/SettingsContext/hooks';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
 
 export type WalletContextType = {
-  loading?: boolean;
   walletCtx?: ResponseWallet | undefined;
   setWalletCtx?: (wallet: ResponseWallet) => void;
   onCreateWallet?: (request: RequestWalletCreate) => void;
@@ -51,7 +51,7 @@ export const WalletContext = createContext<WalletContextType>(undefined);
 export const WalletProvider: React.FC = ({ children }) => {
   const { toastSuccess } = useToast();
   const { setSettingsCtx } = useSettings();
-  const [loading, setLoading] = useState<boolean>(false);
+  const { setAppLoading, onSetActiveTabHomePage } = useApplication();
   const [wallet, setWallet] = useState<ResponseWallet>();
 
   const onCreateWallet = useCallback((request: RequestWalletCreate) => {
@@ -59,20 +59,20 @@ export const WalletProvider: React.FC = ({ children }) => {
   }, []);
 
   const onCreateWalletCompleted = useCallback((history: any) => {
-    setLoading(true);
+    setAppLoading(true);
 
     createWalletCompleted()
       .then(setWallet)
       .finally(() => {
         toastSuccess(null, 'Success! Your wallet has been created!');
-        setLoading(false);
+        setAppLoading(false);
         history.push(Routes.home);
       });
   }, []);
 
   const onRestoreWallet = useCallback(
     (request: RequestWalletRestore, history: any) => {
-      setLoading(true);
+      setAppLoading(true);
 
       restoreWallet(request)
         .then(setWallet)
@@ -81,7 +81,7 @@ export const WalletProvider: React.FC = ({ children }) => {
             null,
             'Congrats! Your wallet has been restored successfully.'
           );
-          setLoading(false);
+          setAppLoading(false);
           history.push(Routes.home);
         });
     },
@@ -95,13 +95,18 @@ export const WalletProvider: React.FC = ({ children }) => {
   }, []);
 
   const onUnlockWallet = useCallback((history: any) => {
+    setAppLoading(true);
+
     unlockWallet()
       .then(setWallet)
-      .finally(() => history.push(Routes.home));
+      .finally(() => {
+        setAppLoading(false);
+        history.push(Routes.home);
+      });
   }, []);
 
   const onBackupWallet = useCallback((history: any) => {
-    setLoading(true);
+    setAppLoading(true);
 
     backupWallet()
       .then(setWallet)
@@ -110,34 +115,35 @@ export const WalletProvider: React.FC = ({ children }) => {
           null,
           'Congrats! Your wallet has been backed up successfully.'
         );
-        setLoading(false);
+        setAppLoading(false);
         history.push(Routes.home);
       });
   }, []);
 
   const onLogoutWallet = useCallback((history: any) => {
-    setLoading(true);
+    setAppLoading(true);
 
     logoutWallet()
       .then((data) => {
         const { wallet, settings } = data;
         setWallet(wallet);
         setSettingsCtx(settings);
+        onSetActiveTabHomePage(0);
       })
       .finally(() => {
-        setLoading(false);
+        setAppLoading(false);
         history.push(Routes.welcome);
       });
   }, []);
 
   const onCreateAccount = useCallback(
     (request: RequestAccountCreate, history: any) => {
-      setLoading(true);
+      setAppLoading(true);
 
       createAccount(request)
         .then(setWallet)
         .finally(() => {
-          setLoading(false);
+          setAppLoading(false);
           history.push(Routes.home);
         });
     },
@@ -146,12 +152,12 @@ export const WalletProvider: React.FC = ({ children }) => {
 
   const onImportAccount = useCallback(
     (request: RequestAccountImport, history: any) => {
-      setLoading(true);
+      setAppLoading(true);
 
       importAccount(request)
         .then(setWallet)
         .finally(() => {
-          setLoading(false);
+          setAppLoading(false);
           history.push(Routes.home);
         });
     },
@@ -159,12 +165,12 @@ export const WalletProvider: React.FC = ({ children }) => {
   );
 
   const onChangeAccount = useCallback((request: RequestAccountChange) => {
-    setLoading(true);
+    setAppLoading(true);
 
     changeAccount(request)
       .then(setWallet)
       .finally(() => {
-        setLoading(false);
+        setAppLoading(false);
       });
   }, []);
 
@@ -185,7 +191,6 @@ export const WalletProvider: React.FC = ({ children }) => {
   return (
     <WalletContext.Provider
       value={{
-        loading,
         walletCtx: wallet,
         setWalletCtx: setWallet,
         onCreateWallet,

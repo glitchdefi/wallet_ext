@@ -1,7 +1,14 @@
-import React, { createContext, useCallback, useState } from 'react';
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 
 export type ApplicationContextType = {
-  loading?: boolean;
+  appLoading?: boolean;
+  setAppLoading?: Dispatch<SetStateAction<boolean>>;
   activeTabHomePage?: number;
   onSetActiveTabHomePage?: (activeTab: number) => void;
 };
@@ -10,7 +17,7 @@ export const ApplicationContext =
   createContext<ApplicationContextType>(undefined);
 
 export const ApplicationProvider: React.FC = ({ children }) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [appLoading, setAppLoading] = useState<boolean>(false);
   const [activeTabHomePage, setActiveTabHomePage] = useState<number>(0);
 
   const onSetActiveTabHomePage = useCallback((activeTab: number) => {
@@ -19,7 +26,12 @@ export const ApplicationProvider: React.FC = ({ children }) => {
 
   return (
     <ApplicationContext.Provider
-      value={{ activeTabHomePage, onSetActiveTabHomePage }}
+      value={{
+        appLoading,
+        setAppLoading,
+        activeTabHomePage,
+        onSetActiveTabHomePage,
+      }}
     >
       {children}
     </ApplicationContext.Provider>

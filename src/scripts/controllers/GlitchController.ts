@@ -13,6 +13,7 @@ import {
   RequestAccountCreate,
   RequestAccountEdit,
   RequestAccountImport,
+  RequestAccountTransfer,
   RequestAutoLockSet,
   RequestEstimateFeeGet,
   RequestPrivatekeyValidate,
@@ -267,8 +268,6 @@ export class GlitchController {
   }: RequestAccountChange): Promise<ResponseWallet> {
     const oldAccounts = await this.appStateController.getAccounts();
 
-    oldAccounts[address].balance = { freeBalance: '0', reservedBalance: '0' };
-
     return await this.appStateController.updateState('wallet', {
       selectedAddress: address,
       accounts: {
@@ -304,38 +303,24 @@ export class GlitchController {
     });
   }
 
-  /**
-   *  Transfer token
-   * @returns
-   */
   async transfer(
-    password?: string,
-    toAddress?: string,
-    amount?: any,
+    { toAddress, amount }: RequestAccountTransfer,
     onFailedCb?: (msg: string) => void,
-    onSuccessCb?: () => void,
-    onWrongPassCb?: () => void
+    onSuccessCb?: () => void
   ): Promise<void> {
     try {
-      const firstAddress = await this.appStateController.getParentAddress();
       const currentAddress = await this.appStateController.getSelectedAddress();
-      const isValid = this.glitchWeb3.unlockAccount(password, firstAddress);
+      this.glitchWeb3.unlockAccount('', currentAddress);
 
-      if (isValid) {
-        this.glitchWeb3.unlockAccount('', currentAddress);
-
-        await this.glitchWeb3.transfer(
-          currentAddress,
-          toAddress,
-          amount,
-          onFailedCb,
-          onSuccessCb
-        );
-      } else {
-        onWrongPassCb();
-      }
+      await this.glitchWeb3.transfer(
+        currentAddress,
+        toAddress,
+        amount,
+        onFailedCb,
+        onSuccessCb
+      );
     } catch (e: any) {
-      log.info('transfer', e);
+      log.info('Transfer error: ', e);
       const msg =
         e.message ===
         '1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low'

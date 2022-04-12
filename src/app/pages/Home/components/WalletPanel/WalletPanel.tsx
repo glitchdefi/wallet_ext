@@ -20,7 +20,12 @@ import { colors } from 'theme/colors';
 import { Box, Flex } from 'app/components/Box';
 import { CopyButton } from 'app/components/Button';
 import { Text } from 'app/components/Text';
-import { EllipsisIcon, GatewayIcon, ProfileIcon } from 'app/components/Svg';
+import {
+  EllipsisIcon,
+  GatewayIcon,
+  LinkIcon,
+  ProfileIcon,
+} from 'app/components/Svg';
 import { GlitchLogo } from 'app/components/Image';
 import { Dropdown } from 'app/components/Dropdown';
 import { AssetsSection } from '../AssetsSection';
@@ -58,6 +63,7 @@ export const WalletPanel: React.FC = React.memo(() => {
               onSelect={(eventKey) => {
                 if (eventKey == 0) history.push(Routes.accountDetails);
                 if (eventKey == 1) history.push(Routes.showPrivateKeys);
+                if (eventKey == 2) history.push(Routes.connectedDapps);
               }}
               customToggle={
                 <Flex width="24px" height="24px" alignItems="center">
@@ -74,6 +80,11 @@ export const WalletPanel: React.FC = React.memo(() => {
                   key: 1,
                   icon: <GatewayIcon />,
                   label: t(messages.showPrivateKey()),
+                },
+                {
+                  key: 2,
+                  icon: <LinkIcon />,
+                  label: t(messages.connectedDapps()),
                 },
               ]}
             />
