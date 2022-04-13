@@ -4,11 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { Routes } from 'constants/routes';
 
 import { colors } from 'theme/colors';
-import { useAccount } from 'state/wallet/hooks';
 import {
+  calcTotalBalance,
   formatDollarAmount,
   formatNumberDownRoundWithExtractMax,
 } from 'utils/number';
+import { useAccount } from 'contexts/WalletContext/hooks';
+import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 
 import { messages } from './messages';
 
@@ -25,8 +27,11 @@ const TokenDetails: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const history = useHistory();
 
+  const { tokenPrice } = useTokenPrice();
   const account = useAccount();
-  const { totalBalance, totalValue } = account;
+  const { balance } = account;
+  const totalBalance = calcTotalBalance(balance);
+  const totalValue = totalBalance * tokenPrice;
 
   return (
     <PageLayout>

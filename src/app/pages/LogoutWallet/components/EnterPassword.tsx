@@ -1,47 +1,60 @@
 import React, { useEffect, useState } from 'react';
-
-import {
-  useSeedPhrase,
-  useWalletActionHandlers,
-  useWrongPassword,
-} from 'state/wallet/hooks';
+import { useHistory } from 'react-router';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
 
 import { Flex, Box } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { colors } from 'theme/colors';
 import { Label, PasswordInput } from 'app/components/Form';
 import { Button, ButtonShadow } from 'app/components/Button';
-
+import { useWallet } from 'contexts/WalletContext/hooks';
+import { showWalletSeed, walletValidate } from 'scripts/ui/messaging';
 interface Props {
   step?: number;
   isNoBackedUp?: boolean;
-  onShow?: (seedPhrase: string, password: string) => void;
+  onShow?: (seed: string) => void;
   onCancel: () => void;
 }
 
 export const EnterPassword: React.FC<Props> = React.memo(
   ({ step, isNoBackedUp, onShow, onCancel }) => {
-    const { isWrongPassword } = useWrongPassword();
-    const { seedPhrase } = useSeedPhrase();
-    const {
-      onLogoutWallet,
-      onShowSeedPhrase,
-      onClearIsWrongPassword,
-      onClearSeedPhrase,
-    } = useWalletActionHandlers();
+    const history = useHistory();
+    const { setAppLoading } = useApplication();
+    const { onLogoutWallet } = useWallet();
 
+    const [seed, setSeed] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [validPassword, setValidPassword] = useState<boolean>(true);
 
     useEffect(() => {
-      return () => {
-        onClearIsWrongPassword();
-        onClearSeedPhrase();
-      };
-    }, []);
+      if (seed) onShow(seed);
+    }, [seed]);
 
-    useEffect(() => {
-      if (seedPhrase) onShow(seedPhrase, password);
-    }, [seedPhrase]);
+    const onShowSeedClick = () => {
+      setAppLoading(true);
+
+      walletValidate({ password }).then(async (valid) => {
+        if (valid) {
+          const seed = await showWalletSeed();
+          setSeed(seed);
+        }
+        setAppLoading(false);
+        setValidPassword(valid);
+      });
+    };
+
+    const onLogoutClick = () => {
+      setAppLoading(true);
+
+      walletValidate({ password }).then((valid) => {
+        if (valid) {
+          onLogoutWallet(history);
+        } else {
+          setAppLoading(false);
+        }
+        setValidPassword(valid);
+      });
+    };
 
     return (
       <Flex flex={1} flexDirection="column" pt="32px" pb="24px" px="32px">
@@ -75,14 +88,13 @@ export const EnterPassword: React.FC<Props> = React.memo(
           <Box mt="16px">
             <Label>Glitch Password</Label>
             <PasswordInput
-              isError={isWrongPassword}
+              isError={!validPassword}
               value={password}
               placeholder="Password"
               onChange={(e) => {
                 const { value } = e.target;
-                isWrongPassword && onClearIsWrongPassword();
-
                 setPassword(value);
+                !validPassword && setValidPassword(true);
               }}
               msgError="Incorrect password"
             />
@@ -95,10 +107,7 @@ export const EnterPassword: React.FC<Props> = React.memo(
               Cancel
             </Button>
             {password ? (
-              <ButtonShadow
-                width="50%"
-                onClick={() => onShowSeedPhrase(password)}
-              >
+              <ButtonShadow width="50%" onClick={onShowSeedClick}>
                 Show
               </ButtonShadow>
             ) : (
@@ -112,7 +121,7 @@ export const EnterPassword: React.FC<Props> = React.memo(
             <Button
               width="100%"
               variant={password ? 'warning' : 'disable-secondary'}
-              onClick={() => onLogoutWallet(password)}
+              onClick={onLogoutClick}
             >
               Log out
             </Button>

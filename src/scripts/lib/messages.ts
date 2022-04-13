@@ -21,14 +21,3 @@ export const sendMessage = (message: {
     });
   });
 };
-
-export const getManifest = () => {
-  const { runtime } = chrome;
-  return new Promise((resolve, reject) => {
-    try {
-      resolve(runtime.getManifest());
-    } catch (err) {
-      reject(err);
-    }
-  });
-};

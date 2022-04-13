@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { useWalletActionHandlers } from 'state/wallet/hooks';
 import { colors } from 'theme/colors';
-import { Routes } from 'constants/routes';
 
 import { Flex } from 'app/components/Box';
 import { Button } from 'app/components/Button';
@@ -14,16 +12,17 @@ interface Props {
   account?: { avatar?: string };
   hasBackButton?: boolean;
   hasBottomBorder?: boolean;
+  onLockWallet?: (history: any) => void;
 }
 
 export const Header: React.FC<Props> = ({
   account,
   hasBackButton,
   hasBottomBorder,
+  onLockWallet,
 }) => {
   const history = useHistory();
   const { avatar } = account;
-  const { onLockWallet } = useWalletActionHandlers();
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
@@ -37,7 +36,7 @@ export const Header: React.FC<Props> = ({
       >
         <Flex alignItems="center">
           {hasBackButton && (
-            <Button p="0px" mr="16px" onClick={() => history.push(Routes.home)}>
+            <Button p="0px" mr="16px" onClick={() => history.push('/')}>
               <LeftArrowIcon color={colors.primary} width="16px" />
             </Button>
           )}
@@ -46,7 +45,7 @@ export const Header: React.FC<Props> = ({
         </Flex>
 
         <Flex alignItems="center" justifyContent="flex-end">
-          <Button p="0px" onClick={onLockWallet}>
+          <Button p="0px" onClick={() => onLockWallet(history)}>
             <LockIcon />
           </Button>
 

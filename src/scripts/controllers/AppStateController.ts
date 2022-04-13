@@ -1,31 +1,23 @@
-import { RootState } from 'types';
-import { SettingState } from 'types/SettingsState';
-import { TransactionsState } from 'types/TransactionsState';
-import { WalletState } from 'types/WalletState';
 import { ExtensionStore } from '../lib/localStore';
 
-export class AppStateController {
-  store: RootState;
-  localStore: ExtensionStore;
-  defaultState: RootState;
+import { ResponseAppStore, ResponseSettings, ResponseWallet } from '../types';
 
-  constructor(opts: { initialState?: RootState }) {
+export class AppStateController {
+  store: ResponseAppStore;
+  localStore: ExtensionStore;
+  defaultState: ResponseAppStore;
+
+  constructor(opts: { initialState?: ResponseAppStore }) {
     const { initialState } = opts;
 
-    const defaultState: RootState = {
-      application: {
-        activeTabHomePage: 0,
-        isLoading: false,
-      },
+    const defaultState: ResponseAppStore = {
       wallet: {
         isInitialized: 'none',
         isLocked: false,
         accounts: {},
         selectedAddress: null,
-        firstAddress: null,
-        priceUsd: null,
+        parentAddress: null,
       },
-      transactions: {},
       settings: {
         locale: 'en',
         currency: 'usd',
@@ -40,32 +32,28 @@ export class AppStateController {
     this.defaultState = defaultState;
 
     this.localStore.set({ ...defaultState, ...initialState }).then((store) => {
-      this.store = store;
+      this.store = store as ResponseAppStore;
     });
   }
 
-  async getState(): Promise<RootState> {
+  async getState(): Promise<ResponseAppStore> {
     return await this.localStore.getAllStorageData();
   }
 
-  async getDefaultState(): Promise<RootState> {
+  async getDefaultState(): Promise<ResponseAppStore> {
     return this.defaultState;
   }
 
-  async setDefaultState(): Promise<object> {
+  async setDefaultState(): Promise<ResponseAppStore> {
     await this.localStore.set({ ...this.defaultState });
     return { ...this.defaultState };
   }
 
-  async getWalletState(): Promise<WalletState> {
+  async getWalletState(): Promise<ResponseWallet> {
     return await this.localStore.get('wallet');
   }
 
-  async getTransactionsState(): Promise<TransactionsState> {
-    return await this.localStore.get('transactions');
-  }
-
-  async getSettingsState(): Promise<SettingState> {
+  async getSettingsState(): Promise<ResponseSettings> {
     return await this.localStore.get('settings');
   }
 
@@ -88,28 +76,32 @@ export class AppStateController {
     return await this.localStore.get('keyAccounts');
   }
 
-  async getAddressSelected(): Promise<string> {
+  async getSelectedAddress(): Promise<string> {
     return (await this.getWalletState()).selectedAddress;
   }
 
-  async getFirstAddress(): Promise<string> {
-    return (await this.getWalletState()).firstAddress;
+  async getParentAddress(): Promise<string> {
+    return (await this.getWalletState()).parentAddress;
   }
 
-  async getAccounts(): Promise<WalletState['accounts']> {
+  async getAccounts(): Promise<ResponseWallet['accounts']> {
     return (await this.getWalletState()).accounts;
   }
 
   async updateState(
-    key: 'wallet' | 'transactions' | 'settings',
-    obj: WalletState | TransactionsState | SettingState
-  ): Promise<object> {
+    key: 'wallet' | 'settings',
+    obj: ResponseWallet | ResponseSettings
+  ): Promise<any> {
     const oldState = await this.getState();
-    return await this.localStore.set({
+    const response = (await this.localStore.set({
       [key]: {
         ...oldState[key],
         ...obj,
       },
-    });
+    })) as {
+      wallet: ResponseWallet | ResponseSettings;
+    };
+
+    return response[key];
   }
 }

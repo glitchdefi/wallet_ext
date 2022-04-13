@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useDebounce } from 'use-lodash-debounce';
 
 import { colors } from 'theme/colors';
-import {
-  useTokenPrice,
-  useAccount,
-  useTransferAction,
-} from 'state/wallet/hooks';
 import { isValidAddressPolkadotAddress } from 'utils/strings';
-import { formatNumberDownRoundWithExtractMax } from 'utils/number';
+import {
+  calcTotalBalance,
+  formatNumberDownRoundWithExtractMax,
+} from 'utils/number';
+import { useAccount } from 'contexts/WalletContext/hooks';
+import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
+import { getEstimateFee } from 'scripts/ui/messaging';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { Button, ButtonShadow } from 'app/components/Button';
-import { DownArrowIcon } from 'app/components/Svg';
+// import { DownArrowIcon } from 'app/components/Svg';
 import { GlitchLogo } from 'app/components/Image';
 import { Label, Input } from 'app/components/Form';
 import { AmountInput } from './AmountInput';
@@ -25,21 +26,21 @@ interface Props {
 }
 
 export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
-  const { address, balance } = useAccount();
-  const { priceUsd } = useTokenPrice();
-  const { getEstimateFee } = useTransferAction();
+  const { balance } = useAccount();
+  const totalBalance = calcTotalBalance(balance);
+  const { tokenPrice } = useTokenPrice();
 
   const [toAddress, setToAddress] = useState<string>('');
   const [amount, setAmount] = useState<any>('');
-  const [isValidAmount, setIsValidAmount] = useState(false);
-  const [isValidAddress, setIsValidAddress] = useState(false);
-  const [isMaxClicked, setIsMaxClicked] = useState(false);
+  const [isValidAmount, setIsValidAmount] = useState<boolean>(false);
+  const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
+  const [isMaxClicked, setIsMaxClicked] = useState<boolean>(false);
   const [estimateFee, setEstimateFee] = useState<string>('0');
   const [isFeeLoading, setIsFeeLoading] = useState<boolean>(false);
   const debouncedAmount = useDebounce(amount, 500);
   const debouncedToAddress = useDebounce(toAddress, 500);
 
-  const feeToUsd = estimateFee ? parseFloat(estimateFee) * priceUsd : null;
+  const feeToUsd = estimateFee ? parseFloat(estimateFee) * tokenPrice : null;
   const isEnableSendButton =
     isValidAddress &&
     isValidAmount &&
@@ -66,7 +67,7 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
   useEffect(() => {
     async function getFee() {
       if (toAddress && isValidAddress && parseFloat(amount) > 0) {
-        const { fee } = await getEstimateFee(toAddress, amount);
+        const fee = await getEstimateFee({ toAddress, amount });
         setEstimateFee(fee);
       } else {
         setEstimateFee('0');
@@ -120,7 +121,7 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
             <Flex mb="8px">
               <Text color={colors.gray6}>Balance:</Text>
               <Text bold ml="8px">
-                {formatNumberDownRoundWithExtractMax(balance, 6)}
+                {formatNumberDownRoundWithExtractMax(totalBalance, 6)}
               </Text>
               <Text bold ml="8px">
                 GLCH
@@ -137,7 +138,7 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
               setIsValidAmount(isValid);
               setIsMaxClicked(isMaxClicked);
             }}
-            balance={balance}
+            balance={totalBalance}
           />
         </Box>
 

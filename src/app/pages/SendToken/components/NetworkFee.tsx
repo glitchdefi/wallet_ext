@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { GlitchToken } from '../../../../constants/tokens';
 import { colors } from 'theme/colors';
 
-import { Box, Flex } from 'app/components/Box';
+import { Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
-import { DownArrowIcon } from 'app/components/Svg';
+// import { DownArrowIcon } from 'app/components/Svg';
 import { formatDollarAmount } from 'utils/number';
 import { Spinner } from 'app/components/Loading';
 

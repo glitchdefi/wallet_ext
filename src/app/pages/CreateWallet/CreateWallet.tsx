@@ -8,14 +8,7 @@ import { Routes } from 'constants/routes';
 import { messages } from './messages';
 
 // Hooks
-import {
-  useStepTitleDesc,
-  useWalletActionHandlers,
-  useAccountActionHandlers,
-  useIsInitialized,
-} from 'state/wallet/hooks';
-import { useLoadingApplication } from 'state/application/hooks';
-import { useToast } from 'hooks/useToast';
+import { useStepTitleDesc } from 'hooks/useStepTitleDesc';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -25,6 +18,7 @@ import {
   VerifyMnemonicStep,
   StepProgressLayout,
 } from 'app/components/Shared';
+import { useWallet } from 'contexts/WalletContext/hooks';
 
 const MAX_STEP = 3;
 
@@ -32,36 +26,26 @@ const CreateWallet: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
+  const { onCreateWallet, onCreateWalletCompleted, onResetAppState } =
+    useWallet();
+
   const [step, setStep] = useState<number>(0);
   const [password, setPassword] = useState<string>('');
-  const [seedPhrase, setSeedPhrase] = useState<string>('');
+  const [mnemonic, setMnemonic] = useState<string>('');
 
-  const { isLoading } = useLoadingApplication();
-  const { toastSuccess } = useToast();
-  const { isInitialized } = useIsInitialized();
-  const { onResetState, onCreateCompleted } = useWalletActionHandlers();
-  const { onCreateAccount } = useAccountActionHandlers();
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'create');
 
   const stepProgress = ((step + 1) / MAX_STEP) * 100;
-
-  useEffect(() => {
-    // Create completed -> push to home page
-    if (!isLoading && isInitialized === 'completed') {
-      toastSuccess('Success!', 'Success! Your wallet has been created!');
-      history.push(Routes.home);
-    }
-  }, [isLoading, step]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [step]);
 
   useEffect(() => {
-    if (seedPhrase) {
-      onCreateAccount(seedPhrase, 'Account 1', password);
+    if (mnemonic) {
+      onCreateWallet({ seed: mnemonic, name: 'Account 1', password });
     }
-  }, [seedPhrase]);
+  }, [mnemonic]);
 
   return (
     <PageLayout>
@@ -73,7 +57,8 @@ const CreateWallet: React.FC = () => {
         stepDescription={t(stepDesc)}
         onBack={() => {
           if (step === 0) {
-            onResetState();
+            onResetAppState();
+            history.push('/');
           } else {
             setStep(step - 1);
           }
@@ -84,7 +69,7 @@ const CreateWallet: React.FC = () => {
             initValue={password}
             onSetupPassword={(password) => {
               setPassword(password);
-              setSeedPhrase(
+              setMnemonic(
                 mnemonicGenerate(GlitchToken.default_mnemonic_length)
               );
               setStep(1);
@@ -92,15 +77,14 @@ const CreateWallet: React.FC = () => {
           />
         )}
         {step === 1 && (
-          <MnemonicPhraseStep
-            seedPhrases={seedPhrase}
-            onNextStep={() => setStep(2)}
-          />
+          <MnemonicPhraseStep seed={mnemonic} onNextStep={() => setStep(2)} />
         )}
         {step === 2 && (
           <VerifyMnemonicStep
-            seedPhrases={seedPhrase}
-            onSubmit={onCreateCompleted}
+            seed={mnemonic}
+            onSubmit={() => {
+              onCreateWalletCompleted(history);
+            }}
           />
         )}
       </StepProgressLayout>

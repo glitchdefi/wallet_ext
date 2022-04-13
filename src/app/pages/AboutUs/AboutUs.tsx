@@ -5,8 +5,6 @@ import secrets from 'secrets';
 
 import logo from '../../../assets/img/gl_logo.png';
 
-import { Routes } from 'constants/routes';
-
 // Components
 import { PageLayout } from 'app/layouts';
 import { Box, Flex } from 'app/components/Box';
@@ -21,7 +19,7 @@ const AboutUs: React.FC = () => {
 
   return (
     <PageLayout>
-      <Header onBack={() => history.push(Routes.home)} title="About Glitch" />
+      <Header onBack={() => history.push('/')} title="About Glitch" />
 
       <Box height="543px" overflowY="scroll">
         <Box p="16px">

@@ -6,7 +6,6 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import { messages } from './messages';
 
-import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
 import { PageLayout } from 'app/layouts';
@@ -38,7 +37,7 @@ const CreateImportAccount: React.FC = () => {
             {t(messages.title())}
           </Text>
 
-          <Button p="0px" onClick={() => history.push(Routes.home)}>
+          <Button p="0px" onClick={() => history.push("/")}>
             <CloseIcon width="12px" fill={colors.gray7} />
           </Button>
         </Flex>

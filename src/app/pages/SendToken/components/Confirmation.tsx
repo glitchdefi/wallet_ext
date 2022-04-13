@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
-import {
-  useSelectedAddress,
-  useTokenPrice,
-  useWalletActionHandlers,
-  useWrongPassword,
-  useTransferAction,
-} from 'state/wallet/hooks';
 import { formatDollarAmount } from 'utils/number';
+import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
+import { transfer, walletValidate } from 'scripts/ui/messaging';
+import { useToast } from 'hooks/useToast';
+import { Routes } from 'constants/routes';
+import { useWallet } from 'contexts/WalletContext/hooks';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
 
 // Components
 import { Box, Flex } from 'app/components/Box';
@@ -24,13 +24,40 @@ interface Props {
 
 export const Confirmation: React.FC<Props> = React.memo(
   ({ amount, estimateFee, toAddress }) => {
+    const history = useHistory();
+    const { setAppLoading } = useApplication();
+    const { walletCtx } = useWallet();
+    const { toastSuccess, toastError } = useToast();
     const [password, setPassword] = useState<string>('');
+    const [validPassword, setValidPassword] = useState<boolean>(true);
 
-    const { selectedAddress } = useSelectedAddress();
-    const { priceUsd } = useTokenPrice();
-    const { isWrongPassword } = useWrongPassword();
-    const { onClearIsWrongPassword } = useWalletActionHandlers();
-    const { onTransfer } = useTransferAction();
+    const { selectedAddress } = walletCtx || {};
+    const { tokenPrice } = useTokenPrice();
+
+    const onConfirm = () => {
+      setAppLoading(true);
+
+      walletValidate({ password }).then((valid) => {
+        if (valid) {
+          transfer({ toAddress, amount }).then((res) => {
+            const { success, message } = res || {};
+            if (success) {
+              toastSuccess(
+                null,
+                'Sent has been successfully! It might take some time for changes to take affect.'
+              );
+            } else {
+              toastError(null, message);
+            }
+            history.push(Routes.tokenDetails);
+            setAppLoading(false);
+          });
+        } else {
+          setAppLoading(false);
+        }
+        setValidPassword(valid);
+      });
+    };
 
     return (
       <Box height="543px" overflowY="scroll">
@@ -66,7 +93,7 @@ export const Confirmation: React.FC<Props> = React.memo(
                 <GlitchLogo width={24} height={24} />
                 <Text ml="8px">{amount} GLCH</Text>
                 <Text ml="8px" color={colors.gray5}>
-                  {`~ ${formatDollarAmount(priceUsd * amount)} USD`}
+                  {`~ ${formatDollarAmount(tokenPrice * amount)} USD`}
                 </Text>
               </Flex>
             </Box>
@@ -79,7 +106,7 @@ export const Confirmation: React.FC<Props> = React.memo(
                 <Text>{`${estimateFee} GLCH`}</Text>
                 <Text ml="8px" color={colors.gray5}>
                   {`~ ${formatDollarAmount(
-                    parseFloat(estimateFee) * priceUsd
+                    parseFloat(estimateFee) * tokenPrice
                   )} USD`}
                 </Text>
               </Flex>
@@ -94,12 +121,12 @@ export const Confirmation: React.FC<Props> = React.memo(
             <Box mt="16px">
               <Label>Glitch Password</Label>
               <PasswordInput
-                isError={isWrongPassword}
+                isError={!validPassword}
                 value={password}
                 placeholder="Password"
                 onChange={(e) => {
                   const { value } = e.target;
-                  isWrongPassword && onClearIsWrongPassword();
+                  !validPassword && setValidPassword(true);
                   setPassword(value);
                 }}
                 msgError="Incorrect password"
@@ -110,10 +137,7 @@ export const Confirmation: React.FC<Props> = React.memo(
 
         <Box py="16px" px="16px">
           {password ? (
-            <ButtonShadow
-              width="100%"
-              onClick={() => onTransfer(password, toAddress, amount)}
-            >
+            <ButtonShadow width="100%" onClick={onConfirm}>
               Confirm
             </ButtonShadow>
           ) : (

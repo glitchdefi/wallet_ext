@@ -1,5 +1,6 @@
 import extension from 'extensionizer';
 import log from 'loglevel';
+import { ResponseAppStore } from 'scripts/types';
 import { checkForError } from './utils';
 
 /**
@@ -40,10 +41,10 @@ export class ExtensionStore {
    * @private
    * @returns the key-value map from local storage
    */
-  getAllStorageData(): Promise<any> {
+  getAllStorageData(): Promise<ResponseAppStore> {
     const { local } = extension.storage;
     return new Promise((resolve, reject) => {
-      local.get(null, (result: any) => {
+      local.get(null, (result: ResponseAppStore) => {
         const err = checkForError();
         if (err) {
           reject(err);

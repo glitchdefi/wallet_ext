@@ -7,16 +7,24 @@ import { UPDATE_TIME } from 'constants/values';
 import { Routes } from '../constants/routes';
 
 import { ToastListener } from 'contexts/ToastsContext';
+import { ExtensionStore } from '../scripts/lib/localStore';
 
 // Hooks
-import { useLoadingApplication } from 'state/application/hooks';
-import { useIsInitialized, useWalletActionHandlers } from 'state/wallet/hooks';
-import { useAutoLockTimer } from 'state/settings/hooks';
+import { useSettings } from 'contexts/SettingsContext/hooks';
+import { useWallet } from 'contexts/WalletContext/hooks';
+import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
+import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
+import { useSigningReq } from 'contexts/SigningReqContext/hooks';
+import {
+  getTokenPrice,
+  subscribeAuthorizeRequests,
+  subscribeSigningRequests,
+} from 'scripts/ui/messaging';
 
 // Components
 import { ContainerLayout } from './layouts';
 import { LoadingApplication } from './components/Loading';
-import { GRoute, Authenticated } from './components/CustomRoute';
 import { ScrollToTop } from './components/ScrollToTop';
 
 // Pages
@@ -37,28 +45,56 @@ import { ReceiveTokenPage } from './pages/ReceiveToken';
 import { AddAssetsPage } from './pages/AddAssets';
 import { BackUpPage } from './pages/BackUp';
 import { SendTokenPage } from './pages/SendToken';
+import { AuthorizePage } from './pages/Authorize';
+import { ConnectedDapps } from './pages/ConnectedDapps';
+import { SigningPage } from './pages/Signing';
 
 const history = createMemoryHistory();
 
 export const App: React.FC = () => {
-  const { isLoading } = useLoadingApplication();
-  const { isInitialized } = useIsInitialized();
-  const { onLockWallet, getBalance, getTokenPrice } = useWalletActionHandlers();
-  const { openTime, duration } = useAutoLockTimer();
+  const { appLoading } = useApplication();
+  const { setSettingsCtx } = useSettings();
+  const { setTokenPrice } = useTokenPrice();
+  const { signRequests, setSignRequests } = useSigningReq();
+  const { authRequests, setAuthRequests } = useAuthorizeReq();
+  const { walletCtx, setWalletCtx, onLockWallet, onGetAccountBalance } =
+    useWallet();
+  const { isInitialized } = walletCtx || {};
 
-  const [timeQuery, setTimeQuery] = useState(0);
-  const [hasInternet, setHasInternet] = useState(true);
+  const [timeQuery, setTimeQuery] = useState<number>(0);
+  const [hasInternet, setHasInternet] = useState<boolean>(true);
+
+  useEffect((): void => {
+    Promise.all([
+      subscribeAuthorizeRequests(setAuthRequests),
+      subscribeSigningRequests(setSignRequests),
+    ]).catch(console.error);
+  }, []);
 
   useEffect(() => {
-    if (
-      isInitialized !== 'none' &&
-      duration &&
-      new Date().getTime() - openTime > duration
-    ) {
-      onLockWallet();
-      history.push(Routes.unlock);
+    async function getInitialState() {
+      const localStore = new ExtensionStore();
+      const initState = await localStore.getAllStorageData();
+      const { wallet, settings } = initState;
+      const { isInitialized } = wallet;
+      const { autoLock } = settings;
+      const { duration, openTime } = autoLock;
+
+      // check autolock -> redirect to unlock page
+      if (
+        isInitialized !== 'none' &&
+        duration &&
+        new Date().getTime() - openTime > duration
+      ) {
+        onLockWallet(history);
+      }
+
+      setWalletCtx(wallet);
+      setSettingsCtx(settings);
     }
-  }, [duration]);
+
+    getInitialState();
+  }, []);
 
   useEffect(() => {
     let job: NodeJS.Timer;
@@ -72,10 +108,13 @@ export const App: React.FC = () => {
     };
   }, []);
 
+  // TODO: check again
   useEffect(() => {
     if (isInitialized !== 'none' && hasInternet && navigator.onLine) {
-      getBalance();
-      getTokenPrice('glitch-protocol', 'usd');
+      onGetAccountBalance();
+      getTokenPrice({ name: 'glitch-protocol', currency: 'usd' }).then(
+        setTokenPrice
+      );
     }
   }, [timeQuery, hasInternet]);
 
@@ -89,58 +128,57 @@ export const App: React.FC = () => {
     };
   }, []);
 
+  const Root: any = walletCtx?.isLocked ? (
+    <UnlockPage />
+  ) : authRequests && authRequests.length ? (
+    <AuthorizePage />
+  ) : signRequests && signRequests.length ? (
+    <SigningPage />
+  ) : (isInitialized === 'pending' || isInitialized === 'completed') &&
+    !walletCtx?.isLocked ? (
+    <HomePage />
+  ) : (
+    <WelcomePage />
+  );
+
   return (
     <Router history={history}>
       <GlobalStyles />
       <ScrollToTop />
       <ToastListener />
       <ContainerLayout>
-        {isLoading && <LoadingApplication />}
+        {appLoading && <LoadingApplication />}
         <Switch>
-          <GRoute exact path={Routes.welcome} component={WelcomePage} />
-
+          <Route exact path="/">
+            {Root}
+          </Route>
+          <Route path={Routes.connectedDapps} component={ConnectedDapps} />
           <Route
             path={Routes.internetWarning}
             component={InternetWarningPage}
           />
           <Route path={Routes.restoreWallet} component={RestoreWalletPage} />
           <Route path={Routes.createWallet} component={CreateWalletPage} />
-
-          <Route path={Routes.unlock} component={UnlockPage} />
-
-          <Authenticated path={Routes.home} component={HomePage} />
-          <Authenticated
+          <Route
             path={Routes.createImportAccount}
             component={CreateImportAccountPage}
           />
-          <Authenticated
-            path={Routes.accountDetails}
-            component={AccountDetailsPage}
-          />
-          <Authenticated
+          <Route path={Routes.accountDetails} component={AccountDetailsPage} />
+          <Route
             path={Routes.showPrivateKeys}
             component={ShowPrivateKeysPage}
           />
-          <Authenticated path={Routes.aboutUs} component={AboutUsPage} />
-          <Authenticated
-            path={Routes.logoutWallet}
-            component={LogoutWalletPage}
-          />
-          <Authenticated
+          <Route path={Routes.aboutUs} component={AboutUsPage} />
+          <Route path={Routes.logoutWallet} component={LogoutWalletPage} />
+          <Route
             path={Routes.revealMnemonicPhrase}
             component={RevealMnemonicPhrasePage}
           />
-          <Authenticated
-            path={Routes.tokenDetails}
-            component={TokenDetailsPage}
-          />
-          <Authenticated
-            path={Routes.receiveToken}
-            component={ReceiveTokenPage}
-          />
-          <Authenticated path={Routes.sendToken} component={SendTokenPage} />
-          <Authenticated path={Routes.addAssets} component={AddAssetsPage} />
-          <Authenticated path={Routes.backUp} component={BackUpPage} />
+          <Route path={Routes.tokenDetails} component={TokenDetailsPage} />
+          <Route path={Routes.receiveToken} component={ReceiveTokenPage} />
+          <Route path={Routes.sendToken} component={SendTokenPage} />
+          <Route path={Routes.addAssets} component={AddAssetsPage} />
+          <Route path={Routes.backUp} component={BackUpPage} />
         </Switch>
       </ContainerLayout>
     </Router>

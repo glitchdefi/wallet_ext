@@ -121,5 +121,6 @@
     },
     "button": {
         "show_results": "Show results"
-    }
+    },
+    "connected_dapps": "Connected Dapps"
 }

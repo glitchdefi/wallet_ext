@@ -1,11 +1,8 @@
 export const Routes = {
-  welcome: '/',
-  home: '/home',
   internetWarning: '/internet-warning',
   createWallet: '/create-wallet',
   restoreWallet: '/restore-wallet',
   createImportAccount: '/create-import-account',
-  unlock: '/unlock',
   accountDetails: '/account-details',
   showPrivateKeys: '/show-private-keys',
   aboutUs: '/about-us',
@@ -16,4 +13,5 @@ export const Routes = {
   addAssets: '/add-assets',
   backUp: '/back-up',
   sendToken: '/send-token',
+  connectedDapps: '/connected-dapps',
 };

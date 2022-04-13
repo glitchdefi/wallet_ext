@@ -7,19 +7,19 @@ import { colors } from 'theme/colors';
 import { Routes } from 'constants/routes';
 import { LOCK_TIME_LIST } from 'constants/values';
 
-import { useIsBackup } from 'state/wallet/hooks';
-import { useAutoLockTimer } from 'state/settings/hooks';
+import { useWallet } from 'contexts/WalletContext/hooks';
+import { useAutoLock, useSettings } from 'contexts/SettingsContext/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import {
   ClockCircleIcon,
-  CurrencyIcon,
+  // CurrencyIcon,
   DownArrowIcon,
   ExclaimationCircleIcon,
   LogoutIcon,
   OneToOneIcon,
-  TranslationIcon,
+  // TranslationIcon,
 } from 'app/components/Svg';
 import { GlitchLogo } from 'app/components/Image';
 import { Dropdown } from 'app/components/Dropdown';
@@ -29,9 +29,10 @@ import { messages } from '../../messages';
 export const SettingsPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const history = useHistory();
-
-  const { isBackUp } = useIsBackup();
-  const { duration, onSetAutoLockTimer } = useAutoLockTimer();
+  const { walletCtx } = useWallet();
+  const { isBackup } = walletCtx || {};
+  const { setAutoLock } = useSettings();
+  const { duration } = useAutoLock();
 
   const activeTimer = LOCK_TIME_LIST.find((o) => o.time === duration);
 
@@ -66,7 +67,7 @@ export const SettingsPanel: React.FC = React.memo(() => {
               activeKey={activeTimer?.key}
               onSelect={(key) => {
                 const { time } = LOCK_TIME_LIST[key];
-                onSetAutoLockTimer(new Date().getTime(), time);
+                setAutoLock({ openTime: new Date().getTime(), duration: time });
               }}
               customToggle={
                 <Flex
@@ -86,14 +87,14 @@ export const SettingsPanel: React.FC = React.memo(() => {
         <SettingItem
           leftIcon={<OneToOneIcon width="24px" />}
           label={
-            !isBackUp
+            !isBackup
               ? t(messages.yourWalletNotBackup())
               : t(messages.revealMnemonicPhrase())
           }
-          actionLabel={!isBackUp && <ExclaimationCircleIcon />}
+          actionLabel={!isBackup && <ExclaimationCircleIcon />}
           onClick={() =>
             history.push(
-              !isBackUp ? Routes.backUp : Routes.revealMnemonicPhrase
+              !isBackup ? Routes.backUp : Routes.revealMnemonicPhrase
             )
           }
         />

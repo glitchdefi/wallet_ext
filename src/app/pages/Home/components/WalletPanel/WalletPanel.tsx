@@ -5,10 +5,12 @@ import { useTranslation } from 'react-i18next';
 
 import bg from '../../../../../assets/img/account_card_bg.jpg';
 
-import { useAccount, useIsBackup } from 'state/wallet/hooks';
+import { useWallet, useAccount } from 'contexts/WalletContext/hooks';
+import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 
 import { truncateAddress } from 'utils/strings';
 import {
+  calcTotalBalance,
   formatDollarAmount,
   formatNumberDownRoundWithExtractMax,
 } from 'utils/number';
@@ -18,7 +20,12 @@ import { colors } from 'theme/colors';
 import { Box, Flex } from 'app/components/Box';
 import { CopyButton } from 'app/components/Button';
 import { Text } from 'app/components/Text';
-import { EllipsisIcon, GatewayIcon, ProfileIcon } from 'app/components/Svg';
+import {
+  EllipsisIcon,
+  GatewayIcon,
+  LinkIcon,
+  ProfileIcon,
+} from 'app/components/Svg';
 import { GlitchLogo } from 'app/components/Image';
 import { Dropdown } from 'app/components/Dropdown';
 import { AssetsSection } from '../AssetsSection';
@@ -29,16 +36,19 @@ import { messages } from '../../messages';
 export const WalletPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const history = useHistory();
-
+  const { tokenPrice } = useTokenPrice();
+  const { walletCtx, onLockWallet } = useWallet();
   const account = useAccount();
-  const { name, totalBalance, totalValue, address } = account;
-  const { isBackUp } = useIsBackup();
+  const { isBackup } = walletCtx || {};
+  const { name, balance, address } = account;
+  const totalBalance = calcTotalBalance(balance);
+  const totalValue = totalBalance * tokenPrice;
 
   return (
     <Box height="540.94px" overflowY="scroll">
-      <Header account={account} />
+      <Header account={account} onLockWallet={onLockWallet} />
 
-      {!isBackUp && (
+      {!isBackup && (
         <BackedUpView onBackup={() => history.push(Routes.backUp)} />
       )}
 
@@ -53,6 +63,7 @@ export const WalletPanel: React.FC = React.memo(() => {
               onSelect={(eventKey) => {
                 if (eventKey == 0) history.push(Routes.accountDetails);
                 if (eventKey == 1) history.push(Routes.showPrivateKeys);
+                if (eventKey == 2) history.push(Routes.connectedDapps);
               }}
               customToggle={
                 <Flex width="24px" height="24px" alignItems="center">
@@ -69,6 +80,11 @@ export const WalletPanel: React.FC = React.memo(() => {
                   key: 1,
                   icon: <GatewayIcon />,
                   label: t(messages.showPrivateKey()),
+                },
+                {
+                  key: 2,
+                  icon: <LinkIcon />,
+                  label: t(messages.connectedDapps()),
                 },
               ]}
             />

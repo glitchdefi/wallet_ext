@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { Routes } from 'constants/routes';
-
 // Components
 import { PageLayout } from 'app/layouts';
 import { Header } from 'app/components/Shared';
@@ -15,15 +13,14 @@ const LogoutWallet: React.FC = React.memo(() => {
   const history = useHistory();
   const [isBackedUp, setIsBackedUp] = useState({ yes: false, no: false });
   const [step, setStep] = useState<number>(0);
-  const [seedPhrase, setSeedPhrase] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [seed, setSeed] = useState<string>('');
 
   return (
     <PageLayout>
       <Header
         onBack={() => {
           if (step === 0) {
-            history.push(Routes.home);
+            history.push('/');
           } else {
             setStep(step - 1);
           }
@@ -34,7 +31,7 @@ const LogoutWallet: React.FC = React.memo(() => {
       {step === 0 && (
         <SelectedOption
           values={isBackedUp}
-          onCancel={() => history.push(Routes.home)}
+          onCancel={() => history.push('/')}
           onNext={(backedUp) => {
             setIsBackedUp(backedUp);
             setStep(1);
@@ -45,28 +42,22 @@ const LogoutWallet: React.FC = React.memo(() => {
         <EnterPassword
           isNoBackedUp={isBackedUp.no}
           step={step}
-          onCancel={() => history.push(Routes.home)}
-          onShow={(seed, password) => {
-            setSeedPhrase(seed);
-            setPassword(password);
+          onCancel={() => history.push('/')}
+          onShow={(seed) => {
+            setSeed(seed);
             setStep(2);
           }}
         />
       )}
       {step === 2 && (
         <ViewMnemonicPhrase
-          seedPhrases={seedPhrase}
+          seed={seed}
           onConfirm={() => {
             setStep(3);
           }}
         />
       )}
-      {step === 3 && (
-        <ConfirmLogout
-          password={password}
-          onCancel={() => history.push(Routes.home)}
-        />
-      )}
+      {step === 3 && <ConfirmLogout onCancel={() => history.push('/')} />}
     </PageLayout>
   );
 });

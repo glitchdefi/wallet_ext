@@ -4,14 +4,9 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import QRCode from 'qrcode.react';
 
-import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
-import {
-  useAccount,
-  useAccountActionHandlers,
-  useAccounts,
-} from 'state/wallet/hooks';
+import { useWallet, useAccount } from 'contexts/WalletContext/hooks';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -25,11 +20,11 @@ import { validateNameExist } from 'utils/strings';
 const AccountDetails: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
+  const { walletCtx, onEditAccount } = useWallet();
+  const { accounts } = walletCtx || {};
 
-  const { accounts } = useAccounts();
   const account = useAccount();
   const { name: accountName, address } = account;
-  const { onChangeAccountName } = useAccountActionHandlers();
 
   const [copied, setCopied] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<boolean>(false);
@@ -77,7 +72,7 @@ const AccountDetails: React.FC = () => {
             {t(messages.title())}
           </Text>
 
-          <Button p="0px" onClick={() => history.push(Routes.home)}>
+          <Button p="0px" onClick={() => history.push('/')}>
             <CloseIcon width="12px" fill={colors.gray7} />
           </Button>
         </Flex>
@@ -106,7 +101,7 @@ const AccountDetails: React.FC = () => {
                   onClick={() => {
                     if (name && !isNameExist) {
                       name !== accountName
-                        ? onChangeAccountName(name)
+                        ? onEditAccount({ name })
                         : setShowEdit(false);
                     }
                   }}

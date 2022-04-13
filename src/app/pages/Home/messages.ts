@@ -16,6 +16,7 @@ export const messages = {
   autoLockTimer: () => _t(translations.settings.auto_lock_timer),
   aboutGlitch: () => _t(translations.settings.about_glitch),
   logout: () => _t(translations.common.logout),
+  connectedDapps: () => _t(translations.connected_dapps),
   revealMnemonicPhrase: () =>
     _t(translations.mnemonicPhrase.reveal_mnemonic_phrase),
   yourWalletNotBackup: () =>

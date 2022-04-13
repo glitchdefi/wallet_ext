@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
-import {
-  useSeedPhrase,
-  useWalletActionHandlers,
-  useStepTitleDesc,
-} from 'state/wallet/hooks';
+import { useWallet } from 'contexts/WalletContext/hooks';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
+import { showWalletSeed, walletValidate } from 'scripts/ui/messaging';
+import { useStepTitleDesc } from 'hooks/useStepTitleDesc';
 
 import { messages } from './messages';
 
 // Components
 import { PageLayout } from 'app/layouts';
 import { Box, Flex } from 'app/components/Box';
-import { LeftArrowIcon } from 'app/components/Svg';
+// import { LeftArrowIcon } from 'app/components/Svg';
 import { Text } from 'app/components/Text';
-import { Button } from 'app/components/Button';
+// import { Button } from 'app/components/Button';
 import {
   Header,
   MnemonicPhraseStep,
@@ -29,31 +27,36 @@ import { EnterPassword } from './components/EnterPassword';
 const BackUp: React.FC = React.memo(() => {
   const history = useHistory();
   const { t } = useTranslation();
+  const { setAppLoading } = useApplication();
+  const { onBackupWallet } = useWallet();
 
-  const [step, setStep] = useState(0);
-  const [password, setPassword] = useState('');
+  const [step, setStep] = useState<number>(0);
+  const [password, setPassword] = useState<string>('');
+  const [seed, setSeed] = useState<string>('');
+  const [validPassword, setValidPassword] = useState<boolean>(true);
 
-  const { onShowSeedPhrase, onClearSeedPhrase, onBackupWalletAction } =
-    useWalletActionHandlers();
-  const { seedPhrase } = useSeedPhrase();
   const { stepTitle, stepDesc } = useStepTitleDesc(step, messages, 'create');
 
-  useEffect(() => {
-    if (seedPhrase && step === 0) setStep(1);
-  }, [seedPhrase]);
-
-  useEffect(() => {
-    return () => {
-      onClearSeedPhrase();
-    };
-  }, []);
+  const _onShowWalletSeed = (password: string) => {
+    setAppLoading(true);
+    setPassword(password);
+    walletValidate({ password }).then(async (valid) => {
+      if (valid) {
+        const seed = await showWalletSeed();
+        setSeed(seed);
+        setStep(1);
+      }
+      setAppLoading(false);
+      setValidPassword(valid);
+    });
+  };
 
   return (
     <PageLayout>
       <Header
         onBack={() => {
           if (step === 0) {
-            history.push(Routes.home);
+            history.push('/');
           } else {
             setStep(step - 1);
           }
@@ -64,11 +67,9 @@ const BackUp: React.FC = React.memo(() => {
       {step === 0 && (
         <EnterPassword
           initValue={password}
-          onChange={(password) => {
-            seedPhrase && onClearSeedPhrase();
-            setPassword(password);
-            onShowSeedPhrase(password);
-          }}
+          passwordValidate={validPassword}
+          onClearPasswordValidate={() => setValidPassword(true)}
+          onSubmit={_onShowWalletSeed}
         />
       )}
 
@@ -97,16 +98,13 @@ const BackUp: React.FC = React.memo(() => {
           </Flex>
 
           {step === 1 && (
-            <MnemonicPhraseStep
-              seedPhrases={seedPhrase}
-              onNextStep={() => setStep(2)}
-            />
+            <MnemonicPhraseStep seed={seed} onNextStep={() => setStep(2)} />
           )}
 
           {step === 2 && (
             <VerifyMnemonicStep
-              seedPhrases={seedPhrase}
-              onSubmit={onBackupWalletAction}
+              seed={seed}
+              onSubmit={() => onBackupWallet(history)}
             />
           )}
         </Flex>

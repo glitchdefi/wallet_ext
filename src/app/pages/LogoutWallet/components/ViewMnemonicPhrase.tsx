@@ -8,12 +8,12 @@ import { ButtonShadow } from 'app/components/Button';
 import { MessageBox } from 'app/components/MessageBox';
 import { MnemonicPhraseView } from 'app/components/Shared';
 interface Props {
-  seedPhrases: string;
+  seed: string;
   onConfirm: () => void;
 }
 
 export const ViewMnemonicPhrase: React.FC<Props> = React.memo(
-  ({ seedPhrases, onConfirm }) => {
+  ({ seed, onConfirm }) => {
     return (
       <Flex flex={1} flexDirection="column" pt="32px" pb="24px" px="32px">
         <Flex>
@@ -43,7 +43,7 @@ export const ViewMnemonicPhrase: React.FC<Props> = React.memo(
         <Box mt="16px">
           <MnemonicPhraseView
             label="Your Mnemonic phrase"
-            seed={seedPhrases}
+            seed={seed}
             background={colors.geekBlue}
           />
         </Box>

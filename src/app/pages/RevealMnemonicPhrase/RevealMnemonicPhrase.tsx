@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
-
-import {
-  useSeedPhrase,
-  useWalletActionHandlers,
-  useWrongPassword,
-} from 'state/wallet/hooks';
+import { showWalletSeed, walletValidate } from 'scripts/ui/messaging';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -22,31 +17,26 @@ import { Header, MnemonicPhraseView } from 'app/components/Shared';
 const RevealMnemonicPhrase: React.FC = React.memo(() => {
   const history = useHistory();
 
-  const { isWrongPassword } = useWrongPassword();
-  const { seedPhrase } = useSeedPhrase();
-  const { onShowSeedPhrase, onClearIsWrongPassword, onClearSeedPhrase } =
-    useWalletActionHandlers();
+  const { setAppLoading } = useApplication();
+  const [password, setPassword] = useState<string>('');
+  const [seed, setSeed] = useState<string>('');
+  const [validPassword, setValidPassword] = useState<boolean>(true);
 
-  const [password, setPassword] = useState('');
-  const [showSeedPhrase, setShowSeedPhrase] = useState(false);
+  const _onShowWalletSeed = () => {
+    setAppLoading(true);
 
-  useEffect(() => {
-    if (seedPhrase) setShowSeedPhrase(true);
-  }, [seedPhrase]);
-
-  useEffect(() => {
-    return () => {
-      onClearIsWrongPassword();
-      onClearSeedPhrase();
-    };
-  }, []);
-
+    walletValidate({ password }).then(async (valid: boolean) => {
+      if (valid) {
+        const seed = await showWalletSeed();
+        setSeed(seed);
+      }
+      setAppLoading(false);
+      setValidPassword(valid);
+    });
+  };
   return (
     <PageLayout>
-      <Header
-        onBack={() => history.push(Routes.home)}
-        title="Reveal Mnemonic phrase"
-      />
+      <Header onBack={() => history.push('/')} title="Reveal Mnemonic phrase" />
 
       <Flex height="543px" flexDirection="column" overflowY="scroll">
         <Box height="503px" overflowY="scroll" p="32px">
@@ -66,11 +56,11 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
               </Box>
             }
           />
-          {showSeedPhrase ? (
+          {seed ? (
             <Box mt="16px">
               <MnemonicPhraseView
                 label="Your Mnemonic phrase"
-                seed={seedPhrase}
+                seed={seed}
                 background={colors.geekBlue}
               />
             </Box>
@@ -83,11 +73,11 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
               <Box mt="16px">
                 <Label>Glitch password</Label>
                 <PasswordInput
-                  isError={isWrongPassword}
+                  isError={!validPassword}
                   placeholder="Password"
                   onChange={(e) => {
                     const { value } = e.target;
-                    isWrongPassword && onClearIsWrongPassword();
+                    !validPassword && setValidPassword(true);
                     setPassword(value);
                   }}
                   msgError="Incorrect password"
@@ -98,8 +88,8 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
         </Box>
 
         <Box px="32px" pb="24px">
-          {showSeedPhrase ? (
-            <Box mt="auto" onClick={() => history.push(Routes.home)}>
+          {seed ? (
+            <Box mt="auto" onClick={() => history.push('/')}>
               <ButtonShadow width="100%">Done</ButtonShadow>
             </Box>
           ) : (
@@ -108,15 +98,12 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
                 mr="16px"
                 width="50%"
                 variant="cancel"
-                onClick={() => history.push(Routes.home)}
+                onClick={() => history.push('/')}
               >
                 Cancel
               </Button>
               {password ? (
-                <ButtonShadow
-                  width="50%"
-                  onClick={() => onShowSeedPhrase(password)}
-                >
+                <ButtonShadow width="50%" onClick={_onShowWalletSeed}>
                   Show
                 </ButtonShadow>
               ) : (

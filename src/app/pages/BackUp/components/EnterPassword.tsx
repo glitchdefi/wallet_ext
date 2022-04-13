@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
-import { Routes } from 'constants/routes';
-
-import { useWalletActionHandlers, useWrongPassword } from 'state/wallet/hooks';
 
 // Components
 import { Flex, Box } from 'app/components/Box';
@@ -14,22 +11,16 @@ import { Button, ButtonShadow } from 'app/components/Button';
 
 interface Props {
   initValue: string;
-  onChange: (password: string) => void;
+  passwordValidate?: boolean;
+  onClearPasswordValidate?: () => void;
+  onSubmit: (password: string) => void;
 }
 
-export const EnterPassword: React.FC<Props> = ({ initValue, onChange }) => {
+export const EnterPassword: React.FC<Props> = (props) => {
+  const { initValue, passwordValidate, onClearPasswordValidate, onSubmit } =
+    props;
   const history = useHistory();
-
   const [password, setPassword] = useState(initValue);
-
-  const { onClearIsWrongPassword } = useWalletActionHandlers();
-  const { isWrongPassword } = useWrongPassword();
-
-  useEffect(() => {
-    return () => {
-      onClearIsWrongPassword();
-    };
-  }, []);
 
   return (
     <Flex flex={1} p="32px" flexDirection="column">
@@ -41,12 +32,12 @@ export const EnterPassword: React.FC<Props> = ({ initValue, onChange }) => {
         <Box mt="16px">
           <Label>Glitch password</Label>
           <PasswordInput
-            isError={isWrongPassword}
+            isError={!passwordValidate}
             value={password}
             placeholder="Password"
             onChange={(e) => {
               const { value } = e.target;
-              !value && onClearIsWrongPassword();
+              !value && onClearPasswordValidate();
 
               setPassword(value);
             }}
@@ -59,13 +50,13 @@ export const EnterPassword: React.FC<Props> = ({ initValue, onChange }) => {
           width="50%"
           variant="cancel"
           mr="16px"
-          onClick={() => history.push(Routes.home)}
+          onClick={() => history.push('/')}
         >
           Cancel
         </Button>
 
         {password ? (
-          <ButtonShadow width="50%" onClick={() => onChange(password)}>
+          <ButtonShadow width="50%" onClick={() => onSubmit(password)}>
             OK
           </ButtonShadow>
         ) : (
