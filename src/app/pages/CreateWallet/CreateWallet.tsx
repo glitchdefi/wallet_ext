@@ -58,7 +58,7 @@ const CreateWallet: React.FC = () => {
         onBack={() => {
           if (step === 0) {
             onResetAppState();
-            history.push(Routes.welcome);
+            history.push('/');
           } else {
             setStep(step - 1);
           }

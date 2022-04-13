@@ -6,6 +6,7 @@ import { WalletProvider } from './contexts/WalletContext';
 import { ApplicationProvider } from './contexts/ApplicationContext';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { TokenPriceProvider } from './contexts/TokenPriceContext';
+import { AuthorizeReqProvider } from './contexts/AuthorizeReqContext';
 
 // App
 import { App } from './app';
@@ -17,15 +18,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const Root: React.FC = () => {
   return (
     <ToastsProvider>
-      <ApplicationProvider>
-        <SettingsProvider>
-          <WalletProvider>
-            <TokenPriceProvider>
-              <App />
-            </TokenPriceProvider>
-          </WalletProvider>
-        </SettingsProvider>
-      </ApplicationProvider>
+      <AuthorizeReqProvider>
+        <ApplicationProvider>
+          <SettingsProvider>
+            <WalletProvider>
+              <TokenPriceProvider>
+                <App />
+              </TokenPriceProvider>
+            </WalletProvider>
+          </SettingsProvider>
+        </ApplicationProvider>
+      </AuthorizeReqProvider>
     </ToastsProvider>
   );
 };

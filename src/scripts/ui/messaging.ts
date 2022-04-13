@@ -25,6 +25,7 @@ import type {
   RequestTokenPriceGet,
   RequestAccountTransfer,
   ResponseAccountTransfer,
+  ResponseAuthorizeList,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -99,6 +100,30 @@ export async function subscribeAuthorizeRequests(
   cb: (accounts: AuthorizeRequest[]) => void
 ): Promise<boolean> {
   return sendMessage('pri(authorize.requests)', null, cb);
+}
+
+export async function approveAuthRequest(id: string): Promise<boolean> {
+  return sendMessage('pri(authorize.approve)', { id });
+}
+
+export async function rejectAuthRequest(id: string): Promise<boolean> {
+  return sendMessage('pri(authorize.reject)', { id });
+}
+
+export async function getAuthList(): Promise<ResponseAuthorizeList> {
+  return sendMessage('pri(authorize.list)');
+}
+
+export async function toggleAuthorization(
+  url: string
+): Promise<ResponseAuthorizeList> {
+  return sendMessage('pri(authorize.toggle)', url);
+}
+
+export async function removeAuthorization(
+  url: string
+): Promise<ResponseAuthorizeList> {
+  return sendMessage('pri(authorize.remove)', url);
 }
 
 // Wallet

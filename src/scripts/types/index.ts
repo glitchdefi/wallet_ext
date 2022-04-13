@@ -1,3 +1,5 @@
+import { AuthUrls } from '../lib/handler/State';
+
 type IsNull<T, K extends keyof T> = {
   [K1 in Exclude<keyof T, K>]: T[K1];
 } & T[K] extends null
@@ -16,11 +18,17 @@ type NullKeys<T> = { [K in keyof T]: IsNull<T, K> }[keyof T];
 
 export interface RequestSignatures {
   // private/internal requests, i.e. from a popup
+  'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
+  'pri(authorize.list)': [null, ResponseAuthorizeList];
+  'pri(authorize.reject)': [RequestAuthorizeReject, boolean];
   'pri(authorize.requests)': [
     RequestAuthorizeSubscribe,
     boolean,
     AuthorizeRequest[]
   ];
+  'pri(authorize.toggle)': [string, ResponseAuthorizeList];
+  'pri(authorize.remove)': [string, ResponseAuthorizeList];
+
   'pri(wallet.create)': [RequestWalletCreate, ResponseWallet];
   'pri(wallet.create.completed)': [null, ResponseWallet];
   'pri(wallet.restore)': [RequestWalletRestore, ResponseWallet];
@@ -142,6 +150,16 @@ export interface AuthorizeRequest {
   request: RequestAuthorizeTab;
   url: string;
 }
+export interface RequestAuthorizeTab {
+  origin: string;
+}
+export interface RequestAuthorizeApprove {
+  id: string;
+}
+
+export interface RequestAuthorizeReject {
+  id: string;
+}
 
 export type RequestAuthorizeSubscribe = null;
 export interface ResponseAccountTransfer {
@@ -175,6 +193,10 @@ export interface ResponseSettings {
 export interface ResponseAppStore {
   settings: ResponseSettings;
   wallet: ResponseWallet;
+}
+
+export interface ResponseAuthorizeList {
+  list: AuthUrls;
 }
 export interface AccountTypes {
   address?: string;

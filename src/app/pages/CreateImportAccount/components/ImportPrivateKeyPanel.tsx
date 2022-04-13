@@ -5,7 +5,6 @@ import TextareaAutosize from 'react-autosize-textarea/lib';
 import styled from 'styled-components';
 
 import { messages } from '../messages';
-import { Routes } from 'constants/routes';
 
 import { useWallet } from 'contexts/WalletContext/hooks';
 
@@ -133,7 +132,7 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
           mr="8px"
           width="50%"
           variant="cancel"
-          onClick={() => history.push(Routes.home)}
+          onClick={() => history.push("/")}
         >
           {t(messages.cancel())}
         </Button>

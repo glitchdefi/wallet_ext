@@ -3,7 +3,6 @@ import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { messages } from '../messages';
-import { Routes } from 'constants/routes';
 import { validateNameExist } from 'utils/strings';
 import { colors } from 'theme/colors';
 import { useWallet } from 'contexts/WalletContext/hooks';
@@ -56,7 +55,7 @@ export const CreateAccountPanel: React.FC = React.memo(() => {
           mr="8px"
           width="50%"
           variant="cancel"
-          onClick={() => history.push(Routes.home)}
+          onClick={() => history.push('/')}
         >
           {t(messages.cancel())}
         </Button>

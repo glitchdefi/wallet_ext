@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import QRCode from 'qrcode.react';
 
-import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
 import { useWallet, useAccount } from 'contexts/WalletContext/hooks';
@@ -73,7 +72,7 @@ const AccountDetails: React.FC = () => {
             {t(messages.title())}
           </Text>
 
-          <Button p="0px" onClick={() => history.push(Routes.home)}>
+          <Button p="0px" onClick={() => history.push('/')}>
             <CloseIcon width="12px" fill={colors.gray7} />
           </Button>
         </Flex>

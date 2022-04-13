@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import TextareaAutosize from 'react-autosize-textarea/lib';
 import styled from 'styled-components';
 
-import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 import { truncateAddress } from 'utils/strings';
 import { messages } from './messages';
@@ -73,7 +72,7 @@ const ShowPrivateKeys: React.FC = () => {
             {t(messages.title())}
           </Text>
 
-          <Button p="0px" onClick={() => history.push(Routes.home)}>
+          <Button p="0px" onClick={() => history.push('/')}>
             <CloseIcon width="12px" fill={colors.gray7} />
           </Button>
         </Flex>
@@ -141,7 +140,7 @@ const ShowPrivateKeys: React.FC = () => {
               <Button
                 width="100%"
                 variant="cancel"
-                onClick={() => history.push(Routes.home)}
+                onClick={() => history.push('/')}
               >
                 Close
               </Button>
@@ -151,7 +150,7 @@ const ShowPrivateKeys: React.FC = () => {
                   width="50%"
                   variant="cancel"
                   mr="16px"
-                  onClick={() => history.push(Routes.home)}
+                  onClick={() => history.push('/')}
                 >
                   Cancel
                 </Button>

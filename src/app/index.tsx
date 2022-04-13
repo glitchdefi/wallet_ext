@@ -14,6 +14,7 @@ import { useSettings } from 'contexts/SettingsContext/hooks';
 import { useWallet } from 'contexts/WalletContext/hooks';
 import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
+import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
 import {
   getTokenPrice,
   subscribeAuthorizeRequests,
@@ -43,7 +44,6 @@ import { AddAssetsPage } from './pages/AddAssets';
 import { BackUpPage } from './pages/BackUp';
 import { SendTokenPage } from './pages/SendToken';
 import { AuthorizePage } from './pages/Authorize';
-import { AuthorizeRequest } from 'scripts/types';
 import { ConnectedDapps } from './pages/ConnectedDapps';
 
 const history = createMemoryHistory();
@@ -52,15 +52,13 @@ export const App: React.FC = () => {
   const { appLoading } = useApplication();
   const { setSettingsCtx } = useSettings();
   const { setTokenPrice } = useTokenPrice();
+  const { authRequests, setAuthRequests } = useAuthorizeReq();
   const { walletCtx, setWalletCtx, onLockWallet, onGetAccountBalance } =
     useWallet();
   const { isInitialized } = walletCtx || {};
 
   const [timeQuery, setTimeQuery] = useState<number>(0);
   const [hasInternet, setHasInternet] = useState<boolean>(true);
-  const [authRequests, setAuthRequests] = useState<null | AuthorizeRequest[]>(
-    null
-  );
 
   useEffect((): void => {
     Promise.all([subscribeAuthorizeRequests(setAuthRequests)]).catch(
@@ -73,23 +71,9 @@ export const App: React.FC = () => {
       const localStore = new ExtensionStore();
       const initState = await localStore.getAllStorageData();
       const { wallet, settings } = initState;
-      const { isInitialized, isLocked } = wallet;
+      const { isInitialized } = wallet;
       const { autoLock } = settings;
       const { duration, openTime } = autoLock;
-
-      console.log(initState);
-
-      if (
-        (isInitialized === 'pending' || isInitialized === 'completed') &&
-        !isLocked
-      ) {
-        history.push(Routes.home);
-      }
-
-      // wallet locked -> redirect to unlock page
-      if (wallet?.isLocked) {
-        history.push(Routes.unlock);
-      }
 
       // check autolock -> redirect to unlock page
       if (
@@ -106,12 +90,6 @@ export const App: React.FC = () => {
 
     getInitialState();
   }, []);
-
-  useEffect(() => {
-    if (authRequests && authRequests.length) {
-      history.push(Routes.authorize);
-    }
-  }, [authRequests]);
 
   useEffect(() => {
     let job: NodeJS.Timer;
@@ -145,6 +123,17 @@ export const App: React.FC = () => {
     };
   }, []);
 
+  const Root: any = walletCtx?.isLocked ? (
+    <UnlockPage />
+  ) : authRequests && authRequests.length ? (
+    <AuthorizePage />
+  ) : (isInitialized === 'pending' || isInitialized === 'completed') &&
+    !walletCtx?.isLocked ? (
+    <HomePage />
+  ) : (
+    <WelcomePage />
+  );
+
   return (
     <Router history={history}>
       <GlobalStyles />
@@ -153,8 +142,9 @@ export const App: React.FC = () => {
       <ContainerLayout>
         {appLoading && <LoadingApplication />}
         <Switch>
-          <Route exact path={Routes.welcome} component={WelcomePage} />
-          <Route path={Routes.authorize} component={AuthorizePage} />
+          <Route exact path="/">
+            {Root}
+          </Route>
           <Route path={Routes.connectedDapps} component={ConnectedDapps} />
           <Route
             path={Routes.internetWarning}
@@ -162,8 +152,6 @@ export const App: React.FC = () => {
           />
           <Route path={Routes.restoreWallet} component={RestoreWalletPage} />
           <Route path={Routes.createWallet} component={CreateWalletPage} />
-          <Route path={Routes.unlock} component={UnlockPage} />
-          <Route path={Routes.home} component={HomePage} />
           <Route
             path={Routes.createImportAccount}
             component={CreateImportAccountPage}

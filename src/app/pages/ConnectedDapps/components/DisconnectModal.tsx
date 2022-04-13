@@ -11,12 +11,14 @@ import { Button, ButtonShadow } from 'app/components/Button';
 
 interface Props {
   show: boolean;
+  url: string;
   onCancel?(): void;
   onConfirm?(): void;
 }
 
 export const DisconnectModal: React.FC<Props> = ({
   show,
+  url,
   onCancel,
   onConfirm,
 }) => {
@@ -34,7 +36,7 @@ export const DisconnectModal: React.FC<Props> = ({
             Confirmation
           </Text>
           <Text color={colors.gray6} mb="32px">
-            Are you sure to disconnect to app.compound.finance?
+            Are you sure to disconnect to {url}?
           </Text>
 
           <Flex alignItems="center">
@@ -60,6 +62,8 @@ export const DisconnectModal: React.FC<Props> = ({
 };
 
 const StyledModal = styled(Modal)`
+  overflow-y: hidden;
+  
   .modal-dialog {
     margin: 16px;
   }

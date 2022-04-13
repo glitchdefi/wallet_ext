@@ -1,5 +1,4 @@
 import React, { createContext, useCallback, useState } from 'react';
-import { Routes } from 'constants/routes';
 import {
   RequestAccountChange,
   RequestAccountCreate,
@@ -66,7 +65,7 @@ export const WalletProvider: React.FC = ({ children }) => {
       .finally(() => {
         toastSuccess(null, 'Success! Your wallet has been created!');
         setAppLoading(false);
-        history.push(Routes.home);
+        history.push('/');
       });
   }, []);
 
@@ -82,7 +81,7 @@ export const WalletProvider: React.FC = ({ children }) => {
             'Congrats! Your wallet has been restored successfully.'
           );
           setAppLoading(false);
-          history.push(Routes.home);
+          history.push('/');
         });
     },
     []
@@ -91,7 +90,7 @@ export const WalletProvider: React.FC = ({ children }) => {
   const onLockWallet = useCallback((history: any) => {
     lockWallet()
       .then(setWallet)
-      .finally(() => history.push(Routes.unlock));
+      .finally(() => history.push('/'));
   }, []);
 
   const onUnlockWallet = useCallback((history: any) => {
@@ -101,7 +100,7 @@ export const WalletProvider: React.FC = ({ children }) => {
       .then(setWallet)
       .finally(() => {
         setAppLoading(false);
-        history.push(Routes.home);
+        history.push('/');
       });
   }, []);
 
@@ -116,7 +115,7 @@ export const WalletProvider: React.FC = ({ children }) => {
           'Congrats! Your wallet has been backed up successfully.'
         );
         setAppLoading(false);
-        history.push(Routes.home);
+        history.push('/');
       });
   }, []);
 
@@ -132,7 +131,7 @@ export const WalletProvider: React.FC = ({ children }) => {
       })
       .finally(() => {
         setAppLoading(false);
-        history.push(Routes.welcome);
+        history.push('/');
       });
   }, []);
 
@@ -144,7 +143,7 @@ export const WalletProvider: React.FC = ({ children }) => {
         .then(setWallet)
         .finally(() => {
           setAppLoading(false);
-          history.push(Routes.home);
+          history.push('/');
         });
     },
     []
@@ -158,7 +157,7 @@ export const WalletProvider: React.FC = ({ children }) => {
         .then(setWallet)
         .finally(() => {
           setAppLoading(false);
-          history.push(Routes.home);
+          history.push('/');
         });
     },
     []

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { Routes } from 'constants/routes';
-
 // Components
 import { PageLayout } from 'app/layouts';
 import { Header } from 'app/components/Shared';
@@ -22,7 +20,7 @@ const LogoutWallet: React.FC = React.memo(() => {
       <Header
         onBack={() => {
           if (step === 0) {
-            history.push(Routes.home);
+            history.push('/');
           } else {
             setStep(step - 1);
           }
@@ -33,7 +31,7 @@ const LogoutWallet: React.FC = React.memo(() => {
       {step === 0 && (
         <SelectedOption
           values={isBackedUp}
-          onCancel={() => history.push(Routes.home)}
+          onCancel={() => history.push('/')}
           onNext={(backedUp) => {
             setIsBackedUp(backedUp);
             setStep(1);
@@ -44,7 +42,7 @@ const LogoutWallet: React.FC = React.memo(() => {
         <EnterPassword
           isNoBackedUp={isBackedUp.no}
           step={step}
-          onCancel={() => history.push(Routes.home)}
+          onCancel={() => history.push('/')}
           onShow={(seed) => {
             setSeed(seed);
             setStep(2);
@@ -59,9 +57,7 @@ const LogoutWallet: React.FC = React.memo(() => {
           }}
         />
       )}
-      {step === 3 && (
-        <ConfirmLogout onCancel={() => history.push(Routes.home)} />
-      )}
+      {step === 3 && <ConfirmLogout onCancel={() => history.push('/')} />}
     </PageLayout>
   );
 });

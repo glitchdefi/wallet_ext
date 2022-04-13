@@ -69,6 +69,13 @@ var alias = {
     'TokenPriceContext',
     'hooks.ts'
   ),
+  'contexts/AuthorizeReqContext/hooks': path.join(
+    __dirname,
+    'src',
+    'contexts',
+    'AuthorizeReqContext',
+    'hooks.ts'
+  ),
   'hooks/useToast': path.join(__dirname, 'src', 'hooks', 'useToast.ts'),
   'hooks/useTransactions': path.join(
     __dirname,
@@ -152,6 +159,14 @@ var alias = {
     'app',
     'components',
     'Form',
+    'index.tsx'
+  ),
+  'app/components/Switch': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Switch',
     'index.tsx'
   ),
   'app/components/MessageBox': path.join(

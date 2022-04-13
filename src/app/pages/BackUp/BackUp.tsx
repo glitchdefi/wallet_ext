@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
 import { useWallet } from 'contexts/WalletContext/hooks';
@@ -57,7 +56,7 @@ const BackUp: React.FC = React.memo(() => {
       <Header
         onBack={() => {
           if (step === 0) {
-            history.push(Routes.home);
+            history.push('/');
           } else {
             setStep(step - 1);
           }

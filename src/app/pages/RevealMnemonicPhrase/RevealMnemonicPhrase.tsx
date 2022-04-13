@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 import { showWalletSeed, walletValidate } from 'scripts/ui/messaging';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
@@ -37,10 +36,7 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
   };
   return (
     <PageLayout>
-      <Header
-        onBack={() => history.push(Routes.home)}
-        title="Reveal Mnemonic phrase"
-      />
+      <Header onBack={() => history.push('/')} title="Reveal Mnemonic phrase" />
 
       <Flex height="543px" flexDirection="column" overflowY="scroll">
         <Box height="503px" overflowY="scroll" p="32px">
@@ -93,7 +89,7 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
 
         <Box px="32px" pb="24px">
           {seed ? (
-            <Box mt="auto" onClick={() => history.push(Routes.home)}>
+            <Box mt="auto" onClick={() => history.push('/')}>
               <ButtonShadow width="100%">Done</ButtonShadow>
             </Box>
           ) : (
@@ -102,7 +98,7 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
                 mr="16px"
                 width="50%"
                 variant="cancel"
-                onClick={() => history.push(Routes.home)}
+                onClick={() => history.push('/')}
               >
                 Cancel
               </Button>

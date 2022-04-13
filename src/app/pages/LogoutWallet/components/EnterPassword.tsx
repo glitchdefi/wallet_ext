@@ -12,7 +12,7 @@ import { showWalletSeed, walletValidate } from 'scripts/ui/messaging';
 interface Props {
   step?: number;
   isNoBackedUp?: boolean;
-  onShow?: (seedPhrase: string) => void;
+  onShow?: (seed: string) => void;
   onCancel: () => void;
 }
 

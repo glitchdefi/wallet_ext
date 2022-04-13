@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
-import { Routes } from 'constants/routes';
 
 import { Flex } from 'app/components/Box';
 import { Button } from 'app/components/Button';
@@ -37,7 +36,7 @@ export const Header: React.FC<Props> = ({
       >
         <Flex alignItems="center">
           {hasBackButton && (
-            <Button p="0px" mr="16px" onClick={() => history.push(Routes.home)}>
+            <Button p="0px" mr="16px" onClick={() => history.push('/')}>
               <LeftArrowIcon color={colors.primary} width="16px" />
             </Button>
           )}

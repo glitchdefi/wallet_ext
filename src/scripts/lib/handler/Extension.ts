@@ -20,10 +20,14 @@ import type {
   RequestEstimateFeeGet,
   RequestTokenPriceGet,
   RequestAccountTransfer,
+  RequestAuthorizeApprove,
+  RequestAuthorizeReject,
+  ResponseAuthorizeList,
 } from '../../types';
 import State from './State';
 import { GlitchController } from '../../controllers/GlitchController';
 import { createSubscription, unsubscribe } from './subscriptions';
+import { assert } from '@polkadot/util';
 
 export default class Extension {
   readonly state: State;
@@ -35,6 +39,42 @@ export default class Extension {
 
   public initController(controller: GlitchController) {
     this.controller = controller;
+  }
+
+  private authorizeApprove({ id }: RequestAuthorizeApprove): boolean {
+    const queued = this.state.getAuthRequest(id);
+
+    assert(queued, 'Unable to find request');
+
+    const { resolve } = queued;
+
+    resolve(true);
+
+    return true;
+  }
+
+  private getAuthList(): ResponseAuthorizeList {
+    return { list: this.state.authUrls };
+  }
+
+  private authorizeReject({ id }: RequestAuthorizeReject): boolean {
+    const queued = this.state.getAuthRequest(id);
+
+    assert(queued, 'Unable to find request');
+
+    const { reject } = queued;
+
+    reject(new Error('Rejected'));
+
+    return true;
+  }
+
+  private toggleAuthorization(url: string): ResponseAuthorizeList {
+    return { list: this.state.toggleAuthorization(url) };
+  }
+
+  private removeAuthorization(url: string): ResponseAuthorizeList {
+    return { list: this.state.removeAuthorization(url) };
   }
 
   // FIXME This looks very much like what we have in accounts
@@ -178,50 +218,87 @@ export default class Extension {
     port: chrome.runtime.Port
   ): Promise<ResponseType<TMessageType>> {
     switch (type) {
+      case 'pri(authorize.approve)':
+        return this.authorizeApprove(request as RequestAuthorizeApprove);
+
+      case 'pri(authorize.list)':
+        return this.getAuthList();
+
+      case 'pri(authorize.reject)':
+        return this.authorizeReject(request as RequestAuthorizeReject);
+
+      case 'pri(authorize.toggle)':
+        return this.toggleAuthorization(request as string);
+
+      case 'pri(authorize.remove)':
+        return this.removeAuthorization(request as string);
+
       case 'pri(authorize.requests)':
         return this.authorizeSubscribe(id, port);
+
       case 'pri(wallet.create)':
         return this.createWallet(request as RequestWalletCreate);
+
       case 'pri(wallet.create.completed)':
         return this.createWalletCompleted();
+
       case 'pri(wallet.restore)':
         return this.restoreWallet(request as RequestWalletRestore);
+
       case 'pri(wallet.lock)':
         return this.lockWallet();
+
       case 'pri(wallet.unlock)':
         return this.unlockWallet();
+
       case 'pri(wallet.logout)':
         return this.logoutWallet();
+
       case 'pri(wallet.backup)':
         return this.backupWallet();
+
       case 'pri(wallet.validate)':
         return this.walletValidate(request as RequestWalletValidate);
+
       case 'pri(wallet.seed.show)':
         return this.showWalletSeed();
+
       case 'pri(wallet.account.create)':
         return this.createAccount(request as RequestAccountCreate);
+
       case 'pri(wallet.account.import)':
         return this.importAccount(request as RequestAccountImport);
+
       case 'pri(wallet.account.change)':
         return this.changeAccount(request as RequestAccountChange);
+
       case 'pri(wallet.account.edit)':
         return this.editAccount(request as RequestAccountEdit);
+
       case 'pri(wallet.account.balance.get)':
         return this.getAccountBalance();
+
       case 'pri(wallet.account.privatekey.validate)':
         return this.privateKeyValidate(request as RequestPrivatekeyValidate);
+
       case 'pri(wallet.account.privatekey.show)':
         return this.showAccountPrivateKey();
+
       case 'pri(wallet.account.transfer)':
         return this.transfer(request as RequestAccountTransfer, id, port);
+
       case 'pri(settings.autolock.set)':
         return this.setAutoLock(request as RequestAutoLockSet);
+
       case 'pri(transactions.list.get)':
         return this.getTransactions(request as RequestTransactionsGet);
+
       case 'pri(estimate.fee.get)':
         return this.getEstimateFee(request as RequestEstimateFeeGet);
+
       case 'pri(token.price.get)':
         return this.getTokenPrice(request as RequestTokenPriceGet);
+
       case 'pri(reset.app.state)':
         return this.resetAppState();
 

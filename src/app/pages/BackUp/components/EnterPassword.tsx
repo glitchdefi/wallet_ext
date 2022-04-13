@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
-import { Routes } from 'constants/routes';
 
 // Components
 import { Flex, Box } from 'app/components/Box';
@@ -51,7 +50,7 @@ export const EnterPassword: React.FC<Props> = (props) => {
           width="50%"
           variant="cancel"
           mr="16px"
-          onClick={() => history.push(Routes.home)}
+          onClick={() => history.push('/')}
         >
           Cancel
         </Button>
