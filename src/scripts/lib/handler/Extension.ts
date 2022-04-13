@@ -23,7 +23,10 @@ import type {
   RequestAuthorizeApprove,
   RequestAuthorizeReject,
   ResponseAuthorizeList,
+  RequestAccountForget,
+  SigningRequest,
 } from '../../types';
+import keyring from '@polkadot/ui-keyring';
 import State from './State';
 import { GlitchController } from '../../controllers/GlitchController';
 import { createSubscription, unsubscribe } from './subscriptions';
@@ -77,11 +80,24 @@ export default class Extension {
     return { list: this.state.removeAuthorization(url) };
   }
 
-  // FIXME This looks very much like what we have in accounts
   private authorizeSubscribe(id: string, port: chrome.runtime.Port): boolean {
     const cb = createSubscription<'pri(authorize.requests)'>(id, port);
     const subscription = this.state.authSubject.subscribe(
       (requests: AuthorizeRequest[]): void => cb(requests)
+    );
+
+    port.onDisconnect.addListener((): void => {
+      unsubscribe(id);
+      subscription.unsubscribe();
+    });
+
+    return true;
+  }
+
+  private signingSubscribe(id: string, port: chrome.runtime.Port): boolean {
+    const cb = createSubscription<'pri(signing.requests)'>(id, port);
+    const subscription = this.state.signSubject.subscribe(
+      (requests: SigningRequest[]): void => cb(requests)
     );
 
     port.onDisconnect.addListener((): void => {
@@ -146,6 +162,12 @@ export default class Extension {
     request: RequestAccountChange
   ): Promise<ResponseWallet> {
     return this.controller.changeAccount(request);
+  }
+
+  private accountsForget({ address }: RequestAccountForget): boolean {
+    keyring.forgetAccount(address);
+
+    return true;
   }
 
   private editAccount(request: RequestAccountEdit): Promise<ResponseWallet> {
@@ -287,6 +309,9 @@ export default class Extension {
       case 'pri(wallet.account.transfer)':
         return this.transfer(request as RequestAccountTransfer, id, port);
 
+      case 'pri(wallet.account.forget)':
+        return this.accountsForget(request as RequestAccountForget);
+
       case 'pri(settings.autolock.set)':
         return this.setAutoLock(request as RequestAutoLockSet);
 
@@ -301,6 +326,9 @@ export default class Extension {
 
       case 'pri(reset.app.state)':
         return this.resetAppState();
+
+      case 'pri(signing.requests)':
+        return this.signingSubscribe(id, port);
 
       default:
         throw new Error(`Unable to handle message of type ${type}`);

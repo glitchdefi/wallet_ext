@@ -1,7 +1,7 @@
 {
-  "name": "glch-wallet-extension",
+  "name": "glitch-wallet-extension",
   "version": "1.0.1",
-  "description": "GLCH Wallet Extension",
+  "description": "Glitch Wallet Extension",
   "license": "MIT",
   "scripts": {
     "build": "node utils/build.js",

@@ -76,6 +76,13 @@ var alias = {
     'AuthorizeReqContext',
     'hooks.ts'
   ),
+  'contexts/SigningReqContext/hooks': path.join(
+    __dirname,
+    'src',
+    'contexts',
+    'SigningReqContext',
+    'hooks.ts'
+  ),
   'hooks/useToast': path.join(__dirname, 'src', 'hooks', 'useToast.ts'),
   'hooks/useTransactions': path.join(
     __dirname,

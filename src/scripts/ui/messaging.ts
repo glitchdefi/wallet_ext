@@ -26,6 +26,8 @@ import type {
   RequestAccountTransfer,
   ResponseAccountTransfer,
   ResponseAuthorizeList,
+  SigningRequest,
+  RequestAccountForget,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -126,6 +128,13 @@ export async function removeAuthorization(
   return sendMessage('pri(authorize.remove)', url);
 }
 
+// Signin
+export async function subscribeSigningRequests(
+  cb: (accounts: SigningRequest[]) => void
+): Promise<boolean> {
+  return sendMessage('pri(signing.requests)', null, cb);
+}
+
 // Wallet
 export async function createWallet(
   request: RequestWalletCreate
@@ -206,6 +215,12 @@ export async function privateKeyValidate(
 
 export async function showAccountPrivateKey(): Promise<string> {
   return sendMessage('pri(wallet.account.privatekey.show)');
+}
+
+export async function forgetAccount(
+  request: RequestAccountForget
+): Promise<boolean> {
+  return sendMessage('pri(wallet.account.forget)', request);
 }
 
 // Settings

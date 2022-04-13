@@ -1005,7 +1005,7 @@ const packageInfo = {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("c1d7c6f58d4bf988ea47")
+/******/ 		__webpack_require__.h = () => ("28217dddd94a5d0bc9ba")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/harmony module decorator */
@@ -1031,7 +1031,7 @@ const packageInfo = {
 /******/ 	/* webpack/runtime/load script */
 /******/ 	(() => {
 /******/ 		var inProgress = {};
-/******/ 		var dataWebpackPrefix = "glch-wallet-extension:";
+/******/ 		var dataWebpackPrefix = "glitch-wallet-extension:";
 /******/ 		// loadScript function to load a script via script tag
 /******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
 /******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
@@ -1511,7 +1511,7 @@ const packageInfo = {
 /******/ 			});
 /******/ 		}
 /******/ 		
-/******/ 		self["webpackHotUpdateglch_wallet_extension"] = (chunkId, moreModules, runtime) => {
+/******/ 		self["webpackHotUpdateglitch_wallet_extension"] = (chunkId, moreModules, runtime) => {
 /******/ 			for(var moduleId in moreModules) {
 /******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
 /******/ 					currentUpdate[moduleId] = moreModules[moduleId];

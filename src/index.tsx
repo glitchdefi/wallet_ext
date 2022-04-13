@@ -7,6 +7,7 @@ import { ApplicationProvider } from './contexts/ApplicationContext';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { TokenPriceProvider } from './contexts/TokenPriceContext';
 import { AuthorizeReqProvider } from './contexts/AuthorizeReqContext';
+import { SigningReqProvider } from './contexts/SigningReqContext';
 
 // App
 import { App } from './app';
@@ -23,7 +24,9 @@ const Root: React.FC = () => {
           <SettingsProvider>
             <WalletProvider>
               <TokenPriceProvider>
-                <App />
+                <SigningReqProvider>
+                  <App />
+                </SigningReqProvider>
               </TokenPriceProvider>
             </WalletProvider>
           </SettingsProvider>

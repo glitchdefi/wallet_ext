@@ -15,10 +15,13 @@ import {
   createWallet,
   createWalletCompleted,
   editAccount,
+  forgetAccount,
   getAccountBalance,
+  getAuthList,
   importAccount,
   lockWallet,
   logoutWallet,
+  removeAuthorization,
   resetAppState,
   restoreWallet,
   unlockWallet,
@@ -26,6 +29,7 @@ import {
 import { useToast } from 'hooks/useToast';
 import { useSettings } from 'contexts/SettingsContext/hooks';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
+import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
 
 export type WalletContextType = {
   walletCtx?: ResponseWallet | undefined;
@@ -51,6 +55,7 @@ export const WalletProvider: React.FC = ({ children }) => {
   const { toastSuccess } = useToast();
   const { setSettingsCtx } = useSettings();
   const { setAppLoading, onSetActiveTabHomePage } = useApplication();
+  const { authRequests } = useAuthorizeReq();
   const [wallet, setWallet] = useState<ResponseWallet>();
 
   const onCreateWallet = useCallback((request: RequestWalletCreate) => {
@@ -119,21 +124,42 @@ export const WalletProvider: React.FC = ({ children }) => {
       });
   }, []);
 
-  const onLogoutWallet = useCallback((history: any) => {
-    setAppLoading(true);
+  const onLogoutWallet = useCallback(
+    async (history: any) => {
+      setAppLoading(true);
 
-    logoutWallet()
-      .then((data) => {
-        const { wallet, settings } = data;
-        setWallet(wallet);
-        setSettingsCtx(settings);
-        onSetActiveTabHomePage(0);
-      })
-      .finally(() => {
-        setAppLoading(false);
-        history.push('/');
+      // Forget account
+      await Promise.all(
+        Object.entries(wallet.accounts).map(([key]) => {
+          return forgetAccount({ address: key as string });
+        })
+      );
+
+      // Remove connected dapps
+      getAuthList().then(async ({ list }) => {
+        list &&
+          (await Promise.all(
+            Object.entries(list).map(([url, _]: [string, any]) => {
+              return removeAuthorization(url);
+            })
+          ));
       });
-  }, []);
+
+      // Remove data store
+      logoutWallet()
+        .then((data) => {
+          const { wallet, settings } = data;
+          setWallet(wallet);
+          setSettingsCtx(settings);
+          onSetActiveTabHomePage(0);
+        })
+        .finally(() => {
+          setAppLoading(false);
+          history.push('/');
+        });
+    },
+    [wallet, authRequests]
+  );
 
   const onCreateAccount = useCallback(
     (request: RequestAccountCreate, history: any) => {

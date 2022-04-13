@@ -1,4 +1,26 @@
+import type { KeyringPair, KeyringPair$Meta } from '@polkadot/keyring/types';
+import type {
+  SignerPayloadJSON,
+  SignerPayloadRaw,
+} from '@polkadot/types/types';
+import type { HexString } from '@polkadot/util/types';
+import { TypeRegistry } from '@polkadot/types';
 import { AuthUrls } from '../lib/handler/State';
+
+export interface AccountJson extends KeyringPair$Meta {
+  address: string;
+  genesisHash?: string | null;
+  isExternal?: boolean;
+  isHardware?: boolean;
+  isHidden?: boolean;
+  name?: string;
+  parentAddress?: string;
+  suri?: string;
+  type?: KeypairType;
+  whenCreated?: number;
+}
+
+export declare type KeypairType = 'ed25519' | 'sr25519' | 'ecdsa' | 'ethereum';
 
 type IsNull<T, K extends keyof T> = {
   [K1 in Exclude<keyof T, K>]: T[K1];
@@ -42,6 +64,7 @@ export interface RequestSignatures {
   'pri(wallet.account.import)': [RequestAccountImport, ResponseWallet];
   'pri(wallet.account.change)': [RequestAccountChange, ResponseWallet];
   'pri(wallet.account.edit)': [RequestAccountEdit, ResponseWallet];
+  'pri(wallet.account.forget)': [RequestAccountForget, boolean];
   'pri(wallet.account.transfer)': [
     RequestAccountTransfer,
     ResponseAccountTransfer
@@ -60,6 +83,8 @@ export interface RequestSignatures {
   'pri(estimate.fee.get)': [RequestEstimateFeeGet, string];
   'pri(token.price.get)': [RequestTokenPriceGet, string | number];
   'pri(reset.app.state)': [null, ResponseWallet];
+
+  'pri(signing.requests)': [RequestSigningSubscribe, boolean, SigningRequest[]];
 
   // public/external requests, i.e. from a page
   'pub(authorize.tab)': [RequestAuthorizeTab, null];
@@ -156,12 +181,29 @@ export interface RequestAuthorizeTab {
 export interface RequestAuthorizeApprove {
   id: string;
 }
-
 export interface RequestAuthorizeReject {
   id: string;
 }
+export interface RequestAccountForget {
+  address: string;
+}
 
 export type RequestAuthorizeSubscribe = null;
+
+export type RequestSigningSubscribe = null;
+
+export interface SigningRequest {
+  account: AccountJson;
+  id: string;
+  request: RequestSign;
+  url: string;
+}
+
+export interface RequestSign {
+  readonly payload: SignerPayloadJSON | SignerPayloadRaw;
+
+  sign(registry: TypeRegistry, pair: KeyringPair): { signature: HexString };
+}
 export interface ResponseAccountTransfer {
   success: boolean;
   message: string;

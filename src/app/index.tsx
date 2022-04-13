@@ -15,9 +15,11 @@ import { useWallet } from 'contexts/WalletContext/hooks';
 import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
 import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
+import { useSigningReq } from 'contexts/SigningReqContext/hooks';
 import {
   getTokenPrice,
   subscribeAuthorizeRequests,
+  subscribeSigningRequests,
 } from 'scripts/ui/messaging';
 
 // Components
@@ -45,6 +47,7 @@ import { BackUpPage } from './pages/BackUp';
 import { SendTokenPage } from './pages/SendToken';
 import { AuthorizePage } from './pages/Authorize';
 import { ConnectedDapps } from './pages/ConnectedDapps';
+import { SigningPage } from './pages/Signing';
 
 const history = createMemoryHistory();
 
@@ -52,6 +55,7 @@ export const App: React.FC = () => {
   const { appLoading } = useApplication();
   const { setSettingsCtx } = useSettings();
   const { setTokenPrice } = useTokenPrice();
+  const { signRequests, setSignRequests } = useSigningReq();
   const { authRequests, setAuthRequests } = useAuthorizeReq();
   const { walletCtx, setWalletCtx, onLockWallet, onGetAccountBalance } =
     useWallet();
@@ -61,9 +65,10 @@ export const App: React.FC = () => {
   const [hasInternet, setHasInternet] = useState<boolean>(true);
 
   useEffect((): void => {
-    Promise.all([subscribeAuthorizeRequests(setAuthRequests)]).catch(
-      console.error
-    );
+    Promise.all([
+      subscribeAuthorizeRequests(setAuthRequests),
+      subscribeSigningRequests(setSignRequests),
+    ]).catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -127,6 +132,8 @@ export const App: React.FC = () => {
     <UnlockPage />
   ) : authRequests && authRequests.length ? (
     <AuthorizePage />
+  ) : signRequests && signRequests.length ? (
+    <SigningPage />
   ) : (isInitialized === 'pending' || isInitialized === 'completed') &&
     !walletCtx?.isLocked ? (
     <HomePage />
