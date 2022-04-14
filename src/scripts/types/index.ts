@@ -84,6 +84,9 @@ export interface RequestSignatures {
   'pri(token.price.get)': [RequestTokenPriceGet, string | number];
   'pri(reset.app.state)': [null, ResponseWallet];
 
+  'pri(signing.approve.signature)': [RequestSigningApproveSignature, boolean];
+  'pri(signing.approve)': [RequestSigningApprove, boolean];
+  'pri(signing.cancel)': [RequestSigningCancel, boolean];
   'pri(signing.requests)': [RequestSigningSubscribe, boolean, SigningRequest[]];
 
   // public/external requests, i.e. from a page
@@ -192,6 +195,16 @@ export type RequestAuthorizeSubscribe = null;
 
 export type RequestSigningSubscribe = null;
 
+export interface RequestSigningApproveSignature {
+  id: string;
+  signature: HexString;
+}
+export interface RequestSigningApprove {
+  id: string;
+}
+export interface RequestSigningCancel {
+  id: string;
+}
 export interface SigningRequest {
   account: AccountJson;
   id: string;

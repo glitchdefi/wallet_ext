@@ -137,8 +137,10 @@ export const App: React.FC = () => {
   ) : (isInitialized === 'pending' || isInitialized === 'completed') &&
     !walletCtx?.isLocked ? (
     <HomePage />
-  ) : (
+  ) : isInitialized === 'none' && !walletCtx?.isLocked ? (
     <WelcomePage />
+  ) : (
+    <LoadingApplication />
   );
 
   return (

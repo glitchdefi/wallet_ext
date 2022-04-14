@@ -6,8 +6,12 @@ import { colors } from 'theme/colors';
 import { Text } from 'app/components/Text';
 import { Box, Flex } from 'app/components/Box';
 import { DownArrowIcon } from 'app/components/Svg';
+interface Props {
+  showArrow?: boolean;
+}
 
-const NetworkBox: React.FC = React.memo(() => {
+const NetworkBox: React.FC<Props> = React.memo((props) => {
+  const { showArrow = true } = props;
   return (
     <Flex
       width="fit-content"
@@ -24,7 +28,7 @@ const NetworkBox: React.FC = React.memo(() => {
       <Text mx="8px" fontSize="12px">
         Glitch Testnet
       </Text>
-      <DownArrowIcon width="12px" color={colors.gray7} />
+      {showArrow && <DownArrowIcon width="12px" color={colors.gray7} />}
     </Flex>
   );
 });

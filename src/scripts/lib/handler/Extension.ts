@@ -25,12 +25,30 @@ import type {
   ResponseAuthorizeList,
   RequestAccountForget,
   SigningRequest,
+  RequestSigningApproveSignature,
+  RequestSigningCancel,
+  RequestSigningApprove,
 } from '../../types';
 import keyring from '@polkadot/ui-keyring';
+import { TypeRegistry } from '@polkadot/types';
+import type {
+  SignerPayloadJSON,
+  SignerPayloadRaw,
+} from '@polkadot/types/types';
 import State from './State';
 import { GlitchController } from '../../controllers/GlitchController';
 import { createSubscription, unsubscribe } from './subscriptions';
 import { assert } from '@polkadot/util';
+import { MetadataDef } from '@polkadot/extension-inject/types';
+
+function isJsonPayload(
+  value: SignerPayloadJSON | SignerPayloadRaw
+): value is SignerPayloadJSON {
+  return (value as SignerPayloadJSON).genesisHash !== undefined;
+}
+
+// a global registry to use internally
+const registry = new TypeRegistry();
 
 export default class Extension {
   readonly state: State;
@@ -104,6 +122,71 @@ export default class Extension {
       unsubscribe(id);
       subscription.unsubscribe();
     });
+
+    return true;
+  }
+
+  private signingApprove({ id }: RequestSigningApprove): boolean {
+    const queued = this.state.getSignRequest(id);
+
+    assert(queued, 'Unable to find request');
+
+    const { request, resolve } = queued;
+    const pair = keyring.getPair(queued.account.address);
+    pair?.isLocked && pair.unlock();
+
+    const { payload } = request;
+
+    if (isJsonPayload(payload)) {
+      // Get the metadata for the genesisHash
+      const currentMetadata = this.state.knownMetadata.find(
+        (meta: MetadataDef) => meta.genesisHash === payload.genesisHash
+      );
+
+      // set the registry before calling the sign function
+      registry.setSignedExtensions(
+        payload.signedExtensions,
+        currentMetadata?.userExtensions
+      );
+
+      if (currentMetadata) {
+        registry.register(currentMetadata?.types);
+      }
+    }
+
+    const result = request.sign(registry, pair);
+
+    resolve({
+      id,
+      ...result,
+    });
+
+    return true;
+  }
+
+  private signingApproveSignature({
+    id,
+    signature,
+  }: RequestSigningApproveSignature): boolean {
+    const queued = this.state.getSignRequest(id);
+
+    assert(queued, 'Unable to find request');
+
+    const { resolve } = queued;
+
+    resolve({ id, signature });
+
+    return true;
+  }
+
+  private signingCancel({ id }: RequestSigningCancel): boolean {
+    const queued = this.state.getSignRequest(id);
+
+    assert(queued, 'Unable to find request');
+
+    const { reject } = queued;
+
+    reject(new Error('Cancelled'));
 
     return true;
   }
@@ -329,6 +412,17 @@ export default class Extension {
 
       case 'pri(signing.requests)':
         return this.signingSubscribe(id, port);
+
+      case 'pri(signing.approve.signature)':
+        return this.signingApproveSignature(
+          request as RequestSigningApproveSignature
+        );
+
+      case 'pri(signing.approve)':
+        return this.signingApprove(request as RequestSigningApprove);
+
+      case 'pri(signing.cancel)':
+        return this.signingCancel(request as RequestSigningCancel);
 
       default:
         throw new Error(`Unable to handle message of type ${type}`);

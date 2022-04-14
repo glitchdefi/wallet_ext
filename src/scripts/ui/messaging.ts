@@ -33,6 +33,7 @@ import type { Message } from '../types/Message';
 
 import { PORT_EXTENSION } from '../../constants/messages';
 import { getId } from '../../utils/getId';
+import { HexString } from '@polkadot/util/types';
 
 interface Handler {
   resolve: (data: any) => void;
@@ -133,6 +134,23 @@ export async function subscribeSigningRequests(
   cb: (accounts: SigningRequest[]) => void
 ): Promise<boolean> {
   return sendMessage('pri(signing.requests)', null, cb);
+}
+
+export async function approveSignRequest(id: string): Promise<boolean> {
+  return sendMessage('pri(signing.approve)', {
+    id,
+  });
+}
+
+export async function cancelSignRequest(id: string): Promise<boolean> {
+  return sendMessage('pri(signing.cancel)', { id });
+}
+
+export async function approveSignSignature(
+  id: string,
+  signature: HexString
+): Promise<boolean> {
+  return sendMessage('pri(signing.approve.signature)', { id, signature });
 }
 
 // Wallet
