@@ -28,6 +28,7 @@ import type {
   ResponseAuthorizeList,
   SigningRequest,
   RequestAccountForget,
+  AllowedPath,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -275,4 +276,8 @@ export async function transfer(
 
 export async function resetAppState(): Promise<ResponseWallet> {
   return sendMessage('pri(reset.app.state)');
+}
+
+export async function windowOpen(path: AllowedPath): Promise<boolean> {
+  return sendMessage('pri(window.open)', path);
 }

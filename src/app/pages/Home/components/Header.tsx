@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
 
 import { Flex } from 'app/components/Box';
 import { Button } from 'app/components/Button';
-import { LockIcon, LeftArrowIcon } from 'app/components/Svg';
+import { LockIcon, LeftArrowIcon, ExpandIcon } from 'app/components/Svg';
 import { ManageAccountModal } from './ManageAccountModal';
 import { Avatar, NetworkBox } from 'app/components/Shared';
+import { windowOpen } from 'scripts/ui/messaging';
+import { useToast } from 'hooks/useToast';
 interface Props {
   account?: { avatar?: string };
   hasBackButton?: boolean;
+  hasExpandButton?: boolean;
   hasBottomBorder?: boolean;
   onLockWallet?: (history: any) => void;
 }
@@ -19,12 +22,18 @@ export const Header: React.FC<Props> = ({
   account,
   hasBackButton,
   hasBottomBorder,
+  hasExpandButton,
   onLockWallet,
 }) => {
   const history = useHistory();
+  const { toastError } = useToast();
   const { avatar } = account;
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+
+  const onExpand = useCallback(() => {
+    windowOpen('/').catch((error: Error) => toastError(null, error.message));
+  }, []);
 
   return (
     <>
@@ -38,6 +47,14 @@ export const Header: React.FC<Props> = ({
           {hasBackButton && (
             <Button p="0px" mr="16px" onClick={() => history.push('/')}>
               <LeftArrowIcon color={colors.primary} width="16px" />
+            </Button>
+          )}
+
+          {hasExpandButton && (
+            <Button p="0px" mr="16px" onClick={onExpand}>
+              <Flex>
+                <ExpandIcon />
+              </Flex>
             </Button>
           )}
 

@@ -34,6 +34,7 @@ export { default as FilterIcon } from './Icons/Filter';
 export { default as CalendarIcon } from './Icons/Calendar';
 export { default as SwapRightIcon } from './Icons/SwapRight';
 export { default as LinkIcon } from './Icons/LinkIcon';
+export { default as ExpandIcon } from './Icons/Expand';
 
 export { default as Svg } from './Svg';
 export type { SvgProps } from './types';

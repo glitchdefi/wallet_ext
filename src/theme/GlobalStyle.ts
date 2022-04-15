@@ -61,4 +61,17 @@ export const GlobalStyles = createGlobalStyle`
         0% {transform:rotate(0deg);}
         100% {transform:rotate(360deg);}
     }
+
+    @media only screen and (min-width: 1028px) {
+        body {
+            padding-top: 60px;
+            padding-bottom: 60px;
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        #root {
+            height: calc(100vh - 120px);
+        }
+    }
 `;

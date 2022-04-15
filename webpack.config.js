@@ -22,6 +22,7 @@ var alias = {
   'utils/strings': path.join(__dirname, 'src', 'utils', 'strings.ts'),
   'utils/number': path.join(__dirname, 'src', 'utils', 'number.ts'),
   'utils/drawAvatar': path.join(__dirname, 'src', 'utils', 'drawAvatar.ts'),
+  'utils/withErrorLog': path.join(__dirname, 'src', 'utils', 'withErrorLog.ts'),
   'theme/colors': path.join(__dirname, 'src', 'theme', 'colors.ts'),
   'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
   'constants/values': path.join(__dirname, 'src', 'constants', 'values.ts'),
@@ -420,6 +421,12 @@ var options = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'notification.html'),
       filename: 'notification.html',
+      chunks: ['popup'],
+      cache: false,
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src', 'tab.html'),
+      filename: 'tab.html',
       chunks: ['popup'],
       cache: false,
     }),
