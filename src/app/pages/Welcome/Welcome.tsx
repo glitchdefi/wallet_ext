@@ -10,7 +10,7 @@ import { Routes } from 'constants/routes';
 import { Button, ButtonShadow } from 'app/components/Button';
 import { Box, Flex } from 'app/components/Box';
 import { NeedHelpContact } from 'app/components/Footer';
-import { NetworkBox, TextGradient } from 'app/components/Shared';
+import { ExpandButton, NetworkBox, TextGradient } from 'app/components/Shared';
 import { PageLayout } from 'app/layouts';
 
 const Welcome: React.FC = () => {
@@ -19,9 +19,12 @@ const Welcome: React.FC = () => {
 
   return (
     <PageLayout hasOverlay={false}>
-      <Box p="16px">
+      <Flex alignItems="center" p="16px">
+        <Box mr="16px">
+          <ExpandButton />
+        </Box>
         <NetworkBox />
-      </Box>
+      </Flex>
 
       <Flex
         flex={1}

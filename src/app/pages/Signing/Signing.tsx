@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { PageLayout } from 'app/layouts';
 import isEmpty from 'lodash/isEmpty';
 import { useHistory } from 'react-router';
@@ -9,7 +9,12 @@ import { formatDollarAmount } from 'utils/number';
 import { SigningRequest } from 'scripts/types';
 
 import { useSigningReq } from 'contexts/SigningReqContext/hooks';
-import { approveSignRequest, cancelSignRequest } from 'scripts/ui/messaging';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
+import {
+  approveSignRequest,
+  cancelSignRequest,
+  walletValidate,
+} from 'scripts/ui/messaging';
 
 import { GlitchLogo } from 'app/components/Image';
 import { Box, Flex } from 'app/components/Box';
@@ -18,19 +23,31 @@ import { ButtonShadow, Button, CopyButton } from 'app/components/Button';
 import { CloseIcon } from 'app/components/Svg';
 import { NetworkBox } from 'app/components/Shared';
 import { useToast } from 'hooks/useToast';
+import { Label, PasswordInput } from 'app/components/Form';
 
 const Signing: React.FC = () => {
   const history = useHistory();
+  const { setAppLoading } = useApplication();
+  const [password, setPassword] = useState<string>('');
+  const [validPassword, setValidPassword] = useState<boolean>(true);
   const { toastError } = useToast();
   const { signRequests } = useSigningReq();
   const request = !isEmpty(signRequests) ? signRequests[0] : {};
   const { id, account, url } = request as SigningRequest;
 
   const onApprove = useCallback((): void => {
-    approveSignRequest(id)
-      .then(() => history.push('/'))
-      .catch((error: Error) => toastError(null, error.message));
-  }, [history, id]);
+    setAppLoading(true);
+
+    walletValidate({ password }).then((valid: boolean) => {
+      if (valid) {
+        approveSignRequest(id)
+          .then(() => history.push('/'))
+          .catch((error: Error) => toastError(null, error.message));
+      }
+      setValidPassword(valid);
+      setAppLoading(false);
+    });
+  }, [history, id, password]);
 
   const onReject = useCallback((): void => {
     cancelSignRequest(id)
@@ -120,15 +137,42 @@ const Signing: React.FC = () => {
               </Text>
             </Flex>
           </Box>
+
+          <Box background={colors.gray2} mt="16px" p="16px">
+            <Text fontSize="12px" color={colors.cyan5}>
+              Please enter the Glitch password to complete your transaction
+            </Text>
+
+            <Box mt="16px">
+              <Label>Glitch Password</Label>
+              <PasswordInput
+                isError={!validPassword}
+                value={password}
+                placeholder="Password"
+                onChange={(e) => {
+                  const { value } = e.target;
+                  !validPassword && setValidPassword(true);
+                  setPassword(value);
+                }}
+                msgError="Incorrect password"
+              />
+            </Box>
+          </Box>
         </Flex>
 
         <Flex background={colors.gray1} pb="16px" px="16px" alignItems="center">
           <Button variant="cancel" width="100%" mr="16px" onClick={onReject}>
             Reject
           </Button>
-          <ButtonShadow width="100%" onClick={onApprove}>
-            Approve
-          </ButtonShadow>
+          {password ? (
+            <ButtonShadow width="100%" onClick={onApprove}>
+              Approve
+            </ButtonShadow>
+          ) : (
+            <Button width="100%" variant="disable-primary">
+              Approve
+            </Button>
+          )}
         </Flex>
       </Flex>
     </PageLayout>

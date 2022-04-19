@@ -61,7 +61,7 @@ const AccountDetails: React.FC = () => {
 
   return (
     <PageLayout minHeight="600px">
-      <Box p="16px">
+      <Flex flex={1} flexDirection="column" p="16px">
         <Flex
           background={colors.gray2}
           alignItems="center"
@@ -82,7 +82,7 @@ const AccountDetails: React.FC = () => {
           alignItems="center"
           flexDirection="column"
           px="16px"
-          height="512px"
+          flex={1}
           background={colors.gray1}
         >
           {showEdit ? (
@@ -159,7 +159,7 @@ const AccountDetails: React.FC = () => {
             </Flex>
           </Button>
         </Flex>
-      </Box>
+      </Flex>
     </PageLayout>
   );
 };

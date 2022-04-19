@@ -1,12 +1,13 @@
 import { createGlobalStyle } from 'styled-components';
 import { colors } from './colors';
+import background from '../assets/img/bg-1.jpg';
 
 export const GlobalStyles = createGlobalStyle`
     body {
         margin: 0;
         padding: 0;
         font-family: IBM Plex Mono, monospace !important;
-        background-color: #07111f;
+        background-image: url(${background});
         min-height: 600px;
     }
 
@@ -62,12 +63,21 @@ export const GlobalStyles = createGlobalStyle`
         100% {transform:rotate(360deg);}
     }
 
-    @media only screen and (min-width: 1028px) {
+    @media only screen and (min-width: 375px) {
+        body {
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        #root {
+            height: 100vh;
+        }
+    }
+    
+    @media only screen and (min-width: 768px) {
         body {
             padding-top: 60px;
             padding-bottom: 60px;
-            min-height: 100%;
-            overflow-x: hidden;
         }
 
         #root {

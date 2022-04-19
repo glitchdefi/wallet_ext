@@ -67,9 +67,9 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
         ) : null} */}
       </Flex>
 
-      <Box mt="16px" mb="16px">
+      <Flex flex={1} flexDirection="column" mt="16px" mb="16px">
         <TransactionList loading={isLoading} data={transactions} />
-      </Box>
+      </Flex>
 
       {/* <FilterModal
         initFilter={filter}

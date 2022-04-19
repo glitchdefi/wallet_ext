@@ -61,7 +61,7 @@ const ShowPrivateKeys: React.FC = () => {
 
   return (
     <PageLayout minHeight="600px">
-      <Box p="16px">
+      <Flex flex={1} flexDirection="column" p="16px">
         <Flex
           background={colors.gray2}
           alignItems="center"
@@ -80,7 +80,7 @@ const ShowPrivateKeys: React.FC = () => {
         <Flex
           p="16px"
           flexDirection="column"
-          height="512px"
+          flex={1}
           background={colors.gray1}
         >
           <AccountWrapper>
@@ -167,7 +167,7 @@ const ShowPrivateKeys: React.FC = () => {
             )}
           </Flex>
         </Flex>
-      </Box>
+      </Flex>
     </PageLayout>
   );
 };

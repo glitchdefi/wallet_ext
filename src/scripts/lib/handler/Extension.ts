@@ -308,7 +308,7 @@ export default class Extension {
   }
 
   private windowOpen(path: AllowedPath): boolean {
-    const url = `${chrome.extension.getURL('tab.html')}#${path}`;
+    const url = `${chrome.extension.getURL('popup.html')}#${path}`;
 
     // if (!ALLOWED_PATH.includes(path)) {
     //   console.error('Not allowed to open the url:', url);

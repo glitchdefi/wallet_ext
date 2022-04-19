@@ -115,6 +115,7 @@ var alias = {
     'hooks',
     'useStepTitleDesc.ts'
   ),
+  'hooks/useIsPopup': path.join(__dirname, 'src', 'hooks', 'useIsPopup.ts'),
   'locales/translations': path.join(
     __dirname,
     'src',
@@ -421,12 +422,6 @@ var options = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'notification.html'),
       filename: 'notification.html',
-      chunks: ['popup'],
-      cache: false,
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'tab.html'),
-      filename: 'tab.html',
       chunks: ['popup'],
       cache: false,
     }),

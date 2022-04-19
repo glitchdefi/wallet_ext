@@ -13,11 +13,18 @@ const alertTypeMap = {
 };
 
 const StyledToast = styled.div`
+  left: 16px;
   right: 16px;
   position: fixed;
-  max-width: calc(100% - 32px);
+  max-width: 744px;
   transition: all 250ms ease-in;
-  width: 100%;
+  width: auto;
+
+  @media only screen and (min-width: 768px) {
+    margin: 66px auto;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 `;
 
 const Toast: React.FC<ToastProps> = ({
