@@ -128,6 +128,23 @@ const StyledModal = styled(Modal)`
   .modal-backdrop.show {
     opacity: 0;
   }
+
+  @media only screen and (min-width: 375px) {
+    .modal-dialog {
+      margin: 0px auto;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+
+  @media only screen and (min-width: 768px) {
+    .modal-dialog {
+      padding-left: 0px;
+      padding-right: 0px;
+      max-width: 712px;
+      margin-top: 136px !important;
+    }
+  }
 `;
 
 const AccountWrapper = styled.div`

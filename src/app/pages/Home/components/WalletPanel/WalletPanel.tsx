@@ -46,7 +46,7 @@ export const WalletPanel: React.FC = React.memo(() => {
 
   return (
     <Box height="540.94px" overflowY="scroll">
-      <Header account={account} onLockWallet={onLockWallet} />
+      <Header hasExpandButton account={account} onLockWallet={onLockWallet} />
 
       {!isBackup && (
         <BackedUpView onBackup={() => history.push(Routes.backUp)} />

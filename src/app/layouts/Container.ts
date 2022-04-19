@@ -11,6 +11,15 @@ const Container = styled.div`
   background-size: cover;
   background-attachment: fixed;
   position: relative;
+
+  @media only screen and (min-width: 375px) {
+    margin: 0px auto;
+    min-height: 100%;
+  }
+
+  @media only screen and (min-width: 768px) {
+    width: 744px;
+  }
 `;
 
 export default Container;

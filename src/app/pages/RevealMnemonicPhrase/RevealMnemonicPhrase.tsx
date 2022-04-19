@@ -38,8 +38,8 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
     <PageLayout>
       <Header onBack={() => history.push('/')} title="Reveal Mnemonic phrase" />
 
-      <Flex height="543px" flexDirection="column" overflowY="scroll">
-        <Box height="503px" overflowY="scroll" p="32px">
+      <Flex position="relative" flex={1} flexDirection="column">
+        <Box p="32px">
           <MessageBox
             textComponent={
               <Box ml="10px">
@@ -87,13 +87,20 @@ const RevealMnemonicPhrase: React.FC = React.memo(() => {
           )}
         </Box>
 
-        <Box px="32px" pb="24px">
+        <Box
+          position="absolute"
+          left="0px"
+          right="0px"
+          bottom="0px"
+          px="32px"
+          pb="24px"
+        >
           {seed ? (
-            <Box mt="auto" onClick={() => history.push('/')}>
+            <Box onClick={() => history.push('/')}>
               <ButtonShadow width="100%">Done</ButtonShadow>
             </Box>
           ) : (
-            <Flex mt="auto">
+            <Flex>
               <Button
                 mr="16px"
                 width="50%"

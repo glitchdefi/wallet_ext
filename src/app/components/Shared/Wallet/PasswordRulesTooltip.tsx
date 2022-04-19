@@ -51,12 +51,6 @@ export const PasswordRulesTooltip: React.FC<Props> = React.memo(
         <ReactTooltip
           id="password-input"
           className="glch-tooltip"
-          overridePosition={({ top }) => {
-            return {
-              left: 16,
-              top,
-            };
-          }}
           place="bottom"
           backgroundColor={colors.gray2}
         >
@@ -107,6 +101,7 @@ const Rule = ({ checked, label, ...rest }: RuleProps) => {
 const Container = styled.div`
   .glch-tooltip {
     padding: 12px;
+    left: auto !important;
     opacity: 1 !important;
   }
 `;

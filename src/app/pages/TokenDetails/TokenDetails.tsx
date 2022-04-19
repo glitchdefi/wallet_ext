@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Routes } from 'constants/routes';
+import styled from 'styled-components';
 
 import { colors } from 'theme/colors';
 import {
@@ -37,7 +38,7 @@ const TokenDetails: React.FC = React.memo(() => {
     <PageLayout>
       <Header account={account} hasBackButton hasBottomBorder />
 
-      <Flex height="527px" flexDirection="column" px="16px" overflowY="scroll">
+      <ContentWrapper flexDirection="column" px="16px" overflowY="scroll">
         <Flex mt="26px" flexDirection="column" alignItems="center">
           <GlitchLogo width={64} height={64} />
 
@@ -88,9 +89,17 @@ const TokenDetails: React.FC = React.memo(() => {
         </Flex>
 
         <TransactionHistorySection />
-      </Flex>
+      </ContentWrapper>
     </PageLayout>
   );
 });
+
+const ContentWrapper = styled(Flex)`
+  height: 527px;
+
+  @media only screen and (min-width: 768px) {
+    height: calc(100vh - 136px);
+  }
+`;
 
 export default TokenDetails;

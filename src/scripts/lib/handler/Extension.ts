@@ -28,6 +28,7 @@ import type {
   RequestSigningApproveSignature,
   RequestSigningCancel,
   RequestSigningApprove,
+  AllowedPath,
 } from '../../types';
 import keyring from '@polkadot/ui-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -40,6 +41,7 @@ import { GlitchController } from '../../controllers/GlitchController';
 import { createSubscription, unsubscribe } from './subscriptions';
 import { assert } from '@polkadot/util';
 import { MetadataDef } from '@polkadot/extension-inject/types';
+import { withErrorLog } from 'utils/withErrorLog';
 
 function isJsonPayload(
   value: SignerPayloadJSON | SignerPayloadRaw
@@ -305,6 +307,20 @@ export default class Extension {
     return Promise.resolve('pending');
   }
 
+  private windowOpen(path: AllowedPath): boolean {
+    const url = `${chrome.extension.getURL('popup.html')}#${path}`;
+
+    // if (!ALLOWED_PATH.includes(path)) {
+    //   console.error('Not allowed to open the url:', url);
+
+    //   return false;
+    // }
+
+    withErrorLog(() => chrome.tabs.create({ url }));
+
+    return true;
+  }
+
   private getTokenPrice(
     request: RequestTokenPriceGet
   ): Promise<string | number> {
@@ -423,6 +439,9 @@ export default class Extension {
 
       case 'pri(signing.cancel)':
         return this.signingCancel(request as RequestSigningCancel);
+
+      case 'pri(window.open)':
+        return this.windowOpen(request as AllowedPath);
 
       default:
         throw new Error(`Unable to handle message of type ${type}`);

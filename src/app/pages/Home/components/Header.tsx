@@ -3,14 +3,15 @@ import { useHistory } from 'react-router';
 
 import { colors } from 'theme/colors';
 
-import { Flex } from 'app/components/Box';
+import { Box, Flex } from 'app/components/Box';
 import { Button } from 'app/components/Button';
 import { LockIcon, LeftArrowIcon } from 'app/components/Svg';
 import { ManageAccountModal } from './ManageAccountModal';
-import { Avatar, NetworkBox } from 'app/components/Shared';
+import { Avatar, ExpandButton, NetworkBox } from 'app/components/Shared';
 interface Props {
   account?: { avatar?: string };
   hasBackButton?: boolean;
+  hasExpandButton?: boolean;
   hasBottomBorder?: boolean;
   onLockWallet?: (history: any) => void;
 }
@@ -19,6 +20,7 @@ export const Header: React.FC<Props> = ({
   account,
   hasBackButton,
   hasBottomBorder,
+  hasExpandButton,
   onLockWallet,
 }) => {
   const history = useHistory();
@@ -41,6 +43,11 @@ export const Header: React.FC<Props> = ({
             </Button>
           )}
 
+          {hasExpandButton && (
+            <Box mr="16px">
+              <ExpandButton />
+            </Box>
+          )}
           <NetworkBox />
         </Flex>
 

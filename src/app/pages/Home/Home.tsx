@@ -65,6 +65,12 @@ const StyledTabs = styled(Tabs)`
     padding-right: 48px;
     justify-content: space-around;
   }
+
+  @media only screen and (min-width: 375px) {
+    ul {
+      position: absolute;
+    }
+  }
 `;
 
 const StyledTab = styled(Tab)<{ isactive?: string }>`

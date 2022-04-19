@@ -83,6 +83,7 @@ export interface RequestSignatures {
   'pri(estimate.fee.get)': [RequestEstimateFeeGet, string];
   'pri(token.price.get)': [RequestTokenPriceGet, string | number];
   'pri(reset.app.state)': [null, ResponseWallet];
+  'pri(window.open)': [AllowedPath, boolean];
 
   'pri(signing.approve.signature)': [RequestSigningApproveSignature, boolean];
   'pri(signing.approve)': [RequestSigningApprove, boolean];
@@ -205,6 +206,8 @@ export interface RequestSigningApprove {
 export interface RequestSigningCancel {
   id: string;
 }
+
+export type AllowedPath = string;
 export interface SigningRequest {
   account: AccountJson;
   id: string;
