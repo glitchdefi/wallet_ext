@@ -76,11 +76,11 @@ export class GlitchWeb3 {
     return { mnemonicEncrypted, json };
   }
 
-  editAccount(name: string, address: string) {
+  editAccount(name: string, address: string, isHidden?: boolean) {
     const pair = keyring.getPair(address);
 
     if (pair) {
-      keyring.saveAccountMeta(pair, { ...pair.meta, name });
+      keyring.saveAccountMeta(pair, { ...pair.meta, name, isHidden });
       return true;
     }
 
@@ -161,7 +161,7 @@ export class GlitchWeb3 {
               const codeError = `${section}.${name}`;
 
               log.info(`${codeError}: ${msg}`);
-              
+
               onFailedCb(
                 codeError === 'balances.InsufficientBalance'
                   ? 'Insufficient funds'

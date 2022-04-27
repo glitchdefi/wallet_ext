@@ -81,4 +81,4 @@ const StyledCheckBox = styled.input`
   }
 `;
 
-export default React.memo(CheckBox);
+export default CheckBox;

@@ -11,6 +11,7 @@ import {
   RequestAccountChange,
   RequestAccountCreate,
   RequestAccountEdit,
+  RequestAccountHidden,
   RequestAccountImport,
   RequestAccountTransfer,
   RequestAutoLockSet,
@@ -18,6 +19,7 @@ import {
   RequestPrivatekeyValidate,
   RequestTokenPriceGet,
   RequestTransactionsGet,
+  RequestUpdateWalletStorage,
   RequestWalletCreate,
   RequestWalletValidate,
   ResponseAppStore,
@@ -301,6 +303,21 @@ export class GlitchController {
     });
   }
 
+  async hiddenAccount({
+    address,
+    isHidden,
+  }: RequestAccountHidden): Promise<ResponseWallet> {
+    let accounts = await this.appStateController.getAccounts();
+    this.glitchWeb3.editAccount(accounts[address].name, address, isHidden);
+    accounts[address].isHidden = isHidden;
+
+    return await this.appStateController.updateState('wallet', {
+      accounts: {
+        ...accounts,
+      },
+    });
+  }
+
   async transfer(
     { toAddress, amount }: RequestAccountTransfer,
     onFailedCb?: (msg: string) => void,
@@ -400,6 +417,14 @@ export class GlitchController {
   //=============================================================================
   // STORE MANAGEMENT METHODS
   //=============================================================================
+
+  async updateWalletStorage({
+    data,
+  }: RequestUpdateWalletStorage): Promise<ResponseWallet> {
+    return await this.appStateController.updateState('wallet', {
+      ...data,
+    });
+  }
 
   async setDefaultAppState(): Promise<object> {
     return await this.appStateController.setDefaultState();

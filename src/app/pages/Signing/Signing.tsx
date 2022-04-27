@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { PageLayout } from 'app/layouts';
-import isEmpty from 'lodash/isEmpty';
 import { useHistory } from 'react-router';
+import isEmpty from 'lodash/isEmpty';
+import styled from 'styled-components';
 
 import { colors } from 'theme/colors';
 import { truncateAddress } from 'utils/strings';
@@ -73,8 +74,7 @@ const Signing: React.FC = () => {
           </Button>
         </Flex>
 
-        <Flex
-          height="454px"
+        <ContentWrapper
           position="relative"
           flexDirection="column"
           background={colors.gray1}
@@ -158,7 +158,7 @@ const Signing: React.FC = () => {
               />
             </Box>
           </Box>
-        </Flex>
+        </ContentWrapper>
 
         <Flex background={colors.gray1} pb="16px" px="16px" alignItems="center">
           <Button variant="cancel" width="100%" mr="16px" onClick={onReject}>
@@ -178,5 +178,13 @@ const Signing: React.FC = () => {
     </PageLayout>
   );
 };
+
+const ContentWrapper = styled(Flex)`
+  height: 454px;
+
+  @media only screen and (min-width: 768px) {
+    height: 100%;
+  }
+`;
 
 export default Signing;

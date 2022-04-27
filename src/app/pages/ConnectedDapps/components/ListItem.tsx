@@ -11,8 +11,9 @@ import { Switch } from 'app/components/Switch';
 
 interface Props {
   info: AuthUrlInfo;
+  accountHidden?: boolean;
   removeAuth: (url: string) => void;
-  toggleAuth: (url: string) => void;
+  toggleAuth: (url: string, allowed: boolean) => void;
   url: string;
 }
 
@@ -20,10 +21,11 @@ export const ListItem: React.FC<Props> = ({
   url,
   info,
   toggleAuth,
+  accountHidden,
   removeAuth,
 }) => {
   const switchAccess = useCallback(() => {
-    toggleAuth(url);
+    toggleAuth(url, info.isAllowed);
   }, [toggleAuth, url]);
 
   const _removeAuth = useCallback(() => {
@@ -45,7 +47,7 @@ export const ListItem: React.FC<Props> = ({
 
       <Box mt="8px">
         <Switch
-          checked={info.isAllowed}
+          checked={accountHidden === false}
           checkedLabel="Allowed"
           onChange={switchAccess}
           uncheckedLabel="Denied"

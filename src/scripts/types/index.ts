@@ -64,6 +64,7 @@ export interface RequestSignatures {
   'pri(wallet.account.import)': [RequestAccountImport, ResponseWallet];
   'pri(wallet.account.change)': [RequestAccountChange, ResponseWallet];
   'pri(wallet.account.edit)': [RequestAccountEdit, ResponseWallet];
+  'pri(wallet.account.hidden)': [RequestAccountHidden, ResponseWallet];
   'pri(wallet.account.forget)': [RequestAccountForget, boolean];
   'pri(wallet.account.transfer)': [
     RequestAccountTransfer,
@@ -83,6 +84,7 @@ export interface RequestSignatures {
   'pri(estimate.fee.get)': [RequestEstimateFeeGet, string];
   'pri(token.price.get)': [RequestTokenPriceGet, string | number];
   'pri(reset.app.state)': [null, ResponseWallet];
+  'pri(update.wallet.storage)': [RequestUpdateWalletStorage, ResponseWallet];
   'pri(window.open)': [AllowedPath, boolean];
 
   'pri(signing.approve.signature)': [RequestSigningApproveSignature, boolean];
@@ -139,6 +141,11 @@ export interface RequestAccountImport {
 }
 export interface RequestAccountEdit {
   name: string;
+  isHidden?: boolean;
+}
+export interface RequestAccountHidden {
+  address: string;
+  isHidden?: boolean;
 }
 export interface RequestPrivatekeyValidate {
   privateKey: string;
@@ -190,6 +197,10 @@ export interface RequestAuthorizeReject {
 }
 export interface RequestAccountForget {
   address: string;
+}
+
+export interface RequestUpdateWalletStorage {
+  data: ResponseWallet;
 }
 
 export type RequestAuthorizeSubscribe = null;
@@ -262,6 +273,7 @@ export interface AccountTypes {
   avatar?: string;
   whenCreated?: number;
   seed?: { encrypted: string; secret: string };
+  isHidden?: boolean;
   balance?: {
     freeBalance?: any;
     reservedBalance?: any;

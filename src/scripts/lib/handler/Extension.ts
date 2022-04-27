@@ -29,6 +29,8 @@ import type {
   RequestSigningCancel,
   RequestSigningApprove,
   AllowedPath,
+  RequestAccountHidden,
+  RequestUpdateWalletStorage,
 } from '../../types';
 import keyring from '@polkadot/ui-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -259,6 +261,12 @@ export default class Extension {
     return this.controller.editAccount(request);
   }
 
+  private hiddenAccount(
+    request: RequestAccountHidden
+  ): Promise<ResponseWallet> {
+    return this.controller.hiddenAccount(request);
+  }
+
   private getAccountBalance(): Promise<ResponseWallet> {
     return this.controller.getBalance();
   }
@@ -331,6 +339,12 @@ export default class Extension {
     return this.controller.setDefaultAppState();
   }
 
+  private updateWalletStorage(
+    request: RequestUpdateWalletStorage
+  ): Promise<ResponseWallet> {
+    return this.controller.updateWalletStorage(request);
+  }
+
   // Weird thought, the eslint override is not needed in Tabs
   public async handle<TMessageType extends MessageTypes>(
     id: string,
@@ -396,6 +410,9 @@ export default class Extension {
       case 'pri(wallet.account.edit)':
         return this.editAccount(request as RequestAccountEdit);
 
+      case 'pri(wallet.account.hidden)':
+        return this.hiddenAccount(request as RequestAccountHidden);
+
       case 'pri(wallet.account.balance.get)':
         return this.getAccountBalance();
 
@@ -425,6 +442,9 @@ export default class Extension {
 
       case 'pri(reset.app.state)':
         return this.resetAppState();
+
+      case 'pri(update.wallet.storage)':
+        return this.updateWalletStorage(request as RequestUpdateWalletStorage);
 
       case 'pri(signing.requests)':
         return this.signingSubscribe(id, port);

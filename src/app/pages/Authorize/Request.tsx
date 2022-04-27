@@ -1,17 +1,29 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router';
 
-import logo from '../../../assets/img/gl_logo.png';
-import { RequestAuthorizeTab } from 'scripts/types';
+import {
+  AccountTypes,
+  RequestAuthorizeTab,
+  ResponseWallet,
+} from 'scripts/types';
 
 import { useToast } from 'hooks/useToast';
-import { approveAuthRequest, rejectAuthRequest } from 'scripts/ui/messaging';
+import { useWallet } from 'contexts/WalletContext/hooks';
+import { useApplication } from 'contexts/ApplicationContext/hooks';
+import {
+  approveAuthRequest,
+  hiddenAccount,
+  rejectAuthRequest,
+  updateWalletStorage,
+} from 'scripts/ui/messaging';
 
-import { Box, Flex } from 'app/components/Box';
+import { Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { colors } from 'theme/colors';
-import { ButtonShadow, Button } from 'app/components/Button';
-import { CheckIcon, CloseIcon } from 'app/components/Svg';
+import { Button } from 'app/components/Button';
+import { CloseIcon } from 'app/components/Svg';
+import RequestStep1 from './components/RequestStep1';
+import RequestStep2 from './components/RequestStep2';
 
 interface Props {
   authId: string;
@@ -21,19 +33,97 @@ interface Props {
 
 const Request: React.FC<Props> = ({ authId, request: { origin }, url }) => {
   const history = useHistory();
+  const { setAppLoading } = useApplication();
   const { toastError } = useToast();
+  const { walletCtx, setWalletCtx } = useWallet();
+  const { accounts } = walletCtx || {};
 
-  const onConnect = useCallback((): void => {
-    approveAuthRequest(authId)
-      .then(() => history.push('/'))
-      .catch((error: Error) => toastError(null, error.message));
-  }, []);
+  const [accountsSelected, setAccountsSelected] = useState<string[]>([]);
+  const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
+  const [step, setStep] = useState<number>(1);
 
-  const onCancel = useCallback((): void => {
-    rejectAuthRequest(authId)
-      .then(() => history.push('/'))
-      .catch((error: Error) => toastError(null, error.message));
-  }, []);
+  const onConnect = useCallback(async (): Promise<void> => {
+    setAppLoading(true);
+    let newAccounts = { ...accounts };
+
+    await Promise.all(
+      Object.entries(accounts).map(([address, _]: [string, AccountTypes]) => {
+        newAccounts = {
+          ...newAccounts,
+          [address]: {
+            ...accounts[address],
+            isHidden: accountsSelected.includes(address) ? false : true,
+          },
+        };
+
+        return hiddenAccount({
+          address,
+          isHidden: accountsSelected.includes(address) ? false : true,
+        });
+      })
+    );
+
+    updateWalletStorage({ data: { ...walletCtx, accounts: newAccounts } }).then(
+      (data) => {
+        approveAuthRequest(authId)
+          .then(() => history.push('/'))
+          .catch((error: Error) => toastError(null, error.message))
+          .finally(() => {
+            setWalletCtx(data);
+            setAppLoading(false);
+          });
+      }
+    );
+  }, [authId, accountsSelected]);
+
+  const onCancel = useCallback(async (): Promise<void> => {
+    setAppLoading(true);
+    let newAccounts = { ...accounts };
+
+    await Promise.all(
+      Object.entries(accounts).map(([address, _]: [string, AccountTypes]) => {
+        newAccounts = {
+          ...newAccounts,
+          [address]: {
+            ...accounts[address],
+            isHidden: true,
+          },
+        };
+
+        return hiddenAccount({ address, isHidden: true });
+      })
+    ).catch((error: Error) => toastError(null, error.message));
+
+    updateWalletStorage({ data: { ...walletCtx, accounts: newAccounts } }).then(
+      (data) => {
+        rejectAuthRequest(authId)
+          .then(() => history.push('/'))
+          .catch((error: Error) => toastError(null, error.message))
+          .finally(() => {
+            setWalletCtx(data);
+            setAppLoading(false);
+          });
+      }
+    );
+  }, [authId]);
+
+  const onAccountSelect = useCallback(
+    (address: string): void => {
+      const currentIndex = accountsSelected.findIndex(
+        (_address) => _address === address
+      );
+
+      if (currentIndex > -1) {
+        accountsSelected.splice(currentIndex, 1);
+        setAccountsSelected([...accountsSelected]);
+      } else {
+        setAccountsSelected([...accountsSelected, address]);
+      }
+
+      setIsCheckAll(false);
+    },
+    [accountsSelected, isCheckAll]
+  );
 
   return (
     <Flex height="100%" flexDirection="column" p="16px">
@@ -52,52 +142,36 @@ const Request: React.FC<Props> = ({ authId, request: { origin }, url }) => {
         </Button>
       </Flex>
 
-      <Flex
-        flex={1}
-        position="relative"
-        flexDirection="column"
-        background={colors.gray1}
-        p="16px"
-      >
-        <Box mb="8px" width={186} height={88}>
-          <img src={logo} width="100%" height="100%" />
-        </Box>
-        <Text mb="32px" color={colors.primary} large bold>
-          {origin} would like to connect to your wallet
-        </Text>
-        <Box>
-          <Text mb="16px" color={colors.gray6}>
-            This site would like to:
-          </Text>
-          <Flex alignItems="center" mb="16px">
-            <CheckIcon mr="8px" color={colors.primary} width="12px" />
-            <Text color={colors.gray9} letterSpacing="-0.5px">
-              View your wallet balance & activity
-            </Text>
-          </Flex>
-          <Flex alignItems="center">
-            <CheckIcon mr="8px" color={colors.primary} width="12px" />
-            <Text color={colors.gray9} letterSpacing="-0.5px">
-              Request approval for transactions
-            </Text>
-          </Flex>
-        </Box>
-
-        <Flex
-          position="absolute"
-          bottom="16px"
-          left="16px"
-          right="16px"
-          alignItems="center"
-        >
-          <Button variant="cancel" width="100%" mr="16px" onClick={onCancel}>
-            Cancel
-          </Button>
-          <ButtonShadow width="100%" onClick={onConnect}>
-            Connect
-          </ButtonShadow>
-        </Flex>
-      </Flex>
+      {step === 1 && (
+        <RequestStep1
+          accountsSelected={accountsSelected}
+          request={{ origin }}
+          accounts={accounts}
+          isCheckAll={isCheckAll}
+          onCheckAll={() => {
+            if (isCheckAll) {
+              setAccountsSelected([]);
+              setIsCheckAll(false);
+            } else {
+              const accountsKey = Object.keys(accounts).map((key) => key);
+              setAccountsSelected(accountsKey);
+              setIsCheckAll(true);
+            }
+          }}
+          onChange={onAccountSelect}
+          onCancel={onCancel}
+          onNext={() => setStep(2)}
+        />
+      )}
+      {step === 2 && (
+        <RequestStep2
+          accountsSelected={accountsSelected}
+          accounts={accounts}
+          request={{ origin }}
+          onBack={() => setStep(1)}
+          onConnect={onConnect}
+        />
+      )}
     </Flex>
   );
 };

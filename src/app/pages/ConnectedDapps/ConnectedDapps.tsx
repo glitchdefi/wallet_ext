@@ -4,10 +4,12 @@ import isEmpty from 'lodash/isEmpty';
 import { AuthUrls, AuthUrlInfo } from '../../../scripts/lib/handler/State';
 import {
   getAuthList,
+  hiddenAccount,
   removeAuthorization,
   toggleAuthorization,
 } from 'scripts/ui/messaging';
 import { useToast } from 'hooks/useToast';
+import { useAccount, useWallet } from 'contexts/WalletContext/hooks';
 
 import { Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -22,6 +24,8 @@ import { Empty } from 'app/components/Empty';
 const ConnectedDapps: React.FC = React.memo(() => {
   const history = useHistory();
   const { toastError } = useToast();
+  const { walletCtx, setWalletCtx } = useWallet();
+  const { address, isHidden } = useAccount();
   const [authList, setAuthList] = useState<AuthUrls | null>(null);
   const [urlSelected, setUrlSelected] = useState<string>('');
   const [showDisconnectModal, setShowDisconnectModal] =
@@ -33,10 +37,17 @@ const ConnectedDapps: React.FC = React.memo(() => {
       .catch((error: Error) => toastError(null, error.message));
   }, []);
 
-  const toggleAuth = useCallback((url: string) => {
-    toggleAuthorization(url)
-      .then(({ list }) => setAuthList(list))
-      .catch((error: Error) => toastError(null, error.message));
+  const toggleAuth = useCallback((url: string, allowed: boolean) => {
+    hiddenAccount({ address, isHidden: isHidden ? false : true }).then(
+      (wallet) => {
+        setWalletCtx(wallet);
+        if (!allowed) {
+          toggleAuthorization(url)
+            .then(({ list }) => setAuthList(list))
+            .catch((error: Error) => toastError(null, error.message));
+        }
+      }
+    );
   }, []);
 
   const removeAuth = useCallback(() => {
@@ -61,7 +72,7 @@ const ConnectedDapps: React.FC = React.memo(() => {
             Connected Dapps
           </Text>
 
-          <Button p="0px" onClick={() => history.push("/")}>
+          <Button p="0px" onClick={() => history.push('/')}>
             <CloseIcon width="13px" fill={colors.gray7} />
           </Button>
         </Flex>
@@ -84,6 +95,7 @@ const ConnectedDapps: React.FC = React.memo(() => {
                   key={url}
                   url={url}
                   info={info}
+                  accountHidden={isHidden}
                   toggleAuth={toggleAuth}
                   removeAuth={(url: string) => {
                     setUrlSelected(url);

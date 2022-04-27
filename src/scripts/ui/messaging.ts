@@ -29,6 +29,8 @@ import type {
   SigningRequest,
   RequestAccountForget,
   AllowedPath,
+  RequestAccountHidden,
+  RequestUpdateWalletStorage,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -222,6 +224,12 @@ export async function editAccount(
   return sendMessage('pri(wallet.account.edit)', request);
 }
 
+export async function hiddenAccount(
+  request: RequestAccountHidden
+): Promise<ResponseWallet> {
+  return sendMessage('pri(wallet.account.hidden)', request);
+}
+
 export async function getAccountBalance(): Promise<ResponseWallet> {
   return sendMessage('pri(wallet.account.balance.get)');
 }
@@ -276,6 +284,12 @@ export async function transfer(
 
 export async function resetAppState(): Promise<ResponseWallet> {
   return sendMessage('pri(reset.app.state)');
+}
+
+export async function updateWalletStorage(
+  request: RequestUpdateWalletStorage
+): Promise<ResponseWallet> {
+  return sendMessage('pri(update.wallet.storage)', request);
 }
 
 export async function windowOpen(path: AllowedPath): Promise<boolean> {
