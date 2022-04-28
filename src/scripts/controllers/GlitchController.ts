@@ -70,6 +70,7 @@ export class GlitchController {
           whenCreated: meta.whenCreated,
           balance: { reservedBalance: '0', freeBalance: '0' },
           seed: mnemonicEncrypted,
+          isHidden: false,
         },
       },
     });
@@ -123,6 +124,7 @@ export class GlitchController {
           avatar: meta.avatar,
           whenCreated: meta.whenCreated,
           seed: mnemonicEncrypted,
+          isHidden: false,
         },
       },
     });

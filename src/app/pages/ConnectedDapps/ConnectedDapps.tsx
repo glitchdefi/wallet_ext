@@ -24,7 +24,7 @@ import { Empty } from 'app/components/Empty';
 const ConnectedDapps: React.FC = React.memo(() => {
   const history = useHistory();
   const { toastError } = useToast();
-  const { walletCtx, setWalletCtx } = useWallet();
+  const { setWalletCtx } = useWallet();
   const { address, isHidden } = useAccount();
   const [authList, setAuthList] = useState<AuthUrls | null>(null);
   const [urlSelected, setUrlSelected] = useState<string>('');
@@ -37,18 +37,21 @@ const ConnectedDapps: React.FC = React.memo(() => {
       .catch((error: Error) => toastError(null, error.message));
   }, []);
 
-  const toggleAuth = useCallback((url: string, allowed: boolean) => {
-    hiddenAccount({ address, isHidden: isHidden ? false : true }).then(
-      (wallet) => {
-        setWalletCtx(wallet);
-        if (!allowed) {
-          toggleAuthorization(url)
-            .then(({ list }) => setAuthList(list))
-            .catch((error: Error) => toastError(null, error.message));
+  const toggleAuth = useCallback(
+    (url: string, allowed: boolean) => {
+      hiddenAccount({ address, isHidden: isHidden ? false : true }).then(
+        (wallet) => {
+          setWalletCtx(wallet);
+          if (!allowed) {
+            toggleAuthorization(url)
+              .then(({ list }) => setAuthList(list))
+              .catch((error: Error) => toastError(null, error.message));
+          }
         }
-      }
-    );
-  }, []);
+      );
+    },
+    [isHidden]
+  );
 
   const removeAuth = useCallback(() => {
     removeAuthorization(urlSelected)

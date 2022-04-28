@@ -4,11 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 
 import { GlitchToken } from 'constants/tokens';
-import { Routes } from 'constants/routes';
 import { messages } from './messages';
 
 // Hooks
 import { useStepTitleDesc } from 'hooks/useStepTitleDesc';
+import { useWallet } from 'contexts/WalletContext/hooks';
+import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
+import { approveAuthRequest } from 'scripts/ui/messaging';
+import { useToast } from 'hooks/useToast';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -18,7 +21,6 @@ import {
   VerifyMnemonicStep,
   StepProgressLayout,
 } from 'app/components/Shared';
-import { useWallet } from 'contexts/WalletContext/hooks';
 
 const MAX_STEP = 3;
 
@@ -26,6 +28,8 @@ const CreateWallet: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
+  const { authRequests } = useAuthorizeReq();
+  const { toastError } = useToast();
   const { onCreateWallet, onCreateWalletCompleted, onResetAppState } =
     useWallet();
 
@@ -83,6 +87,12 @@ const CreateWallet: React.FC = () => {
           <VerifyMnemonicStep
             seed={mnemonic}
             onSubmit={() => {
+              if (authRequests?.length) {
+                approveAuthRequest(authRequests[0].id).catch((error: Error) =>
+                  toastError(null, error.message)
+                );
+              }
+
               onCreateWalletCompleted(history);
             }}
           />
