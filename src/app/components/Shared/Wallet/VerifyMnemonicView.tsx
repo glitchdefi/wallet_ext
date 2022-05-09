@@ -11,11 +11,11 @@ import { Text } from 'app/components/Text';
 import MnemonicPhraseItem from './MnemonicPhraseItem';
 
 interface Props {
-  list: string[];
-  confirmList: string[];
+  list: { key: string; value: string }[];
+  confirmList: { key: string; value: string }[];
   isValid: boolean;
-  onItemClick: (list: string[]) => void;
-  onItemConfirmClick: (list: string[]) => void;
+  onItemClick: (list: { key: string; value: string }[]) => void;
+  onItemConfirmClick: (list: { key: string; value: string }[]) => void;
 }
 
 const VerifyMnemonicView: React.FC<Props> = ({
@@ -30,14 +30,14 @@ const VerifyMnemonicView: React.FC<Props> = ({
   return (
     <Box>
       <MpWrapper>
-        {confirmList?.map((word: string, i) => (
+        {confirmList?.map((o, i) => (
           <MnemonicPhraseItem
             variants="selected"
-            word={word}
+            word={o.value}
             num={i}
             key={i}
             onClick={() => {
-              const newList = confirmList.filter((cWord) => cWord !== word);
+              const newList = confirmList.filter((_o) => _o.key !== o.key);
               onItemClick(newList);
             }}
           />
@@ -50,14 +50,19 @@ const VerifyMnemonicView: React.FC<Props> = ({
       )}
 
       <MpWrapper mt="16px">
-        {list?.map((word: string, i) => (
+        {list?.map((o, i) => (
           <MnemonicPhraseItem
-            variants={confirmList.includes(word) ? 'disable' : 'default'}
-            word={word}
+            variants={
+              confirmList.findIndex((_o) => _o.key === o.key) > -1
+                ? 'disable'
+                : 'default'
+            }
+            word={o.value}
             num={i}
             key={i}
             onClick={() => {
-              if (!confirmList.includes(word)) onItemConfirmClick([...confirmList, word]);
+              if (confirmList.findIndex((_o) => _o.key === o.key) <= -1)
+                onItemConfirmClick([...confirmList, o]);
             }}
           />
         ))}

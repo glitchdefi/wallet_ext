@@ -10,7 +10,7 @@ import {
   formatDollarAmount,
   formatNumberDownRoundWithExtractMax,
 } from 'utils/number';
-import { useAccount } from 'contexts/WalletContext/hooks';
+import { useAccount, useWallet } from 'contexts/WalletContext/hooks';
 import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 
 import { messages } from './messages';
@@ -27,6 +27,7 @@ import { TransactionHistorySection } from './components/TransactionHistorySectio
 const TokenDetails: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const history = useHistory();
+  const { onLockWallet } = useWallet();
 
   const { tokenPrice } = useTokenPrice();
   const account = useAccount();
@@ -36,7 +37,12 @@ const TokenDetails: React.FC = React.memo(() => {
 
   return (
     <PageLayout>
-      <Header account={account} hasBackButton hasBottomBorder />
+      <Header
+        account={account}
+        onLockWallet={onLockWallet}
+        hasBackButton
+        hasBottomBorder
+      />
 
       <ContentWrapper flexDirection="column" px="16px" overflowY="scroll">
         <Flex mt="26px" flexDirection="column" alignItems="center">

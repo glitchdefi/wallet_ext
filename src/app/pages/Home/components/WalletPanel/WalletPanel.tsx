@@ -32,6 +32,7 @@ import { AssetsSection } from '../AssetsSection';
 import { Header } from '../Header';
 import { BackedUpView } from './BackedUpView';
 import { messages } from '../../messages';
+import { ConnectedDappNoti } from './ConnectedDappNoti';
 
 export const WalletPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
@@ -46,6 +47,7 @@ export const WalletPanel: React.FC = React.memo(() => {
 
   return (
     <Box height="540.94px" overflowY="scroll">
+      <ConnectedDappNoti />
       <Header hasExpandButton account={account} onLockWallet={onLockWallet} />
 
       {!isBackup && (

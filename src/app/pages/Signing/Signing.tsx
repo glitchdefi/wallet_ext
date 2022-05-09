@@ -140,7 +140,7 @@ const Signing: React.FC = () => {
 
           <Box background={colors.gray2} mt="16px" p="16px">
             <Text fontSize="12px" color={colors.cyan5}>
-              Please enter the Glitch password to complete your transaction
+              Please enter the Glitch password to approve your transaction
             </Text>
 
             <Box mt="16px">

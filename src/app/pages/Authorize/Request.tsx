@@ -1,11 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router';
 
-import {
-  AccountTypes,
-  RequestAuthorizeTab,
-  ResponseWallet,
-} from 'scripts/types';
+import { AccountTypes, RequestAuthorizeTab } from 'scripts/types';
 
 import { useToast } from 'hooks/useToast';
 import { useWallet } from 'contexts/WalletContext/hooks';
@@ -24,6 +20,7 @@ import { Button } from 'app/components/Button';
 import { CloseIcon } from 'app/components/Svg';
 import RequestStep1 from './components/RequestStep1';
 import RequestStep2 from './components/RequestStep2';
+import { CONNECTED_DAPP_KEY } from 'constants/values';
 
 interface Props {
   authId: string;
@@ -41,6 +38,9 @@ const Request: React.FC<Props> = ({ authId, request: { origin }, url }) => {
   const [accountsSelected, setAccountsSelected] = useState<string[]>([]);
   const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
   const [step, setStep] = useState<number>(1);
+
+  const splitUrl = url?.split('/');
+  const dappUrl = splitUrl?.length ? `${splitUrl[2]}` : '';
 
   const onConnect = useCallback(async (): Promise<void> => {
     setAppLoading(true);
@@ -66,7 +66,10 @@ const Request: React.FC<Props> = ({ authId, request: { origin }, url }) => {
     updateWalletStorage({ data: { ...walletCtx, accounts: newAccounts } }).then(
       (data) => {
         approveAuthRequest(authId)
-          .then(() => history.push('/'))
+          .then(() => {
+            localStorage.setItem(CONNECTED_DAPP_KEY, dappUrl);
+            history.push('/');
+          })
           .catch((error: Error) => toastError(null, error.message))
           .finally(() => {
             setWalletCtx(data);
@@ -145,7 +148,7 @@ const Request: React.FC<Props> = ({ authId, request: { origin }, url }) => {
       {step === 1 && (
         <RequestStep1
           accountsSelected={accountsSelected}
-          request={{ origin }}
+          request={{ origin: dappUrl }}
           accounts={accounts}
           isCheckAll={isCheckAll}
           onCheckAll={() => {
@@ -167,7 +170,7 @@ const Request: React.FC<Props> = ({ authId, request: { origin }, url }) => {
         <RequestStep2
           accountsSelected={accountsSelected}
           accounts={accounts}
-          request={{ origin }}
+          request={{ origin: dappUrl }}
           onBack={() => setStep(1)}
           onConnect={onConnect}
         />

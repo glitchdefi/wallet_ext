@@ -43,6 +43,9 @@ const RequestStep2: React.FC<Props> = ({
 
       <Box height="160px" my="16px" overflowY="scroll">
         {Object.entries(accounts)
+          .sort(([, a], [, b]) => {
+            return b.whenCreated - a.whenCreated;
+          })
           .filter(([key]) => {
             return accountsSelected.includes(key);
           })

@@ -8,9 +8,7 @@ import { Routes } from 'constants/routes';
 
 import { useWallet } from 'contexts/WalletContext/hooks';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
-import { approveAuthRequest, walletValidate } from 'scripts/ui/messaging';
-import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
-import { useToast } from 'hooks/useToast';
+import { walletValidate } from 'scripts/ui/messaging';
 
 // Theme
 import { colors } from 'theme/colors';
@@ -27,10 +25,8 @@ import { PageLayout } from 'app/layouts';
 const Unlock: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
-  const { authRequests } = useAuthorizeReq();
   const { setAppLoading } = useApplication();
-  const { walletCtx, onUnlockWallet } = useWallet();
-  const { toastError } = useToast();
+  const { onUnlockWallet } = useWallet();
 
   const [password, setPassword] = useState<string>('');
   const [isPassValid, setIsPassValid] = useState<boolean>(true);
@@ -41,13 +37,6 @@ const Unlock: React.FC = () => {
     walletValidate({ password }).then((isValid: boolean) => {
       if (isValid) {
         onUnlockWallet(history);
-
-        // Approve authorize if newly created account
-        if (authRequests?.length && !walletCtx.isBackup) {
-          approveAuthRequest(authRequests[0].id).catch((error: Error) =>
-            toastError(null, error.message)
-          );
-        }
       } else {
         setAppLoading(false);
       }

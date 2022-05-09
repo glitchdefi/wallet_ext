@@ -9,9 +9,6 @@ import { messages } from './messages';
 // Hooks
 import { useStepTitleDesc } from 'hooks/useStepTitleDesc';
 import { useWallet } from 'contexts/WalletContext/hooks';
-import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
-import { approveAuthRequest } from 'scripts/ui/messaging';
-import { useToast } from 'hooks/useToast';
 
 // Components
 import { PageLayout } from 'app/layouts';
@@ -28,8 +25,6 @@ const CreateWallet: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const { authRequests } = useAuthorizeReq();
-  const { toastError } = useToast();
   const { onCreateWallet, onCreateWalletCompleted, onResetAppState } =
     useWallet();
 
@@ -87,12 +82,6 @@ const CreateWallet: React.FC = () => {
           <VerifyMnemonicStep
             seed={mnemonic}
             onSubmit={() => {
-              if (authRequests?.length) {
-                approveAuthRequest(authRequests[0].id).catch((error: Error) =>
-                  toastError(null, error.message)
-                );
-              }
-
               onCreateWalletCompleted(history);
             }}
           />

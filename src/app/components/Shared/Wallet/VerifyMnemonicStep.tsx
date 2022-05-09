@@ -15,14 +15,26 @@ interface Props {
 
 const VerifyMnemonicStep: React.FC<Props> = ({ seed, onSubmit }) => {
   const { t } = useTranslation();
-  const [seedList, setSeedList] = useState<string[]>([]);
-  const [confirmSeedList, setConfirmSeedList] = useState<string[]>([]);
+  const [seedList, setSeedList] = useState<{ key: string; value: string }[]>(
+    []
+  );
+  const [confirmSeedList, setConfirmSeedList] = useState<
+    { key: string; value: string }[]
+  >([]);
 
   const isValid =
-    JSON.stringify(seed?.split(' ')) === JSON.stringify(confirmSeedList);
+    JSON.stringify(seed?.split(' ')) ===
+    JSON.stringify(confirmSeedList.map((o) => o.value));
 
   useEffect(() => {
-    setSeedList(shuffle(seed?.split(' ')));
+    const shuffleList = shuffle(seed?.split(' '));
+    const sList = shuffleList.map((word: string, index: number) => {
+      return {
+        key: `${word}-${index}`,
+        value: word,
+      };
+    });
+    setSeedList(sList);
   }, []);
 
   return (

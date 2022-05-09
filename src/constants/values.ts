@@ -1,6 +1,8 @@
 import { KeypairType } from '@polkadot/util-crypto/types';
 import moment from 'moment';
 
+export const CONNECTED_DAPP_KEY = 'CONNECTED_DAPP_KEY';
+
 export const LOCK_TIME_LIST = [
   { key: 0, time: null, label: 'Never' },
   { key: 1, time: 60 * 1000, label: '1 minute' },
