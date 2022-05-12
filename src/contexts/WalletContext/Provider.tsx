@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import {
   RequestAccountChange,
   RequestAccountCreate,
@@ -75,8 +76,26 @@ export const WalletProvider: React.FC = ({ children }) => {
   }, []);
 
   const onRestoreWallet = useCallback(
-    (request: RequestWalletRestore, history: any) => {
+    async (request: RequestWalletRestore, history: any) => {
       setAppLoading(true);
+
+      // Forget account
+      !isEmpty(wallet?.accounts) &&
+        (await Promise.all(
+          Object.entries(wallet.accounts).map(([key]) => {
+            return forgetAccount({ address: key as string });
+          })
+        ));
+
+      // Remove connected dapps
+      getAuthList().then(async ({ list }) => {
+        list &&
+          (await Promise.all(
+            Object.entries(list).map(([url, _]: [string, any]) => {
+              return removeAuthorization(url);
+            })
+          ));
+      });
 
       restoreWallet(request)
         .then(setWallet)
@@ -89,7 +108,7 @@ export const WalletProvider: React.FC = ({ children }) => {
           history.push('/');
         });
     },
-    []
+    [wallet, authRequests]
   );
 
   const onLockWallet = useCallback((history: any) => {

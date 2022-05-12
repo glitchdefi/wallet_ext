@@ -31,6 +31,7 @@ import type {
   AllowedPath,
   RequestAccountHidden,
   RequestUpdateWalletStorage,
+  RequestAuthorizeToggle,
 } from '../../types';
 import keyring from '@polkadot/ui-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -94,8 +95,10 @@ export default class Extension {
     return true;
   }
 
-  private toggleAuthorization(url: string): ResponseAuthorizeList {
-    return { list: this.state.toggleAuthorization(url) };
+  private toggleAuthorization(
+    request: RequestAuthorizeToggle
+  ): ResponseAuthorizeList {
+    return { list: this.state.toggleAuthorization(request) };
   }
 
   private removeAuthorization(url: string): ResponseAuthorizeList {
@@ -363,7 +366,7 @@ export default class Extension {
         return this.authorizeReject(request as RequestAuthorizeReject);
 
       case 'pri(authorize.toggle)':
-        return this.toggleAuthorization(request as string);
+        return this.toggleAuthorization(request as RequestAuthorizeToggle);
 
       case 'pri(authorize.remove)':
         return this.removeAuthorization(request as string);

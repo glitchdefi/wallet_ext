@@ -260,7 +260,7 @@ export default class Tabs {
     }
 
     if (type !== 'pub(authorize.tab)') {
-      this.state.ensureUrlAuthorized(url);
+      this.state.ensureUrlAuthorized(url, request as { address?: string });
     }
 
     switch (type) {

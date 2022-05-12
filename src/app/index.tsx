@@ -108,7 +108,6 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  // TODO: check again
   useEffect(() => {
     if (isInitialized !== 'none' && hasInternet && navigator.onLine) {
       onGetAccountBalance();

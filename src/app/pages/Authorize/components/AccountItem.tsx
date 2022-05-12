@@ -56,8 +56,8 @@ export const AccountItem: React.FC<Props> = (props) => {
             <Flex alignItems="center">
               <Text bold>{data.name}</Text>
               <Text>{`(...${data.address.substring(
-                data.address.length - 1,
-                data.address.length - 5
+                data.address.length,
+                data.address.length - 4
               )})`}</Text>
             </Flex>
 

@@ -8,15 +8,13 @@ import { CONNECTED_DAPP_KEY } from 'constants/values';
 
 export const ConnectedDappNoti: React.FC = () => {
   const [show, setShow] = useState<boolean>(false);
-  const [dappUrl, setDappUrl] = useState<string>('');
+  const dappUrl = localStorage.getItem(CONNECTED_DAPP_KEY);
 
   useEffect(() => {
-    const dappUrl = localStorage.getItem(CONNECTED_DAPP_KEY);
     if (dappUrl) {
       setShow(true);
-      setDappUrl(dappUrl);
     }
-  }, []);
+  }, [dappUrl]);
 
   useEffect(() => {
     if (show) {

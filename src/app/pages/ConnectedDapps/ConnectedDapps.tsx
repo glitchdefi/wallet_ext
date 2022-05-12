@@ -38,15 +38,13 @@ const ConnectedDapps: React.FC = React.memo(() => {
   }, []);
 
   const toggleAuth = useCallback(
-    (url: string, allowed: boolean) => {
+    (url: string) => {
       hiddenAccount({ address, isHidden: isHidden ? false : true }).then(
         (wallet) => {
           setWalletCtx(wallet);
-          if (!allowed) {
-            toggleAuthorization(url)
-              .then(({ list }) => setAuthList(list))
-              .catch((error: Error) => toastError(null, error.message));
-          }
+          toggleAuthorization({ url, address })
+            .then(({ list }) => setAuthList(list))
+            .catch((error: Error) => toastError(null, error.message));
         }
       );
     },

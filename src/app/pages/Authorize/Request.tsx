@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router';
+import isEmpty from 'lodash/isEmpty';
 
 import { AccountTypes, RequestAuthorizeTab } from 'scripts/types';
 
@@ -150,7 +151,11 @@ const Request: React.FC<Props> = ({ authId, request: { origin }, url }) => {
           accountsSelected={accountsSelected}
           request={{ origin: dappUrl }}
           accounts={accounts}
-          isCheckAll={isCheckAll}
+          isCheckAll={
+            isCheckAll ||
+            (!isEmpty(accounts) &&
+              Object.keys(accounts)?.length === accountsSelected?.length)
+          }
           onCheckAll={() => {
             if (isCheckAll) {
               setAccountsSelected([]);

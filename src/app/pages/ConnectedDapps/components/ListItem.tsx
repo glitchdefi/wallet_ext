@@ -7,13 +7,12 @@ import { colors } from 'theme/colors';
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { DeleteIcon } from 'app/components/Svg';
-import { Switch } from 'app/components/Switch';
 
 interface Props {
   info: AuthUrlInfo;
   accountHidden?: boolean;
   removeAuth: (url: string) => void;
-  toggleAuth: (url: string, allowed: boolean) => void;
+  toggleAuth: (url: string) => void;
   url: string;
 }
 
@@ -25,7 +24,7 @@ export const ListItem: React.FC<Props> = ({
   removeAuth,
 }) => {
   const switchAccess = useCallback(() => {
-    toggleAuth(url, info.isAllowed);
+    toggleAuth(url);
   }, [toggleAuth, url]);
 
   const _removeAuth = useCallback(() => {
@@ -45,13 +44,26 @@ export const ListItem: React.FC<Props> = ({
         <DeleteIcon width="18px" onClick={_removeAuth} />
       </Flex>
 
-      <Box mt="8px">
-        <Switch
-          checked={accountHidden === false}
-          checkedLabel="Allowed"
-          onChange={switchAccess}
-          uncheckedLabel="Denied"
-        />
+      <Box>
+        {accountHidden === false ? (
+          <Flex alignItems="center">
+            <Text color={colors.green} fontSize="12px" mr="4px">
+              Approved
+            </Text>
+            <LinkText color={colors.gray} onClick={switchAccess}>
+              Disconnect
+            </LinkText>
+          </Flex>
+        ) : (
+          <Flex alignItems="center">
+            <Text color={colors.gray6} fontSize="12px" mr="4px">
+              Denied.
+            </Text>
+            <LinkText color={colors.primary} onClick={switchAccess}>
+              Connect
+            </LinkText>
+          </Flex>
+        )}
       </Box>
     </ItemWrapper>
   );
@@ -68,4 +80,11 @@ const ItemWrapper = styled.div`
   &:hover {
     background-color: rgba(255, 255, 255, 0.03);
   }
+`;
+
+const LinkText = styled(Text)`
+  text-decoration: underline;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
 `;

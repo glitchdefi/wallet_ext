@@ -31,6 +31,7 @@ import type {
   AllowedPath,
   RequestAccountHidden,
   RequestUpdateWalletStorage,
+  RequestAuthorizeToggle,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -121,9 +122,9 @@ export async function getAuthList(): Promise<ResponseAuthorizeList> {
 }
 
 export async function toggleAuthorization(
-  url: string
+  request: RequestAuthorizeToggle
 ): Promise<ResponseAuthorizeList> {
-  return sendMessage('pri(authorize.toggle)', url);
+  return sendMessage('pri(authorize.toggle)', request);
 }
 
 export async function removeAuthorization(

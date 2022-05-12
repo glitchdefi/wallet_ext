@@ -1,3 +1,5 @@
+import reduce from 'lodash/reduce';
+import includes from 'lodash/includes';
 import type {
   MetadataDef,
   ProviderMeta,
@@ -10,12 +12,14 @@ import type {
 import type {
   AccountJson,
   AuthorizeRequest,
+  MessageTypes,
   MetadataRequest,
   RequestAuthorizeTab,
   RequestRpcSend,
   RequestRpcSubscribe,
   RequestRpcUnsubscribe,
   RequestSign,
+  RequestTypes,
   ResponseRpcListProviders,
   ResponseSigning,
   SigningRequest,
@@ -31,6 +35,12 @@ import { assert } from '@polkadot/util';
 import { MetadataStore } from '../../stores';
 import { withErrorLog } from '../../../utils/withErrorLog';
 import { getId } from '../../../utils/getId';
+import { ExtensionStore } from '../localStore';
+import {
+  AccountTypes,
+  RequestAuthorizeToggle,
+  ResponseWallet,
+} from 'scripts/types';
 
 interface Resolver<T> {
   reject: (error: Error) => void;
@@ -49,7 +59,9 @@ export type AuthUrls = Record<string, AuthUrlInfo>;
 export interface AuthUrlInfo {
   count: number;
   id: string;
-  isAllowed: boolean;
+  isAllowed: {
+    [key: string]: boolean;
+  };
   origin: string;
   url: string;
 }
@@ -151,6 +163,8 @@ export default class State {
 
   readonly metaStore = new MetadataStore();
 
+  readonly localStore: ExtensionStore;
+
   // Map of providers currently injected in tabs
   readonly injectedProviders = new Map<
     chrome.runtime.Port,
@@ -187,6 +201,7 @@ export default class State {
     const previousAuth = JSON.parse(authString) as AuthUrls;
 
     this._authUrls = previousAuth;
+    this.localStore = new ExtensionStore();
   }
 
   public get knownMetadata(): MetadataDef[] {
@@ -256,8 +271,18 @@ export default class State {
     resolve: (result: boolean) => void,
     reject: (error: Error) => void
   ): Resolver<boolean> => {
-    const complete = (result: boolean | Error) => {
-      const isAllowed = result === true;
+    const complete = async (result: boolean | Error) => {
+      const { accounts }: ResponseWallet = await this.localStore.get('wallet');
+
+      const isAllowed = reduce(
+        Object.entries(accounts),
+        function (obj, [address, account]: [string, AccountTypes]) {
+          obj[address] = !account.isHidden;
+          return obj;
+        },
+        {}
+      );
+
       const {
         idStr,
         request: { origin },
@@ -371,12 +396,20 @@ export default class State {
     }
   }
 
-  public toggleAuthorization(url: string): AuthUrls {
+  public toggleAuthorization({
+    url,
+    address,
+  }: RequestAuthorizeToggle): AuthUrls {
     const entry = this._authUrls[url];
 
     assert(entry, `The source ${url} is not known`);
 
-    this._authUrls[url].isAllowed = !entry.isAllowed;
+    if (!(address in entry.isAllowed)) {
+      this._authUrls[url].isAllowed[address] = true;
+    } else {
+      this._authUrls[url].isAllowed[address] = !entry.isAllowed[address];
+    }
+
     this.saveCurrentAuthList();
 
     return this._authUrls;
@@ -427,7 +460,10 @@ export default class State {
     if (this._authUrls[idStr]) {
       // this url was seen in the past
       assert(
-        this._authUrls[idStr].isAllowed,
+        !includes(
+          Object.entries(this._authUrls[idStr]).map(([, allowed]) => allowed),
+          true
+        ),
         `The source ${url} is not allowed to interact with this extension`
       );
 
@@ -450,12 +486,28 @@ export default class State {
     });
   }
 
-  public ensureUrlAuthorized(url: string): boolean {
+  public ensureUrlAuthorized(
+    url: string,
+    request: { address?: string }
+  ): boolean {
     const entry = this._authUrls[this.stripUrl(url)];
 
     assert(entry, `The source ${url} has not been enabled yet`);
+
+    if (request?.address) {
+      assert(
+        entry.isAllowed[request?.address],
+        `The source ${url} is not allowed to interact with this account`
+      );
+
+      return false;
+    }
+
     assert(
-      entry.isAllowed,
+      !includes(
+        Object.entries(entry).map(([, allowed]) => allowed),
+        true
+      ),
       `The source ${url} is not allowed to interact with this extension`
     );
 

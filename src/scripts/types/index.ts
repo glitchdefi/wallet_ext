@@ -48,7 +48,7 @@ export interface RequestSignatures {
     boolean,
     AuthorizeRequest[]
   ];
-  'pri(authorize.toggle)': [string, ResponseAuthorizeList];
+  'pri(authorize.toggle)': [RequestAuthorizeToggle, ResponseAuthorizeList];
   'pri(authorize.remove)': [string, ResponseAuthorizeList];
 
   'pri(wallet.create)': [RequestWalletCreate, ResponseWallet];
@@ -216,6 +216,11 @@ export interface RequestSigningApprove {
 }
 export interface RequestSigningCancel {
   id: string;
+}
+
+export interface RequestAuthorizeToggle {
+  url: string;
+  address: string;
 }
 
 export type AllowedPath = string;

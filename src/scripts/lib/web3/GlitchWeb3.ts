@@ -69,6 +69,7 @@ export class GlitchWeb3 {
     const { json } = keyring.addUri(mnemonic, password || undefined, {
       avatar: getAvatar(),
       name,
+      isHidden: true,
     });
 
     const mnemonicEncrypted = await messageEncryption(mnemonic);
