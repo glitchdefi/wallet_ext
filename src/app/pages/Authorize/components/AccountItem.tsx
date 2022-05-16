@@ -34,12 +34,8 @@ export const AccountItem: React.FC<Props> = (props) => {
               <Box>
                 <Flex alignItems="center">
                   <Text bold>{data.name}</Text>
-                  <Text>{`(...${data.address.substring(
-                    data.address.length,
-                    data.address.length - 4
-                  )})`}</Text>
                 </Flex>
-
+                <Text fontSize="12px">{data.address}</Text>
                 <Text fontSize="12px" color={colors.gray6}>
                   {calcTotalBalance(data.balance)} GLCH
                 </Text>
@@ -55,12 +51,8 @@ export const AccountItem: React.FC<Props> = (props) => {
           <Box>
             <Flex alignItems="center">
               <Text bold>{data.name}</Text>
-              <Text>{`(...${data.address.substring(
-                data.address.length,
-                data.address.length - 4
-              )})`}</Text>
             </Flex>
-
+            <Text fontSize="12px">{data.address}</Text>
             <Text fontSize="12px" color={colors.gray6}>
               {calcTotalBalance(data.balance)} GLCH
             </Text>
@@ -79,7 +71,8 @@ const AccountItemWrapper = styled(Flex)`
   }
 
   label:after {
-    top: 19px !important;
+    left: 3px;
+    top: 37px !important;
   }
 
   &:hover {

@@ -91,7 +91,7 @@ const Signing: React.FC = () => {
             </Text>
             <Flex alignItems="center">
               <Text fontSize="12px" color={colors.primary}>
-                {truncateAddress(account?.address)}
+                {account?.address}
               </Text>
               <CopyButton
                 value={account?.address}
@@ -180,7 +180,7 @@ const Signing: React.FC = () => {
 };
 
 const ContentWrapper = styled(Flex)`
-  height: 454px;
+  height: 447px;
 
   @media only screen and (min-width: 768px) {
     height: 100%;

@@ -26,8 +26,12 @@ function CheckBox({ labelComponent, id, onChange, checked, ...rest }: Props) {
 }
 
 const StyledCheckBox = styled.input`
-  position: absolute;
-  opacity: 0;
+  padding: 0;
+  height: initial;
+  width: initial;
+  margin-bottom: 0;
+  display: none;
+  cursor: pointer;
 
   & + label {
     display: flex;
