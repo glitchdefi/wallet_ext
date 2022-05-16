@@ -115,7 +115,7 @@ export enum NotificationOptions {
   PopUp,
 }
 
-const AUTH_URLS_KEY = 'authUrls';
+export const AUTH_URLS_KEY = 'authUrls';
 
 function extractMetadata(store: MetadataStore): void {
   store.allMap((map): void => {
@@ -272,22 +272,22 @@ export default class State {
     reject: (error: Error) => void
   ): Resolver<boolean> => {
     const complete = async (result: boolean | Error) => {
-      const { accounts }: ResponseWallet = await this.localStore.get('wallet');
-
-      const isAllowed = reduce(
-        Object.entries(accounts),
-        function (obj, [address, account]: [string, AccountTypes]) {
-          obj[address] = !account.isHidden;
-          return obj;
-        },
-        {}
-      );
-
       const {
         idStr,
         request: { origin },
         url,
       } = this.authRequests[id];
+
+      const { accounts }: ResponseWallet = await this.localStore.get('wallet');
+
+      const isAllowed = reduce(
+        Object.entries(accounts),
+        function (obj, [address, account]: [string, AccountTypes]) {
+          obj[address] = account.allowedUrls.includes(idStr);
+          return obj;
+        },
+        {}
+      );
 
       this._authUrls[this.stripUrl(url)] = {
         count: 0,
@@ -396,16 +396,18 @@ export default class State {
     }
   }
 
-  public toggleAuthorization({
+  public async toggleAuthorization({
     url,
     address,
-  }: RequestAuthorizeToggle): AuthUrls {
+  }: RequestAuthorizeToggle): Promise<AuthUrls> {
     const entry = this._authUrls[url];
+    const { accounts }: ResponseWallet = await this.localStore.get('wallet');
 
     assert(entry, `The source ${url} is not known`);
 
     if (!(address in entry.isAllowed)) {
-      this._authUrls[url].isAllowed[address] = true;
+      this._authUrls[url].isAllowed[address] =
+        accounts[address].allowedUrls.includes(url);
     } else {
       this._authUrls[url].isAllowed[address] = !entry.isAllowed[address];
     }

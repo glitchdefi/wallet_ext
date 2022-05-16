@@ -69,7 +69,6 @@ export class GlitchWeb3 {
     const { json } = keyring.addUri(mnemonic, password || undefined, {
       avatar: getAvatar(),
       name,
-      isHidden: true,
     });
 
     const mnemonicEncrypted = await messageEncryption(mnemonic);
@@ -77,11 +76,11 @@ export class GlitchWeb3 {
     return { mnemonicEncrypted, json };
   }
 
-  editAccount(name: string, address: string, isHidden?: boolean) {
+  editAccount(name: string, address: string) {
     const pair = keyring.getPair(address);
 
     if (pair) {
-      keyring.saveAccountMeta(pair, { ...pair.meta, name, isHidden });
+      keyring.saveAccountMeta(pair, { ...pair.meta, name });
       return true;
     }
 

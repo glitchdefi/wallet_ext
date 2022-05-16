@@ -10,7 +10,7 @@ import { DeleteIcon } from 'app/components/Svg';
 
 interface Props {
   info: AuthUrlInfo;
-  accountHidden?: boolean;
+  currentAddress: string;
   removeAuth: (url: string) => void;
   toggleAuth: (url: string) => void;
   url: string;
@@ -20,7 +20,7 @@ export const ListItem: React.FC<Props> = ({
   url,
   info,
   toggleAuth,
-  accountHidden,
+  currentAddress,
   removeAuth,
 }) => {
   const switchAccess = useCallback(() => {
@@ -45,7 +45,7 @@ export const ListItem: React.FC<Props> = ({
       </Flex>
 
       <Box>
-        {accountHidden === false ? (
+        {info.isAllowed[currentAddress] === true ? (
           <Flex alignItems="center">
             <Text color={colors.green} fontSize="12px" mr="4px">
               Approved

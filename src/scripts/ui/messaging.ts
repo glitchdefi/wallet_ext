@@ -29,7 +29,6 @@ import type {
   SigningRequest,
   RequestAccountForget,
   AllowedPath,
-  RequestAccountHidden,
   RequestUpdateWalletStorage,
   RequestAuthorizeToggle,
 } from '../types';
@@ -223,12 +222,6 @@ export async function editAccount(
   request: RequestAccountEdit
 ): Promise<ResponseWallet> {
   return sendMessage('pri(wallet.account.edit)', request);
-}
-
-export async function hiddenAccount(
-  request: RequestAccountHidden
-): Promise<ResponseWallet> {
-  return sendMessage('pri(wallet.account.hidden)', request);
 }
 
 export async function getAccountBalance(): Promise<ResponseWallet> {

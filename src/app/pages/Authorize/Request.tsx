@@ -9,7 +9,6 @@ import { useWallet } from 'contexts/WalletContext/hooks';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
 import {
   approveAuthRequest,
-  hiddenAccount,
   rejectAuthRequest,
   updateWalletStorage,
 } from 'scripts/ui/messaging';
@@ -47,22 +46,17 @@ const Request: React.FC<Props> = ({ authId, request: { origin }, url }) => {
     setAppLoading(true);
     let newAccounts = { ...accounts };
 
-    await Promise.all(
-      Object.entries(accounts).map(([address, _]: [string, AccountTypes]) => {
-        newAccounts = {
-          ...newAccounts,
-          [address]: {
-            ...accounts[address],
-            isHidden: accountsSelected.includes(address) ? false : true,
-          },
-        };
-
-        return hiddenAccount({
-          address,
-          isHidden: accountsSelected.includes(address) ? false : true,
-        });
-      })
-    );
+    Object.entries(accounts).map(([address, _]: [string, AccountTypes]) => {
+      newAccounts = {
+        ...newAccounts,
+        [address]: {
+          ...accounts[address],
+          allowedUrls: accountsSelected.includes(address)
+            ? [...accounts[address].allowedUrls, dappUrl]
+            : [...accounts[address].allowedUrls],
+        },
+      };
+    });
 
     updateWalletStorage({ data: { ...walletCtx, accounts: newAccounts } }).then(
       (data) => {
@@ -82,34 +76,13 @@ const Request: React.FC<Props> = ({ authId, request: { origin }, url }) => {
 
   const onCancel = useCallback(async (): Promise<void> => {
     setAppLoading(true);
-    let newAccounts = { ...accounts };
-
-    await Promise.all(
-      Object.entries(accounts).map(([address, _]: [string, AccountTypes]) => {
-        newAccounts = {
-          ...newAccounts,
-          [address]: {
-            ...accounts[address],
-            isHidden: true,
-          },
-        };
-
-        return hiddenAccount({ address, isHidden: true });
-      })
-    ).catch((error: Error) => toastError(null, error.message));
-
-    updateWalletStorage({ data: { ...walletCtx, accounts: newAccounts } }).then(
-      (data) => {
-        rejectAuthRequest(authId)
-          .then(() => history.push('/'))
-          .catch((error: Error) => toastError(null, error.message))
-          .finally(() => {
-            setWalletCtx(data);
-            setAppLoading(false);
-          });
-      }
-    );
-  }, [authId]);
+    rejectAuthRequest(authId)
+      .then(() => history.push('/'))
+      .catch((error: Error) => toastError(null, error.message))
+      .finally(() => {
+        setAppLoading(false);
+      });
+  }, [accountsSelected, authId]);
 
   const onAccountSelect = useCallback(
     (address: string): void => {

@@ -64,7 +64,6 @@ export interface RequestSignatures {
   'pri(wallet.account.import)': [RequestAccountImport, ResponseWallet];
   'pri(wallet.account.change)': [RequestAccountChange, ResponseWallet];
   'pri(wallet.account.edit)': [RequestAccountEdit, ResponseWallet];
-  'pri(wallet.account.hidden)': [RequestAccountHidden, ResponseWallet];
   'pri(wallet.account.forget)': [RequestAccountForget, boolean];
   'pri(wallet.account.transfer)': [
     RequestAccountTransfer,
@@ -141,11 +140,6 @@ export interface RequestAccountImport {
 }
 export interface RequestAccountEdit {
   name: string;
-  isHidden?: boolean;
-}
-export interface RequestAccountHidden {
-  address: string;
-  isHidden?: boolean;
 }
 export interface RequestPrivatekeyValidate {
   privateKey: string;
@@ -279,6 +273,7 @@ export interface AccountTypes {
   whenCreated?: number;
   seed?: { encrypted: string; secret: string };
   isHidden?: boolean;
+  allowedUrls?: string[];
   balance?: {
     freeBalance?: any;
     reservedBalance?: any;

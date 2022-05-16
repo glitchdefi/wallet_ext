@@ -32,23 +32,26 @@ import { assert, isNumber } from '@polkadot/util';
 
 import RequestBytesSign from '../RequestBytesSign';
 import RequestExtrinsicSign from '../RequestExtrinsicSign';
-import State from './State';
+import State, { AuthUrls, AUTH_URLS_KEY } from './State';
 import { createSubscription, unsubscribe } from './subscriptions';
 import { PHISHING_PAGE_REDIRECT } from '../../../constants/messages';
 import { canDerive } from '../../../utils/canDerive';
 import { withErrorLog } from '../../../utils/withErrorLog';
+import { ExtensionStore } from '../localStore';
 
 function transformAccounts(
   accounts: SubjectInfo,
-  anyType = false
+  anyType = false,
+  url: string
 ): InjectedAccount[] {
+  const splitUrl = url?.split('/');
+  const dappUrl = splitUrl?.length ? `${splitUrl[2]}` : '';
+  const authString = localStorage.getItem(AUTH_URLS_KEY);
+  const authUrls = JSON.parse(authString) as AuthUrls;
+
   return Object.values(accounts)
     .filter(
-      ({
-        json: {
-          meta: { isHidden },
-        },
-      }) => !isHidden
+      ({ json: { address } }) => authUrls[dappUrl].isAllowed[address] === true
     )
     .filter(({ type }) => (anyType ? true : canDerive(type)))
     .sort(
@@ -72,9 +75,11 @@ function transformAccounts(
 
 export default class Tabs {
   readonly state: State;
+  readonly localStore: ExtensionStore;
 
   constructor(state: State) {
     this.state = state;
+    this.localStore = new ExtensionStore();
   }
 
   private authorize(
@@ -88,7 +93,11 @@ export default class Tabs {
     url: string,
     { anyType }: RequestAccountList
   ): InjectedAccount[] {
-    return transformAccounts(accountsObservable.subject.getValue(), anyType);
+    return transformAccounts(
+      accountsObservable.subject.getValue(),
+      anyType,
+      url
+    );
   }
 
   private accountsSubscribe(
@@ -98,7 +107,8 @@ export default class Tabs {
   ): boolean {
     const cb = createSubscription<'pub(accounts.subscribe)'>(id, port);
     const subscription = accountsObservable.subject.subscribe(
-      (accounts: SubjectInfo): void => cb(transformAccounts(accounts))
+      (accounts: SubjectInfo): void =>
+        cb(transformAccounts(accounts, null, url))
     );
 
     port.onDisconnect.addListener((): void => {
@@ -307,4 +317,12 @@ export default class Tabs {
         throw new Error(`Unable to handle message of type ${type}`);
     }
   }
+}
+function anyType(
+  accounts: any,
+  anyType: any,
+  url: string,
+  localStore: ExtensionStore
+) {
+  throw new Error('Function not implemented.');
 }

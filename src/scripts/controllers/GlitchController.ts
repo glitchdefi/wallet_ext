@@ -11,7 +11,6 @@ import {
   RequestAccountChange,
   RequestAccountCreate,
   RequestAccountEdit,
-  RequestAccountHidden,
   RequestAccountImport,
   RequestAccountTransfer,
   RequestAutoLockSet,
@@ -70,7 +69,7 @@ export class GlitchController {
           whenCreated: meta.whenCreated,
           balance: { reservedBalance: '0', freeBalance: '0' },
           seed: mnemonicEncrypted,
-          isHidden: true,
+          allowedUrls: [],
         },
       },
     });
@@ -124,7 +123,7 @@ export class GlitchController {
           avatar: meta.avatar,
           whenCreated: meta.whenCreated,
           seed: mnemonicEncrypted,
-          isHidden: true,
+          allowedUrls: [],
         },
       },
     });
@@ -207,7 +206,7 @@ export class GlitchController {
           balance: { reservedBalance: '0', freeBalance: '0' },
           seed: mnemonicEncrypted,
           whenCreated: meta.whenCreated,
-          isHidden: true,
+          allowedUrls: [],
         },
         ...oldAccounts,
       },
@@ -244,7 +243,7 @@ export class GlitchController {
           balance: { freeBalance: '0', reservedBalance: '0' },
           seed: mnemonicEncrypted,
           whenCreated: meta.whenCreated,
-          isHidden: true,
+          allowedUrls: [],
         },
         ...oldAccounts,
       },
@@ -303,21 +302,6 @@ export class GlitchController {
     return await this.appStateController.updateState('wallet', {
       accounts: {
         ...oldAccounts,
-      },
-    });
-  }
-
-  async hiddenAccount({
-    address,
-    isHidden,
-  }: RequestAccountHidden): Promise<ResponseWallet> {
-    let accounts = await this.appStateController.getAccounts();
-    this.glitchWeb3.editAccount(accounts[address].name, address, isHidden);
-    accounts[address].isHidden = isHidden;
-
-    return await this.appStateController.updateState('wallet', {
-      accounts: {
-        ...accounts,
       },
     });
   }

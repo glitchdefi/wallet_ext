@@ -29,7 +29,6 @@ import type {
   RequestSigningCancel,
   RequestSigningApprove,
   AllowedPath,
-  RequestAccountHidden,
   RequestUpdateWalletStorage,
   RequestAuthorizeToggle,
 } from '../../types';
@@ -95,10 +94,10 @@ export default class Extension {
     return true;
   }
 
-  private toggleAuthorization(
+  private async toggleAuthorization(
     request: RequestAuthorizeToggle
-  ): ResponseAuthorizeList {
-    return { list: this.state.toggleAuthorization(request) };
+  ): Promise<ResponseAuthorizeList> {
+    return { list: await this.state.toggleAuthorization(request) };
   }
 
   private removeAuthorization(url: string): ResponseAuthorizeList {
@@ -264,12 +263,6 @@ export default class Extension {
     return this.controller.editAccount(request);
   }
 
-  private hiddenAccount(
-    request: RequestAccountHidden
-  ): Promise<ResponseWallet> {
-    return this.controller.hiddenAccount(request);
-  }
-
   private getAccountBalance(): Promise<ResponseWallet> {
     return this.controller.getBalance();
   }
@@ -412,9 +405,6 @@ export default class Extension {
 
       case 'pri(wallet.account.edit)':
         return this.editAccount(request as RequestAccountEdit);
-
-      case 'pri(wallet.account.hidden)':
-        return this.hiddenAccount(request as RequestAccountHidden);
 
       case 'pri(wallet.account.balance.get)':
         return this.getAccountBalance();
