@@ -19,7 +19,7 @@ import { Button } from 'app/components/Button';
 import { CloseIcon } from 'app/components/Svg';
 import { PageLayout } from 'app/layouts';
 import { ListItem } from './components/ListItem';
-import { DisconnectModal } from './components/DisconnectModal';
+import { ConfirmationModal } from './components/ConfirmationModal';
 import { Empty } from 'app/components/Empty';
 
 const ConnectedDapps: React.FC = React.memo(() => {
@@ -29,8 +29,11 @@ const ConnectedDapps: React.FC = React.memo(() => {
   const { address } = useAccount();
   const [authList, setAuthList] = useState<AuthUrls | null>(null);
   const [urlSelected, setUrlSelected] = useState<string>('');
-  const [showDisconnectModal, setShowDisconnectModal] =
+  const [showConfirmationModal, setShowConfirmationModal] =
     useState<boolean>(false);
+  const [modalType, setModalType] = useState<
+    'connect' | 'disconnect' | 'remove'
+  >('disconnect');
   const { accounts } = walletCtx || {};
 
   useEffect(() => {
@@ -39,33 +42,35 @@ const ConnectedDapps: React.FC = React.memo(() => {
       .catch((error: Error) => toastError(null, error.message));
   }, []);
 
-  const toggleAuth = useCallback(
-    (url: string) => {
-      const newAccounts = {
-        ...accounts,
-        [address]: {
-          ...accounts[address],
-          allowedUrls: accounts[address].allowedUrls.includes(url)
-            ? [...accounts[address].allowedUrls.filter((_url) => _url !== url)]
-            : [...accounts[address].allowedUrls, url],
-        },
-      };
+  const toggleAuth = useCallback(() => {
+    const newAccounts = {
+      ...accounts,
+      [address]: {
+        ...accounts[address],
+        allowedUrls: accounts[address].allowedUrls.includes(urlSelected)
+          ? [
+              ...accounts[address].allowedUrls.filter(
+                (_url) => _url !== urlSelected
+              ),
+            ]
+          : [...accounts[address].allowedUrls, urlSelected],
+      },
+    };
 
-      updateWalletStorage({
-        data: {
-          ...walletCtx,
-          accounts: newAccounts,
-        },
-      }).then((data) => {
-        setWalletCtx(data);
+    updateWalletStorage({
+      data: {
+        ...walletCtx,
+        accounts: newAccounts,
+      },
+    }).then((data) => {
+      setWalletCtx(data);
 
-        toggleAuthorization({ url, address })
-          .then(({ list }) => setAuthList(list))
-          .catch((error: Error) => toastError(null, error.message));
-      });
-    },
-    [authList, walletCtx]
-  );
+      toggleAuthorization({ url: urlSelected, address })
+        .then(({ list }) => setAuthList(list))
+        .catch((error: Error) => toastError(null, error.message))
+        .finally(() => setShowConfirmationModal(false));
+    });
+  }, [walletCtx, urlSelected]);
 
   const removeAuth = useCallback(() => {
     let newAccounts = {};
@@ -95,9 +100,9 @@ const ConnectedDapps: React.FC = React.memo(() => {
       removeAuthorization(urlSelected)
         .then(({ list }) => {
           setAuthList(list);
-          setShowDisconnectModal(false);
         })
-        .catch((error: Error) => toastError(null, error.message));
+        .catch((error: Error) => toastError(null, error.message))
+        .finally(() => setShowConfirmationModal(false));
     });
   }, [walletCtx, urlSelected]);
 
@@ -138,10 +143,15 @@ const ConnectedDapps: React.FC = React.memo(() => {
                   url={url}
                   info={info}
                   currentAddress={address}
-                  toggleAuth={toggleAuth}
+                  toggleAuth={(url: string, isApproved: boolean) => {
+                    setUrlSelected(url);
+                    setModalType(isApproved ? 'disconnect' : 'connect');
+                    setShowConfirmationModal(true);
+                  }}
                   removeAuth={(url: string) => {
                     setUrlSelected(url);
-                    setShowDisconnectModal(true);
+                    setModalType('remove');
+                    setShowConfirmationModal(true);
                   }}
                 />
               )
@@ -150,11 +160,18 @@ const ConnectedDapps: React.FC = React.memo(() => {
         </Flex>
       </Flex>
 
-      <DisconnectModal
+      <ConfirmationModal
+        type={modalType}
         url={urlSelected}
-        show={showDisconnectModal}
-        onConfirm={removeAuth}
-        onCancel={() => setShowDisconnectModal(false)}
+        show={showConfirmationModal}
+        onConfirm={() => {
+          if (modalType === 'connect' || modalType === 'disconnect') {
+            toggleAuth();
+          } else {
+            removeAuth();
+          }
+        }}
+        onCancel={() => setShowConfirmationModal(false)}
       />
     </PageLayout>
   );

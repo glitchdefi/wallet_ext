@@ -1,22 +1,25 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import styled from 'styled-components';
+import { space, typography } from 'styled-system';
 
 import { colors } from 'theme/colors';
 
 import { Box, Flex } from 'app/components/Box';
 import { WarningIcon } from 'app/components/Svg';
-import { Text } from 'app/components/Text';
+import { Text, TextProps } from 'app/components/Text';
 import { Button, ButtonShadow } from 'app/components/Button';
 
 interface Props {
+  type: 'connect' | 'disconnect' | 'remove';
   show: boolean;
   url: string;
   onCancel?(): void;
   onConfirm?(): void;
 }
 
-export const DisconnectModal: React.FC<Props> = ({
+export const ConfirmationModal: React.FC<Props> = ({
+  type,
   show,
   url,
   onCancel,
@@ -35,11 +38,25 @@ export const DisconnectModal: React.FC<Props> = ({
           <Text color={colors.gray9} large fontWeight="600" mb="8px">
             Confirmation
           </Text>
-          <Text color={colors.gray6} mb="32px">
-            Are you sure to disconnect to {url}?
-          </Text>
 
-          <Flex alignItems="center">
+          {type === 'connect' ? (
+            <Box>
+              <ModalText color={colors.white} fontWeight="600" mr="6px">
+                {url}
+              </ModalText>
+              <ModalText>would like to connect to your wallet</ModalText>
+            </Box>
+          ) : (
+            <Box>
+              <ModalText>Are you sure to disconnect to</ModalText>
+              <ModalText mx="6px" color={colors.white} fontWeight="600">
+                {url}
+              </ModalText>
+              <ModalText>?</ModalText>
+            </Box>
+          )}
+
+          <Flex mt="32px" alignItems="center">
             <Button
               fontSize="14px"
               px="16px"
@@ -52,7 +69,7 @@ export const DisconnectModal: React.FC<Props> = ({
               Cancel
             </Button>
             <ConfirmButton width="100%" onClick={onConfirm}>
-              Confirm
+              {type === 'connect' ? 'Connect' : 'Confirm'}
             </ConfirmButton>
           </Flex>
         </Box>
@@ -93,4 +110,12 @@ const ConfirmButton = styled(ButtonShadow)`
     font-size: 14px;
     padding: 5px 0px;
   }
+`;
+
+const ModalText = styled.span<TextProps>`
+  font-size: 14px;
+  line-height: 22px;
+  color: ${({ color }) => color || colors.gray6};
+  ${space}
+  ${typography}
 `;

@@ -78,4 +78,10 @@ const AccountItemWrapper = styled(Flex)`
   &:hover {
     background-color: rgba(255, 255, 255, 0.03);
   }
+
+  @media only screen and (min-width: 768px) {
+    label:after {
+      top: 28px !important;
+    }
+  }
 `;

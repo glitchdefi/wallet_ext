@@ -6,13 +6,13 @@ import { colors } from 'theme/colors';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
-import { DeleteIcon } from 'app/components/Svg';
+import { CheckCircle, CloseCircle, DeleteIcon } from 'app/components/Svg';
 
 interface Props {
   info: AuthUrlInfo;
   currentAddress: string;
   removeAuth: (url: string) => void;
-  toggleAuth: (url: string) => void;
+  toggleAuth: (url: string, isApproved: boolean) => void;
   url: string;
 }
 
@@ -23,8 +23,10 @@ export const ListItem: React.FC<Props> = ({
   currentAddress,
   removeAuth,
 }) => {
+  const isApproved = info.isAllowed[currentAddress] === true;
+
   const switchAccess = useCallback(() => {
-    toggleAuth(url);
+    toggleAuth(url, isApproved);
   }, [toggleAuth, url]);
 
   const _removeAuth = useCallback(() => {
@@ -34,37 +36,43 @@ export const ListItem: React.FC<Props> = ({
   return (
     <ItemWrapper>
       <Flex alignItems="center">
-        <Flex flex={1} alignItems="center">
+        <Flex flex={1} flexDirection="column">
           {/* <Box mr="8px">
           <img width="32px" height="32px" />
         </Box> */}
           <Text color={colors.gray9}>{url}</Text>
+          <Box>
+            {isApproved ? (
+              <Flex alignItems="center">
+                <Flex alignItems="center">
+                  <CheckCircle mr="5px" width="14px" />
+                  <Text color={colors.gray6} fontSize="12px" mr="4px">
+                    Approved.
+                  </Text>
+                </Flex>
+                <LinkText color={colors.error} onClick={switchAccess}>
+                  Disconnect
+                </LinkText>
+              </Flex>
+            ) : (
+              <Flex alignItems="center">
+                <Flex alignItems="center">
+                  <CloseCircle mr="5px" width="14px" />
+                  <Text color={colors.gray6} fontSize="12px" mr="4px">
+                    Denied.
+                  </Text>
+                </Flex>
+
+                <LinkText color={colors.primary} onClick={switchAccess}>
+                  Connect
+                </LinkText>
+              </Flex>
+            )}
+          </Box>
         </Flex>
 
-        <DeleteIcon width="18px" onClick={_removeAuth} />
+        <DeleteIcon width="24px" onClick={_removeAuth} />
       </Flex>
-
-      <Box>
-        {info.isAllowed[currentAddress] === true ? (
-          <Flex alignItems="center">
-            <Text color={colors.green} fontSize="12px" mr="4px">
-              Approved
-            </Text>
-            <LinkText color={colors.gray} onClick={switchAccess}>
-              Disconnect
-            </LinkText>
-          </Flex>
-        ) : (
-          <Flex alignItems="center">
-            <Text color={colors.gray6} fontSize="12px" mr="4px">
-              Denied.
-            </Text>
-            <LinkText color={colors.primary} onClick={switchAccess}>
-              Connect
-            </LinkText>
-          </Flex>
-        )}
-      </Box>
     </ItemWrapper>
   );
 };

@@ -25,7 +25,7 @@ export const ConnectedDappNoti: React.FC = () => {
     }
   }, [show]);
 
-  if (!show) return null;
+  if (!show || !dappUrl) return null;
   return (
     <Flex
       px="16px"

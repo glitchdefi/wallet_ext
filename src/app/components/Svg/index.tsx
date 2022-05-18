@@ -35,6 +35,8 @@ export { default as CalendarIcon } from './Icons/Calendar';
 export { default as SwapRightIcon } from './Icons/SwapRight';
 export { default as LinkIcon } from './Icons/LinkIcon';
 export { default as ExpandIcon } from './Icons/Expand';
+export { default as CheckCircle } from './Icons/CheckCircle';
+export { default as CloseCircle } from './Icons/CloseCircle';
 
 export { default as Svg } from './Svg';
 export type { SvgProps } from './types';
