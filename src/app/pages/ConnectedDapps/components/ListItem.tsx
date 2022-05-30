@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import styled from 'styled-components';
 
 import { AuthUrlInfo } from '../../../../scripts/lib/handler/State';
+import { getFaviconFromUrl } from '../../../../utils/getFaviconFromUrl';
 import { colors } from 'theme/colors';
 
 import { Box, Flex } from 'app/components/Box';
@@ -23,6 +24,7 @@ export const ListItem: React.FC<Props> = ({
   currentAddress,
   removeAuth,
 }) => {
+  const dappIcon = getFaviconFromUrl(url);
   const isApproved = info.isAllowed[currentAddress] === true;
 
   const switchAccess = useCallback(() => {
@@ -37,38 +39,48 @@ export const ListItem: React.FC<Props> = ({
     <ItemWrapper>
       <Flex alignItems="center">
         <Flex flex={1} flexDirection="column">
-          {/* <Box mr="8px">
-          <img width="32px" height="32px" />
-        </Box> */}
-          <Text color={colors.gray9}>{url}</Text>
-          <Box>
-            {isApproved ? (
-              <Flex alignItems="center">
-                <Flex alignItems="center">
-                  <CheckCircle mr="5px" width="14px" />
-                  <Text color={colors.gray6} fontSize="12px" mr="4px">
-                    Approved.
-                  </Text>
-                </Flex>
-                <LinkText color={colors.error} onClick={switchAccess}>
-                  Disconnect
-                </LinkText>
-              </Flex>
-            ) : (
-              <Flex alignItems="center">
-                <Flex alignItems="center">
-                  <CloseCircle mr="5px" width="14px" />
-                  <Text color={colors.gray6} fontSize="12px" mr="4px">
-                    Denied.
-                  </Text>
-                </Flex>
+          <Flex alignItems="center">
+            <Box mr="8px">
+              <img
+                style={{ borderRadius: '16px' }}
+                width="32px"
+                height="32px"
+                src={dappIcon}
+              />
+            </Box>
 
-                <LinkText color={colors.primary} onClick={switchAccess}>
-                  Connect
-                </LinkText>
-              </Flex>
-            )}
-          </Box>
+            <Box>
+              <Text color={colors.gray9}>{url}</Text>
+              <Box>
+                {isApproved ? (
+                  <Flex alignItems="center">
+                    <Flex alignItems="center">
+                      <CheckCircle mr="5px" width="14px" />
+                      <Text color={colors.gray6} fontSize="12px" mr="4px">
+                        Approved.
+                      </Text>
+                    </Flex>
+                    <LinkText color={colors.error} onClick={switchAccess}>
+                      Disconnect
+                    </LinkText>
+                  </Flex>
+                ) : (
+                  <Flex alignItems="center">
+                    <Flex alignItems="center">
+                      <CloseCircle mr="5px" width="14px" />
+                      <Text color={colors.gray6} fontSize="12px" mr="4px">
+                        Denied.
+                      </Text>
+                    </Flex>
+
+                    <LinkText color={colors.primary} onClick={switchAccess}>
+                      Connect
+                    </LinkText>
+                  </Flex>
+                )}
+              </Box>
+            </Box>
+          </Flex>
         </Flex>
 
         <DeleteIcon width="24px" onClick={_removeAuth} />
