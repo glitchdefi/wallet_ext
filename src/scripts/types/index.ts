@@ -76,6 +76,7 @@ export interface RequestSignatures {
   ];
   'pri(wallet.account.privatekey.show)': [null, string];
   'pri(settings.autolock.set)': [RequestAutoLockSet, ResponseSettings];
+  'pri(settings.network.set)': [RequestNetworkSet, ResponseSettings];
   'pri(transactions.list.get)': [
     RequestTransactionsGet,
     ResponseTransactionsGet
@@ -147,6 +148,10 @@ export interface RequestPrivatekeyValidate {
 export interface RequestAutoLockSet {
   openTime: number;
   duration: number;
+}
+
+export interface RequestNetworkSet {
+  network: 'testnet' | 'mainnet';
 }
 
 export interface RequestTransactionsGet {
@@ -257,6 +262,7 @@ export interface ResponseSettings {
   };
   currency?: string;
   locale?: string;
+  network?: 'mainnet' | 'testnet';
 }
 export interface ResponseAppStore {
   settings: ResponseSettings;

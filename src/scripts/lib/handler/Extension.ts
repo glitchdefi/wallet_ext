@@ -31,6 +31,7 @@ import type {
   AllowedPath,
   RequestUpdateWalletStorage,
   RequestAuthorizeToggle,
+  RequestNetworkSet,
 } from '../../types';
 import keyring from '@polkadot/ui-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -281,6 +282,10 @@ export default class Extension {
     return this.controller.setAutoLockTimer(request);
   }
 
+  private setNetwork(request: RequestNetworkSet): Promise<ResponseSettings> {
+    return this.controller.setNetwork(request);
+  }
+
   private getTransactions(
     request: RequestTransactionsGet
   ): Promise<ResponseTransactionsGet> {
@@ -423,6 +428,9 @@ export default class Extension {
 
       case 'pri(settings.autolock.set)':
         return this.setAutoLock(request as RequestAutoLockSet);
+
+      case 'pri(settings.network.set)':
+        return this.setNetwork(request as RequestNetworkSet);
 
       case 'pri(transactions.list.get)':
         return this.getTransactions(request as RequestTransactionsGet);

@@ -10,6 +10,7 @@ import type {
   SignerPayloadJSON,
   SignerPayloadRaw,
 } from '@polkadot/types/types';
+// import { TypeRegistry, Metadata } from '@polkadot/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type {
   MessageTypes,
@@ -30,6 +31,7 @@ import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
 import { assert, isNumber } from '@polkadot/util';
 
+import { GlitchController } from '../../controllers/GlitchController';
 import RequestBytesSign from '../RequestBytesSign';
 import RequestExtrinsicSign from '../RequestExtrinsicSign';
 import State, { AuthUrls, AUTH_URLS_KEY } from './State';
@@ -76,10 +78,15 @@ function transformAccounts(
 export default class Tabs {
   readonly state: State;
   readonly localStore: ExtensionStore;
+  controller: GlitchController;
 
   constructor(state: State) {
     this.state = state;
     this.localStore = new ExtensionStore();
+  }
+
+  public initController(controller: GlitchController) {
+    this.controller = controller;
   }
 
   private authorize(
@@ -146,6 +153,34 @@ export default class Tabs {
   ): Promise<ResponseSigning> {
     const address = request.address;
     const pair = this.getSigningPair(address);
+    // const api = this.controller.glitchWeb3.api;
+
+    // api.rpc.chain.getBlock(request.blockHash).then((signedBlock) => {
+    //   // the information for each of the contained extrinsics
+    //   signedBlock.block.extrinsics.forEach((ex, index) => {
+    //     // the extrinsics are decoded by the API, human-like view
+    //     console.log(index, ex.toHuman());
+
+    //     const {
+    //       isSigned,
+    //       meta,
+    //       method: { args, method, section },
+    //     } = ex;
+
+    //     // explicit display of name, args & documentation
+    //     console.log(
+    //       `${section}.${method}(${args.map((a) => a.toString()).join(', ')})`
+    //     );
+    //     console.log(meta.docs.map((d) => d.toString()).join('\n'));
+
+    //     // signer/nonce info
+    //     if (isSigned) {
+    //       console.log(
+    //         `signer=${ex.signer.toString()}, nonce=${ex.nonce.toString()}`
+    //       );
+    //     }
+    //   });
+    // });
 
     return this.state.sign(url, new RequestExtrinsicSign(request), {
       address,

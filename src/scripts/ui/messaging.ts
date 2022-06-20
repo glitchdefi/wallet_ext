@@ -31,6 +31,7 @@ import type {
   AllowedPath,
   RequestUpdateWalletStorage,
   RequestAuthorizeToggle,
+  RequestNetworkSet,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -249,6 +250,12 @@ export async function setAutoLock(
   request: RequestAutoLockSet
 ): Promise<ResponseSettings> {
   return sendMessage('pri(settings.autolock.set)', request);
+}
+
+export async function setNetwork(
+  request: RequestNetworkSet
+): Promise<ResponseSettings> {
+  return sendMessage('pri(settings.network.set)', request);
 }
 
 // Transactions

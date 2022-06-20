@@ -11,7 +11,7 @@ import { Text, TextProps } from 'app/components/Text';
 import { Button, ButtonShadow } from 'app/components/Button';
 
 interface Props {
-  type: 'connect' | 'disconnect' | 'remove';
+  type: 'connect' | 'remove';
   show: boolean;
   url: string;
   onCancel?(): void;

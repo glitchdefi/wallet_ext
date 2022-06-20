@@ -17,3 +17,10 @@ export const useAutoLock = (): ResponseSettings['autoLock'] => {
 
   return { ...autoLock };
 };
+
+export const useNetwork = (): ResponseSettings['network'] => {
+  const { settingsCtx } = useSettings();
+  const { network } = settingsCtx || {};
+
+  return network;
+};
