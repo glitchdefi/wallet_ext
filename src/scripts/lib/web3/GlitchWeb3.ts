@@ -10,52 +10,66 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { u8aToHex } from '@polkadot/util';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import web3Utils from 'web3-utils';
-import secrets from 'secrets';
+
+import { RequestWalletCreate } from 'scripts/types';
+import { AppStateController } from 'scripts/controllers/AppStateController';
 
 import { DEFAULT_TYPE } from 'constants/values';
-import { GlitchToken } from '../../../constants/tokens';
+import { GlitchToken } from 'constants/tokens';
+import { GlitchNetwork } from 'constants/networks';
+
 import { getAvatar } from 'utils/drawAvatar';
 import { messageEncryption, privateKeyValidate } from 'utils/strings';
-import { RequestWalletCreate } from 'scripts/types';
 
 log.setDefaultLevel('debug');
 
 export class GlitchWeb3 {
   api: ApiPromise;
+  appStateController: AppStateController;
 
   /**
    * The Singleton's constructor should always be private to prevent direct
    * construction calls with the `new` operator.
    */
-  constructor() {
+  constructor(appStateController: AppStateController) {
+    this.appStateController = appStateController;
     cryptoWaitReady().then(async () => {
-      try {
-        // Initialise the provider to connect to the local node
-        const provider = new WsProvider(secrets.wsProvider);
-
-        // Create the API and wait until ready
-        const api = await ApiPromise.create({ provider });
-
-        // Retrieve the chain & node information information via rpc calls
-        const [chain, nodeName, nodeVersion] = await Promise.all([
-          api.rpc.system.chain(),
-          api.rpc.system.name(),
-          api.rpc.system.version(),
-        ]);
-
-        this.api = api;
-
-        log.info(
-          `You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`
-        );
-
-        // load all available addresses and accounts
-        keyring.loadAll({ ss58Format: 42, type: DEFAULT_TYPE });
-        log.info('Glitch Wallet initialization complete.');
-      } catch (error) {
-        log.info('initError', error);
-      }
+      await this.createApi();
+      // load all available addresses and accounts
+      keyring.loadAll({ ss58Format: 42, type: DEFAULT_TYPE });
     });
+  }
+
+  async createApi() {
+    try {
+      const network = await this.appStateController.getNetwork();
+      const wsProvider = GlitchNetwork.find(
+        (n) => n.key === network
+      ).wsProvider;
+
+      // Initialise the provider to connect to the local node
+      const provider = new WsProvider(wsProvider);
+
+      // Create the API and wait until ready
+      const api = await ApiPromise.create({ provider });
+
+      // Retrieve the chain & node information information via rpc calls
+      const [chain, nodeName, nodeVersion] = await Promise.all([
+        api.rpc.system.chain(),
+        api.rpc.system.name(),
+        api.rpc.system.version(),
+      ]);
+
+      this.api = api;
+
+      log.info(
+        `You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`
+      );
+
+      log.info('Glitch Wallet initialization complete.');
+    } catch (error) {
+      log.info('initError', error);
+    }
   }
 
   async createAccount(request: RequestWalletCreate): Promise<{
@@ -69,6 +83,7 @@ export class GlitchWeb3 {
     const { json } = keyring.addUri(mnemonic, password || undefined, {
       avatar: getAvatar(),
       name,
+      genesisHash: this.api.genesisHash.toHex(),
     });
 
     const mnemonicEncrypted = await messageEncryption(mnemonic);
@@ -85,6 +100,22 @@ export class GlitchWeb3 {
     }
 
     return false;
+  }
+
+  updateAccountGenesisHash() {
+    const accounts = keyring.getAccounts();
+
+    accounts.forEach((account) => {
+      const { address } = account;
+      const pair = keyring.getPair(address);
+
+      if (pair) {
+        keyring.saveAccountMeta(pair, {
+          ...pair.meta,
+          genesisHash: this.api.genesisHash.toHex(),
+        });
+      }
+    });
   }
 
   unlockAccount(password?: string, address?: string) {

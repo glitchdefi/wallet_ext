@@ -27,6 +27,7 @@ var alias = {
   'constants/routes': path.join(__dirname, 'src', 'constants', 'routes.ts'),
   'constants/values': path.join(__dirname, 'src', 'constants', 'values.ts'),
   'constants/tokens': path.join(__dirname, 'src', 'constants', 'tokens.ts'),
+  'constants/networks': path.join(__dirname, 'src', 'constants', 'networks.ts'),
   'app/layouts': path.join(__dirname, 'src', 'app', 'layouts', 'index.ts'),
   'scripts/ui/messaging': path.join(
     __dirname,

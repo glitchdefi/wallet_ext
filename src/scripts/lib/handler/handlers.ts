@@ -30,6 +30,7 @@ export default function handler(
     extension.initController(controller);
     promise = extension.handle(id, message, request, port);
   } else {
+    tabs.initController(controller);
     promise = tabs.handle(id, message, request, from, port);
   }
 

@@ -2,10 +2,10 @@ import React from 'react';
 import moment from 'moment';
 import web3Utils from 'web3-utils';
 import { useTranslation } from 'react-i18next';
-import secrets from 'secrets';
 
 import { colors } from 'theme/colors';
 import { useAccount } from 'contexts/WalletContext/hooks';
+import { useNetwork } from 'contexts/SettingsContext/hooks';
 
 import { messages } from '../messages';
 
@@ -15,6 +15,7 @@ import { OutlineSelectIcon } from 'app/components/Svg';
 import { Skeleton } from 'app/components/Skeleton';
 import { Button } from 'app/components/Button';
 import { TransactionStatus } from './TransactionStatus';
+import { GlitchNetwork } from 'constants/networks';
 
 const FORMAT_TIME = 'MMM DD, YYYY • HH:mm';
 
@@ -28,10 +29,12 @@ export const TransactionItem: React.FC<Props> = React.memo(
   ({ data, index }) => {
     const { t } = useTranslation();
     const { address } = useAccount();
+    const network = useNetwork();
     const { hash, time, to, status, value } = data || {};
 
     const isReceive = to === address;
     const amount = web3Utils.fromWei(value);
+    const explorerUrl = GlitchNetwork.find((n) => n.key === network).explorerUrl;
 
     return (
       <Box mt={index > 0 ? '8px' : '0px'}>
@@ -70,7 +73,7 @@ export const TransactionItem: React.FC<Props> = React.memo(
           <Button
             p="0px"
             onClick={() => {
-              window.open(`${secrets.explorerUrl}/tx/${hash}`);
+              window.open(`${explorerUrl}/tx/${hash}`);
             }}
           >
             <Flex alignItems="center">

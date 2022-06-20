@@ -1,6 +1,5 @@
 import log from 'loglevel';
 import axios from 'axios';
-import secrets from 'secrets';
 
 import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
@@ -15,6 +14,7 @@ import {
   RequestAccountTransfer,
   RequestAutoLockSet,
   RequestEstimateFeeGet,
+  RequestNetworkSet,
   RequestPrivatekeyValidate,
   RequestTokenPriceGet,
   RequestTransactionsGet,
@@ -26,6 +26,7 @@ import {
   ResponseTransactionsGet,
   ResponseWallet,
 } from '../types';
+import { GlitchNetwork } from 'constants/networks';
 
 log.setDefaultLevel('debug');
 export class GlitchController {
@@ -34,8 +35,8 @@ export class GlitchController {
 
   constructor(otps: { initialState: ResponseAppStore }) {
     const { initialState } = otps;
-    this.glitchWeb3 = new GlitchWeb3();
     this.appStateController = new AppStateController({ initialState });
+    this.glitchWeb3 = new GlitchWeb3(this.appStateController);
   }
 
   //=============================================================================
@@ -376,6 +377,8 @@ export class GlitchController {
   ): Promise<ResponseTransactionsGet> {
     const { pageIndex, pageSize, txStatus, txType, startTime, endTime } =
       request || {};
+    const network = await this.appStateController.getNetwork();
+    const apiUrl = GlitchNetwork.find((n) => n.key === network).baseApiUrl;
     const address = await this.appStateController.getSelectedAddress();
 
     const dateParams =
@@ -384,7 +387,7 @@ export class GlitchController {
         : '';
 
     const res = await axios.get(
-      `${secrets.baseApiUrl}/address/${address}/tx?page_index=${pageIndex}&page_size=${pageSize}&txStatus=${txStatus}&txType=${txType}${dateParams}`
+      `${apiUrl}/address/${address}/tx?page_index=${pageIndex}&page_size=${pageSize}&txStatus=${txStatus}&txType=${txType}${dateParams}`
     );
 
     return res?.data;
@@ -400,6 +403,16 @@ export class GlitchController {
     return await this.appStateController.updateState('settings', {
       autoLock: request,
     });
+  }
+
+  async setNetwork({ network }: RequestNetworkSet): Promise<ResponseSettings> {
+    const settings = await this.appStateController.updateState('settings', {
+      network,
+    });
+    await this.glitchWeb3.createApi();
+    this.glitchWeb3.updateAccountGenesisHash();
+
+    return settings;
   }
 
   //=============================================================================

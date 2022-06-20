@@ -25,6 +25,7 @@ export class AppStateController {
           openTime: new Date().getTime(),
           duration: 60000,
         },
+        network: 'testnet',
       },
     };
 
@@ -86,6 +87,10 @@ export class AppStateController {
 
   async getAccounts(): Promise<ResponseWallet['accounts']> {
     return (await this.getWalletState()).accounts;
+  }
+
+  async getNetwork(): Promise<ResponseSettings['network']> {
+    return (await this.getSettingsState()).network;
   }
 
   async updateState(

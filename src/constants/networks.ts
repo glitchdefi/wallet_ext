@@ -1,14 +1,23 @@
 export const GlitchNetwork = [
   {
-    id: 1,
-    name: 'Glitch testnet',
-    icon: 'logo.png',
-    networks: [
-      {
-        id: 1,
-        name: 'glitch.finance',
-        host: 'https://node3-testnet.glitch.finance/',
-      },
-    ],
+    key: 'testnet',
+    label: 'Glitch Testnet',
+    wsProvider: 'wss://wss-fullnodes-testnet.glitch.finance',
+    baseApiUrl: 'https://api-testnet-v2.glitch.finance',
+    explorerUrl: 'https://testnet-explorer.glitch.finance',
+  },
+  // {
+  //   key: 'mainnet',
+  //   label: 'Glitch Mainnet',
+  //   wsProvider: 'wss://wss-fullnodes-mainnet.glitch.finance',
+  //   baseApiUrl: 'https://api-mainnet.glitch.finance',
+  //   explorerUrl: 'https://explorer.glitch.finance',
+  // },
+  {
+    key: 'uat',
+    label: 'Glitch UAT',
+    wsProvider: 'ws://13.212.197.46:9944',
+    baseApiUrl: 'https://api-uat-explorer.glitch.finance',
+    explorerUrl: 'https://api-uat-explorer.glitch.finance',
   },
 ];
