@@ -54,17 +54,17 @@ export class GlitchWeb3 {
       const api = await ApiPromise.create({ provider });
 
       // Retrieve the chain & node information information via rpc calls
-      const [chain, nodeName, nodeVersion] = await Promise.all([
-        api.rpc.system.chain(),
-        api.rpc.system.name(),
-        api.rpc.system.version(),
-      ]);
+      // const [chain, nodeName, nodeVersion] = await Promise.all([
+      //   api.rpc.system.chain(),
+      //   api.rpc.system.name(),
+      //   api.rpc.system.version(),
+      // ]);
 
       this.api = api;
 
-      log.info(
-        `You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`
-      );
+      // log.info(
+      //   `You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`
+      // );
 
       log.info('Glitch Wallet initialization complete.');
     } catch (error) {
