@@ -10,7 +10,8 @@ import type {
   SignerPayloadJSON,
   SignerPayloadRaw,
 } from '@polkadot/types/types';
-// import { TypeRegistry, Metadata } from '@polkadot/types';
+import { ApiPromise } from '@polkadot/api';
+import { TypeRegistry, Metadata } from '@polkadot/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type {
   MessageTypes,
@@ -149,37 +150,42 @@ export default class Tabs {
 
   private extrinsicSign(
     url: string,
-    request: SignerPayloadJSON
+    request: SignerPayloadJSON // Request from polkadot
   ): Promise<ResponseSigning> {
     const address = request.address;
     const pair = this.getSigningPair(address);
-    // const api = this.controller.glitchWeb3.api;
+    const api: ApiPromise = this.controller.glitchWeb3.api;
+
+    console.log('request', request);
+
+    // Get amount / fee here
 
     // api.rpc.chain.getBlock(request.blockHash).then((signedBlock) => {
     //   // the information for each of the contained extrinsics
-    //   signedBlock.block.extrinsics.forEach((ex, index) => {
-    //     // the extrinsics are decoded by the API, human-like view
-    //     console.log(index, ex.toHuman());
-
+    //   signedBlock.block.extrinsics.forEach(async (ex, index) => {
     //     const {
     //       isSigned,
     //       meta,
     //       method: { args, method, section },
     //     } = ex;
 
-    //     // explicit display of name, args & documentation
-    //     console.log(
-    //       `${section}.${method}(${args.map((a) => a.toString()).join(', ')})`
-    //     );
-    //     console.log(meta.docs.map((d) => d.toString()).join('\n'));
-
-    //     // signer/nonce info
-    //     if (isSigned) {
-    //       console.log(
-    //         `signer=${ex.signer.toString()}, nonce=${ex.nonce.toString()}`
-    //       );
-    //     }
+    //     const tx = api.tx[section].method.method;
+    //     console.log(await tx.)
     //   });
+    // });
+
+    // const registry = new TypeRegistry();
+    // api.rpc.state.getMetadata().then((data) => {
+    //   const metadata = new Metadata(registry as any, data);
+    //   registry.setMetadata(metadata);
+    //   const call = registry.createType('Call', request.method);
+
+    //   const callM = call.toHuman();
+    //   const args = call.args.map((a) => a.toString());
+
+    //   const tx = api.tx[callM.section as any].callM.method; // undefined
+
+    //   console.log('tx', tx);
     // });
 
     return this.state.sign(url, new RequestExtrinsicSign(request), {
