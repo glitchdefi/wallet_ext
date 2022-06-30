@@ -139,7 +139,7 @@ export const App: React.FC = () => {
   ) : isInitialized === 'none' && !walletCtx?.isLocked ? (
     <WelcomePage />
   ) : (
-    <LoadingApplication />
+    <LoadingApplication loading={appLoading} />
   );
 
   return (
@@ -148,7 +148,7 @@ export const App: React.FC = () => {
       <ScrollToTop />
       <ToastListener />
       <ContainerLayout>
-        {appLoading && <LoadingApplication />}
+        <LoadingApplication loading={appLoading} />
         <Switch>
           <Route exact path="/">
             {Root}

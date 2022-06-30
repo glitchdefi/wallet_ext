@@ -1,12 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Loading } from './Loading';
+interface Props {
+  loading?: boolean;
+}
 
-import Spinner from './Spinner';
+const LoadingApplication: React.FC<Props> = ({ loading }) => {
+  if (!loading) return null;
 
-const LoadingApplication: React.FC = () => {
   return (
     <Overlay>
-      <Spinner size="36px" />
+      <Loading />
     </Overlay>
   );
 };
@@ -24,4 +28,7 @@ const Overlay = styled.div`
   z-index: 1060;
 `;
 
-export default LoadingApplication;
+export default React.memo(
+  LoadingApplication,
+  (prevProps, nextProps) => prevProps.loading === nextProps.loading
+);
