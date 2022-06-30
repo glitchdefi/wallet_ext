@@ -5,12 +5,11 @@ import isEmpty from 'lodash/isEmpty';
 import styled from 'styled-components';
 
 import { colors } from 'theme/colors';
-import { truncateAddress } from 'utils/strings';
-import { formatDollarAmount } from 'utils/number';
-import { SigningRequest } from 'scripts/types';
+// import { SigningRequest } from 'scripts/types';
 
 import { useSigningReq } from 'contexts/SigningReqContext/hooks';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
+import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 import {
   approveSignRequest,
   cancelSignRequest,
@@ -29,12 +28,25 @@ import { Label, PasswordInput } from 'app/components/Form';
 const Signing: React.FC = () => {
   const history = useHistory();
   const { setAppLoading } = useApplication();
-  const [password, setPassword] = useState<string>('');
-  const [validPassword, setValidPassword] = useState<boolean>(true);
+  const { tokenPrice } = useTokenPrice();
   const { toastError } = useToast();
   const { signRequests } = useSigningReq();
+
+  const [password, setPassword] = useState<string>('');
+  const [validPassword, setValidPassword] = useState<boolean>(true);
+
   const request = !isEmpty(signRequests) ? signRequests[0] : {};
-  const { id, account, url } = request as SigningRequest;
+  const {
+    id,
+    account,
+    url,
+    request: {
+      payload: { amount, fee },
+    },
+  } = request as any;
+
+  const feeToUsd = (fee * tokenPrice).toFixed(4);
+  const amountToUsd = (amount * tokenPrice).toFixed(4);
 
   const onApprove = useCallback((): void => {
     setAppLoading(true);
@@ -118,10 +130,14 @@ const Signing: React.FC = () => {
             <Flex>
               <GlitchLogo width={24} height={24} />
               <Text ml="8px" color={colors.gray7}>
-                - GLCH
+                {amount} GLCH
               </Text>
               <Text ml="8px" color={colors.gray5}>
-                {`~ ${formatDollarAmount(0)} USD`}
+                {`~ ${
+                  parseFloat(amountToUsd) < 0.001
+                    ? '<$0.001'
+                    : `$${amountToUsd}`
+                } USD`}
               </Text>
             </Flex>
           </Box>
@@ -131,9 +147,11 @@ const Signing: React.FC = () => {
               Network fee
             </Text>
             <Flex>
-              <Text color={colors.gray7}>- GLCH</Text>
+              <Text color={colors.gray7}>{fee} GLCH</Text>
               <Text ml="8px" color={colors.gray5}>
-                {`~ ${formatDollarAmount(0)} USD`}
+                {`~ ${
+                  parseFloat(feeToUsd) < 0.001 ? '<$0.001' : `$${feeToUsd}`
+                } USD`}
               </Text>
             </Flex>
           </Box>

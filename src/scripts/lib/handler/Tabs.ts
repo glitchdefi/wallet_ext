@@ -11,7 +11,7 @@ import type {
   SignerPayloadRaw,
 } from '@polkadot/types/types';
 import { ApiPromise } from '@polkadot/api';
-import { TypeRegistry, Metadata } from '@polkadot/types';
+import { TypeRegistry } from '@polkadot/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type {
   MessageTypes,
@@ -30,7 +30,7 @@ import type {
 import { checkIfDenied } from '@polkadot/phishing';
 import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
-import { assert, isNumber } from '@polkadot/util';
+import { assert, BN, BN_MILLION, isNumber } from '@polkadot/util';
 
 import { GlitchController } from '../../controllers/GlitchController';
 import RequestBytesSign from '../RequestBytesSign';
@@ -148,50 +148,47 @@ export default class Tabs {
     });
   }
 
-  private extrinsicSign(
+  private async extrinsicSign(
     url: string,
-    request: SignerPayloadJSON // Request from polkadot
+    request: SignerPayloadJSON
   ): Promise<ResponseSigning> {
     const address = request.address;
     const pair = this.getSigningPair(address);
     const api: ApiPromise = this.controller.glitchWeb3.api;
 
-    console.log('request', request);
+    const endcodedCallData = request.method;
+    const account = request.address;
+    const registry = new TypeRegistry();
+    const data = await api.rpc.state.getMetadata();
+    registry.setMetadata(data);
+    const call = registry.createType('Call', endcodedCallData);
+    const method: any = call.toHuman();
+    const args = call.args.map((a) => a.toString());
+    const tx = api.tx[method.section][method.method](...args);
+    const paymentInfo = (await tx.paymentInfo(account)).toHuman();
 
-    // Get amount / fee here
+    const argsAmountSplit = method.args[1]?.split(' ');
 
-    // api.rpc.chain.getBlock(request.blockHash).then((signedBlock) => {
-    //   // the information for each of the contained extrinsics
-    //   signedBlock.block.extrinsics.forEach(async (ex, index) => {
-    //     const {
-    //       isSigned,
-    //       meta,
-    //       method: { args, method, section },
-    //     } = ex;
+    const partialFee = paymentInfo?.partialFee
+      ?.toString()
+      ?.replace(' µGLCH', '');
 
-    //     const tx = api.tx[section].method.method;
-    //     console.log(await tx.)
-    //   });
-    // });
+    const amount = argsAmountSplit?.length
+      ? parseFloat(argsAmountSplit[0]) /
+        (argsAmountSplit[1] === 'MUnit' ? 1 : 1000)
+      : '0';
+    const fee = partialFee
+      ? Number(parseFloat(partialFee) / 1000000)?.toFixed(9)
+      : '0';
 
-    // const registry = new TypeRegistry();
-    // api.rpc.state.getMetadata().then((data) => {
-    //   const metadata = new Metadata(registry as any, data);
-    //   registry.setMetadata(metadata);
-    //   const call = registry.createType('Call', request.method);
-
-    //   const callM = call.toHuman();
-    //   const args = call.args.map((a) => a.toString());
-
-    //   const tx = api.tx[callM.section as any].callM.method; // undefined
-
-    //   console.log('tx', tx);
-    // });
-
-    return this.state.sign(url, new RequestExtrinsicSign(request), {
-      address,
-      ...pair.meta,
-    });
+    return this.state.sign(
+      url,
+      new RequestExtrinsicSign({ ...request, amount, fee }),
+      {
+        address,
+        ...pair.meta,
+      }
+    );
   }
 
   private metadataProvide(url: string, request: MetadataDef): Promise<boolean> {
@@ -328,7 +325,7 @@ export default class Tabs {
         return this.bytesSign(url, request as SignerPayloadRaw);
 
       case 'pub(extrinsic.sign)':
-        return this.extrinsicSign(url, request as SignerPayloadJSON);
+        return await this.extrinsicSign(url, request as SignerPayloadJSON);
 
       case 'pub(metadata.list)':
         return this.metadataList(url);
