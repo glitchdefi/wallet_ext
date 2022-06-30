@@ -3,11 +3,14 @@ import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { RequestSign } from './types';
 
 import { TypeRegistry } from '@polkadot/types';
-
+interface Payload extends SignerPayloadJSON {
+  amount: string | number;
+  fee: string | number;
+}
 export default class RequestExtrinsicSign implements RequestSign {
-  public readonly payload: SignerPayloadJSON;
+  public readonly payload: Payload;
 
-  constructor(payload: SignerPayloadJSON) {
+  constructor(payload: Payload) {
     this.payload = payload;
   }
 

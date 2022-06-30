@@ -229,12 +229,16 @@ export interface SigningRequest {
   request: RequestSign;
   url: string;
 }
-
+export interface SignerPayloadJSON2 extends SignerPayloadJSON {
+  amount: string | number;
+  fee: string | number;
+}
 export interface RequestSign {
-  readonly payload: SignerPayloadJSON | SignerPayloadRaw;
+  readonly payload: SignerPayloadJSON2 | SignerPayloadRaw;
 
   sign(registry: TypeRegistry, pair: KeyringPair): { signature: HexString };
 }
+
 export interface ResponseAccountTransfer {
   success: boolean;
   message: string;
