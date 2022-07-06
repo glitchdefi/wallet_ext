@@ -24,6 +24,7 @@ import { CloseIcon } from 'app/components/Svg';
 import { NetworkBox } from 'app/components/Shared';
 import { useToast } from 'hooks/useToast';
 import { Label, PasswordInput } from 'app/components/Form';
+import { GlitchNetwork } from 'constants/networks';
 
 const Signing: React.FC = () => {
   const history = useHistory();
@@ -41,7 +42,7 @@ const Signing: React.FC = () => {
     account,
     url,
     request: {
-      payload: { amount, fee },
+      payload: { amount, fee, genesisHash },
     },
   } = request as any;
 
@@ -94,7 +95,12 @@ const Signing: React.FC = () => {
           p="16px"
         >
           <Box mb="8px">
-            <NetworkBox showArrow={false} />
+            <NetworkBox
+              showArrow={false}
+              customName={
+                GlitchNetwork.find((n) => n.genesisHash === genesisHash).label
+              }
+            />
           </Box>
 
           <Box mb="32px">

@@ -13,12 +13,13 @@ import { DownArrowIcon } from 'app/components/Svg';
 import { Dropdown } from '../Dropdown';
 interface Props {
   showArrow?: boolean;
+  customName?: string;
 }
 
 const NetworkBox: React.FC<Props> = React.memo((props) => {
   const network = useNetwork();
   const { setNetwork } = useSettings();
-  const { showArrow = true } = props;
+  const { showArrow = true, customName } = props;
 
   const networkName = GlitchNetwork.find((n) => n.key === network)?.label;
 
@@ -27,7 +28,11 @@ const NetworkBox: React.FC<Props> = React.memo((props) => {
       <Dropdown
         showChecked
         activeKey={network}
-        onSelect={(key) => setNetwork({ network: key })}
+        onSelect={(key) => {
+          if (showArrow) {
+            setNetwork({ network: key });
+          }
+        }}
         customToggle={
           <Flex
             width="fit-content"
@@ -42,7 +47,7 @@ const NetworkBox: React.FC<Props> = React.memo((props) => {
               background={colors.green}
             />
             <Text mx="8px" fontSize="12px">
-              {networkName}
+              {customName || networkName}
             </Text>
             {showArrow && <DownArrowIcon width="12px" color={colors.gray7} />}
           </Flex>
