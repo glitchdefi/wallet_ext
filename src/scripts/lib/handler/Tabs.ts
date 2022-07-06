@@ -30,7 +30,7 @@ import type {
 import { checkIfDenied } from '@polkadot/phishing';
 import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
-import { assert, BN, BN_MILLION, isNumber } from '@polkadot/util';
+import { assert, isNumber } from '@polkadot/util';
 
 import { GlitchController } from '../../controllers/GlitchController';
 import RequestBytesSign from '../RequestBytesSign';
