@@ -107,3 +107,17 @@ export const calcTotalBalance = (balance: {
     false
   );
 };
+
+export const toGLCH = (num: string): number => {
+  if (num?.includes('µGLCH')) {
+    const _num = parseFloat(num?.replace(' µGLCH', ''));
+    return _num / 1000000;
+  }
+
+  if (num?.includes('mGLCH')) {
+    const _num = parseFloat(num?.replace(' mGLCH', ''));
+    return _num / 1000;
+  }
+
+  return parseFloat(num?.replace(' GLCH', ''));
+};

@@ -11,7 +11,8 @@ import type {
   SignerPayloadRaw,
 } from '@polkadot/types/types';
 import { ApiPromise } from '@polkadot/api';
-import { TypeRegistry } from '@polkadot/types';
+import Web3Utils from 'web3-utils';
+import isNaN from 'lodash/isNaN';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type {
   MessageTypes,
@@ -41,6 +42,7 @@ import { PHISHING_PAGE_REDIRECT } from '../../../constants/messages';
 import { canDerive } from '../../../utils/canDerive';
 import { withErrorLog } from '../../../utils/withErrorLog';
 import { ExtensionStore } from '../localStore';
+import { toGLCH } from 'utils/number';
 
 function transformAccounts(
   accounts: SubjectInfo,
@@ -156,74 +158,58 @@ export default class Tabs {
     const pair = this.getSigningPair(address);
     const api: ApiPromise = this.controller.glitchWeb3.api;
 
-    // const apiAt = await api.at(request.blockHash);
-    // const { block } = await api.rpc.chain.getBlock(request.blockHash);
+    const { block } = await api.rpc.chain.getBlock(request.blockHash);
 
-    // console.log('extrinsic:', JSON.stringify(block.extrinsics));
-    // const queryFeeDetails = await api.rpc.payment.queryFeeDetails(
-    //   block.extrinsics[1].toHex(),
-    //   request.blockHash
-    // );
-    // console.log(
-    //   'queryFeeDetails:',
-    //   JSON.stringify(queryFeeDetails.toHuman(), null, 2)
-    // );
-    // const queryInfo = await api.rpc.payment.queryInfo(
-    //   block.extrinsics[1].toHex(),
-    //   request.blockHash
-    // );
-    // console.log('queryInfo:', JSON.stringify(queryInfo.toHuman(), null, 2));
-
-    // const test = apiAt.registry.createType('Call', request.method);
-
-    // console.log({
-    //   method: test.toHuman(),
-    //   args: test.args.map((a) => a.toString()),
-    // });
-
-    const endcodedCallData = request.method;
-    const registry = new TypeRegistry();
-    const data = await api.rpc.state.getMetadata();
-    registry.setMetadata(data);
-
-    const call = api.registry.createType('Call', endcodedCallData);
+    const call = block.registry.createType('Call', request.method);
     const method: any = call.toHuman();
     const args = call.args.map((a) => a.toString());
 
-    const tx = api.tx[method.section][method.method](...args);
-    const paymentInfo = (await tx.paymentInfo(address)).toHuman();
+    let amount: string | number = '0';
+    let partialFee: number = 0;
 
-    let amount: any = '0';
-
-    if (
-      method?.method === 'unbond' ||
-      method?.method === 'bondExtra' ||
-      method?.method === 'submitCandidacy'
+    if (method.method === 'batchAll') {
+      const _args = method.args[0][0]?.args;
+      amount = toGLCH(_args[1]);
+    } else if (
+      method.method === 'proposeSpend' ||
+      method.method === 'proposeBounty'
     ) {
-      const argsAmountSplit = method.args[0]?.split(' ');
-      amount = argsAmountSplit?.length
-        ? parseFloat(argsAmountSplit[0]) /
-          (argsAmountSplit[1] === 'MUnit' ? 1 : 1000)
-        : '0';
+      amount = Web3Utils.fromWei(args[0]);
+    } else if (method.method === 'notePreimage') {
+      amount = '0';
     } else {
-      const argsAmountSplit = method.args[1]?.split(' ');
-      amount = argsAmountSplit?.length
-        ? parseFloat(argsAmountSplit[0]) /
-          (argsAmountSplit[1] === 'MUnit' ? 1 : 1000)
-        : '0';
+      if (args?.length >= 2) {
+        amount = Web3Utils.fromWei(args[1]);
+      } else {
+        amount = !isNaN(Number(args[0])) ? Web3Utils.fromWei(args[0]) : '0';
+      }
     }
 
-    const partialFee = paymentInfo?.partialFee
-      ?.toString()
-      ?.replace(' µGLCH', '');
+    // Get fees
+    if (
+      method.method === 'vote' ||
+      method.method === 'batchAll' ||
+      method.method === 'nominate'
+    ) {
+      const queryInfo = await api.rpc.payment.queryInfo(
+        block.extrinsics[0].toHex(),
+        request.blockHash
+      );
 
-    const fee = partialFee
-      ? Number(parseFloat(partialFee) / 1000000)?.toFixed(9)
-      : '0';
+      partialFee = toGLCH(queryInfo.toHuman().partialFee?.toString());
+    } else {
+      const tx = api.tx[method.section][method.method](...args);
+      const paymentInfo = (await tx.paymentInfo(address)).toHuman();
+      partialFee = toGLCH(paymentInfo?.partialFee?.toString());
+    }
 
     return this.state.sign(
       url,
-      new RequestExtrinsicSign({ ...request, amount, fee }),
+      new RequestExtrinsicSign({
+        ...request,
+        amount,
+        fee: partialFee?.toFixed(9),
+      }),
       {
         address,
         ...pair.meta,
