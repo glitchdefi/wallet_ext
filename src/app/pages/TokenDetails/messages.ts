@@ -16,5 +16,7 @@ export const messages = {
   txn: () => _t(translations.transaction.txn),
   filter: () => _t(translations.filter.filter),
   selectTime: () => _t(translations.filter.select_time),
+  kindOfAddress: () => _t(translations.filter.kind_of_address),
   showResults: () => _t(translations.button.show_results),
+  date: () => _t(translations.transaction.date),
 };

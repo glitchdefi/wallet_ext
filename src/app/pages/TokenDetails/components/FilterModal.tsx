@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import styled from 'styled-components';
 
 import {
+  ADDRESS_TYPE_LIST,
   DATE_LIST,
   KIND_OF_TXN_LIST,
   STATUS_TYPE_LIST,
@@ -22,17 +23,20 @@ interface Props {
   isOpen: boolean;
   onClose?(): void;
   initFilter: {
+    addressType?: any;
     txStatus?: number;
     txType?: number;
     startTime?: number;
     endTime?: number;
   };
   onFilter?({
+    addressType,
     txStatus,
     txType,
     startTime,
     endTime,
   }: {
+    addressType?: any;
     txStatus?: number;
     txType?: number;
     startTime?: number;
@@ -53,6 +57,7 @@ export const FilterModal: React.FC<Props> = React.memo(
   }) => {
     const { t } = useTranslation();
     const [filter, setFilter] = useState({
+      addressType: 2,
       txStatus: 2,
       txType: 0,
       startTime: null,
@@ -63,6 +68,7 @@ export const FilterModal: React.FC<Props> = React.memo(
     useEffect(() => {
       initFilter &&
         setFilter({
+          addressType: initFilter.addressType,
           txStatus: initFilter.txStatus,
           txType: initFilter.txType,
           startTime: initFilter.startTime,
@@ -92,9 +98,23 @@ export const FilterModal: React.FC<Props> = React.memo(
         </Flex>
 
         <Box p="16px" mt="16px">
-          {/* Date */}
+          {/* Kind of Address */}
           <Box>
-            <Text>{t(messages.selectTime())}</Text>
+            <Text>{t(messages.kindOfAddress())}</Text>
+            <Box mt="8px">
+              <FilterButtonList
+                list={ADDRESS_TYPE_LIST}
+                activeKey={filter.addressType}
+                onItemClick={(key) =>
+                  setFilter({ ...filter, addressType: key })
+                }
+              />
+            </Box>
+          </Box>
+
+          {/* Date */}
+          <Box mt="32px">
+            <Text>{t(messages.date())}</Text>
             <Box mt="8px">
               <FilterButtonList
                 list={DATE_LIST}

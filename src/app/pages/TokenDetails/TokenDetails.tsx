@@ -47,6 +47,9 @@ const TokenDetails: React.FC = React.memo(() => {
       <ContentWrapper flexDirection="column" px="16px" overflowY="scroll">
         <Flex mt="26px" flexDirection="column" alignItems="center">
           <GlitchLogo width={64} height={64} />
+          <Text fontSize="12px" color={colors.blue6}>
+            (Substrate address)
+          </Text>
 
           <Flex mt="12px" alignItems="flex-end">
             <Text fontSize="24px" bold color={colors.white}>

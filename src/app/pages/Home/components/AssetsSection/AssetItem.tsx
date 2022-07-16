@@ -2,25 +2,25 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { colors } from 'theme/colors';
-import { formatDollarAmount, formatNumberDownRoundWithExtractMax } from 'utils/number';
+import {
+  formatDollarAmount,
+  formatNumberDownRoundWithExtractMax,
+} from 'utils/number';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { GlitchLogo } from 'app/components/Image';
 
 interface Props {
+  isERC20?: boolean;
   name?: string;
   amount?: any;
   totalValue?: any;
   onClick?: () => void;
 }
 
-export const AssetItem: React.FC<Props> = ({
-  name,
-  amount,
-  totalValue,
-  onClick,
-}) => {
+export const AssetItem: React.FC<Props> = (props) => {
+  const { isERC20, name, amount, totalValue, onClick } = props;
   return (
     <Wrapper py="20px" px="16px" alignItems="center" onClick={onClick}>
       <GlitchLogo width={36} height={36} />
@@ -30,11 +30,13 @@ export const AssetItem: React.FC<Props> = ({
             <Text large bold>
               GLCH
             </Text>
-            {/* <NetworkType>
-              <Text fontSize="10px" color={colors.blue6}>
-                ERC20
-              </Text>
-            </NetworkType> */}
+            {isERC20 && (
+              <NetworkType>
+                <Text fontSize="10px" color={colors.blue6}>
+                  ERC20
+                </Text>
+              </NetworkType>
+            )}
           </Flex>
           <Text large bold>
             {formatNumberDownRoundWithExtractMax(amount, 6)}

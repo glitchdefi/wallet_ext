@@ -14,4 +14,5 @@ export interface CustomDropdownProps {
   align?: 'start' | 'end';
   activeKey?: string | number;
   showChecked?: boolean;
+  renderItem?: (item: DropdownItemTypes) => React.ReactNode;
 }

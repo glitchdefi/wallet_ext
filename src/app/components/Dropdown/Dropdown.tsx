@@ -14,6 +14,7 @@ function CustomDropdown(props: CustomDropdownProps) {
     activeKey,
     customToggle,
     showChecked,
+    renderItem,
     ...rest
   } = props;
 
@@ -29,17 +30,21 @@ function CustomDropdown(props: CustomDropdownProps) {
               eventKey={o.key}
               as="button"
             >
-              <Flex alignItems="center" justifyContent="space-between">
-                <Flex>
-                  {React.isValidElement(o.icon) &&
-                    React.cloneElement(o.icon, { mr: '12px' })}
-                  <Text color={colors.gray7}>{o.label}</Text>
-                </Flex>
+              {renderItem ? (
+                renderItem(o)
+              ) : (
+                <Flex alignItems="center" justifyContent="space-between">
+                  <Flex>
+                    {React.isValidElement(o.icon) &&
+                      React.cloneElement(o.icon, { mr: '12px' })}
+                    <Text color={colors.gray7}>{o.label}</Text>
+                  </Flex>
 
-                {activeKey == o.key && showChecked && (
-                  <CheckIcon width="14px" color={colors.primary} />
-                )}
-              </Flex>
+                  {activeKey == o.key && showChecked && (
+                    <CheckIcon width="14px" color={colors.primary} />
+                  )}
+                </Flex>
+              )}
             </RBDropdown.Item>
           ))}
         </RBDropdown.Menu>
