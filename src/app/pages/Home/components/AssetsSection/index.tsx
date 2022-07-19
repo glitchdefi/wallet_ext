@@ -39,8 +39,8 @@ export const AssetsSection: React.FC = () => {
         <AssetItem
           isERC20
           name="Glitch"
-          amount={totalBalance}
-          totalValue={totalValue}
+          amount={'0'}
+          totalValue={'0'}
           onClick={() => history.push(Routes.tokenDetails)}
         />
       </Box>
