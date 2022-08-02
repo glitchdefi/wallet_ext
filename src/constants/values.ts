@@ -106,9 +106,9 @@ export const GLITCH_CHAINS = [
     key: 'substrate',
     label: '(Substrate address)',
   },
-  {
-    chain: 'evm',
-    key: 'evm',
-    label: '(EVM address)',
-  },
+  // {
+  //   chain: 'evm',
+  //   key: 'evm',
+  //   label: '(EVM address)',
+  // },
 ];

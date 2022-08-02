@@ -175,7 +175,10 @@ export default class Tabs {
       method.method === 'proposeBounty'
     ) {
       amount = Web3Utils.fromWei(args[0]);
-    } else if (method.method === 'notePreimage') {
+    } else if (
+      method.method === 'notePreimage' ||
+      method.method === 'withdrawUnbonded'
+    ) {
       amount = 0;
     } else if (method.method === 'propose' && method.section === 'council') {
       method.args?.map((o: any) => {
@@ -189,7 +192,7 @@ export default class Tabs {
       amount = '100';
     } else {
       if (args?.length >= 2) {
-        amount = Web3Utils.fromWei(args[1]);
+        amount = !isNaN(Number(args[1])) ? Web3Utils.fromWei(args[1]) : '0';
       } else {
         amount = !isNaN(Number(args[0])) ? Web3Utils.fromWei(args[0]) : '0';
       }

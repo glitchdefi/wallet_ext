@@ -1,5 +1,6 @@
 import log from 'loglevel';
 import axios from 'axios';
+import keyring from '@polkadot/ui-keyring';
 
 import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
@@ -27,6 +28,7 @@ import {
   ResponseWallet,
 } from '../types';
 import { GlitchNetwork } from 'constants/networks';
+import { DEFAULT_TYPE } from 'constants/values';
 
 log.setDefaultLevel('debug');
 export class GlitchController {
@@ -197,7 +199,8 @@ export class GlitchController {
       };
     };
     const oldAccounts = await this.appStateController.getAccounts();
-    return await this.appStateController.updateState('wallet', {
+
+    const wallet = await this.appStateController.updateState('wallet', {
       selectedAddress: address,
       accounts: {
         [address]: {
@@ -212,6 +215,8 @@ export class GlitchController {
         ...oldAccounts,
       },
     });
+
+    return wallet;
   }
 
   async importAccount({
@@ -234,7 +239,7 @@ export class GlitchController {
     };
     const oldAccounts = await this.appStateController.getAccounts();
 
-    return await this.appStateController.updateState('wallet', {
+    const wallet = await this.appStateController.updateState('wallet', {
       selectedAddress: address,
       accounts: {
         [address]: {
@@ -249,21 +254,15 @@ export class GlitchController {
         ...oldAccounts,
       },
     });
+
+    return wallet;
   }
 
   async privateKeyValidate({
     privateKey,
   }: RequestPrivatekeyValidate): Promise<boolean> {
-    const { json } = await this.glitchWeb3.createAccount({
-      seed: privateKey,
-      name: '',
-      password: null,
-    });
-    const { address } = json as unknown as {
-      address: string;
-    };
+    const address = keyring.createFromUri(privateKey, {}, DEFAULT_TYPE).address;
     const oldAccounts = await this.appStateController.getAccounts();
-
     return !!oldAccounts[address];
   }
 

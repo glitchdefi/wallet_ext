@@ -186,12 +186,14 @@ export const WalletProvider: React.FC = ({ children }) => {
     (request: RequestAccountCreate, history: any) => {
       setAppLoading(true);
 
-      createAccount(request)
-        .then(setWallet)
-        .finally(() => {
-          setAppLoading(false);
-          history.push('/');
-        });
+      setTimeout(() => {
+        createAccount(request)
+          .then(setWallet)
+          .finally(() => {
+            setAppLoading(false);
+            history.push('/');
+          });
+      }, 200);
     },
     []
   );
@@ -200,12 +202,14 @@ export const WalletProvider: React.FC = ({ children }) => {
     (request: RequestAccountImport, history: any) => {
       setAppLoading(true);
 
-      importAccount(request)
-        .then(setWallet)
-        .finally(() => {
-          setAppLoading(false);
-          history.push('/');
-        });
+      setTimeout(() => {
+        importAccount(request)
+          .then(setWallet)
+          .finally(() => {
+            setAppLoading(false);
+            history.push('/');
+          });
+      }, 200);
     },
     []
   );
