@@ -6,8 +6,9 @@ import { PAGE_SIZE } from 'constants/values';
 import { messages } from '../messages';
 import { useTransactions } from 'hooks/useTransactions';
 import { useWallet } from 'contexts/WalletContext/hooks';
+import { useNetwork } from 'contexts/SettingsContext/hooks';
 
-import { Box, Flex } from 'app/components/Box';
+import { Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { FilterIcon } from 'app/components/Svg';
 import { Button } from 'app/components/Button';
@@ -16,6 +17,7 @@ import { FilterModal } from './FilterModal';
 
 export const TransactionHistorySection: React.FC = React.memo(() => {
   const { t } = useTranslation();
+  const currentNetwork = useNetwork();
   const { walletCtx } = useWallet();
   const { selectedAddress } = walletCtx || {};
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -38,7 +40,7 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
     endTime: filter.endTime,
   });
 
-  // Reset filter when account changed
+  // Reset filter when account || network changed
   useEffect(() => {
     setFilter({
       addressType: 2,
@@ -47,7 +49,7 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
       startTime: null,
       endTime: null,
     });
-  }, [selectedAddress]);
+  }, [selectedAddress, currentNetwork]);
 
   return (
     <>
@@ -62,7 +64,7 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
           {t(messages.transactionHistory())}
         </Text>
 
-        {true ? (
+        {/* {true ? (
           <Button p="0px" onClick={() => setShowFilterModal(true)}>
             <Flex alignItems="center">
               <FilterIcon width="14px" />
@@ -71,7 +73,7 @@ export const TransactionHistorySection: React.FC = React.memo(() => {
               </Text>
             </Flex>
           </Button>
-        ) : null}
+        ) : null} */}
       </Flex>
 
       <Flex flex={1} flexDirection="column" mt="16px" mb="16px">

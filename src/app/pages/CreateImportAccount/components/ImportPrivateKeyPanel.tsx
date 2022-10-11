@@ -121,7 +121,7 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
           )}
           {privateKeyExist && (
             <Text mt="2px" fontSize="12px" color={colors.error}>
-              The account you're are trying to import is a duplicate
+              The account you're trying to import is a duplicate
             </Text>
           )}
         </Box>

@@ -119,14 +119,14 @@ export const WalletPanel: React.FC = React.memo(() => {
               </Flex>
             </Flex>
 
-            <SyncBalanceView />
+            {/* <SyncBalanceView /> */}
           </Flex>
 
           <Text mt="4px" fontSize="12px" color={colors.gray6}>
             {`~ ${formatDollarAmount(totalValue)} USD`}
           </Text>
 
-          <Button p="0px" mt="8px">
+          {/* <Button p="0px" mt="8px">
             <Text
               style={{ textDecoration: 'underline' }}
               fontWeight="600"
@@ -135,7 +135,7 @@ export const WalletPanel: React.FC = React.memo(() => {
             >
               Switch to EVM address
             </Text>
-          </Button>
+          </Button> */}
         </AccountCard>
       </Box>
       <AssetsSection />

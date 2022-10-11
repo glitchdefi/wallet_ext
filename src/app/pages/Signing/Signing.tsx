@@ -98,7 +98,7 @@ const Signing: React.FC = () => {
             <NetworkBox
               showArrow={false}
               customName={
-                GlitchNetwork.find((n) => n.genesisHash === genesisHash).label
+                GlitchNetwork.find((n) => n.genesisHash === genesisHash)?.label
               }
             />
           </Box>
