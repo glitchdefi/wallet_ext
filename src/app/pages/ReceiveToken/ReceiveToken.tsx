@@ -55,9 +55,13 @@ const ReceiveToken: React.FC = () => {
         px="32px"
         height="512px"
       >
-        <Flex alignItems="center">
-          <Text color={colors.gray7} bold>
+        <Flex flexDirection="column" alignItems="center">
+          <Text mb="32px" color={colors.gray7} bold>
             {name}
+          </Text>
+
+          <Text fontSize="12px" color={colors.blue6}>
+            (Substrate address)
           </Text>
         </Flex>
 
@@ -98,7 +102,7 @@ const StyledBorder = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 32px;
+  margin-top: 12px;
   width: 192px;
   height: 192px;
   background: ${colors.gray1};

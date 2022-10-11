@@ -18,7 +18,7 @@ import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
 import { Box, Flex } from 'app/components/Box';
-import { CopyButton } from 'app/components/Button';
+import { Button, CopyButton } from 'app/components/Button';
 import { Text } from 'app/components/Text';
 import {
   EllipsisIcon,
@@ -33,6 +33,7 @@ import { Header } from '../Header';
 import { BackedUpView } from './BackedUpView';
 import { messages } from '../../messages';
 import { ConnectedDappNoti } from './ConnectedDappNoti';
+import { SyncBalanceView } from './SyncBalanceView';
 
 export const WalletPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
@@ -97,26 +98,44 @@ export const WalletPanel: React.FC = React.memo(() => {
               {truncateAddress(address)}
             </Text>
             <CopyButton value={address} p="2px" ml="6px" width="10px" />
+            <Text fontSize="12px" ml="10px" color={colors.gray6}>
+              (Substrate address)
+            </Text>
           </Flex>
 
-          <Flex alignItems="center" mt="16px">
-            <Box width="24px" height="24px" pt="2px">
-              <GlitchLogo width={24} height={24} />
-            </Box>
+          <Flex alignItems="center" justifyContent="space-between" mt="16px">
+            <Flex alignItems="center">
+              <Box width="24px" height="24px" pt="2px">
+                <GlitchLogo width={24} height={24} />
+              </Box>
 
-            <Flex ml="8px" alignItems="flex-end">
-              <Text color={colors.white} fontSize="24px" bold>
-                {formatNumberDownRoundWithExtractMax(totalBalance, 6)}
-              </Text>
-              <Text ml="8px" pb="5px" color={colors.white}>
-                GLCH
-              </Text>
+              <Flex ml="8px" alignItems="flex-end">
+                <Text color={colors.white} fontSize="24px" bold>
+                  {formatNumberDownRoundWithExtractMax(totalBalance, 6)}
+                </Text>
+                <Text ml="8px" pb="5px" color={colors.white}>
+                  GLCH
+                </Text>
+              </Flex>
             </Flex>
+
+            {/* <SyncBalanceView /> */}
           </Flex>
 
           <Text mt="4px" fontSize="12px" color={colors.gray6}>
             {`~ ${formatDollarAmount(totalValue)} USD`}
           </Text>
+
+          {/* <Button p="0px" mt="8px">
+            <Text
+              style={{ textDecoration: 'underline' }}
+              fontWeight="600"
+              fontSize="12px"
+              color={colors.primary}
+            >
+              Switch to EVM address
+            </Text>
+          </Button> */}
         </AccountCard>
       </Box>
       <AssetsSection />

@@ -117,7 +117,8 @@
     },
     "filter": {
         "filter": "Filter",
-        "select_time": "Select time"
+        "select_time": "Select time",
+        "kind_of_address": "Kind of address"
     },
     "button": {
         "show_results": "Show results"

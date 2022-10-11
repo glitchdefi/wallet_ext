@@ -43,6 +43,21 @@ export const KIND_OF_TXN_LIST = [
   },
 ];
 
+export const ADDRESS_TYPE_LIST = [
+  {
+    label: 'All',
+    key: 2,
+  },
+  {
+    label: 'Substrate',
+    key: 'substrate',
+  },
+  {
+    label: 'EVM',
+    key: 'evm',
+  },
+];
+
 export const STATUS_TYPE_LIST = [
   {
     label: 'All',
@@ -83,4 +98,17 @@ export const DATE_LIST = [
     startTime: moment().subtract(3, 'months').startOf('day').valueOf(),
     endTime: moment().endOf('day').valueOf(),
   },
+];
+
+export const GLITCH_CHAINS = [
+  {
+    chain: 'substrate',
+    key: 'substrate',
+    label: '(Substrate address)',
+  },
+  // {
+  //   chain: 'evm',
+  //   key: 'evm',
+  //   label: '(EVM address)',
+  // },
 ];

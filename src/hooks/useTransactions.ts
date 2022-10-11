@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useWallet } from 'contexts/WalletContext/hooks';
+import { useNetwork } from 'contexts/SettingsContext/hooks';
 import { RequestTransactionsGet } from 'scripts/types';
 import { getTransactions } from 'scripts/ui/messaging';
 
 export const useTransactions = (request: RequestTransactionsGet) => {
   const { txStatus, txType, startTime, endTime } = request || {};
   const { walletCtx } = useWallet();
+  const currentNetwork = useNetwork();
   const { selectedAddress } = walletCtx || {};
   const [transactions, setTransactions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -24,7 +26,15 @@ export const useTransactions = (request: RequestTransactionsGet) => {
       setTransactions([]);
       setIsLoading(false);
     }
-  }, [selectedAddress, txStatus, txType, startTime, endTime, hasInternet]);
+  }, [
+    selectedAddress,
+    currentNetwork,
+    txStatus,
+    txType,
+    startTime,
+    endTime,
+    hasInternet,
+  ]);
 
   useEffect(() => {
     addEventListener('offline', () => setHasInternet(false));

@@ -26,6 +26,7 @@ import {
   resetAppState,
   restoreWallet,
   unlockWallet,
+  setNetwork,
 } from 'scripts/ui/messaging';
 import { useToast } from 'hooks/useToast';
 import { useSettings } from 'contexts/SettingsContext/hooks';
@@ -166,8 +167,9 @@ export const WalletProvider: React.FC = ({ children }) => {
 
       // Remove data store
       logoutWallet()
-        .then((data) => {
+        .then(async (data) => {
           const { wallet, settings } = data;
+          await setNetwork({ network: settings.network });
           setWallet(wallet);
           setSettingsCtx(settings);
           onSetActiveTabHomePage(0);
@@ -184,12 +186,14 @@ export const WalletProvider: React.FC = ({ children }) => {
     (request: RequestAccountCreate, history: any) => {
       setAppLoading(true);
 
-      createAccount(request)
-        .then(setWallet)
-        .finally(() => {
-          setAppLoading(false);
-          history.push('/');
-        });
+      setTimeout(() => {
+        createAccount(request)
+          .then(setWallet)
+          .finally(() => {
+            setAppLoading(false);
+            history.push('/');
+          });
+      }, 200);
     },
     []
   );
@@ -198,12 +202,14 @@ export const WalletProvider: React.FC = ({ children }) => {
     (request: RequestAccountImport, history: any) => {
       setAppLoading(true);
 
-      importAccount(request)
-        .then(setWallet)
-        .finally(() => {
-          setAppLoading(false);
-          history.push('/');
-        });
+      setTimeout(() => {
+        importAccount(request)
+          .then(setWallet)
+          .finally(() => {
+            setAppLoading(false);
+            history.push('/');
+          });
+      }, 200);
     },
     []
   );

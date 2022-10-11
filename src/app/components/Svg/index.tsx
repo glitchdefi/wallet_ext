@@ -37,6 +37,7 @@ export { default as LinkIcon } from './Icons/LinkIcon';
 export { default as ExpandIcon } from './Icons/Expand';
 export { default as CheckCircle } from './Icons/CheckCircle';
 export { default as CloseCircle } from './Icons/CloseCircle';
+export { default as InfoFilled } from './Icons/InfoFilled';
 
 export { default as Svg } from './Svg';
 export type { SvgProps } from './types';

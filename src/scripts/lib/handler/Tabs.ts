@@ -175,33 +175,35 @@ export default class Tabs {
       method.method === 'proposeBounty'
     ) {
       amount = Web3Utils.fromWei(args[0]);
-    } else if (method.method === 'notePreimage') {
-      amount = '0';
+    } else if (
+      method.method === 'notePreimage' ||
+      method.method === 'withdrawUnbonded'
+    ) {
+      amount = 0;
+    } else if (method.method === 'propose' && method.section === 'council') {
+      method.args?.map((o: any) => {
+        o.args?.map((arg: any) => {
+          if (typeof arg === 'string' && arg?.includes('GLCH')) {
+            amount = toGLCH(arg);
+          }
+        });
+      });
+    } else if (method.method === 'second' && method.section === 'democracy') {
+      amount = '100';
     } else {
       if (args?.length >= 2) {
-        amount = Web3Utils.fromWei(args[1]);
+        amount = !isNaN(Number(args[1])) ? Web3Utils.fromWei(args[1]) : '0';
       } else {
         amount = !isNaN(Number(args[0])) ? Web3Utils.fromWei(args[0]) : '0';
       }
     }
 
     // Get fees
-    if (
-      method.method === 'vote' ||
-      method.method === 'batchAll' ||
-      method.method === 'nominate'
-    ) {
-      const queryInfo = await api.rpc.payment.queryInfo(
-        block.extrinsics[0].toHex(),
-        request.blockHash
-      );
+    const txArgs = call.args.map((a) => a);
 
-      partialFee = toGLCH(queryInfo.toHuman().partialFee?.toString());
-    } else {
-      const tx = api.tx[method.section][method.method](...args);
-      const paymentInfo = (await tx.paymentInfo(address)).toHuman();
-      partialFee = toGLCH(paymentInfo?.partialFee?.toString());
-    }
+    const tx = api.tx[method.section][method.method](...txArgs);
+    const paymentInfo = (await tx.paymentInfo(address)).toHuman();
+    partialFee = toGLCH(paymentInfo?.partialFee?.toString());
 
     return this.state.sign(
       url,

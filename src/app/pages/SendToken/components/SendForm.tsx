@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDebounce } from 'use-lodash-debounce';
+import styled from 'styled-components';
 
 import { colors } from 'theme/colors';
 import { isValidAddressPolkadotAddress } from 'utils/strings';
@@ -10,6 +11,7 @@ import {
 import { useAccount } from 'contexts/WalletContext/hooks';
 import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 import { getEstimateFee } from 'scripts/ui/messaging';
+import { GLITCH_CHAINS } from 'constants/values';
 
 import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
@@ -20,6 +22,9 @@ import { Label, Input } from 'app/components/Form';
 import { AmountInput } from './AmountInput';
 import { NetworkFee } from './NetworkFee';
 import { MessageBox } from 'app/components/MessageBox';
+import { Dropdown } from 'app/components/Dropdown';
+import { CheckIcon, DownArrowIcon } from 'app/components/Svg';
+
 interface Props {
   initData: { amount: any; toAddress: string };
   onNext: (amount: any, estimateFee: string, toAddress: string) => void;
@@ -80,22 +85,54 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
   return (
     <>
       <Flex flexDirection="column" p="16px">
-        <Flex
-          py="10px"
-          px="16px"
-          width="100%"
-          background={colors.gray1}
-          alignItems="center"
-        >
-          <Flex flex={1} alignItems="center">
-            <GlitchLogo width={32} height={32} />
-            <Text large ml="12px" bold>
-              GLCH
-            </Text>
-          </Flex>
+        <SelectChainWrapper>
+          <Dropdown
+            showChecked
+            activeKey={'substrate'}
+            // onSelect={(key) => {
+            //   if (showArrow) {
+            //     setNetwork({ network: key });
+            //   }
+            // }}
+            customToggle={
+              <Flex
+                py="10px"
+                px="16px"
+                width="100%"
+                background={colors.gray1}
+                alignItems="center"
+              >
+                <Flex flex={1} alignItems="center">
+                  <GlitchLogo width={32} height={32} />
+                  <Text large ml="12px" mr="4px" bold>
+                    GLCH
+                  </Text>
+                  <Text fontSize="12px" color={colors.blue6}>
+                    (Substrate address)
+                  </Text>
+                </Flex>
 
-          {/* <DownArrowIcon width="16px" color={colors.primary} /> */}
-        </Flex>
+                <DownArrowIcon width="16px" color={colors.primary} />
+              </Flex>
+            }
+            renderItem={(item) => (
+              <Flex alignItems="center" justifyContent="space-between">
+                <Flex flex={1} alignItems="center">
+                  <GlitchLogo width={24} height={24} mr="12px" />
+                  <Text mr="6px" bold>
+                    GLCH
+                  </Text>
+                  <Text fontSize="12px" color={colors.gray6}>
+                    {item.label}
+                  </Text>
+                </Flex>
+
+                <CheckIcon width="14px" color={colors.primary} />
+              </Flex>
+            )}
+            items={GLITCH_CHAINS}
+          />
+        </SelectChainWrapper>
 
         <Box mt="24px">
           <Label>Send to</Label>
@@ -175,3 +212,21 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
     </>
   );
 });
+
+const SelectChainWrapper = styled.div`
+  .glch-dropdown {
+    .dropdown-menu {
+      min-width: calc(100vw - 32px);
+    }
+
+    button {
+      width: 100%;
+    }
+
+    @media screen and (min-width: 768px) {
+      .dropdown-menu {
+        min-width: calc(744px - 32px);
+      }
+    }
+  }
+`;
