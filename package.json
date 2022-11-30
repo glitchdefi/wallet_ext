@@ -1,12 +1,13 @@
 {
   "name": "glitch-wallet-extension",
-  "version": "1.2.0",
+  "version": "1.2.3",
   "description": "Glitch Wallet Extension",
   "license": "MIT",
   "scripts": {
-    "build": "node utils/build.js",
+    "build": "rm -rf build && node utils/build.js && npm run zip",
     "start": "node utils/webserver.js",
-    "prettier": "prettier --write '**/*.{js,jsx,css,html}'"
+    "prettier": "prettier --write '**/*.{js,jsx,css,html}'",
+    "zip": "rm -rf wallet_ext.tar.gz && tar -zcvf wallet_ext.tar.gz build"
   },
   "dependencies": {
     "@hot-loader/react-dom": "^17.0.1",
@@ -53,6 +54,7 @@
     "secrets": "^1.1.5",
     "styled-components": "^5.3.1",
     "styled-system": "^5.1.5",
+    "tar": "^6.1.11",
     "use-lodash-debounce": "^1.2.0",
     "util": "^0.12.4",
     "web3": "^1.6.0",

@@ -109,7 +109,8 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isInitialized !== 'none' && hasInternet && navigator.onLine) {
+    //  && navigator.onLine
+    if (isInitialized !== 'none' && hasInternet) {
       onGetAccountBalance();
       getTokenPrice({ name: 'glitch-protocol', currency: 'usd' }).then(
         setTokenPrice

@@ -10,20 +10,25 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { u8aToHex } from '@polkadot/util';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import web3Utils from 'web3-utils';
+import Web3 from 'web3';
 
-import { RequestWalletCreate } from 'scripts/types';
+import { AccountTypes, RequestWalletCreate } from 'scripts/types';
 import { AppStateController } from 'scripts/controllers/AppStateController';
 
 import { DEFAULT_TYPE } from 'constants/values';
 import { GlitchToken } from 'constants/tokens';
-import { GlitchNetwork } from 'constants/networks';
+import { GlitchNetwork, GLITCH_EVM_TYPES } from 'constants/networks';
 
 import { getAvatar } from 'utils/drawAvatar';
-import { messageEncryption, privateKeyValidate } from 'utils/strings';
+import {
+  isHexSeed,
+  messageEncryption,
+  privateKeyValidate,
+} from 'utils/strings';
 
 log.setDefaultLevel('debug');
-
 export class GlitchWeb3 {
+  web3: Web3;
   api: ApiPromise;
   appStateController: AppStateController;
 
@@ -42,17 +47,19 @@ export class GlitchWeb3 {
 
   async createApi() {
     try {
-      const network = await this.appStateController.getNetwork();
-      const wsProvider = GlitchNetwork.find(
-        (n) => n.key === network
-      ).wsProvider;
+      const networkName = await this.appStateController.getNetwork();
+      const networkInfo = GlitchNetwork.find((n) => n.key === networkName);
 
       // Initialise the provider to connect to the local node
-      const provider = new WsProvider(wsProvider);
+      const provider = new WsProvider(networkInfo.wsProvider);
 
       // Create the API and wait until ready
-      const api = await ApiPromise.create({ provider });
+      const api = await ApiPromise.create({
+        provider,
+        types: GLITCH_EVM_TYPES,
+      });
 
+      this.web3 = new Web3(networkInfo.evmProvider);
       this.api = api;
 
       log.info('Glitch Wallet initialization complete.');
@@ -64,7 +71,12 @@ export class GlitchWeb3 {
   async createAccount(request: RequestWalletCreate): Promise<{
     mnemonicEncrypted: { encrypted: string; secret: string };
     json: KeyringPair$Json;
+    evmAccount: { address: string; encryptedPk: string };
   }> {
+    let evmAccount = {
+      address: null,
+    };
+    let encryptedPk = null;
     const { seed, name, password } = request;
     const mnemonic =
       seed?.trim() || mnemonicGenerate(GlitchToken.default_mnemonic_length);
@@ -75,9 +87,31 @@ export class GlitchWeb3 {
       genesisHash: this.api.genesisHash.toHex(),
     });
 
+    if (isHexSeed(mnemonic)) {
+      evmAccount = this.web3.eth.accounts.privateKeyToAccount(mnemonic);
+      encryptedPk = this.web3.eth.accounts.encrypt(
+        mnemonic,
+        evmAccount.address
+      );
+    } else {
+      const privateKey = this.getPrivateKeyFromSeed(mnemonic);
+      evmAccount = this.web3.eth.accounts.privateKeyToAccount(privateKey);
+      encryptedPk = this.web3.eth.accounts.encrypt(
+        privateKey,
+        evmAccount.address
+      );
+    }
+
     const mnemonicEncrypted = await messageEncryption(mnemonic);
 
-    return { mnemonicEncrypted, json };
+    return {
+      mnemonicEncrypted,
+      json,
+      evmAccount: {
+        ...evmAccount,
+        encryptedPk: JSON.stringify(encryptedPk),
+      },
+    };
   }
 
   editAccount(name: string, address: string) {
@@ -217,5 +251,45 @@ export class GlitchWeb3 {
     const { secretKey } = naclKeypairFromSeed(miniSecret);
 
     return u8aToHex(secretKey.subarray(0, 32));
+  }
+
+  async claimEvmAccountBalance(account: AccountTypes): Promise<boolean> {
+    try {
+      const addressPair = keyring.getPair(account.address);
+      const privateKey = this.web3.eth.accounts.decrypt(
+        JSON.parse(account.encryptedPk),
+        account.evmAddress
+      );
+      this.web3.eth.accounts.wallet.add(privateKey);
+      const signature = await this.web3.eth.sign(
+        `glitch evm:${this.web3.utils
+          .bytesToHex(
+            this.web3.utils.hexToBytes(u8aToHex(addressPair.publicKey))
+          )
+          .slice(2)}`,
+        account.evmAddress
+      );
+      return new Promise((resolve, reject) => {
+        this.api.tx.evmAccounts
+          .claimAccount(account.evmAddress, signature)
+          .signAndSend(addressPair, async ({ events = [], status }) => {
+            if (status.isFinalized) {
+              console.log(
+                `Time: ${new Date().toLocaleString()} ${
+                  account.address
+                } has bound with EVM address: ${account.evmAddress}`
+              );
+              resolve(true);
+            }
+          });
+      });
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
+  clearAllWeb3WalletAccounts() {
+    this.web3.eth.accounts.wallet.clear();
   }
 }

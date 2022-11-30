@@ -9,6 +9,7 @@ import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
 import { decryptMessage } from 'utils/strings';
 import {
   RequestAccountChange,
+  RequestAccountClaimEvmBalance,
   RequestAccountCreate,
   RequestAccountEdit,
   RequestAccountImport,
@@ -47,7 +48,7 @@ export class GlitchController {
 
   async createWallet(request: RequestWalletCreate): Promise<ResponseWallet> {
     const data = await this.glitchWeb3.createAccount(request);
-    const { mnemonicEncrypted, json } = data;
+    const { mnemonicEncrypted, json, evmAccount } = data;
     const { address, meta } = json as unknown as {
       address: string;
       meta?: {
@@ -63,15 +64,18 @@ export class GlitchController {
       isBackup: false,
       seed: null,
       parentAddress: address,
+      parentEvmAddress: evmAccount.address,
       selectedAddress: address,
       accounts: {
         [address]: {
           address,
+          evmAddress: evmAccount.address,
           name: meta.name,
           avatar: meta.avatar,
           whenCreated: meta.whenCreated,
           balance: { reservedBalance: '0', freeBalance: '0' },
           seed: mnemonicEncrypted,
+          encryptedPk: evmAccount.encryptedPk,
           allowedUrls: [],
         },
       },
@@ -96,7 +100,7 @@ export class GlitchController {
 
   async restoreWallet(request: RequestWalletCreate): Promise<ResponseWallet> {
     const data = await this.glitchWeb3.createAccount(request);
-    const { mnemonicEncrypted, json } = data;
+    const { mnemonicEncrypted, json, evmAccount } = data;
     const { address, meta } = json as unknown as {
       address: string;
       meta?: {
@@ -117,14 +121,17 @@ export class GlitchController {
       isBackup: true,
       selectedAddress: address,
       parentAddress: address,
+      parentEvmAddress: evmAccount.address,
       seed: null,
       accounts: {
         [address]: {
           address: address,
+          evmAddress: evmAccount.address,
           balance: { reservedBalance: '0', freeBalance: '0' },
           name: meta.name,
           avatar: meta.avatar,
           whenCreated: meta.whenCreated,
+          encryptedPk: evmAccount.encryptedPk,
           seed: mnemonicEncrypted,
           allowedUrls: [],
         },
@@ -189,7 +196,7 @@ export class GlitchController {
       name,
       password: null,
     });
-    const { mnemonicEncrypted, json } = data;
+    const { mnemonicEncrypted, json, evmAccount } = data;
     const { address, meta } = json as unknown as {
       address: string;
       meta?: {
@@ -206,10 +213,12 @@ export class GlitchController {
         [address]: {
           name: meta.name,
           address: address,
+          evmAddress: evmAccount.address,
           avatar: meta.avatar,
           balance: { reservedBalance: '0', freeBalance: '0' },
           seed: mnemonicEncrypted,
           whenCreated: meta.whenCreated,
+          encryptedPk: evmAccount.encryptedPk,
           allowedUrls: [],
         },
         ...oldAccounts,
@@ -228,7 +237,7 @@ export class GlitchController {
       name,
       password: null,
     });
-    const { mnemonicEncrypted, json } = data;
+    const { mnemonicEncrypted, json, evmAccount } = data;
     const { address, meta } = json as unknown as {
       address: string;
       meta?: {
@@ -245,10 +254,12 @@ export class GlitchController {
         [address]: {
           name: meta.name,
           address: address,
+          evmAddress: evmAccount.address,
           avatar: meta.avatar,
           balance: { freeBalance: '0', reservedBalance: '0' },
           seed: mnemonicEncrypted,
           whenCreated: meta.whenCreated,
+          encryptedPk: evmAccount.encryptedPk,
           allowedUrls: [],
         },
         ...oldAccounts,
@@ -304,6 +315,17 @@ export class GlitchController {
         ...oldAccounts,
       },
     });
+  }
+
+  async claimEvmAccount(
+    request: RequestAccountClaimEvmBalance
+  ): Promise<boolean> {
+    const allAccounts = await this.appStateController.getAccounts();
+    const currentAccount = allAccounts[request.address];
+
+    this.glitchWeb3.unlockAccount('', request.address);
+
+    return this.glitchWeb3.claimEvmAccountBalance(currentAccount);
   }
 
   async transfer(

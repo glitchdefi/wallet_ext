@@ -9,13 +9,21 @@ import { Box } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { Button } from 'app/components/Button';
 import { SyncBalanceErrorModal } from './SyncBalanceErrorModal';
+import { useAccount, useWallet } from 'contexts/WalletContext/hooks';
 
 export const SyncBalanceView: React.FC = () => {
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
+  const { address } = useAccount();
+  const { onClaimEvmBalance } = useWallet();
 
   const onToggle = useCallback(() => {
     setIsPopoverOpen((prev) => !prev);
   }, []);
+
+  const onSync = useCallback(() => {
+    onClaimEvmBalance({ address });
+    onToggle();
+  }, [onClaimEvmBalance]);
 
   return (
     <>
@@ -43,7 +51,13 @@ export const SyncBalanceView: React.FC = () => {
                   to sync balance between Substrate and EVM address.
                 </Text>
 
-                <Button py="5px" px="16px" fontSize="14px" variant="primary">
+                <Button
+                  py="5px"
+                  px="16px"
+                  fontSize="14px"
+                  variant="primary"
+                  onClick={onSync}
+                >
                   Sync balance
                 </Button>
               </Box>

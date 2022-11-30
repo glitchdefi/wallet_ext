@@ -75,6 +75,10 @@ export interface RequestSignatures {
     boolean
   ];
   'pri(wallet.account.privatekey.show)': [null, string];
+  'pri(wallet.account.claimEvmBalance)': [
+    RequestAccountClaimEvmBalance,
+    boolean
+  ];
   'pri(settings.autolock.set)': [RequestAutoLockSet, ResponseSettings];
   'pri(settings.network.set)': [RequestNetworkSet, ResponseSettings];
   'pri(transactions.list.get)': [
@@ -144,6 +148,10 @@ export interface RequestAccountEdit {
 }
 export interface RequestPrivatekeyValidate {
   privateKey: string;
+}
+
+export interface RequestAccountClaimEvmBalance {
+  address: string;
 }
 export interface RequestAutoLockSet {
   openTime: number;
@@ -254,6 +262,7 @@ export interface ResponseWallet {
   isBackup?: boolean;
   seed?: string;
   parentAddress?: string;
+  parentEvmAddress?: string;
   selectedAddress?: string;
   accounts?: {
     [key: string]: AccountTypes;
@@ -278,10 +287,12 @@ export interface ResponseAuthorizeList {
 }
 export interface AccountTypes {
   address?: string;
+  evmAddress?: string;
   name?: string;
   avatar?: string;
   whenCreated?: number;
   seed?: { encrypted: string; secret: string };
+  encryptedPk?: string;
   isHidden?: boolean;
   allowedUrls?: string[];
   balance?: {

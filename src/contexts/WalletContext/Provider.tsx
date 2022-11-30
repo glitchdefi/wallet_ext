@@ -8,6 +8,7 @@ import {
   RequestWalletRestore,
   RequestAccountEdit,
   ResponseWallet,
+  RequestAccountClaimEvmBalance,
 } from 'scripts/types';
 import {
   backupWallet,
@@ -27,6 +28,7 @@ import {
   restoreWallet,
   unlockWallet,
   setNetwork,
+  claimEvmAccountBalance,
 } from 'scripts/ui/messaging';
 import { useToast } from 'hooks/useToast';
 import { useSettings } from 'contexts/SettingsContext/hooks';
@@ -49,6 +51,7 @@ export type WalletContextType = {
   onEditAccount?: (request: RequestAccountEdit) => void;
   onCreateWalletCompleted?: (history: any) => void;
   onResetAppState?: () => void;
+  onClaimEvmBalance?: (request: RequestAccountClaimEvmBalance) => void;
 };
 
 export const WalletContext = createContext<WalletContextType>(undefined);
@@ -232,6 +235,24 @@ export const WalletProvider: React.FC = ({ children }) => {
     getAccountBalance().then(setWallet);
   }, [wallet]);
 
+  const onClaimEvmBalance = useCallback(
+    (request: RequestAccountClaimEvmBalance) => {
+      setAppLoading(true);
+
+      claimEvmAccountBalance(request)
+        .then(() => {
+          toastSuccess(
+            null,
+            'Successfully synced balance between Substrate and EVM address!'
+          );
+        })
+        .finally(() => {
+          setAppLoading(false);
+        });
+    },
+    []
+  );
+
   const onResetAppState = useCallback(() => {
     resetAppState().then((data: any) => {
       setWallet(data?.wallet);
@@ -256,6 +277,7 @@ export const WalletProvider: React.FC = ({ children }) => {
         onUnlockWallet,
         onLogoutWallet,
         onResetAppState,
+        onClaimEvmBalance,
       }}
     >
       {children}

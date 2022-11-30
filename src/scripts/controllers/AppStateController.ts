@@ -16,6 +16,7 @@ export class AppStateController {
         isLocked: false,
         accounts: {},
         selectedAddress: null,
+        parentEvmAddress: null,
         parentAddress: null,
       },
       settings: {

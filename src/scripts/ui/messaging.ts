@@ -32,6 +32,7 @@ import type {
   RequestUpdateWalletStorage,
   RequestAuthorizeToggle,
   RequestNetworkSet,
+  RequestAccountClaimEvmBalance,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -243,6 +244,12 @@ export async function forgetAccount(
   request: RequestAccountForget
 ): Promise<boolean> {
   return sendMessage('pri(wallet.account.forget)', request);
+}
+
+export async function claimEvmAccountBalance(
+  request: RequestAccountClaimEvmBalance
+): Promise<boolean> {
+  return sendMessage('pri(wallet.account.claimEvmBalance)', request);
 }
 
 // Settings

@@ -32,6 +32,7 @@ import type {
   RequestUpdateWalletStorage,
   RequestAuthorizeToggle,
   RequestNetworkSet,
+  RequestAccountClaimEvmBalance,
 } from '../../types';
 import keyring from '@polkadot/ui-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -268,6 +269,12 @@ export default class Extension {
     return this.controller.getBalance();
   }
 
+  private claimEvmBalance(
+    request: RequestAccountClaimEvmBalance
+  ): Promise<boolean> {
+    return this.controller.claimEvmAccount(request);
+  }
+
   private privateKeyValidate(
     request: RequestPrivatekeyValidate
   ): Promise<boolean> {
@@ -425,6 +432,9 @@ export default class Extension {
 
       case 'pri(wallet.account.forget)':
         return this.accountsForget(request as RequestAccountForget);
+
+      case 'pri(wallet.account.claimEvmBalance)':
+        return this.claimEvmBalance(request as RequestAccountClaimEvmBalance);
 
       case 'pri(settings.autolock.set)':
         return this.setAutoLock(request as RequestAutoLockSet);
