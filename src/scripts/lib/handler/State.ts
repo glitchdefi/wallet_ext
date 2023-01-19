@@ -280,24 +280,29 @@ export default class State {
 
       const { accounts }: ResponseWallet = await this.localStore.get('wallet');
 
-      const isAllowed = reduce(
-        Object.entries(accounts),
-        function (obj, [address, account]: [string, AccountTypes]) {
-          obj[address] = account.allowedUrls.includes(idStr);
-          return obj;
-        },
-        {}
-      );
+      // If approved, save it to local storage
+      // Else, do not save so the user can request again
+      if (typeof result === 'boolean') {
+        const isAllowed = reduce(
+          Object.entries(accounts),
+          function (obj, [address, account]: [string, AccountTypes]) {
+            obj[address] = account.allowedUrls.includes(idStr);
+            return obj;
+          },
+          {}
+        );
 
-      this._authUrls[this.stripUrl(url)] = {
-        count: 0,
-        id: idStr,
-        isAllowed,
-        origin,
-        url,
-      };
+        this._authUrls[this.stripUrl(url)] = {
+          count: 0,
+          id: idStr,
+          isAllowed,
+          origin,
+          url,
+        };
 
-      this.saveCurrentAuthList();
+        this.saveCurrentAuthList();
+      }
+
       delete this.authRequests[id];
       this.updateIconAuth(true);
     };
