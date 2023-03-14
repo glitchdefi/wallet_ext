@@ -25,6 +25,11 @@ import { NetworkBox } from 'app/components/Shared';
 import { useToast } from 'hooks/useToast';
 import { Label, PasswordInput } from 'app/components/Form';
 import { GlitchNetwork } from 'constants/networks';
+import { useAccount } from 'contexts/WalletContext/hooks';
+import {
+  calcTotalBalance,
+  formatNumberDownRoundWithExtractMax,
+} from 'utils/number';
 
 const Signing: React.FC = () => {
   const history = useHistory();
@@ -32,11 +37,14 @@ const Signing: React.FC = () => {
   const { tokenPrice } = useTokenPrice();
   const { toastError } = useToast();
   const { signRequests } = useSigningReq();
+  const { balance } = useAccount();
 
   const [password, setPassword] = useState<string>('');
   const [validPassword, setValidPassword] = useState<boolean>(true);
 
+  const totalBalance = calcTotalBalance(balance);
   const request = !isEmpty(signRequests) ? signRequests[0] : {};
+
   const {
     id,
     account,
@@ -47,7 +55,9 @@ const Signing: React.FC = () => {
   } = request as any;
 
   const feeToUsd = (fee * tokenPrice).toFixed(4);
-  const amountToUsd = (amount * tokenPrice).toFixed(4);
+  const amountToUsd = (
+    (amount === 'allBalances' ? totalBalance : amount) * tokenPrice
+  ).toFixed(4);
 
   const onApprove = useCallback((): void => {
     setAppLoading(true);
@@ -136,7 +146,10 @@ const Signing: React.FC = () => {
             <Flex>
               <GlitchLogo width={24} height={24} />
               <Text ml="8px" color={colors.gray7}>
-                {amount} GLCH
+                {amount === 'allBalances'
+                  ? formatNumberDownRoundWithExtractMax(totalBalance, 6)
+                  : amount}{' '}
+                GLCH
               </Text>
               <Text ml="8px" color={colors.gray5}>
                 {`~ ${

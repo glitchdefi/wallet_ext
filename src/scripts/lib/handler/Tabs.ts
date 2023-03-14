@@ -188,8 +188,17 @@ export default class Tabs {
           }
         });
       });
-    } else if (method.method === 'second' && method.section === 'democracy') {
+    } else if (
+      (method.method === 'second' && method.section === 'democracy') ||
+      (method.method === 'submitCandidacy' &&
+        method.section === 'electionsPhragmen')
+    ) {
       amount = '100';
+    } else if (
+      method.method === 'transferAll' &&
+      method.section === 'balances'
+    ) {
+      amount = 'allBalances';
     } else {
       if (args?.length >= 2) {
         amount = !isNaN(Number(args[1])) ? Web3Utils.fromWei(args[1]) : '0';
