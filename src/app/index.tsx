@@ -11,7 +11,7 @@ import { ExtensionStore } from '../scripts/lib/localStore';
 
 // Hooks
 import { useSettings } from 'contexts/SettingsContext/hooks';
-import { useWallet } from 'contexts/WalletContext/hooks';
+import { useAccount, useWallet } from 'contexts/WalletContext/hooks';
 import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
 import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
@@ -57,9 +57,15 @@ export const App: React.FC = () => {
   const { setTokenPrice } = useTokenPrice();
   const { signRequests, setSignRequests } = useSigningReq();
   const { authRequests, setAuthRequests } = useAuthorizeReq();
-  const { walletCtx, setWalletCtx, onLockWallet, onGetAccountBalance } =
-    useWallet();
-  const { isInitialized } = walletCtx || {};
+  const {
+    walletCtx,
+    setWalletCtx,
+    onLockWallet,
+    onGetAccountBalance,
+    onClaimEvmBalance,
+  } = useWallet();
+  const { address, isEVMClaimed } = useAccount();
+  const { isInitialized, isLocked } = walletCtx || {};
 
   const [timeQuery, setTimeQuery] = useState<number>(0);
   const [hasInternet, setHasInternet] = useState<boolean>(true);
@@ -127,6 +133,12 @@ export const App: React.FC = () => {
       removeEventListener('offline', () => setHasInternet(false));
     };
   }, []);
+
+  useEffect(() => {
+    if (isEVMClaimed === false && address !== '--' && isLocked === false) {
+      onClaimEvmBalance({ address });
+    }
+  }, [address, isLocked]);
 
   const Root: any = walletCtx?.isLocked ? (
     <UnlockPage />

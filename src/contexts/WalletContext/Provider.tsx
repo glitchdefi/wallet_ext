@@ -237,18 +237,7 @@ export const WalletProvider: React.FC = ({ children }) => {
 
   const onClaimEvmBalance = useCallback(
     (request: RequestAccountClaimEvmBalance) => {
-      setAppLoading(true);
-
-      claimEvmAccountBalance(request)
-        .then(() => {
-          toastSuccess(
-            null,
-            'Successfully synced balance between Substrate and EVM address!'
-          );
-        })
-        .finally(() => {
-          setAppLoading(false);
-        });
+      claimEvmAccountBalance(request).then(setWallet);
     },
     []
   );

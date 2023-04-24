@@ -33,6 +33,7 @@ import type {
   RequestAuthorizeToggle,
   RequestNetworkSet,
   RequestAccountClaimEvmBalance,
+  RequestIsEvmClaimed,
 } from '../../types';
 import keyring from '@polkadot/ui-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -271,8 +272,12 @@ export default class Extension {
 
   private claimEvmBalance(
     request: RequestAccountClaimEvmBalance
-  ): Promise<boolean> {
+  ): Promise<ResponseWallet> {
     return this.controller.claimEvmAccount(request);
+  }
+
+  private isEvmClaimed(request: RequestIsEvmClaimed): Promise<boolean> {
+    return this.controller.isEvmClaimed(request);
   }
 
   private privateKeyValidate(
@@ -435,6 +440,9 @@ export default class Extension {
 
       case 'pri(wallet.account.claimEvmBalance)':
         return this.claimEvmBalance(request as RequestAccountClaimEvmBalance);
+
+      case 'pri(wallet.account.isEvmClaimed)':
+        return this.isEvmClaimed(request as RequestIsEvmClaimed);
 
       case 'pri(settings.autolock.set)':
         return this.setAutoLock(request as RequestAutoLockSet);

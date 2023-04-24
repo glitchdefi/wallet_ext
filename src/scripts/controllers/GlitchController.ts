@@ -16,6 +16,7 @@ import {
   RequestAccountTransfer,
   RequestAutoLockSet,
   RequestEstimateFeeGet,
+  RequestIsEvmClaimed,
   RequestNetworkSet,
   RequestPrivatekeyValidate,
   RequestTokenPriceGet,
@@ -77,6 +78,7 @@ export class GlitchController {
           seed: mnemonicEncrypted,
           encryptedPk: evmAccount.encryptedPk,
           allowedUrls: [],
+          isEVMClaimed: false,
         },
       },
     });
@@ -115,6 +117,11 @@ export class GlitchController {
       duration: 60000,
     });
 
+    const isEvmClaimed = await this.isEvmClaimed({
+      substareAddress: address,
+      evmAddress: evmAccount.address,
+    });
+
     return await this.appStateController.updateState('wallet', {
       isInitialized: 'completed',
       isLocked: false,
@@ -134,6 +141,7 @@ export class GlitchController {
           encryptedPk: evmAccount.encryptedPk,
           seed: mnemonicEncrypted,
           allowedUrls: [],
+          isEVMClaimed: isEvmClaimed,
         },
       },
     });
@@ -220,6 +228,7 @@ export class GlitchController {
           whenCreated: meta.whenCreated,
           encryptedPk: evmAccount.encryptedPk,
           allowedUrls: [],
+          isEVMClaimed: false,
         },
         ...oldAccounts,
       },
@@ -247,6 +256,10 @@ export class GlitchController {
       };
     };
     const oldAccounts = await this.appStateController.getAccounts();
+    const isEvmClaimed = await this.isEvmClaimed({
+      substareAddress: address,
+      evmAddress: evmAccount.address,
+    });
 
     const wallet = await this.appStateController.updateState('wallet', {
       selectedAddress: address,
@@ -261,6 +274,7 @@ export class GlitchController {
           whenCreated: meta.whenCreated,
           encryptedPk: evmAccount.encryptedPk,
           allowedUrls: [],
+          isEVMClaimed: isEvmClaimed,
         },
         ...oldAccounts,
       },
@@ -319,13 +333,28 @@ export class GlitchController {
 
   async claimEvmAccount(
     request: RequestAccountClaimEvmBalance
-  ): Promise<boolean> {
+  ): Promise<ResponseWallet> {
     const allAccounts = await this.appStateController.getAccounts();
     const currentAccount = allAccounts[request.address];
 
     this.glitchWeb3.unlockAccount('', request.address);
 
-    return this.glitchWeb3.claimEvmAccountBalance(currentAccount);
+    const isEVMClaimed = await this.glitchWeb3.claimEvmAccountBalance(
+      currentAccount
+    );
+
+    allAccounts[request.address].isEVMClaimed = isEVMClaimed;
+
+    return await this.appStateController.updateState('wallet', {
+      accounts: allAccounts,
+    });
+  }
+
+  async isEvmClaimed(request: RequestIsEvmClaimed): Promise<boolean> {
+    return await this.glitchWeb3.isEvmClaimed(
+      request.substareAddress,
+      request.evmAddress
+    );
   }
 
   async transfer(
