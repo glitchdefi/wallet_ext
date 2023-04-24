@@ -18,7 +18,7 @@ import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
 import { Box, Flex } from 'app/components/Box';
-import { Button, CopyButton } from 'app/components/Button';
+import { CopyButton } from 'app/components/Button';
 import { Text } from 'app/components/Text';
 import {
   EllipsisIcon,
@@ -33,7 +33,6 @@ import { Header } from '../Header';
 import { BackedUpView } from './BackedUpView';
 import { messages } from '../../messages';
 import { ConnectedDappNoti } from './ConnectedDappNoti';
-import { SyncBalanceView } from './SyncBalanceView';
 
 export const WalletPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
@@ -129,7 +128,7 @@ export const WalletPanel: React.FC = React.memo(() => {
               </Flex>
             </Flex>
 
-            <SyncBalanceView />
+            {/* <SyncBalanceView /> */}
           </Flex>
 
           <Text mt="4px" fontSize="12px" color={colors.gray6}>
