@@ -59,6 +59,8 @@ export class GlitchController {
       };
     };
 
+    this.glitchWeb3.unlockAccount(request.password, address);
+
     return await this.appStateController.updateState('wallet', {
       isInitialized: 'pending',
       isLocked: true,
@@ -111,14 +113,11 @@ export class GlitchController {
       };
     };
 
+    this.glitchWeb3.unlockAccount(request.password, address);
+
     await this.setAutoLockTimer({
       openTime: new Date().getTime(),
       duration: 60000,
-    });
-
-    const isEvmClaimed = await this.isEvmClaimed({
-      substareAddress: address,
-      evmAddress: evmAccount.address,
     });
 
     return await this.appStateController.updateState('wallet', {
@@ -253,10 +252,6 @@ export class GlitchController {
       };
     };
     const oldAccounts = await this.appStateController.getAccounts();
-    const isEvmClaimed = await this.isEvmClaimed({
-      substareAddress: address,
-      evmAddress: evmAccount.address,
-    });
 
     const wallet = await this.appStateController.updateState('wallet', {
       selectedAddress: address,
