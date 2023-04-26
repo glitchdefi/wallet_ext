@@ -1,6 +1,6 @@
 {
   "name": "glitch-wallet-extension",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "Glitch Wallet Extension",
   "license": "MIT",
   "scripts": {
