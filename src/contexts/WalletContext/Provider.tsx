@@ -9,6 +9,7 @@ import {
   RequestAccountEdit,
   ResponseWallet,
   RequestAccountClaimEvmBalance,
+  RequestIsEvmClaimed,
 } from 'scripts/types';
 import {
   backupWallet,
@@ -29,6 +30,7 @@ import {
   unlockWallet,
   setNetwork,
   claimEvmAccountBalance,
+  isEvmClaimed,
 } from 'scripts/ui/messaging';
 import { useToast } from 'hooks/useToast';
 import { useSettings } from 'contexts/SettingsContext/hooks';
@@ -52,6 +54,7 @@ export type WalletContextType = {
   onCreateWalletCompleted?: (history: any) => void;
   onResetAppState?: () => void;
   onClaimEvmBalance?: (request: RequestAccountClaimEvmBalance) => void;
+  checkIsEvmClaimed?: (request: RequestIsEvmClaimed) => Promise<boolean>;
 };
 
 export const WalletContext = createContext<WalletContextType>(undefined);
@@ -237,7 +240,14 @@ export const WalletProvider: React.FC = ({ children }) => {
 
   const onClaimEvmBalance = useCallback(
     (request: RequestAccountClaimEvmBalance) => {
-      claimEvmAccountBalance(request).then(setWallet);
+      claimEvmAccountBalance(request);
+    },
+    []
+  );
+
+  const checkIsEvmClaimed = useCallback(
+    async (request: RequestIsEvmClaimed): Promise<boolean> => {
+      return await isEvmClaimed(request);
     },
     []
   );
@@ -267,6 +277,7 @@ export const WalletProvider: React.FC = ({ children }) => {
         onLogoutWallet,
         onResetAppState,
         onClaimEvmBalance,
+        checkIsEvmClaimed,
       }}
     >
       {children}

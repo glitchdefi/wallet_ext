@@ -18,6 +18,7 @@ import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
 import { useSigningReq } from 'contexts/SigningReqContext/hooks';
 import {
   getTokenPrice,
+  isEvmClaimed,
   subscribeAuthorizeRequests,
   subscribeSigningRequests,
 } from 'scripts/ui/messaging';
@@ -48,6 +49,7 @@ import { SendTokenPage } from './pages/SendToken';
 import { AuthorizePage } from './pages/Authorize';
 import { ConnectedDapps } from './pages/ConnectedDapps';
 import { SigningPage } from './pages/Signing';
+import { useNetwork } from 'contexts/SettingsContext/hooks';
 
 const history = createMemoryHistory();
 
@@ -55,6 +57,7 @@ export const App: React.FC = () => {
   const { appLoading } = useApplication();
   const { setSettingsCtx } = useSettings();
   const { setTokenPrice } = useTokenPrice();
+  const network = useNetwork();
   const { signRequests, setSignRequests } = useSigningReq();
   const { authRequests, setAuthRequests } = useAuthorizeReq();
   const {
@@ -64,7 +67,7 @@ export const App: React.FC = () => {
     onGetAccountBalance,
     onClaimEvmBalance,
   } = useWallet();
-  const { address, isEVMClaimed } = useAccount();
+  const { address, evmAddress } = useAccount();
   const { isInitialized, isLocked } = walletCtx || {};
 
   const [timeQuery, setTimeQuery] = useState<number>(0);
@@ -135,10 +138,14 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isEVMClaimed === false && address !== '--' && isLocked === false) {
-      onClaimEvmBalance({ address });
+    if (address !== '--' && isLocked === false) {
+      isEvmClaimed({ substareAddress: address, evmAddress }).then(
+        (isClaimed) => {
+          if (!isClaimed) onClaimEvmBalance({ address });
+        }
+      );
     }
-  }, [address, isLocked]);
+  }, [address, network, isLocked]);
 
   const Root: any = walletCtx?.isLocked ? (
     <UnlockPage />

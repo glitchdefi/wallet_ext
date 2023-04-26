@@ -78,7 +78,6 @@ export class GlitchController {
           seed: mnemonicEncrypted,
           encryptedPk: evmAccount.encryptedPk,
           allowedUrls: [],
-          isEVMClaimed: false,
         },
       },
     });
@@ -141,7 +140,6 @@ export class GlitchController {
           encryptedPk: evmAccount.encryptedPk,
           seed: mnemonicEncrypted,
           allowedUrls: [],
-          isEVMClaimed: isEvmClaimed,
         },
       },
     });
@@ -228,7 +226,6 @@ export class GlitchController {
           whenCreated: meta.whenCreated,
           encryptedPk: evmAccount.encryptedPk,
           allowedUrls: [],
-          isEVMClaimed: false,
         },
         ...oldAccounts,
       },
@@ -274,7 +271,6 @@ export class GlitchController {
           whenCreated: meta.whenCreated,
           encryptedPk: evmAccount.encryptedPk,
           allowedUrls: [],
-          isEVMClaimed: isEvmClaimed,
         },
         ...oldAccounts,
       },
@@ -333,21 +329,12 @@ export class GlitchController {
 
   async claimEvmAccount(
     request: RequestAccountClaimEvmBalance
-  ): Promise<ResponseWallet> {
+  ): Promise<boolean> {
     const allAccounts = await this.appStateController.getAccounts();
     const currentAccount = allAccounts[request.address];
-
     this.glitchWeb3.unlockAccount('', request.address);
 
-    const isEVMClaimed = await this.glitchWeb3.claimEvmAccountBalance(
-      currentAccount
-    );
-
-    allAccounts[request.address].isEVMClaimed = isEVMClaimed;
-
-    return await this.appStateController.updateState('wallet', {
-      accounts: allAccounts,
-    });
+    return await this.glitchWeb3.claimEvmAccountBalance(currentAccount);
   }
 
   async isEvmClaimed(request: RequestIsEvmClaimed): Promise<boolean> {

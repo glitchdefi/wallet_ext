@@ -249,7 +249,7 @@ export async function forgetAccount(
 
 export async function claimEvmAccountBalance(
   request: RequestAccountClaimEvmBalance
-): Promise<ResponseWallet> {
+): Promise<boolean> {
   return sendMessage('pri(wallet.account.claimEvmBalance)', request);
 }
 

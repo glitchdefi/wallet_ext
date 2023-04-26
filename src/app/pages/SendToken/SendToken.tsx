@@ -15,6 +15,7 @@ const SendToken: React.FC = React.memo(() => {
   const [toAddress, setToAddress] = useState<string>('');
   const [fee, setFee] = useState<string>('0');
   const [step, setStep] = useState<number>(0);
+  const [isMaxClicked, setIsMaxClicked] = useState<boolean>(false);
 
   return (
     <PageLayout>
@@ -31,17 +32,23 @@ const SendToken: React.FC = React.memo(() => {
 
       {step === 0 && (
         <SendForm
-          initData={{ amount, toAddress }}
-          onNext={(amount, estimateFee, toAddress) => {
+          initData={{ amount, toAddress, isMaxClicked }}
+          onNext={(amount, estimateFee, toAddress, isMaxClicked) => {
             setAmount(amount);
             setToAddress(toAddress);
             setFee(estimateFee);
+            setIsMaxClicked(isMaxClicked);
             setStep(1);
           }}
         />
       )}
       {step === 1 && (
-        <Confirmation amount={amount} estimateFee={fee} toAddress={toAddress} />
+        <Confirmation
+          amount={amount}
+          estimateFee={fee}
+          toAddress={toAddress}
+          isTransferAll={isMaxClicked}
+        />
       )}
     </PageLayout>
   );

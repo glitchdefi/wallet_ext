@@ -272,7 +272,7 @@ export default class Extension {
 
   private claimEvmBalance(
     request: RequestAccountClaimEvmBalance
-  ): Promise<ResponseWallet> {
+  ): Promise<boolean> {
     return this.controller.claimEvmAccount(request);
   }
 

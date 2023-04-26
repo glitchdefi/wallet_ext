@@ -77,7 +77,7 @@ export interface RequestSignatures {
   'pri(wallet.account.privatekey.show)': [null, string];
   'pri(wallet.account.claimEvmBalance)': [
     RequestAccountClaimEvmBalance,
-    ResponseWallet
+    boolean
   ];
   'pri(wallet.account.isEvmClaimed)': [RequestIsEvmClaimed, boolean];
   'pri(settings.autolock.set)': [RequestAutoLockSet, ResponseSettings];
@@ -302,7 +302,6 @@ export interface AccountTypes {
   encryptedPk?: string;
   isHidden?: boolean;
   allowedUrls?: string[];
-  isEVMClaimed?: boolean;
   balance?: {
     freeBalance?: any;
     reservedBalance?: any;
