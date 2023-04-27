@@ -71,6 +71,7 @@ export const App: React.FC = () => {
   const { isInitialized, isLocked } = walletCtx || {};
 
   const [timeQuery, setTimeQuery] = useState<number>(0);
+  const [timeTokenPriceQuery, setTimeTokenPriceQuery] = useState<number>(0);
   const [hasInternet, setHasInternet] = useState<boolean>(true);
 
   useEffect((): void => {
@@ -107,13 +108,19 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     let job: NodeJS.Timer;
+    let tokenPriceJob: NodeJS.Timer;
 
     job = setInterval(() => {
       setTimeQuery((prev) => prev + 1);
     }, UPDATE_TIME);
 
+    tokenPriceJob = setInterval(() => {
+      setTimeTokenPriceQuery((prev) => prev + 1);
+    }, UPDATE_TIME * 4);
+
     return () => {
       clearInterval(job);
+      clearInterval(tokenPriceJob);
     };
   }, []);
 
@@ -121,11 +128,17 @@ export const App: React.FC = () => {
     //  && navigator.onLine
     if (isInitialized !== 'none' && hasInternet) {
       onGetAccountBalance();
+    }
+  }, [timeQuery, hasInternet]);
+
+  useEffect(() => {
+    //  && navigator.onLine
+    if (isInitialized !== 'none' && hasInternet) {
       getTokenPrice({ name: 'glitch-protocol', currency: 'usd' }).then(
         setTokenPrice
       );
     }
-  }, [timeQuery, hasInternet]);
+  }, [timeTokenPriceQuery, hasInternet]);
 
   useEffect(() => {
     addEventListener('offline', () => setHasInternet(false));
