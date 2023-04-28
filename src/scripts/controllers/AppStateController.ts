@@ -26,7 +26,7 @@ export class AppStateController {
           openTime: new Date().getTime(),
           duration: 60000,
         },
-        network: 'testnet',
+        network: 'mainnet',
       },
     };
 
