@@ -1,13 +1,10 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Glitch Wallet",
   "background": {
-    "scripts": [
-      "background.bundle.js"
-    ],
-    "persistent": true
+    "service_worker": "background.bundle.js"
   },
-  "browser_action": {
+  "action": {
     "default_popup": "popup.html",
     "default_icon": "icon-34.png"
   },
@@ -17,14 +14,15 @@
   "content_scripts": [
     {
       "matches": [
+        "file://*/*",
         "http://*/*",
-        "https://*/*",
-        "<all_urls>"
+        "https://*/*"
       ],
       "js": [
         "contentScript.bundle.js"
       ],
-      "run_at": "document_start"
+      "run_at": "document_start",
+      "all_frames": false
     }
   ],
   "permissions": [
@@ -33,9 +31,25 @@
     "clipboardWrite"
   ],
   "web_accessible_resources": [
-    "icon-128.png",
-    "icon-34.png",
-    "page.bundle.js"
+    {
+      "resources": [
+        "page.bundle.js"
+      ],
+      "use_dynamic_url": false,
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    },
+    {
+      "resources": [
+        "icon-128.png",
+        "icon-34.png"
+      ],
+      "matches": []
+    }
   ],
-  "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'"
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
 }

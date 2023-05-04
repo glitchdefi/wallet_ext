@@ -41,6 +41,7 @@ import {
   RequestAuthorizeToggle,
   ResponseWallet,
 } from 'scripts/types';
+import browser from 'webextension-polyfill';
 
 interface Resolver<T> {
   reject: (error: Error) => void;
@@ -91,7 +92,7 @@ interface SignRequest extends Resolver<ResponseSigning> {
   url: string;
 }
 
-const NOTIFICATION_URL = chrome.extension.getURL('notification.html');
+const NOTIFICATION_URL = browser.runtime.getURL('notification.html');
 
 const POPUP_WINDOW_OPTS: chrome.windows.CreateData = {
   focused: true,
@@ -196,9 +197,13 @@ export default class State {
 
     extractMetadata(this.metaStore);
 
+    let previousAuth = null;
+
     // retrieve previously set authorizations
-    const authString = localStorage.getItem(AUTH_URLS_KEY) || '{}';
-    const previousAuth = JSON.parse(authString) as AuthUrls;
+    browser.storage.local.get([AUTH_URLS_KEY]).then((result) => {
+      const authString = result?.[AUTH_URLS_KEY];
+      previousAuth = authString ? (JSON.parse(authString) as AuthUrls) : {};
+    });
 
     this._authUrls = previousAuth;
     this.localStore = new ExtensionStore();
@@ -320,7 +325,9 @@ export default class State {
   };
 
   private saveCurrentAuthList() {
-    localStorage.setItem(AUTH_URLS_KEY, JSON.stringify(this._authUrls));
+    browser.storage.local.set({
+      [AUTH_URLS_KEY]: JSON.stringify(this._authUrls),
+    });
   }
 
   private metaComplete = (

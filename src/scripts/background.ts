@@ -4,12 +4,13 @@ import { GlitchController } from './controllers/GlitchController';
 import handlers from './lib/handler/handlers';
 import { withErrorLog } from '../utils/withErrorLog';
 import { ResponseAppStore } from './types';
+import browser from 'webextension-polyfill';
 
 log.setDefaultLevel('debug');
 
 // setup the notification (same a FF default background, white text)
 withErrorLog(() =>
-  chrome.browserAction.setBadgeBackgroundColor({ color: '#d90000' })
+  browser.action.setBadgeBackgroundColor({ color: '#d90000' })
 );
 
 /**
@@ -18,9 +19,8 @@ withErrorLog(() =>
  */
 async function initialize(): Promise<any> {
   const initState = await loadStateFromPersistence();
-  // Initializes the Glitch Controller with any initial state and default language.
+  //Initializes the Glitch Controller with any initial state and default language.
   const controller = new GlitchController({ initialState: initState });
-  // handleChromeListeners(controller);
   handleChromePortListener(controller);
 }
 

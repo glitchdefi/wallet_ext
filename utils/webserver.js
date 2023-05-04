@@ -3,6 +3,22 @@ process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 process.env.ASSET_PATH = '/';
 
+const { exec } = require('child_process');
+
+class RunAfterCompilePlugin {
+  apply(compiler) {
+    compiler.hooks.done.tap('RunAfterCompilePlugin', () => {
+      exec('npm run replace_background', (err, stdout) => {
+        if (err) {
+          console.error(`Error running your script: ${err}`);
+          return;
+        }
+        console.log(`Your script output: ${stdout}`);
+      });
+    });
+  }
+}
+
 var WebpackDevServer = require('webpack-dev-server'),
   webpack = require('webpack'),
   config = require('../webpack.config'),
@@ -21,9 +37,10 @@ for (var entryName in config.entry) {
   }
 }
 
-config.plugins = [new webpack.HotModuleReplacementPlugin()].concat(
-  config.plugins || []
-);
+config.plugins = [
+  new webpack.HotModuleReplacementPlugin(),
+  new RunAfterCompilePlugin(),
+].concat(config.plugins || []);
 
 delete config.chromeExtensionBoilerplate;
 

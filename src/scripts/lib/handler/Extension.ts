@@ -47,6 +47,7 @@ import { createSubscription, unsubscribe } from './subscriptions';
 import { assert } from '@polkadot/util';
 import { MetadataDef } from '@polkadot/extension-inject/types';
 import { withErrorLog } from 'utils/withErrorLog';
+import browser from 'webextension-polyfill';
 
 function isJsonPayload(
   value: SignerPayloadJSON | SignerPayloadRaw
@@ -329,7 +330,7 @@ export default class Extension {
   }
 
   private windowOpen(path: AllowedPath): boolean {
-    const url = `${chrome.extension.getURL('popup.html')}#${path}`;
+    const url = `${browser.runtime.getURL('popup.html')}#${path}`;
 
     // if (!ALLOWED_PATH.includes(path)) {
     //   console.error('Not allowed to open the url:', url);

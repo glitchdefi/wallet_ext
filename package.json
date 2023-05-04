@@ -5,9 +5,10 @@
   "license": "MIT",
   "scripts": {
     "build": "rm -rf build && node utils/build.js && npm run zip",
-    "start": "node utils/webserver.js",
+    "start": "rm -rf build && node utils/webserver.js",
     "prettier": "prettier --write '**/*.{js,jsx,css,html}'",
-    "zip": "rm -rf wallet_ext.tar.gz && tar -zcvf wallet_ext.tar.gz build"
+    "zip": "rm -rf wallet_ext.tar.gz && tar -zcvf wallet_ext.tar.gz build",
+    "replace_background": "sed -i '' 's/document.baseURI[ ]*||//' ./build/background.bundle.js"
   },
   "dependencies": {
     "@hot-loader/react-dom": "^17.0.1",
@@ -52,12 +53,13 @@
     "react-tooltip": "^4.2.21",
     "react-transition-group": "^4.4.2",
     "secrets": "^1.1.5",
+    "sed": "^0.0.2",
     "styled-components": "^5.3.1",
     "styled-system": "^5.1.5",
     "tar": "^6.1.11",
     "use-lodash-debounce": "^1.2.0",
     "util": "^0.12.4",
-    "web3": "^1.6.0",
+    "web3-eth": "^1.9.0",
     "web3-utils": "^1.6.0"
   },
   "devDependencies": {
@@ -71,6 +73,7 @@
     "@types/react-router-dom": "^5.3.1",
     "@types/styled-components": "^5.1.14",
     "@types/styled-system": "^5.1.13",
+    "@types/webextension-polyfill": "^0.10.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "babel-preset-react-app": "^10.0.0",
@@ -99,6 +102,7 @@
     "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^8.0.17",
     "typescript": "^4.1.5",
+    "webextension-polyfill": "^0.10.0",
     "webpack": "^5.23.0",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2"

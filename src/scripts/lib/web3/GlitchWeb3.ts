@@ -10,7 +10,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { u8aToHex } from '@polkadot/util';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import web3Utils from 'web3-utils';
-import Web3 from 'web3';
+import Web3Eth from 'web3-eth';
 
 import { AccountTypes, RequestWalletCreate } from 'scripts/types';
 import { AppStateController } from 'scripts/controllers/AppStateController';
@@ -19,7 +19,7 @@ import { DEFAULT_TYPE } from 'constants/values';
 import { GlitchToken } from 'constants/tokens';
 import { GlitchNetwork, GLITCH_EVM_TYPES } from 'constants/networks';
 
-import { getAvatar } from 'utils/drawAvatar';
+// import { getAvatar } from 'utils/drawAvatar';
 import {
   isHexSeed,
   messageEncryption,
@@ -28,7 +28,7 @@ import {
 
 log.setDefaultLevel('debug');
 export class GlitchWeb3 {
-  web3: Web3;
+  web3: Web3Eth;
   api: ApiPromise;
   appStateController: AppStateController;
 
@@ -59,7 +59,7 @@ export class GlitchWeb3 {
         types: GLITCH_EVM_TYPES,
       });
 
-      this.web3 = new Web3(networkInfo.evmProvider);
+      this.web3 = new Web3Eth(networkInfo.evmProvider);
       this.api = api;
 
       log.info('Glitch Wallet initialization complete.');
@@ -82,30 +82,24 @@ export class GlitchWeb3 {
       seed?.trim() || mnemonicGenerate(GlitchToken.default_mnemonic_length);
 
     const { json } = keyring.addUri(mnemonic, password || undefined, {
-      avatar: getAvatar(),
+      avatar: null,
       name,
       genesisHash: this.api.genesisHash.toHex(),
     });
 
     if (isHexSeed(mnemonic)) {
-      evmAccount = this.web3.eth.accounts.privateKeyToAccount(mnemonic);
-      encryptedPk = this.web3.eth.accounts.encrypt(
-        mnemonic,
-        evmAccount.address
-      );
+      evmAccount = this.web3.accounts.privateKeyToAccount(mnemonic);
+      encryptedPk = this.web3.accounts.encrypt(mnemonic, evmAccount.address);
     } else {
       const privateKey = this.getPrivateKeyFromSeed(mnemonic);
-      evmAccount = this.web3.eth.accounts.privateKeyToAccount(privateKey);
-      encryptedPk = this.web3.eth.accounts.encrypt(
-        privateKey,
-        evmAccount.address
-      );
+      evmAccount = this.web3.accounts.privateKeyToAccount(privateKey);
+      encryptedPk = this.web3.accounts.encrypt(privateKey, evmAccount.address);
     }
 
     const mnemonicEncrypted = await messageEncryption(mnemonic);
 
     return {
-      mnemonicEncrypted,
+      mnemonicEncrypted: mnemonicEncrypted,
       json,
       evmAccount: {
         ...evmAccount,
@@ -171,7 +165,7 @@ export class GlitchWeb3 {
         .transfer(toAddress, amount)
         .paymentInfo(fromAddress);
 
-      return web3Utils.fromWei(partialFee);
+      return web3Utils.fromWei(partialFee as any);
     } catch (e: any) {
       log.info('getEstimateFeeError:', e);
       throw new Error((e as Error).message);
@@ -257,16 +251,14 @@ export class GlitchWeb3 {
     try {
       const addressPair = keyring.getPair(account.address);
 
-      const privateKey = this.web3.eth.accounts.decrypt(
+      const privateKey = this.web3.accounts.decrypt(
         JSON.parse(account.encryptedPk),
         account.evmAddress
       );
-      this.web3.eth.accounts.wallet.add(privateKey);
-      const signature = await this.web3.eth.sign(
-        `glitch evm:${this.web3.utils
-          .bytesToHex(
-            this.web3.utils.hexToBytes(u8aToHex(addressPair.publicKey))
-          )
+      this.web3.accounts.wallet.add(privateKey);
+      const signature = await this.web3.sign(
+        `glitch evm:${web3Utils
+          .bytesToHex(web3Utils.hexToBytes(u8aToHex(addressPair.publicKey)))
           .slice(2)}`,
         account.evmAddress
       );
@@ -316,6 +308,6 @@ export class GlitchWeb3 {
   }
 
   clearAllWeb3WalletAccounts() {
-    this.web3.eth.accounts.wallet.clear();
+    this.web3.accounts.wallet.clear();
   }
 }

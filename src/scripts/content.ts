@@ -5,6 +5,7 @@ import {
   MESSAGE_ORIGIN_PAGE,
 } from '../constants/messages';
 import { Message } from './lib/page/types';
+import browser from 'webextension-polyfill';
 
 // connect to the extension
 const port = chrome.runtime.connect({ name: PORT_CONTENT });
@@ -27,7 +28,7 @@ window.addEventListener('message', ({ data, source }: Message): void => {
 // inject our data injector
 const script = document.createElement('script');
 
-script.src = chrome.extension.getURL('page.bundle.js');
+script.src = browser.runtime.getURL('page.bundle.js');
 
 script.onload = (): void => {
   // remove the injecting tag when loaded

@@ -66,7 +66,7 @@ export const AmountInput: React.FC<Props> = ({
       if (isMaxLoading && !isFeeLoading && parseFloat(estimateFee) > 0) {
         const balanceToBN = new BN(web3Utils.toWei(balance));
         const feeToBN = new BN(web3Utils.toWei(estimateFee));
-        const adjFee = feeToBN.muln(110).div(BN_HUNDRED);
+        const adjFee = feeToBN.muln(110).div(BN_HUNDRED as BN);
 
         setIsMaxClicked(true);
         // amount =  balance - fee
