@@ -312,7 +312,7 @@ export class GlitchController {
     const oldAccounts = await this.appStateController.getAccounts();
     const address = await this.appStateController.getSelectedAddress();
 
-    this.glitchWeb3.editAccount(name, address);
+    await this.glitchWeb3.editAccount(name, address);
     oldAccounts[address].name = name;
 
     return await this.appStateController.updateState('wallet', {
@@ -442,7 +442,7 @@ export class GlitchController {
       network,
     });
     await this.glitchWeb3.createApi();
-    this.glitchWeb3.updateAccountGenesisHash();
+    await this.glitchWeb3.updateAccountGenesisHash();
 
     return settings;
   }

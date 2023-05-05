@@ -88,7 +88,6 @@ export class Base {
         await this.addAccountPairs();
     }
     async addAccountPairs() {
-        console.log('addAccountPairs', this.keyring.getPairs());
         this.keyring
             .getPairs()
             .forEach(async ({ address, meta }) => {

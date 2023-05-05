@@ -87,21 +87,19 @@ export const WalletProvider: React.FC = ({ children }) => {
       setAppLoading(true);
 
       // Forget account
-      !isEmpty(wallet?.accounts) &&
-        (await Promise.all(
-          Object.entries(wallet.accounts).map(([key]) => {
-            return forgetAccount({ address: key as string });
-          })
-        ));
+      if (!isEmpty(wallet?.accounts)) {
+        for (const key of Object.keys(wallet.accounts)) {
+          await forgetAccount({ address: key });
+        }
+      }
 
       // Remove connected dapps
       getAuthList().then(async ({ list }) => {
-        list &&
-          (await Promise.all(
-            Object.entries(list).map(([url, _]: [string, any]) => {
-              return removeAuthorization(url);
-            })
-          ));
+        if (list) {
+          for (const key of Object.keys(list)) {
+            await removeAuthorization(list[key].url);
+          }
+        }
       });
 
       restoreWallet(request)
@@ -155,20 +153,19 @@ export const WalletProvider: React.FC = ({ children }) => {
       setAppLoading(true);
 
       // Forget account
-      await Promise.all(
-        Object.entries(wallet.accounts).map(([key]) => {
-          return forgetAccount({ address: key as string });
-        })
-      );
+      if (!isEmpty(wallet?.accounts)) {
+        for (const key of Object.keys(wallet.accounts)) {
+          await forgetAccount({ address: key });
+        }
+      }
 
       // Remove connected dapps
       getAuthList().then(async ({ list }) => {
-        list &&
-          (await Promise.all(
-            Object.entries(list).map(([url, _]: [string, any]) => {
-              return removeAuthorization(url);
-            })
-          ));
+        if (list) {
+          for (const key of Object.keys(list)) {
+            await removeAuthorization(list[key].url);
+          }
+        }
       });
 
       // Remove data store

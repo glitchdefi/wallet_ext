@@ -3645,31 +3645,30 @@
             });
         }
         async set(items) {
-            const promises = [];
-            Object.keys(items).forEach((key) => {
-                promises.push(this.storage.setItem(key, items[key]));
-            });
-            await Promise.all(promises);
+            console.log('update - items', items);
+            const promises = Object.keys(items).map((key) => this.storage.setItem(key, items[key]));
+            console.log('update - promises', promises);
+            const test = await Promise.all(promises);
+            console.log('update - saved', test);
         }
-        remove(key) {
-            return this.storage.removeItem(key);
+        async remove(key) {
+            return await this.storage.removeItem(key);
         }
-        clear() {
-            return this.storage.clear();
+        async clear() {
+            return await this.storage.clear();
         }
-        get(key) {
-            return this.storage.getItem(key).then((item) => {
-                if (!item) {
-                    return {};
-                }
-                return {
-                    [key]: item
-                };
-            });
+        async get(key) {
+            const item = await this.storage.getItem(key);
+            if (!item) {
+                return {};
+            }
+            return {
+                [key]: item
+            };
         }
         async getWholeStorage() {
             const storeOb = {};
-            return this.storage
+            return await this.storage
                 .iterate((value, key) => {
                 storeOb[key] = value;
             })
@@ -3706,20 +3705,26 @@
             let vals = await this.storage.get(this.namespace);
             vals = vals[this.namespace] ? vals[this.namespace] : {};
             vals[key] = val;
-            return this.storage.set({
+            console.log('update - keyring set', {
+                stored: vals,
+                [key]: val
+            });
+            await this.storage.set({
                 [this.namespace]: vals
             });
         }
         async remove(key) {
             let vals = await this.storage.get(this.namespace);
             vals = vals[this.namespace] ? vals[this.namespace] : {};
+            console.log('remove', { vals, key });
             delete vals[key];
-            return this.storage.set({
+            console.log('afterRemove', { vals, key });
+            return await this.storage.set({
                 [this.namespace]: vals
             });
         }
         async clear() {
-            return this.storage.remove(this.namespace);
+            await this.storage.remove(this.namespace);
         }
     }
     const ForageStorage$1 = ForageStorage;
@@ -3806,7 +3811,6 @@
             await this.addAccountPairs();
         }
         async addAccountPairs() {
-            console.log('addAccountPairs', this.keyring.getPairs());
             this.keyring
                 .getPairs()
                 .forEach(async ({ address, meta }) => {

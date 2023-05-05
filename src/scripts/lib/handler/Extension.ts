@@ -257,9 +257,10 @@ export default class Extension {
     return this.controller.changeAccount(request);
   }
 
-  private accountsForget({ address }: RequestAccountForget): boolean {
-    keyring.forgetAccount(address);
-
+  private async accountsForget({
+    address,
+  }: RequestAccountForget): Promise<boolean> {
+    await keyring.forgetAccount(address);
     return true;
   }
 

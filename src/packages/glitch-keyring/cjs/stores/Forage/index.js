@@ -30,20 +30,26 @@ class ForageStorage {
         let vals = await this.storage.get(this.namespace);
         vals = vals[this.namespace] ? vals[this.namespace] : {};
         vals[key] = val;
-        return this.storage.set({
+        console.log('update - keyring set', {
+            stored: vals,
+            [key]: val
+        });
+        await this.storage.set({
             [this.namespace]: vals
         });
     }
     async remove(key) {
         let vals = await this.storage.get(this.namespace);
         vals = vals[this.namespace] ? vals[this.namespace] : {};
+        console.log('remove', { vals, key });
         delete vals[key];
-        return this.storage.set({
+        console.log('afterRemove', { vals, key });
+        return await this.storage.set({
             [this.namespace]: vals
         });
     }
     async clear() {
-        return this.storage.remove(this.namespace);
+        await this.storage.remove(this.namespace);
     }
 }
 exports.default = ForageStorage;

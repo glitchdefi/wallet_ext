@@ -111,31 +111,31 @@ export class GlitchWeb3 {
     };
   }
 
-  editAccount(name: string, address: string) {
+  async editAccount(name: string, address: string) {
     const pair = keyring.getPair(address);
 
     if (pair) {
-      keyring.saveAccountMeta(pair, { ...pair.meta, name });
+      await keyring.saveAccountMeta(pair, { ...pair.meta, name });
       return true;
     }
 
     return false;
   }
 
-  updateAccountGenesisHash() {
+  async updateAccountGenesisHash() {
     const accounts = keyring.getAccounts();
 
-    accounts.forEach((account) => {
+    for (const account of accounts) {
       const { address } = account;
       const pair = keyring.getPair(address);
 
       if (pair) {
-        keyring.saveAccountMeta(pair, {
+        await keyring.saveAccountMeta(pair, {
           ...pair.meta,
           genesisHash: this.api.genesisHash.toHex(),
         });
       }
-    });
+    }
   }
 
   unlockAccount(password?: string, address?: string) {
@@ -252,33 +252,37 @@ export class GlitchWeb3 {
 
   async claimEvmAccountBalance(account: AccountTypes): Promise<boolean> {
     try {
-      const addressPair = keyring.getPair(account.address);
+      if (account?.address) {
+        const addressPair = keyring.getPair(account.address);
 
-      const privateKey = this.web3.accounts.decrypt(
-        JSON.parse(account.encryptedPk),
-        account.evmAddress
-      );
-      this.web3.accounts.wallet.add(privateKey);
-      const signature = await this.web3.sign(
-        `glitch evm:${web3Utils
-          .bytesToHex(web3Utils.hexToBytes(u8aToHex(addressPair.publicKey)))
-          .slice(2)}`,
-        account.evmAddress
-      );
-      return new Promise((resolve, reject) => {
-        this.api.tx.evmAccounts
-          .claimAccount(account.evmAddress, signature)
-          .signAndSend(addressPair, async ({ events = [], status }) => {
-            if (status.isFinalized) {
-              console.log(
-                `Time: ${new Date().toLocaleString()} ${
-                  account.address
-                } has bound with EVM address: ${account.evmAddress}`
-              );
-              resolve(true);
-            }
-          });
-      });
+        const privateKey = this.web3.accounts.decrypt(
+          JSON.parse(account.encryptedPk),
+          account.evmAddress
+        );
+        this.web3.accounts.wallet.add(privateKey);
+        const signature = await this.web3.sign(
+          `glitch evm:${web3Utils
+            .bytesToHex(web3Utils.hexToBytes(u8aToHex(addressPair.publicKey)))
+            .slice(2)}`,
+          account.evmAddress
+        );
+        return new Promise((resolve, reject) => {
+          this.api.tx.evmAccounts
+            .claimAccount(account.evmAddress, signature)
+            .signAndSend(addressPair, async ({ events = [], status }) => {
+              if (status.isFinalized) {
+                console.log(
+                  `Time: ${new Date().toLocaleString()} ${
+                    account.address
+                  } has bound with EVM address: ${account.evmAddress}`
+                );
+                resolve(true);
+              }
+            });
+        });
+      }
+
+      return false;
     } catch (error) {
       console.log(error);
       return false;
