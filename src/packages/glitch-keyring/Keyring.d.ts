@@ -1,0 +1,50 @@
+/// <reference types="bn.js" />
+import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/keyring/types';
+import type { BN } from '@polkadot/util';
+import type { EncryptedJson } from '@polkadot/util-crypto/json/types';
+import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { SingleAddress } from './observable/types.js';
+import type { CreateResult, KeyringAddress, KeyringAddressType, KeyringItemType, KeyringJson$Meta, KeyringOptions, KeyringPairs$Json, KeyringStruct } from './types.js';
+import { KeyringOption } from './options/index.js';
+import { Base } from './Base.js';
+export declare class Keyring extends Base implements KeyringStruct {
+    #private;
+    readonly keyringOption: KeyringOption;
+    addExternal(address: string | Uint8Array, meta?: KeyringPair$Meta): Promise<CreateResult>;
+    addHardware(address: string | Uint8Array, hardwareType: string, meta?: KeyringPair$Meta): Promise<CreateResult>;
+    addMultisig(addresses: (string | Uint8Array)[], threshold: bigint | BN | number, meta?: KeyringPair$Meta): Promise<CreateResult>;
+    addPair(pair: KeyringPair, password: string): Promise<CreateResult>;
+    addUri(suri: string, password?: string, meta?: KeyringPair$Meta, type?: KeypairType): Promise<CreateResult>;
+    backupAccount(pair: KeyringPair, password: string): KeyringPair$Json;
+    backupAccounts(addresses: string[], password: string): Promise<KeyringPairs$Json>;
+    createFromJson(json: KeyringPair$Json, meta?: KeyringPair$Meta): KeyringPair;
+    createFromUri(suri: string, meta?: KeyringPair$Meta, type?: KeypairType): KeyringPair;
+    encryptAccount(pair: KeyringPair, password: string): Promise<void>;
+    forgetAccount(address: string): Promise<void>;
+    forgetAddress(address: string): Promise<void>;
+    forgetContract(address: string): Promise<void>;
+    getAccount(address: string | Uint8Array): KeyringAddress | undefined;
+    getAccounts(): KeyringAddress[];
+    getAddress(_address: string | Uint8Array, type?: KeyringItemType | null): KeyringAddress | undefined;
+    getAddresses(): KeyringAddress[];
+    getContract(address: string | Uint8Array): KeyringAddress | undefined;
+    getContracts(): KeyringAddress[];
+    private rewriteKey;
+    private loadAccount;
+    private loadAddress;
+    private loadContract;
+    private loadInjected;
+    private allowGenesis;
+    loadAll(options: KeyringOptions, injected?: {
+        address: string;
+        meta: KeyringJson$Meta;
+        type?: KeypairType;
+    }[]): Promise<void>;
+    restoreAccount(json: KeyringPair$Json, password: string): KeyringPair;
+    restoreAccounts(json: EncryptedJson, password: string): void;
+    saveAccount(pair: KeyringPair, password?: string): Promise<KeyringPair$Json>;
+    saveAccountMeta(pair: KeyringPair, meta: KeyringPair$Meta): Promise<void>;
+    saveAddress(address: string, meta: KeyringPair$Meta, type?: KeyringAddressType): Promise<KeyringPair$Json>;
+    saveContract(address: string, meta: KeyringPair$Meta): Promise<KeyringPair$Json>;
+    saveRecent(address: string): Promise<SingleAddress>;
+}

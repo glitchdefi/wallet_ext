@@ -1,6 +1,6 @@
 import log from 'loglevel';
 import axios from 'axios';
-import keyring from '@polkadot/ui-keyring';
+import keyring from '../../packages/glitch-keyring';
 
 import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';

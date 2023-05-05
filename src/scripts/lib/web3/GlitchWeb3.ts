@@ -1,5 +1,5 @@
 import log from 'loglevel';
-import keyring from '@polkadot/ui-keyring';
+import keyring from '../../../packages/glitch-keyring';
 import {
   cryptoWaitReady,
   mnemonicGenerate,
@@ -41,7 +41,10 @@ export class GlitchWeb3 {
     cryptoWaitReady().then(async () => {
       await this.createApi();
       // load all available addresses and accounts
-      keyring.loadAll({ ss58Format: 42, type: DEFAULT_TYPE });
+      await keyring.loadAll({
+        ss58Format: 42,
+        type: DEFAULT_TYPE,
+      });
     });
   }
 
@@ -81,7 +84,7 @@ export class GlitchWeb3 {
     const mnemonic =
       seed?.trim() || mnemonicGenerate(GlitchToken.default_mnemonic_length);
 
-    const { json } = keyring.addUri(mnemonic, password || undefined, {
+    const { json } = await keyring.addUri(mnemonic, password || undefined, {
       avatar: null,
       name,
       genesisHash: this.api.genesisHash.toHex(),

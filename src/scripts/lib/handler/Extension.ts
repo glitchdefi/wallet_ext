@@ -35,7 +35,7 @@ import type {
   RequestAccountClaimEvmBalance,
   RequestIsEvmClaimed,
 } from '../../types';
-import keyring from '@polkadot/ui-keyring';
+import keyring from '../../../packages/glitch-keyring';
 import { TypeRegistry } from '@polkadot/types';
 import type {
   SignerPayloadJSON,
