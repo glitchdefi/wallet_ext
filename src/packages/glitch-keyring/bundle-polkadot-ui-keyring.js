@@ -3645,11 +3645,8 @@
             });
         }
         async set(items) {
-            console.log('update - items', items);
             const promises = Object.keys(items).map((key) => this.storage.setItem(key, items[key]));
-            console.log('update - promises', promises);
-            const test = await Promise.all(promises);
-            console.log('update - saved', test);
+            await Promise.all(promises);
         }
         async remove(key) {
             return await this.storage.removeItem(key);
@@ -3705,10 +3702,6 @@
             let vals = await this.storage.get(this.namespace);
             vals = vals[this.namespace] ? vals[this.namespace] : {};
             vals[key] = val;
-            console.log('update - keyring set', {
-                stored: vals,
-                [key]: val
-            });
             await this.storage.set({
                 [this.namespace]: vals
             });

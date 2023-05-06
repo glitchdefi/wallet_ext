@@ -27,10 +27,6 @@ class ForageStorage {
         let vals = await this.storage.get(this.namespace);
         vals = vals[this.namespace] ? vals[this.namespace] : {};
         vals[key] = val;
-        console.log('update - keyring set', {
-            stored: vals,
-            [key]: val
-        });
         await this.storage.set({
             [this.namespace]: vals
         });

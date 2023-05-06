@@ -15,11 +15,8 @@ class LocalForage {
         });
     }
     async set(items) {
-        console.log('update - items', items);
         const promises = Object.keys(items).map((key) => this.storage.setItem(key, items[key]));
-        console.log('update - promises', promises);
-        const test = await Promise.all(promises);
-        console.log('update - saved', test);
+        await Promise.all(promises);
     }
     async remove(key) {
         return await this.storage.removeItem(key);

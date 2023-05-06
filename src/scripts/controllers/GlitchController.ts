@@ -102,46 +102,50 @@ export class GlitchController {
   }
 
   async restoreWallet(request: RequestWalletCreate): Promise<ResponseWallet> {
-    const data = await this.glitchWeb3.createAccount(request);
-    const { mnemonicEncrypted, json, evmAccount } = data;
-    const { address, meta } = json as unknown as {
-      address: string;
-      meta?: {
-        name: string;
-        avatar: string;
-        whenCreated: number;
+    try {
+      const data = await this.glitchWeb3.createAccount(request);
+      const { mnemonicEncrypted, json, evmAccount } = data;
+      const { address, meta } = json as unknown as {
+        address: string;
+        meta?: {
+          name: string;
+          avatar: string;
+          whenCreated: number;
+        };
       };
-    };
 
-    this.glitchWeb3.unlockAccount(request.password, address);
+      this.glitchWeb3.unlockAccount(request.password, address);
 
-    await this.setAutoLockTimer({
-      openTime: new Date().getTime(),
-      duration: 60000,
-    });
+      await this.setAutoLockTimer({
+        openTime: new Date().getTime(),
+        duration: 60000,
+      });
 
-    return await this.appStateController.updateState('wallet', {
-      isInitialized: 'completed',
-      isLocked: false,
-      isBackup: true,
-      selectedAddress: address,
-      parentAddress: address,
-      parentEvmAddress: evmAccount.address,
-      seed: null,
-      accounts: {
-        [address]: {
-          address: address,
-          evmAddress: evmAccount.address,
-          balance: { reservedBalance: '0', freeBalance: '0' },
-          name: meta.name,
-          avatar: meta.avatar,
-          whenCreated: meta.whenCreated,
-          encryptedPk: evmAccount.encryptedPk,
-          seed: mnemonicEncrypted,
-          allowedUrls: [],
+      return await this.appStateController.updateState('wallet', {
+        isInitialized: 'completed',
+        isLocked: false,
+        isBackup: true,
+        selectedAddress: address,
+        parentAddress: address,
+        parentEvmAddress: evmAccount.address,
+        seed: null,
+        accounts: {
+          [address]: {
+            address: address,
+            evmAddress: evmAccount.address,
+            balance: { reservedBalance: '0', freeBalance: '0' },
+            name: meta.name,
+            avatar: meta.avatar,
+            whenCreated: meta.whenCreated,
+            encryptedPk: evmAccount.encryptedPk,
+            seed: mnemonicEncrypted,
+            allowedUrls: [],
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      console.log('restoreWalletError', error);
+    }
   }
 
   async lockWallet(): Promise<ResponseWallet> {
@@ -196,41 +200,45 @@ export class GlitchController {
   //=============================================================================
 
   async createAccount({ name }: RequestAccountCreate): Promise<ResponseWallet> {
-    const data = await this.glitchWeb3.createAccount({
-      seed: null,
-      name,
-      password: null,
-    });
-    const { mnemonicEncrypted, json, evmAccount } = data;
-    const { address, meta } = json as unknown as {
-      address: string;
-      meta?: {
-        name: string;
-        avatar: string;
-        whenCreated: number;
+    try {
+      const data = await this.glitchWeb3.createAccount({
+        seed: null,
+        name,
+        password: null,
+      });
+      const { mnemonicEncrypted, json, evmAccount } = data;
+      const { address, meta } = json as unknown as {
+        address: string;
+        meta?: {
+          name: string;
+          avatar: string;
+          whenCreated: number;
+        };
       };
-    };
-    const oldAccounts = await this.appStateController.getAccounts();
+      const oldAccounts = await this.appStateController.getAccounts();
 
-    const wallet = await this.appStateController.updateState('wallet', {
-      selectedAddress: address,
-      accounts: {
-        [address]: {
-          name: meta.name,
-          address: address,
-          evmAddress: evmAccount.address,
-          avatar: meta.avatar,
-          balance: { reservedBalance: '0', freeBalance: '0' },
-          seed: mnemonicEncrypted,
-          whenCreated: meta.whenCreated,
-          encryptedPk: evmAccount.encryptedPk,
-          allowedUrls: [],
+      const wallet = await this.appStateController.updateState('wallet', {
+        selectedAddress: address,
+        accounts: {
+          [address]: {
+            name: meta.name,
+            address: address,
+            evmAddress: evmAccount.address,
+            avatar: meta.avatar,
+            balance: { reservedBalance: '0', freeBalance: '0' },
+            seed: mnemonicEncrypted,
+            whenCreated: meta.whenCreated,
+            encryptedPk: evmAccount.encryptedPk,
+            allowedUrls: [],
+          },
+          ...oldAccounts,
         },
-        ...oldAccounts,
-      },
-    });
+      });
 
-    return wallet;
+      return wallet;
+    } catch (error) {
+      console.log('createAccountError', error);
+    }
   }
 
   async importAccount({
