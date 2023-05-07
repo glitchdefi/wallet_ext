@@ -15,10 +15,7 @@ import type {
   RequestAutoLockSet,
   ResponseSettings,
   RequestAccountEdit,
-  RequestTransactionsGet,
-  ResponseTransactionsGet,
   RequestEstimateFeeGet,
-  RequestTokenPriceGet,
   RequestAccountTransfer,
   RequestAuthorizeApprove,
   RequestAuthorizeReject,
@@ -303,12 +300,6 @@ export default class Extension {
     return this.controller.setNetwork(request);
   }
 
-  private getTransactions(
-    request: RequestTransactionsGet
-  ): Promise<ResponseTransactionsGet> {
-    return this.controller.getTransactions(request);
-  }
-
   private getEstimateFee(request: RequestEstimateFeeGet): Promise<string> {
     return this.controller.getEstimateFee(request);
   }
@@ -345,12 +336,6 @@ export default class Extension {
     withErrorLog(() => chrome.tabs.create({ url }));
 
     return true;
-  }
-
-  private getTokenPrice(
-    request: RequestTokenPriceGet
-  ): Promise<string | number> {
-    return this.controller.getTokenPrice(request);
   }
 
   private resetAppState(): Promise<ResponseWallet> {
@@ -455,14 +440,8 @@ export default class Extension {
       case 'pri(settings.network.set)':
         return this.setNetwork(request as RequestNetworkSet);
 
-      case 'pri(transactions.list.get)':
-        return this.getTransactions(request as RequestTransactionsGet);
-
       case 'pri(estimate.fee.get)':
         return this.getEstimateFee(request as RequestEstimateFeeGet);
-
-      case 'pri(token.price.get)':
-        return this.getTokenPrice(request as RequestTokenPriceGet);
 
       case 'pri(reset.app.state)':
         return this.resetAppState();

@@ -1,5 +1,5 @@
 import extension from 'extensionizer';
-import log from 'loglevel';
+import { log } from 'utils/log-config';
 import { ResponseAppStore } from 'scripts/types';
 import { checkForError } from './utils';
 

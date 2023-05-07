@@ -19,10 +19,7 @@ import type {
   RequestAutoLockSet,
   ResponseSettings,
   RequestAccountEdit,
-  RequestTransactionsGet,
-  ResponseTransactionsGet,
   RequestEstimateFeeGet,
-  RequestTokenPriceGet,
   RequestAccountTransfer,
   ResponseAccountTransfer,
   ResponseAuthorizeList,
@@ -37,8 +34,8 @@ import type {
 } from '../types';
 import type { Message } from '../types/Message';
 
-import { PORT_EXTENSION } from '../../constants/messages';
-import { getId } from '../../utils/getId';
+import { PORT_EXTENSION } from 'constants/messages';
+import { getId } from 'utils/getId';
 import { HexString } from '@polkadot/util/types';
 
 interface Handler {
@@ -272,23 +269,10 @@ export async function setNetwork(
   return sendMessage('pri(settings.network.set)', request);
 }
 
-// Transactions
-export async function getTransactions(
-  request: RequestTransactionsGet
-): Promise<ResponseTransactionsGet> {
-  return sendMessage('pri(transactions.list.get)', request);
-}
-
 export async function getEstimateFee(
   request: RequestEstimateFeeGet
 ): Promise<string> {
   return sendMessage('pri(estimate.fee.get)', request);
-}
-
-export async function getTokenPrice(
-  request: RequestTokenPriceGet
-): Promise<string | number> {
-  return sendMessage('pri(token.price.get)', request);
 }
 
 export async function transfer(

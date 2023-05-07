@@ -4,8 +4,8 @@
  * Check the documentation section i18n for details
  */
 
-import { translations } from '../../../locales/translations';
-import { _t } from '../../../utils/message';
+import { translations } from 'locales/translations';
+import { _t } from 'utils/message';
 
 export const messages = {
   needHelpContact: () => _t(translations.common.need_help_contact),

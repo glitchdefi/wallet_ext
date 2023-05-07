@@ -2,6 +2,7 @@ import type {
   MessageTypesWithSubscriptions,
   SubscriptionMessageTypes,
 } from '../types';
+import { log } from 'utils/log-config';
 
 type Subscriptions = Record<string, chrome.runtime.Port>;
 
@@ -26,10 +27,9 @@ export function createSubscription<
 // clear a previous subscriber
 export function unsubscribe(id: string): void {
   if (subscriptions[id]) {
-    console.log(`Unsubscribing from ${id}`);
-
+    log.info(`Unsubscribing from ${id}`);
     delete subscriptions[id];
   } else {
-    console.error(`Unable to unsubscribe from ${id}`);
+    log.info(`Unable to unsubscribe from ${id}`);
   }
 }

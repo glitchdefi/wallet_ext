@@ -2,29 +2,33 @@ import { useEffect, useState } from 'react';
 import { useWallet } from 'contexts/WalletContext/hooks';
 import { useNetwork } from 'contexts/SettingsContext/hooks';
 import { RequestTransactionsGet } from 'scripts/types';
-import { getTransactions } from 'scripts/ui/messaging';
+import { useFetchTransactions } from './useFetchTransactions';
 
 export const useTransactions = (request: RequestTransactionsGet) => {
-  const { txStatus, txType, startTime, endTime } = request || {};
+  const { pageIndex, pageSize, txStatus, txType, startTime, endTime } =
+    request || {};
   const { walletCtx } = useWallet();
   const currentNetwork = useNetwork();
   const { selectedAddress } = walletCtx || {};
   const [transactions, setTransactions] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasInternet, setHasInternet] = useState<boolean>(true);
 
-  useEffect(() => {
-    setIsLoading(true);
+  const { isFetching, fetchTransactions } = useFetchTransactions();
 
+  useEffect(() => {
     if (hasInternet && navigator.onLine) {
-      getTransactions(request)
-        .then((data) => {
-          setTransactions(data?.data);
-        })
-        .finally(() => setIsLoading(false));
+      fetchTransactions({
+        page_index: pageIndex,
+        page_size: pageSize,
+        txStatus,
+        txType,
+        start_time: startTime,
+        end_time: endTime,
+      }).then((res) => {
+        setTransactions(res?.data);
+      });
     } else {
       setTransactions([]);
-      setIsLoading(false);
     }
   }, [
     selectedAddress,
@@ -46,5 +50,5 @@ export const useTransactions = (request: RequestTransactionsGet) => {
     };
   }, []);
 
-  return { isLoading, transactions };
+  return { isLoading: isFetching, transactions };
 };

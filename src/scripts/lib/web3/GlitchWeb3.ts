@@ -1,4 +1,4 @@
-import log from 'loglevel';
+import { log } from 'utils/log-config';
 import keyring from 'packages/glitch-keyring';
 import {
   cryptoWaitReady,
@@ -26,7 +26,6 @@ import {
   privateKeyValidate,
 } from 'utils/strings';
 
-log.setDefaultLevel('debug');
 export class GlitchWeb3 {
   web3: Web3Eth;
   api: ApiPromise;
@@ -67,7 +66,7 @@ export class GlitchWeb3 {
 
       log.info('Glitch Wallet initialization complete.');
     } catch (error) {
-      log.info('initError', error);
+      log.error('initError', error);
     }
   }
 
@@ -170,7 +169,7 @@ export class GlitchWeb3 {
 
       return web3Utils.fromWei(partialFee as any);
     } catch (e: any) {
-      log.info('getEstimateFeeError:', e);
+      log.error('getEstimateFeeError:', e);
       throw new Error((e as Error).message);
     }
   }
@@ -211,7 +210,7 @@ export class GlitchWeb3 {
               const msg = docs.join(' ');
               const codeError = `${section}.${name}`;
 
-              log.info(`${codeError}: ${msg}`);
+              log.error(`${codeError}: ${msg}`);
 
               onFailedCb(
                 codeError === 'balances.InsufficientBalance'
@@ -222,7 +221,7 @@ export class GlitchWeb3 {
               );
             } else {
               // Other, CannotLookup, BadOrigin, no extra info
-              log.info('dispatchError', dispatchError.toString());
+              log.error('dispatchError', dispatchError.toString());
               onFailedCb(dispatchError.toString());
             }
           }
@@ -233,7 +232,7 @@ export class GlitchWeb3 {
           }
         });
     } catch (e: any) {
-      log.info('Transfer Error:', e);
+      log.error('Transfer Error:', e);
       throw new Error((e as Error).message);
     }
   }
@@ -271,7 +270,7 @@ export class GlitchWeb3 {
             .claimAccount(account.evmAddress, signature)
             .signAndSend(addressPair, async ({ events = [], status }) => {
               if (status.isFinalized) {
-                console.log(
+                log.info(
                   `Time: ${new Date().toLocaleString()} ${
                     account.address
                   } has bound with EVM address: ${account.evmAddress}`
@@ -284,7 +283,7 @@ export class GlitchWeb3 {
 
       return false;
     } catch (error) {
-      console.log(error);
+      log.error('ClaimEvmAccountError', error);
       return false;
     }
   }

@@ -1,5 +1,4 @@
-import log from 'loglevel';
-import axios from 'axios';
+import { log } from 'utils/log-config';
 import keyring from 'packages/glitch-keyring';
 
 import { AppStateController } from './AppStateController';
@@ -19,20 +18,15 @@ import {
   RequestIsEvmClaimed,
   RequestNetworkSet,
   RequestPrivatekeyValidate,
-  RequestTokenPriceGet,
-  RequestTransactionsGet,
   RequestUpdateWalletStorage,
   RequestWalletCreate,
   RequestWalletValidate,
   ResponseAppStore,
   ResponseSettings,
-  ResponseTransactionsGet,
   ResponseWallet,
 } from '../types';
-import { GlitchNetwork } from 'constants/networks';
 import { DEFAULT_TYPE } from 'constants/values';
 
-log.setDefaultLevel('debug');
 export class GlitchController {
   glitchWeb3: GlitchWeb3;
   appStateController: AppStateController;
@@ -144,7 +138,7 @@ export class GlitchController {
         },
       });
     } catch (error) {
-      console.log('restoreWalletError', error);
+      log.error('restoreWalletError', error);
     }
   }
 
@@ -237,7 +231,7 @@ export class GlitchController {
 
       return wallet;
     } catch (error) {
-      console.log('createAccountError', error);
+      log.error('createAccountError', error);
     }
   }
 
@@ -364,7 +358,7 @@ export class GlitchController {
         onSuccessCb
       );
     } catch (e: any) {
-      log.info('Transfer error: ', e);
+      log.error('Transfer error: ', e);
       const msg =
         e.message ===
         '1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low'
@@ -386,16 +380,6 @@ export class GlitchController {
     );
   }
 
-  async getTokenPrice({
-    name,
-    currency,
-  }: RequestTokenPriceGet): Promise<string | number> {
-    const res = await axios.get(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${name}&vs_currencies=${currency}`
-    );
-    return res?.data[name]?.usd;
-  }
-
   async getBalance(): Promise<ResponseWallet> {
     const oldAccounts = await this.appStateController.getAccounts();
     const addressSelected = await this.appStateController.getSelectedAddress();
@@ -410,27 +394,6 @@ export class GlitchController {
         ...oldAccounts,
       },
     });
-  }
-
-  async getTransactions(
-    request: RequestTransactionsGet
-  ): Promise<ResponseTransactionsGet> {
-    const { pageIndex, pageSize, txStatus, txType, startTime, endTime } =
-      request || {};
-    const network = await this.appStateController.getNetwork();
-    const apiUrl = GlitchNetwork.find((n) => n.key === network).baseApiUrl;
-    const address = await this.appStateController.getSelectedAddress();
-
-    const dateParams =
-      startTime && endTime
-        ? `&start_time=${startTime}&end_time=${endTime}`
-        : '';
-
-    const res = await axios.get(
-      `${apiUrl}/address/${address}/tx?page_index=${pageIndex}&page_size=${pageSize}&txStatus=${txStatus}&txType=${txType}${dateParams}`
-    );
-
-    return res?.data;
   }
 
   //=============================================================================

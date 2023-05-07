@@ -12,14 +12,12 @@ import type {
 import type {
   AccountJson,
   AuthorizeRequest,
-  MessageTypes,
   MetadataRequest,
   RequestAuthorizeTab,
   RequestRpcSend,
   RequestRpcSubscribe,
   RequestRpcUnsubscribe,
   RequestSign,
-  RequestTypes,
   ResponseRpcListProviders,
   ResponseSigning,
   SigningRequest,
@@ -33,8 +31,8 @@ import settings from '@polkadot/ui-settings';
 import { assert } from '@polkadot/util';
 
 import { MetadataStore } from '../../stores';
-import { withErrorLog } from '../../../utils/withErrorLog';
-import { getId } from '../../../utils/getId';
+import { withErrorLog } from 'utils/withErrorLog';
+import { getId } from 'utils/getId';
 import { ExtensionStore } from '../localStore';
 import {
   AccountTypes,

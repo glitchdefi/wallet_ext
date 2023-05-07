@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
-import { AuthUrls, AuthUrlInfo } from '../../../scripts/lib/handler/State';
+import { AuthUrls, AuthUrlInfo } from 'scripts/lib/handler/State';
 import {
   getAuthList,
   removeAuthorization,

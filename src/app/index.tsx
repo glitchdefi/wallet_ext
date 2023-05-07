@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Router, Route, Switch } from 'react-router';
 import { createMemoryHistory } from 'history';
 
-import { GlobalStyles } from '../theme/GlobalStyle';
+import { GlobalStyles } from 'theme/GlobalStyle';
 import { UPDATE_TIME } from 'constants/values';
-import { Routes } from '../constants/routes';
+import { Routes } from 'constants/routes';
 
 import { ToastListener } from 'contexts/ToastsContext';
-import { ExtensionStore } from '../scripts/lib/localStore';
+import { ExtensionStore } from 'scripts/lib/localStore';
 
 // Hooks
 import { useSettings } from 'contexts/SettingsContext/hooks';
@@ -17,7 +17,6 @@ import { useApplication } from 'contexts/ApplicationContext/hooks';
 import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
 import { useSigningReq } from 'contexts/SigningReqContext/hooks';
 import {
-  getTokenPrice,
   isEvmClaimed,
   subscribeAuthorizeRequests,
   subscribeSigningRequests,
@@ -50,6 +49,7 @@ import { AuthorizePage } from './pages/Authorize';
 import { ConnectedDapps } from './pages/ConnectedDapps';
 import { SigningPage } from './pages/Signing';
 import { useNetwork } from 'contexts/SettingsContext/hooks';
+import { useFetchTokenPrice } from 'hooks/useFetchTokenPrice';
 
 const history = createMemoryHistory();
 
@@ -57,6 +57,7 @@ export const App: React.FC = () => {
   const { appLoading } = useApplication();
   const { setSettingsCtx } = useSettings();
   const { setTokenPrice } = useTokenPrice();
+  const { fetchTokenPrice } = useFetchTokenPrice();
   const network = useNetwork();
   const { signRequests, setSignRequests } = useSigningReq();
   const { authRequests, setAuthRequests } = useAuthorizeReq();
@@ -132,8 +133,8 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     if (isInitialized !== 'none' && hasInternet && !appLoading) {
-      getTokenPrice({ name: 'glitch-protocol', currency: 'usd' }).then(
-        setTokenPrice
+      fetchTokenPrice({ ids: 'glitch-protocol', vs_currencies: 'usd' }).then(
+        (d) => setTokenPrice(d?.data['glitch-protocol']?.usd)
       );
     }
   }, [timeTokenPriceQuery, hasInternet]);

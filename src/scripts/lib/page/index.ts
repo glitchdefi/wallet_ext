@@ -1,5 +1,5 @@
-import { MESSAGE_ORIGIN_PAGE } from '../../../constants/messages';
-import { getId } from '../../../utils/getId';
+import { MESSAGE_ORIGIN_PAGE } from 'constants/messages';
+import { getId } from 'utils/getId';
 import Injected from './Injected';
 
 // when sending a message from the injector to the extension, we

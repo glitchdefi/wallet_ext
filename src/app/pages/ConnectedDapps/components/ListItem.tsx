@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 
-import { AuthUrlInfo } from '../../../../scripts/lib/handler/State';
-import { getFaviconFromUrl } from '../../../../utils/getFaviconFromUrl';
+import { AuthUrlInfo } from 'scripts/lib/handler/State';
+import { getFaviconFromUrl } from 'utils/getFaviconFromUrl';
 import { colors } from 'theme/colors';
 
 import { Box, Flex } from 'app/components/Box';

@@ -82,12 +82,7 @@ export interface RequestSignatures {
   'pri(wallet.account.isEvmClaimed)': [RequestIsEvmClaimed, boolean];
   'pri(settings.autolock.set)': [RequestAutoLockSet, ResponseSettings];
   'pri(settings.network.set)': [RequestNetworkSet, ResponseSettings];
-  'pri(transactions.list.get)': [
-    RequestTransactionsGet,
-    ResponseTransactionsGet
-  ];
   'pri(estimate.fee.get)': [RequestEstimateFeeGet, string];
-  'pri(token.price.get)': [RequestTokenPriceGet, string | number];
   'pri(reset.app.state)': [null, ResponseWallet];
   'pri(update.wallet.storage)': [RequestUpdateWalletStorage, ResponseWallet];
   'pri(window.open)': [AllowedPath, boolean];
@@ -180,11 +175,6 @@ export interface RequestTransactionsGet {
 export interface RequestEstimateFeeGet {
   toAddress: string;
   amount: any;
-}
-
-export interface RequestTokenPriceGet {
-  name: string;
-  currency: string;
 }
 
 export interface RequestAccountTransfer {

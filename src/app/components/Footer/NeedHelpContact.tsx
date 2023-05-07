@@ -5,7 +5,7 @@ import { messages } from './message';
 // Components
 import { Flex } from '../Box';
 import { Text } from '../Text';
-import { colors } from '../../../theme/colors';
+import { colors } from 'theme/colors';
 import styled from 'styled-components';
 
 const NeedHelpContact: React.FC = () => {

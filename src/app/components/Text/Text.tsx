@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { space, typography, layout } from 'styled-system';
 import { TextProps } from './types';
-import { colors } from '../../../theme/colors';
+import { colors } from 'theme/colors';
 
 const getFontSize = ({ fontSize, large }: TextProps) => {
   return large ? '16px' : fontSize || '14px';

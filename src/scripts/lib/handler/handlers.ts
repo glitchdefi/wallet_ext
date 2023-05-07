@@ -1,6 +1,7 @@
 import { assert } from '@polkadot/util';
 import { GlitchController } from '../../controllers/GlitchController';
-import { PORT_EXTENSION } from '../../../constants/messages';
+import { PORT_EXTENSION } from 'constants/messages';
+import { log } from 'utils/log-config';
 import Extension from './Extension';
 
 import State from './State';
@@ -24,7 +25,7 @@ export default function handler(
     : (sender.tab && sender.tab.url) || sender.url || '<unknown>';
   const source = `${from}: ${id}: ${message}`;
 
-  console.log(` [in] ${source}`); // :: ${JSON.stringify(request)}`);
+  log.debug(` [in] ${source}`); // :: ${JSON.stringify(request)}`);
 
   let promise: Promise<any>;
 
@@ -40,8 +41,8 @@ export default function handler(
     promise
       .then((response: any): void => {
         if (response !== 'pending') {
-          console.log('UI received: ', response);
-          console.log(`[out] ${source}`); // :: ${JSON.stringify(response)}`);
+          log.debug('UI received: ', response);
+          log.debug(`[out] ${source}`); // :: ${JSON.stringify(response)}`);
 
           // between the start and the end of the promise, the user may have closed
           // the tab, in which case port will be undefined
@@ -51,7 +52,7 @@ export default function handler(
         }
       })
       .catch((error: Error): void => {
-        console.log(`[err] ${source}:: ${error.message}`);
+        log.error(`[err] ${source}:: ${error.message}`);
 
         // only send message back to port if it's still connected
         if (port) {

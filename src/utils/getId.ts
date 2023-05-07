@@ -1,4 +1,4 @@
-import { EXTENSION_PREFIX } from '../constants/messages';
+import { EXTENSION_PREFIX } from 'constants/messages';
 
 let counter = 0;
 export function getId(): string {

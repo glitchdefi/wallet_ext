@@ -19,7 +19,16 @@
     "noFallthroughCasesInSwitch": true,
     "downlevelIteration": true,
     "paths": {
-      "packages": ["./src/packages"]
+      "packages": ["./src/packages"],
+      "hooks": ["./src/hooks"],
+      "contexts": ["./src/contexts"],
+      "utils": ["./src/utils"],
+      "theme": ["./src/theme"],
+      "constants": ["./src/constants"],
+      "scripts": ["./src/scripts"],
+      "locales": ["./src/locales"],
+      "app/components": ["./src/app/components"],
+      "app/layouts": ["./src/app/layouts"]
     }
   },
   "include": ["src", "index.d.ts"],
