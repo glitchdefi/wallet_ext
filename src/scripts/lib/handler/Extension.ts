@@ -35,7 +35,7 @@ import type {
   RequestAccountClaimEvmBalance,
   RequestIsEvmClaimed,
 } from '../../types';
-import keyring from '../../../packages/glitch-keyring';
+import keyring from 'packages/glitch-keyring';
 import { TypeRegistry } from '@polkadot/types';
 import type {
   SignerPayloadJSON,
@@ -104,8 +104,11 @@ export default class Extension {
     return { list: await this.state.toggleAuthorization(request) };
   }
 
-  private removeAuthorization(url: string): ResponseAuthorizeList {
-    return { list: this.state.removeAuthorization(url) };
+  private async removeAuthorization(
+    url: string
+  ): Promise<ResponseAuthorizeList> {
+    const authUrls = await this.state.removeAuthorization(url);
+    return { list: authUrls };
   }
 
   private authorizeSubscribe(id: string, port: chrome.runtime.Port): boolean {

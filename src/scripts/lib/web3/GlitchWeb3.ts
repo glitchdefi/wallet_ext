@@ -1,5 +1,5 @@
 import log from 'loglevel';
-import keyring from '../../../packages/glitch-keyring';
+import keyring from 'packages/glitch-keyring';
 import {
   cryptoWaitReady,
   mnemonicGenerate,

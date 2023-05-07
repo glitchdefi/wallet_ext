@@ -13,7 +13,7 @@ import type {
 import { ApiPromise } from '@polkadot/api';
 import Web3Utils from 'web3-utils';
 import isNaN from 'lodash/isNaN';
-import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
+import type { SubjectInfo } from 'packages/glitch-keyring/observable/types';
 import type {
   MessageTypes,
   RequestAccountList,
@@ -29,8 +29,8 @@ import type {
 } from '../types';
 
 import { checkIfDenied } from '@polkadot/phishing';
-import keyring from '@polkadot/ui-keyring';
-import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
+import keyring from 'packages/glitch-keyring';
+import { accounts as accountsObservable } from 'packages/glitch-keyring/observable/accounts';
 import { assert, isNumber } from '@polkadot/util';
 
 import { GlitchController } from '../../controllers/GlitchController';

@@ -7,6 +7,8 @@ import State from './State';
 import Tabs from './Tabs';
 
 const state = new State();
+await state.getPreviousAuthorizations();
+
 const tabs = new Tabs(state);
 const extension = new Extension(state);
 

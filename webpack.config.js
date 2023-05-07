@@ -18,6 +18,7 @@ var alias = {
     'utils',
     'redux-injectors.ts'
   ),
+  packages: path.join(__dirname, 'src', 'packages'),
   'utils/message': path.join(__dirname, 'src', 'utils', 'message.ts'),
   'utils/strings': path.join(__dirname, 'src', 'utils', 'strings.ts'),
   'utils/number': path.join(__dirname, 'src', 'utils', 'number.ts'),
@@ -291,6 +292,9 @@ if (fileSystem.existsSync(secretsPath)) {
 
 var options = {
   mode: process.env.NODE_ENV || 'development',
+  experiments: {
+    topLevelAwait: true,
+  },
   entry: {
     popup: path.join(__dirname, 'src', 'index.tsx'),
     background: path.join(__dirname, 'src', 'scripts', 'background.ts'),

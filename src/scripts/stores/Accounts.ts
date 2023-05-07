@@ -1,4 +1,4 @@
-import type { KeyringJson, KeyringStore } from '@polkadot/ui-keyring/types';
+import type { KeyringJson, KeyringStore } from 'packages/glitch-keyring/types';
 import { EXTENSION_PREFIX } from '../../constants/messages';
 import BaseStore from './Base';
 

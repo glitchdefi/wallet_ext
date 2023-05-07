@@ -4,14 +4,11 @@ import { GlitchController } from './controllers/GlitchController';
 import handlers from './lib/handler/handlers';
 import { withErrorLog } from '../utils/withErrorLog';
 import { ResponseAppStore } from './types';
-import browser from 'webextension-polyfill';
 
 log.setDefaultLevel('debug');
 
 // setup the notification (same a FF default background, white text)
-withErrorLog(() =>
-  browser.action.setBadgeBackgroundColor({ color: '#d90000' })
-);
+withErrorLog(() => chrome.action.setBadgeBackgroundColor({ color: '#d90000' }));
 
 /**
  * Initializes the Glitch controller, and sets up all platform configuration.

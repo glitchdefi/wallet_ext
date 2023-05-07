@@ -158,7 +158,7 @@ function extractMetadata(store: MetadataStore): void {
 }
 
 export default class State {
-  readonly _authUrls: AuthUrls = {};
+  _authUrls: AuthUrls = {};
 
   readonly authRequests: Record<string, AuthRequest> = {};
 
@@ -194,19 +194,15 @@ export default class State {
 
   constructor(providers: Providers = {}) {
     this._providers = providers;
-
     extractMetadata(this.metaStore);
-
-    let previousAuth = null;
-
-    // retrieve previously set authorizations
-    browser.storage.local.get([AUTH_URLS_KEY]).then((result) => {
-      const authString = result?.[AUTH_URLS_KEY];
-      previousAuth = authString ? (JSON.parse(authString) as AuthUrls) : {};
-    });
-
-    this._authUrls = previousAuth;
     this.localStore = new ExtensionStore();
+  }
+
+  public async getPreviousAuthorizations() {
+    // retrieve previously set authorizations
+    const result = await browser.storage.local.get([AUTH_URLS_KEY]);
+    const authString = result?.[AUTH_URLS_KEY];
+    this._authUrls = authString ? (JSON.parse(authString) as AuthUrls) : {};
   }
 
   public get knownMetadata(): MetadataDef[] {
@@ -305,7 +301,7 @@ export default class State {
           url,
         };
 
-        this.saveCurrentAuthList();
+        await this.saveCurrentAuthList();
       }
 
       delete this.authRequests[id];
@@ -324,8 +320,8 @@ export default class State {
     };
   };
 
-  private saveCurrentAuthList() {
-    browser.storage.local.set({
+  private async saveCurrentAuthList(): Promise<void> {
+    await browser.storage.local.set({
       [AUTH_URLS_KEY]: JSON.stringify(this._authUrls),
     });
   }
@@ -401,7 +397,7 @@ export default class State {
       ? `${signCount}`
       : '';
 
-    withErrorLog(() => chrome.browserAction.setBadgeText({ text }));
+    withErrorLog(() => chrome.action.setBadgeText({ text }));
 
     if (shouldClose && text === '') {
       this.popupClose();
@@ -424,18 +420,18 @@ export default class State {
       this._authUrls[url].isAllowed[address] = !entry.isAllowed[address];
     }
 
-    this.saveCurrentAuthList();
+    await this.saveCurrentAuthList();
 
     return this._authUrls;
   }
 
-  public removeAuthorization(url: string): AuthUrls {
+  public async removeAuthorization(url: string): Promise<AuthUrls> {
     const entry = this._authUrls[url];
 
     assert(entry, `The source ${url} is not known`);
 
     delete this._authUrls[url];
-    this.saveCurrentAuthList();
+    await this.saveCurrentAuthList();
 
     return this._authUrls;
   }
