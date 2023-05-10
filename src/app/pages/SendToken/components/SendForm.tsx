@@ -113,9 +113,6 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
                   <Text large ml="12px" mr="4px" bold>
                     GLCH
                   </Text>
-                  <Text fontSize="12px" color={colors.blue6}>
-                    (Substrate address)
-                  </Text>
                 </Flex>
 
                 <DownArrowIcon width="16px" color={colors.primary} />

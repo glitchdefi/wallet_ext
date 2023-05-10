@@ -26,7 +26,7 @@ const ShowPrivateKeys: React.FC = () => {
   const { t } = useTranslation();
 
   const { setAppLoading } = useApplication();
-  const { name, avatar, address } = useAccount();
+  const { name, avatar, address, evmAddress } = useAccount();
 
   const [copied, setCopied] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
@@ -92,6 +92,9 @@ const ShowPrivateKeys: React.FC = () => {
               </Text>
               <Text fontSize="12px" color={colors.gray6}>
                 {truncateAddress(address)}
+              </Text>
+              <Text fontSize="12px" color={colors.gray6}>
+                {truncateAddress(evmAddress)}
               </Text>
             </Box>
           </AccountWrapper>
