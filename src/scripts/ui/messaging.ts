@@ -31,6 +31,7 @@ import type {
   RequestNetworkSet,
   RequestAccountClaimEvmBalance,
   RequestIsEvmClaimed,
+  RequestUpdateAccountAvatar,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -222,6 +223,12 @@ export async function editAccount(
   request: RequestAccountEdit
 ): Promise<ResponseWallet> {
   return sendMessage('pri(wallet.account.edit)', request);
+}
+
+export async function updateAccountAvatar(
+  request: RequestUpdateAccountAvatar
+): Promise<ResponseWallet> {
+  return sendMessage('pri(wallet.account.updateAvatar)', request);
 }
 
 export async function getAccountBalance(): Promise<ResponseWallet> {

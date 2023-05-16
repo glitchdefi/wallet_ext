@@ -31,6 +31,7 @@ import type {
   RequestNetworkSet,
   RequestAccountClaimEvmBalance,
   RequestIsEvmClaimed,
+  RequestUpdateAccountAvatar,
 } from '../../types';
 import keyring from 'packages/glitch-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -268,6 +269,12 @@ export default class Extension {
     return this.controller.editAccount(request);
   }
 
+  private updateAccountAvatar(
+    request: RequestUpdateAccountAvatar
+  ): Promise<ResponseWallet> {
+    return this.controller.updateAccountAvatar(request);
+  }
+
   private getAccountBalance(): Promise<ResponseWallet> {
     return this.controller.getBalance();
   }
@@ -412,6 +419,9 @@ export default class Extension {
 
       case 'pri(wallet.account.edit)':
         return this.editAccount(request as RequestAccountEdit);
+
+      case 'pri(wallet.account.updateAvatar)':
+        return this.updateAccountAvatar(request as RequestUpdateAccountAvatar);
 
       case 'pri(wallet.account.balance.get)':
         return this.getAccountBalance();

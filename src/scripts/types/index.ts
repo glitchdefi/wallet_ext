@@ -64,6 +64,10 @@ export interface RequestSignatures {
   'pri(wallet.account.import)': [RequestAccountImport, ResponseWallet];
   'pri(wallet.account.change)': [RequestAccountChange, ResponseWallet];
   'pri(wallet.account.edit)': [RequestAccountEdit, ResponseWallet];
+  'pri(wallet.account.updateAvatar)': [
+    RequestUpdateAccountAvatar,
+    ResponseWallet
+  ];
   'pri(wallet.account.forget)': [RequestAccountForget, boolean];
   'pri(wallet.account.transfer)': [
     RequestAccountTransfer,
@@ -141,6 +145,10 @@ export interface RequestAccountImport {
 }
 export interface RequestAccountEdit {
   name: string;
+}
+
+export interface RequestUpdateAccountAvatar {
+  avatar: string;
 }
 export interface RequestPrivatekeyValidate {
   privateKey: string;

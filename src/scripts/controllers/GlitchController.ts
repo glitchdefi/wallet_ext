@@ -18,6 +18,7 @@ import {
   RequestIsEvmClaimed,
   RequestNetworkSet,
   RequestPrivatekeyValidate,
+  RequestUpdateAccountAvatar,
   RequestUpdateWalletStorage,
   RequestWalletCreate,
   RequestWalletValidate,
@@ -320,6 +321,21 @@ export class GlitchController {
     });
   }
 
+  async updateAccountAvatar({
+    avatar,
+  }: RequestUpdateAccountAvatar): Promise<ResponseWallet> {
+    const oldAccounts = await this.appStateController.getAccounts();
+    const address = await this.appStateController.getSelectedAddress();
+
+    oldAccounts[address].avatar = avatar;
+
+    return await this.appStateController.updateState('wallet', {
+      accounts: {
+        ...oldAccounts,
+      },
+    });
+  }
+
   async claimEvmAccount(
     request: RequestAccountClaimEvmBalance
   ): Promise<boolean> {
@@ -379,11 +395,14 @@ export class GlitchController {
   async getBalance(): Promise<ResponseWallet> {
     const oldAccounts = await this.appStateController.getAccounts();
     const addressSelected = await this.appStateController.getSelectedAddress();
-    const { freeBalance, reservedBalance } = await this.glitchWeb3.getBalance(
-      addressSelected
-    );
 
-    oldAccounts[addressSelected].balance = { freeBalance, reservedBalance };
+    if (addressSelected) {
+      const { freeBalance, reservedBalance } = await this.glitchWeb3.getBalance(
+        addressSelected
+      );
+
+      oldAccounts[addressSelected].balance = { freeBalance, reservedBalance };
+    }
 
     return await this.appStateController.updateState('wallet', {
       accounts: {
