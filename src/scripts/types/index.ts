@@ -151,7 +151,7 @@ export interface RequestAccountClaimEvmBalance {
 }
 
 export interface RequestIsEvmClaimed {
-  substareAddress: string;
+  substrateAddress: string;
   evmAddress: string;
 }
 

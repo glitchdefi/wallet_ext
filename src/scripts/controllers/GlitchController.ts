@@ -48,7 +48,6 @@ export class GlitchController {
       address: string;
       meta?: {
         name: string;
-        avatar: string;
         whenCreated: number;
       };
     };
@@ -68,7 +67,7 @@ export class GlitchController {
           address,
           evmAddress: evmAccount.address,
           name: meta.name,
-          avatar: meta.avatar,
+          avatar: null,
           whenCreated: meta.whenCreated,
           balance: { reservedBalance: '0', freeBalance: '0' },
           seed: mnemonicEncrypted,
@@ -103,7 +102,6 @@ export class GlitchController {
         address: string;
         meta?: {
           name: string;
-          avatar: string;
           whenCreated: number;
         };
       };
@@ -129,7 +127,7 @@ export class GlitchController {
             evmAddress: evmAccount.address,
             balance: { reservedBalance: '0', freeBalance: '0' },
             name: meta.name,
-            avatar: meta.avatar,
+            avatar: null,
             whenCreated: meta.whenCreated,
             encryptedPk: evmAccount.encryptedPk,
             seed: mnemonicEncrypted,
@@ -205,7 +203,6 @@ export class GlitchController {
         address: string;
         meta?: {
           name: string;
-          avatar: string;
           whenCreated: number;
         };
       };
@@ -218,7 +215,7 @@ export class GlitchController {
             name: meta.name,
             address: address,
             evmAddress: evmAccount.address,
-            avatar: meta.avatar,
+            avatar: null,
             balance: { reservedBalance: '0', freeBalance: '0' },
             seed: mnemonicEncrypted,
             whenCreated: meta.whenCreated,
@@ -249,7 +246,6 @@ export class GlitchController {
       address: string;
       meta?: {
         name: string;
-        avatar: string;
         whenCreated: number;
       };
     };
@@ -262,7 +258,7 @@ export class GlitchController {
           name: meta.name,
           address: address,
           evmAddress: evmAccount.address,
-          avatar: meta.avatar,
+          avatar: null,
           balance: { freeBalance: '0', reservedBalance: '0' },
           seed: mnemonicEncrypted,
           whenCreated: meta.whenCreated,
@@ -336,7 +332,7 @@ export class GlitchController {
 
   async isEvmClaimed(request: RequestIsEvmClaimed): Promise<boolean> {
     return await this.glitchWeb3.isEvmClaimed(
-      request.substareAddress,
+      request.substrateAddress,
       request.evmAddress
     );
   }

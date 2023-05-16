@@ -151,7 +151,7 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     if (address !== '--' && isLocked === false) {
-      isEvmClaimed({ substareAddress: address, evmAddress }).then(
+      isEvmClaimed({ substrateAddress: address, evmAddress }).then(
         (isClaimed) => {
           if (!isClaimed) onClaimEvmBalance({ address });
         }

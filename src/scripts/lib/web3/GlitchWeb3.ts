@@ -19,7 +19,6 @@ import { DEFAULT_TYPE } from 'constants/values';
 import { GlitchToken } from 'constants/tokens';
 import { GlitchNetwork, GLITCH_EVM_TYPES } from 'constants/networks';
 
-// import { getAvatar } from 'utils/drawAvatar';
 import {
   isHexSeed,
   messageEncryption,
@@ -84,7 +83,6 @@ export class GlitchWeb3 {
       seed?.trim() || mnemonicGenerate(GlitchToken.default_mnemonic_length);
 
     const { json } = await keyring.addUri(mnemonic, password || undefined, {
-      avatar: null,
       name,
       genesisHash: this.api.genesisHash.toHex(),
     });
