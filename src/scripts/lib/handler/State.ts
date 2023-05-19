@@ -464,7 +464,16 @@ export default class State {
       `The source ${url} has a pending authorization request`
     );
 
-    if (this._authUrls[idStr]) {
+    const totalAccounts = Object.keys(this._authUrls[idStr]?.isAllowed)?.length;
+    const unauthorizedAccounts = Object.keys(
+      this._authUrls[idStr]?.isAllowed
+    )?.filter((k) => this._authUrls[idStr].isAllowed[k] === false)?.length;
+
+    if (
+      this._authUrls[idStr] &&
+      ((totalAccounts <= 1 && unauthorizedAccounts <= 0) ||
+        (totalAccounts > 1 && unauthorizedAccounts !== totalAccounts))
+    ) {
       // this url was seen in the past
       assert(
         !includes(
@@ -477,6 +486,9 @@ export default class State {
       return false;
     }
 
+    // There are 2 cases that need to be re-authorised
+    // 1. When the wallet has only 1 account and that account is disconnected from this
+    // 2. When wallet has multiple accounts and all accounts are disconnected from this url
     return new Promise((resolve, reject): void => {
       const id = getId();
 
