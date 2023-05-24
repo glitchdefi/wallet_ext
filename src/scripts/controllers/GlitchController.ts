@@ -16,6 +16,7 @@ import {
   RequestAccountTransfer,
   RequestAutoLockSet,
   RequestEstimateFeeGet,
+  RequestIsEvmClaimed,
   RequestNetworkSet,
   RequestPrivatekeyValidate,
   RequestTokenPriceGet,
@@ -57,6 +58,8 @@ export class GlitchController {
         whenCreated: number;
       };
     };
+
+    this.glitchWeb3.unlockAccount(request.password, address);
 
     return await this.appStateController.updateState('wallet', {
       isInitialized: 'pending',
@@ -109,6 +112,8 @@ export class GlitchController {
         whenCreated: number;
       };
     };
+
+    this.glitchWeb3.unlockAccount(request.password, address);
 
     await this.setAutoLockTimer({
       openTime: new Date().getTime(),
@@ -322,10 +327,16 @@ export class GlitchController {
   ): Promise<boolean> {
     const allAccounts = await this.appStateController.getAccounts();
     const currentAccount = allAccounts[request.address];
-
     this.glitchWeb3.unlockAccount('', request.address);
 
-    return this.glitchWeb3.claimEvmAccountBalance(currentAccount);
+    return await this.glitchWeb3.claimEvmAccountBalance(currentAccount);
+  }
+
+  async isEvmClaimed(request: RequestIsEvmClaimed): Promise<boolean> {
+    return await this.glitchWeb3.isEvmClaimed(
+      request.substareAddress,
+      request.evmAddress
+    );
   }
 
   async transfer(

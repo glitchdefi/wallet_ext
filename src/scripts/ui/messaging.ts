@@ -33,6 +33,7 @@ import type {
   RequestAuthorizeToggle,
   RequestNetworkSet,
   RequestAccountClaimEvmBalance,
+  RequestIsEvmClaimed,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -250,6 +251,12 @@ export async function claimEvmAccountBalance(
   request: RequestAccountClaimEvmBalance
 ): Promise<boolean> {
   return sendMessage('pri(wallet.account.claimEvmBalance)', request);
+}
+
+export async function isEvmClaimed(
+  request: RequestIsEvmClaimed
+): Promise<boolean> {
+  return sendMessage('pri(wallet.account.isEvmClaimed)', request);
 }
 
 // Settings

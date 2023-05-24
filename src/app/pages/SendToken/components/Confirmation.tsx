@@ -20,13 +20,14 @@ interface Props {
   amount?: any;
   toAddress?: any;
   estimateFee?: string;
+  isTransferAll?: boolean;
 }
 
 export const Confirmation: React.FC<Props> = React.memo(
-  ({ amount, estimateFee, toAddress }) => {
+  ({ amount, estimateFee, toAddress, isTransferAll }) => {
     const history = useHistory();
     const { setAppLoading } = useApplication();
-    const { walletCtx } = useWallet();
+    const { walletCtx, onClaimEvmBalance } = useWallet();
     const { toastSuccess, toastError } = useToast();
     const [password, setPassword] = useState<string>('');
     const [validPassword, setValidPassword] = useState<boolean>(true);
@@ -42,6 +43,9 @@ export const Confirmation: React.FC<Props> = React.memo(
           transfer({ toAddress, amount }).then((res) => {
             const { success, message } = res || {};
             if (success) {
+              if (isTransferAll) {
+                onClaimEvmBalance({ address: selectedAddress });
+              }
               toastSuccess(
                 null,
                 'Sent has been successfully! It might take some time for changes to take affect.'

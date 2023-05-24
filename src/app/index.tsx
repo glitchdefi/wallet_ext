@@ -11,13 +11,14 @@ import { ExtensionStore } from '../scripts/lib/localStore';
 
 // Hooks
 import { useSettings } from 'contexts/SettingsContext/hooks';
-import { useWallet } from 'contexts/WalletContext/hooks';
+import { useAccount, useWallet } from 'contexts/WalletContext/hooks';
 import { useTokenPrice } from 'contexts/TokenPriceContext/hooks';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
 import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
 import { useSigningReq } from 'contexts/SigningReqContext/hooks';
 import {
   getTokenPrice,
+  isEvmClaimed,
   subscribeAuthorizeRequests,
   subscribeSigningRequests,
 } from 'scripts/ui/messaging';
@@ -48,6 +49,7 @@ import { SendTokenPage } from './pages/SendToken';
 import { AuthorizePage } from './pages/Authorize';
 import { ConnectedDapps } from './pages/ConnectedDapps';
 import { SigningPage } from './pages/Signing';
+import { useNetwork } from 'contexts/SettingsContext/hooks';
 
 const history = createMemoryHistory();
 
@@ -55,13 +57,21 @@ export const App: React.FC = () => {
   const { appLoading } = useApplication();
   const { setSettingsCtx } = useSettings();
   const { setTokenPrice } = useTokenPrice();
+  const network = useNetwork();
   const { signRequests, setSignRequests } = useSigningReq();
   const { authRequests, setAuthRequests } = useAuthorizeReq();
-  const { walletCtx, setWalletCtx, onLockWallet, onGetAccountBalance } =
-    useWallet();
-  const { isInitialized } = walletCtx || {};
+  const {
+    walletCtx,
+    setWalletCtx,
+    onLockWallet,
+    onGetAccountBalance,
+    onClaimEvmBalance,
+  } = useWallet();
+  const { address, evmAddress } = useAccount();
+  const { isInitialized, isLocked } = walletCtx || {};
 
   const [timeQuery, setTimeQuery] = useState<number>(0);
+  const [timeTokenPriceQuery, setTimeTokenPriceQuery] = useState<number>(0);
   const [hasInternet, setHasInternet] = useState<boolean>(true);
 
   useEffect((): void => {
@@ -98,13 +108,19 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     let job: NodeJS.Timer;
+    let tokenPriceJob: NodeJS.Timer;
 
     job = setInterval(() => {
       setTimeQuery((prev) => prev + 1);
     }, UPDATE_TIME);
 
+    tokenPriceJob = setInterval(() => {
+      setTimeTokenPriceQuery((prev) => prev + 1);
+    }, UPDATE_TIME * 4);
+
     return () => {
       clearInterval(job);
+      clearInterval(tokenPriceJob);
     };
   }, []);
 
@@ -112,11 +128,17 @@ export const App: React.FC = () => {
     //  && navigator.onLine
     if (isInitialized !== 'none' && hasInternet) {
       onGetAccountBalance();
+    }
+  }, [timeQuery, hasInternet]);
+
+  useEffect(() => {
+    //  && navigator.onLine
+    if (isInitialized !== 'none' && hasInternet) {
       getTokenPrice({ name: 'glitch-protocol', currency: 'usd' }).then(
         setTokenPrice
       );
     }
-  }, [timeQuery, hasInternet]);
+  }, [timeTokenPriceQuery, hasInternet]);
 
   useEffect(() => {
     addEventListener('offline', () => setHasInternet(false));
@@ -127,6 +149,16 @@ export const App: React.FC = () => {
       removeEventListener('offline', () => setHasInternet(false));
     };
   }, []);
+
+  useEffect(() => {
+    if (address !== '--' && isLocked === false) {
+      isEvmClaimed({ substareAddress: address, evmAddress }).then(
+        (isClaimed) => {
+          if (!isClaimed) onClaimEvmBalance({ address });
+        }
+      );
+    }
+  }, [address, network, isLocked]);
 
   const Root: any = walletCtx?.isLocked ? (
     <UnlockPage />

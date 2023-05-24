@@ -79,6 +79,7 @@ export interface RequestSignatures {
     RequestAccountClaimEvmBalance,
     boolean
   ];
+  'pri(wallet.account.isEvmClaimed)': [RequestIsEvmClaimed, boolean];
   'pri(settings.autolock.set)': [RequestAutoLockSet, ResponseSettings];
   'pri(settings.network.set)': [RequestNetworkSet, ResponseSettings];
   'pri(transactions.list.get)': [
@@ -153,6 +154,12 @@ export interface RequestPrivatekeyValidate {
 export interface RequestAccountClaimEvmBalance {
   address: string;
 }
+
+export interface RequestIsEvmClaimed {
+  substareAddress: string;
+  evmAddress: string;
+}
+
 export interface RequestAutoLockSet {
   openTime: number;
   duration: number;

@@ -18,7 +18,7 @@ import { Routes } from 'constants/routes';
 import { colors } from 'theme/colors';
 
 import { Box, Flex } from 'app/components/Box';
-import { Button, CopyButton } from 'app/components/Button';
+import { CopyButton } from 'app/components/Button';
 import { Text } from 'app/components/Text';
 import {
   EllipsisIcon,
@@ -33,7 +33,6 @@ import { Header } from '../Header';
 import { BackedUpView } from './BackedUpView';
 import { messages } from '../../messages';
 import { ConnectedDappNoti } from './ConnectedDappNoti';
-import { SyncBalanceView } from './SyncBalanceView';
 
 export const WalletPanel: React.FC = React.memo(() => {
   const { t } = useTranslation();
@@ -42,7 +41,7 @@ export const WalletPanel: React.FC = React.memo(() => {
   const { walletCtx, onLockWallet } = useWallet();
   const account = useAccount();
   const { isBackup } = walletCtx || {};
-  const { name, balance, address, evmAddress } = account;
+  const { name, balance, address } = account;
   const totalBalance = calcTotalBalance(balance);
   const totalValue = totalBalance * tokenPrice;
 
@@ -107,7 +106,13 @@ export const WalletPanel: React.FC = React.memo(() => {
             <Text fontSize="12px" color={colors.primary}>
               {truncateAddress(evmAddress)}
             </Text>
-            <CopyButton value={evmAddress} p="2px" ml="6px" width="10px" />
+            <CopyButton
+              id={evmAddress}
+              value={evmAddress}
+              p="2px"
+              ml="6px"
+              width="10px"
+            />
             <Text fontSize="12px" ml="10px" color={colors.gray6}>
               (EVM address)
             </Text>

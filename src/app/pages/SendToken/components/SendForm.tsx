@@ -26,8 +26,13 @@ import { Dropdown } from 'app/components/Dropdown';
 import { CheckIcon, DownArrowIcon } from 'app/components/Svg';
 
 interface Props {
-  initData: { amount: any; toAddress: string };
-  onNext: (amount: any, estimateFee: string, toAddress: string) => void;
+  initData: { amount: any; toAddress: string; isMaxClicked: boolean };
+  onNext: (
+    amount: any,
+    estimateFee: string,
+    toAddress: string,
+    isMaxClicked: boolean
+  ) => void;
 }
 
 export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
@@ -56,8 +61,9 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
     if (initData) {
       !toAddress && setToAddress(initData.toAddress);
       !amount && setAmount(initData.amount);
+      !isMaxClicked && setIsMaxClicked(initData.isMaxClicked);
     }
-  }, [initData]);
+  }, [initData.toAddress, initData.amount, initData.isMaxClicked]);
 
   useEffect(() => {
     setIsValidAddress(isValidAddressPolkadotAddress(toAddress));
@@ -168,6 +174,7 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
 
           <AmountInput
             initAmount={amount}
+            isMaxClicked={isMaxClicked}
             isFeeLoading={isFeeLoading}
             estimateFee={estimateFee}
             onChange={({ amount, isValid, isMaxClicked }) => {
@@ -199,7 +206,7 @@ export const SendForm: React.FC<Props> = React.memo(({ initData, onNext }) => {
         {isEnableSendButton ? (
           <ButtonShadow
             width="100%"
-            onClick={() => onNext(amount, estimateFee, toAddress)}
+            onClick={() => onNext(amount, estimateFee, toAddress, isMaxClicked)}
           >
             Send
           </ButtonShadow>

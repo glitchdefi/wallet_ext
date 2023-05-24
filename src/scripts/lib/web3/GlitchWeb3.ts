@@ -256,6 +256,7 @@ export class GlitchWeb3 {
   async claimEvmAccountBalance(account: AccountTypes): Promise<boolean> {
     try {
       const addressPair = keyring.getPair(account.address);
+
       const privateKey = this.web3.eth.accounts.decrypt(
         JSON.parse(account.encryptedPk),
         account.evmAddress
@@ -287,6 +288,31 @@ export class GlitchWeb3 {
       console.log(error);
       return false;
     }
+  }
+
+  /**
+   *
+   * @param evmAddress The EVM address to check
+   * @returns A promise that resolves to true if the EVM address is claimed
+   * or false if the address is not claimed
+   */
+  async isEvmClaimed(
+    substrateAddress: string,
+    evmAddress: string
+  ): Promise<boolean> {
+    const rpcEvmAddress = await this.api.query.evmAccounts.evmAddresses(
+      substrateAddress
+    );
+
+    if (!rpcEvmAddress.toJSON()) return false;
+    if (
+      rpcEvmAddress.toJSON() &&
+      rpcEvmAddress.toJSON() === evmAddress?.toLowerCase()
+    ) {
+      return true;
+    }
+
+    console.error('An evm account already exists to bind to this account');
   }
 
   clearAllWeb3WalletAccounts() {

@@ -21,6 +21,7 @@ type Value = {
 
 interface Props {
   initAmount?: any;
+  isMaxClicked: boolean;
   balance?: any;
   onChange: ({ amount, isValid }: Value) => void;
   isFeeLoading?: boolean;
@@ -29,6 +30,7 @@ interface Props {
 
 export const AmountInput: React.FC<Props> = ({
   initAmount,
+  isMaxClicked: _isMaxClicked,
   onChange,
   balance,
   isFeeLoading,
@@ -42,7 +44,8 @@ export const AmountInput: React.FC<Props> = ({
 
   useEffect(() => {
     initAmount && setAmount(initAmount);
-  }, [initAmount]);
+    _isMaxClicked && setIsMaxClicked(_isMaxClicked);
+  }, [initAmount, _isMaxClicked]);
 
   // Check validate
   useEffect(() => {
