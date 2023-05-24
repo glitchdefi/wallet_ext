@@ -464,9 +464,11 @@ export default class State {
       `The source ${url} has a pending authorization request`
     );
 
-    const totalAccounts = Object.keys(this._authUrls[idStr]?.isAllowed)?.length;
+    const totalAccounts = Object.keys(
+      this._authUrls[idStr]?.isAllowed || {}
+    )?.length;
     const unauthorizedAccounts = Object.keys(
-      this._authUrls[idStr]?.isAllowed
+      this._authUrls[idStr]?.isAllowed || {}
     )?.filter((k) => this._authUrls[idStr].isAllowed[k] === false)?.length;
 
     if (
