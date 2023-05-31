@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import QRCode from 'qrcode.react';
+import { TabList, TabPanel } from 'react-tabs';
 
 import { colors } from 'theme/colors';
 import { useAccount } from 'contexts/WalletContext/hooks';
@@ -11,27 +10,15 @@ import { Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { PageLayout } from 'app/layouts';
 import { Button } from 'app/components/Button';
-import { CheckIcon, CopyIcon, LeftArrowIcon } from 'app/components/Svg';
+import { LeftArrowIcon } from 'app/components/Svg';
+import { Tab, Tabs } from 'app/components/Tabs';
+import { AccountInfoWithQRCode } from 'app/components/Shared';
 
 const ReceiveToken: React.FC = () => {
   const history = useHistory();
-  const { t } = useTranslation();
 
-  const { name, address } = useAccount();
-  const [copied, setCopied] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (copied) {
-      setTimeout(() => {
-        setCopied(false);
-      }, 1500);
-    }
-  }, [copied]);
-
-  const onCopy = () => {
-    navigator.clipboard.writeText(address);
-    setCopied(true);
-  };
+  const { name, address, evmAddress } = useAccount();
+  const [activeTab, setActiveTab] = useState<number>(0);
 
   return (
     <PageLayout minHeight="600px">
@@ -56,57 +43,34 @@ const ReceiveToken: React.FC = () => {
         height="512px"
       >
         <Flex flexDirection="column" alignItems="center">
-          <Text mb="32px" color={colors.gray7} bold>
+          <Text color={colors.gray7} bold>
             {name}
           </Text>
-
-          <Text fontSize="12px" color={colors.blue6}>
-            (Substrate address)
-          </Text>
         </Flex>
 
-        <StyledBorder>
-          <QRCode value={address} size={160} />
-        </StyledBorder>
-
-        <Flex
-          mt="24px"
-          background={colors.gray1}
-          flexWrap="wrap"
-          py="8px"
-          px="26px"
+        <Tabs
+          selectedIndex={activeTab}
+          onSelect={(index) => setActiveTab(index)}
         >
-          <Text textAlign="center" color={colors.gray7} large>
-            {address}
-          </Text>
-        </Flex>
+          <TabList>
+            <Tab isactive={activeTab === 0 ? 'true' : 'false'}>
+              <Text>Substrate Address</Text>
+            </Tab>
+            <Tab isactive={activeTab === 1 ? 'true' : 'false'}>
+              <Text>EVM Address</Text>
+            </Tab>
+          </TabList>
 
-        <Button width="160px" mt="24px" variant="secondary" onClick={onCopy}>
-          <Flex justifyContent="center" alignItems="center">
-            {copied ? (
-              <CheckIcon width="12px" color={colors.primary} />
-            ) : (
-              <CopyIcon width="12px" />
-            )}
-            <Text ml="10px" color={colors.primary} bold>
-              {copied ? 'Copied' : 'Copy address'}
-            </Text>
-          </Flex>
-        </Button>
+          <TabPanel>
+            <AccountInfoWithQRCode address={address} />
+          </TabPanel>
+          <TabPanel>
+            <AccountInfoWithQRCode address={evmAddress} />
+          </TabPanel>
+        </Tabs>
       </Flex>
     </PageLayout>
   );
 };
-
-const StyledBorder = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 12px;
-  width: 192px;
-  height: 192px;
-  background: ${colors.gray1};
-  box-shadow: -3px 3px 0px ${colors.primary}, 3px -1px 0px ${colors.secondary};
-`;
 
 export default ReceiveToken;

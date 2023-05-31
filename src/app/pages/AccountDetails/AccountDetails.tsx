@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
-import QRCode from 'qrcode.react';
+import { TabList, TabPanel } from 'react-tabs';
 
 import { colors } from 'theme/colors';
 
@@ -12,10 +11,12 @@ import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { PageLayout } from 'app/layouts';
 import { Button } from 'app/components/Button';
-import { CheckIcon, CloseIcon, CopyIcon, EditIcon } from 'app/components/Svg';
+import { CheckIcon, CloseIcon, EditIcon } from 'app/components/Svg';
 import { messages } from './messages';
 import { Input } from 'app/components/Form';
 import { validateNameExist } from 'utils/strings';
+import { Tab, Tabs } from 'app/components/Tabs';
+import { AccountInfoWithQRCode } from 'app/components/Shared';
 
 const AccountDetails: React.FC = () => {
   const history = useHistory();
@@ -24,12 +25,12 @@ const AccountDetails: React.FC = () => {
   const { accounts } = walletCtx || {};
 
   const account = useAccount();
-  const { name: accountName, address } = account;
+  const { name: accountName, address, evmAddress } = account;
 
-  const [copied, setCopied] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<boolean>(false);
   const [isNameExist, setIsNameExist] = useState<boolean>(false);
   const [name, setName] = useState<string>(accountName || '');
+  const [activeTab, setActiveTab] = useState<number>(0);
 
   useEffect(() => {
     showEdit && setShowEdit(false);
@@ -45,19 +46,6 @@ const AccountDetails: React.FC = () => {
       isError && setIsNameExist(true);
     }
   }, [name]);
-
-  useEffect(() => {
-    if (copied) {
-      setTimeout(() => {
-        setCopied(false);
-      }, 1500);
-    }
-  }, [copied]);
-
-  const onCopy = () => {
-    navigator.clipboard.writeText(address);
-    setCopied(true);
-  };
 
   return (
     <PageLayout minHeight="600px">
@@ -130,49 +118,30 @@ const AccountDetails: React.FC = () => {
             </Flex>
           )}
 
-          <StyledBorder>
-            <QRCode value={address} size={160} />
-          </StyledBorder>
-
-          <Flex
-            mt="24px"
-            background={colors.gray2}
-            flexWrap="wrap"
-            py="8px"
-            px="26px"
+          <Tabs
+            selectedIndex={activeTab}
+            onSelect={(index) => setActiveTab(index)}
           >
-            <Text textAlign="center" color={colors.gray7} large>
-              {address}
-            </Text>
-          </Flex>
+            <TabList>
+              <Tab isactive={activeTab === 0 ? 'true' : 'false'}>
+                <Text>Substrate Address</Text>
+              </Tab>
+              <Tab isactive={activeTab === 1 ? 'true' : 'false'}>
+                <Text>EVM Address</Text>
+              </Tab>
+            </TabList>
 
-          <Button width="160px" mt="24px" variant="secondary" onClick={onCopy}>
-            <Flex justifyContent="center" alignItems="center">
-              {copied ? (
-                <CheckIcon width="12px" color={colors.primary} />
-              ) : (
-                <CopyIcon width="12px" />
-              )}
-              <Text ml="10px" color={colors.primary} bold>
-                {copied ? 'Copied' : 'Copy address'}
-              </Text>
-            </Flex>
-          </Button>
+            <TabPanel>
+              <AccountInfoWithQRCode address={address} />
+            </TabPanel>
+            <TabPanel>
+              <AccountInfoWithQRCode address={evmAddress} />
+            </TabPanel>
+          </Tabs>
         </Flex>
       </Flex>
     </PageLayout>
   );
 };
-
-const StyledBorder = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 32px;
-  width: 192px;
-  height: 192px;
-  background: ${colors.gray1};
-  box-shadow: -3px 3px 0px ${colors.primary}, 3px -1px 0px ${colors.secondary};
-`;
 
 export default AccountDetails;

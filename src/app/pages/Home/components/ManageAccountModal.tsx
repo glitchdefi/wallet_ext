@@ -76,6 +76,9 @@ export const ManageAccountModal: React.FC<Props> = React.memo(
                       <Text fontSize="12px" color={colors.gray7}>
                         {truncateAddress(account?.address)}
                       </Text>
+                      <Text fontSize="12px" color={colors.gray7}>
+                        {truncateAddress(account?.evmAddress)}
+                      </Text>
                     </Box>
                     {checked && (
                       <CheckIcon width="18px" color={colors.primary} />

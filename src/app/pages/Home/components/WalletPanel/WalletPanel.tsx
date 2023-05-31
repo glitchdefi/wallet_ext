@@ -41,7 +41,7 @@ export const WalletPanel: React.FC = React.memo(() => {
   const { walletCtx, onLockWallet } = useWallet();
   const account = useAccount();
   const { isBackup } = walletCtx || {};
-  const { name, balance, address } = account;
+  const { name, balance, address, evmAddress } = account;
   const totalBalance = calcTotalBalance(balance);
   const totalValue = totalBalance * tokenPrice;
 
@@ -97,12 +97,12 @@ export const WalletPanel: React.FC = React.memo(() => {
               {truncateAddress(address)}
             </Text>
             <CopyButton value={address} p="2px" ml="6px" width="10px" />
-            {/* <Text fontSize="12px" ml="10px" color={colors.gray6}>
+            <Text fontSize="12px" ml="10px" color={colors.gray6}>
               (Substrate address)
-            </Text> */}
+            </Text>
           </Flex>
 
-          {/* <Flex alignItems="center">
+          <Flex alignItems="center">
             <Text fontSize="12px" color={colors.primary}>
               {truncateAddress(evmAddress)}
             </Text>
@@ -116,7 +116,7 @@ export const WalletPanel: React.FC = React.memo(() => {
             <Text fontSize="12px" ml="10px" color={colors.gray6}>
               (EVM address)
             </Text>
-          </Flex> */}
+          </Flex>
 
           <Flex alignItems="center" justifyContent="space-between" mt="16px">
             <Flex alignItems="center">
