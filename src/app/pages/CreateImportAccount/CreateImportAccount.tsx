@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { useHistory, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { TabList, TabPanel } from 'react-tabs';
 
 import { messages } from './messages';
 
@@ -13,6 +12,7 @@ import { Box, Flex } from 'app/components/Box';
 import { Text } from 'app/components/Text';
 import { Button } from 'app/components/Button';
 import { CloseIcon } from 'app/components/Svg';
+import { Tab, Tabs } from 'app/components/Tabs';
 import { CreateAccountPanel } from './components/CreateAccountPanel';
 import { ImportPrivateKeyPanel } from './components/ImportPrivateKeyPanel';
 
@@ -37,23 +37,23 @@ const CreateImportAccount: React.FC = () => {
             {t(messages.title())}
           </Text>
 
-          <Button p="0px" onClick={() => history.push("/")}>
+          <Button p="0px" onClick={() => history.push('/')}>
             <CloseIcon width="12px" fill={colors.gray7} />
           </Button>
         </Flex>
 
         <Box height="100%" px="16px" background={colors.gray1}>
-          <StyledTabs
+          <Tabs
             selectedIndex={activeTab}
             onSelect={(index) => setActiveTab(index)}
           >
             <TabList>
-              <StyledTab isactive={activeTab === 0 ? 'true' : 'false'}>
+              <Tab isactive={activeTab === 0 ? 'true' : 'false'}>
                 <Text>{t(messages.createAccount())}</Text>
-              </StyledTab>
-              <StyledTab isactive={activeTab === 1 ? 'true' : 'false'}>
+              </Tab>
+              <Tab isactive={activeTab === 1 ? 'true' : 'false'}>
                 <Text>{t(messages.importPrivateKeys())}</Text>
-              </StyledTab>
+              </Tab>
             </TabList>
 
             <TabPanel>
@@ -62,50 +62,11 @@ const CreateImportAccount: React.FC = () => {
             <TabPanel>
               <ImportPrivateKeyPanel />
             </TabPanel>
-          </StyledTabs>
+          </Tabs>
         </Box>
       </Flex>
     </PageLayout>
   );
 };
-
-const StyledTabs = styled(Tabs)`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-
-  ul {
-    list-style: none;
-    display: flex;
-    margin: 0px;
-    padding: 0px;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 16px;
-    border-bottom: 1px solid ${colors.gray8};
-  }
-
-  .react-tabs__tab-panel--selected {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-`;
-
-const StyledTab = styled(Tab)<{ isactive?: string }>`
-  user-select: none;
-  padding-top: 8px;
-  padding-bottom: ${({ isactive }) => (isactive === 'true' ? '10px' : '11px')};
-  cursor: pointer;
-  border-bottom: ${({ isactive }) =>
-    isactive === 'true' && `1px solid ${colors.primary}`};
-
-  div {
-    transition: all 0.5s;
-
-    color: ${({ isactive }) =>
-      isactive === 'true' ? colors.primary : colors.gray6};
-  }
-`;
 
 export default CreateImportAccount;

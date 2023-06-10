@@ -171,6 +171,14 @@ var alias = {
     'Form',
     'index.tsx'
   ),
+  'app/components/Tabs': path.join(
+    __dirname,
+    'src',
+    'app',
+    'components',
+    'Tabs',
+    'index.tsx'
+  ),
   'app/components/Switch': path.join(
     __dirname,
     'src',

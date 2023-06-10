@@ -96,13 +96,7 @@ export const WalletPanel: React.FC = React.memo(() => {
             <Text fontSize="12px" color={colors.primary}>
               {truncateAddress(address)}
             </Text>
-            <CopyButton
-              id={address}
-              value={address}
-              p="2px"
-              ml="6px"
-              width="10px"
-            />
+            <CopyButton value={address} p="2px" ml="6px" width="10px" />
             <Text fontSize="12px" ml="10px" color={colors.gray6}>
               (Substrate address)
             </Text>
