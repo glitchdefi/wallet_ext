@@ -78,9 +78,6 @@ export const Confirmation: React.FC<Props> = React.memo(
 
               <Text mt="4px" color={colors.gray7}>
                 {selectedAddress}
-                <Text as="span" ml="4px" fontSize="12px" color={colors.blue6}>
-                  (Substrate address)
-                </Text>
               </Text>
             </Box>
 

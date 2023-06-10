@@ -26,7 +26,7 @@ export const GlitchNetwork = [
     baseApiUrl: 'https://api-uat-explorer.glitch.finance',
     explorerUrl: 'https://api-uat-explorer.glitch.finance',
     genesisHash:
-      '0xf2a30cfbdc4786fa8374d64cee42c8628051a3e68c2f715cf35cba44fdcd61c9',
+      '0x0d25f2cd4d5692442623e9f947b408e703c15a3849dbb97a75e6f00468a981e7',
   },
 ];
 

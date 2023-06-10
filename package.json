@@ -1,7 +1,7 @@
 {
-  "name": "glitch-wallet-extension-v3",
-  "version": "1.0.0",
-  "description": "Glitch Wallet Extension V3",
+  "name": "glitch-wallet-extension",
+  "version": "1.5.0",
+  "description": "Glitch Wallet Extension",
   "license": "MIT",
   "scripts": {
     "build": "rm -rf build && node utils/build.js",
