@@ -4,12 +4,13 @@
 
 ## Prerequisites
 
-- NodeJS >= v11
+- NodeJS >= v16
 - Yarn latest
 
 ### Installation
 
 ### Developers
+
 Execute the following to clone, install dependencies, and run a development server:
 
     git clone https://github.com/glitchdefi/wallet_ext
@@ -18,7 +19,8 @@ Execute the following to clone, install dependencies, and run a development serv
     yarn start
 
 ### Build App
-`yarn install`
+
+`yarn build`
 
 ### Tester
 

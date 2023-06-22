@@ -7,7 +7,7 @@ export const GlitchNetwork = [
     baseApiUrl: 'https://api-mainnet.glitch.finance',
     explorerUrl: 'https://explorer.glitch.finance',
     genesisHash:
-      '0xef807eb7ebbfe8f4ef15fba22857ea0c06fa05b5595b577523cec1c3a36fec6c',
+      '0x0c17cb8f797ae1b27358e5ab7c6ddc55210124d3a2791dbffd25e2f3b2d9156a',
   },
   {
     key: 'testnet',
@@ -22,7 +22,7 @@ export const GlitchNetwork = [
   {
     key: 'uat',
     label: 'Glitch UAT',
-    wsProvider: 'ws://13.212.197.46:9944',
+    wsProvider: 'wss://wss-uat.glitch.finance',
     baseApiUrl: 'https://api-uat-explorer.glitch.finance',
     explorerUrl: 'https://api-uat-explorer.glitch.finance',
     genesisHash:

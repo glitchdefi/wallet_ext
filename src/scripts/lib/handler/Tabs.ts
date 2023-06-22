@@ -13,7 +13,7 @@ import type {
 import { ApiPromise } from '@polkadot/api';
 import Web3Utils from 'web3-utils';
 import isNaN from 'lodash/isNaN';
-import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
+import type { SubjectInfo } from 'packages/glitch-keyring/observable/types';
 import type {
   MessageTypes,
   RequestAccountList,
@@ -29,8 +29,8 @@ import type {
 } from '../types';
 
 import { checkIfDenied } from '@polkadot/phishing';
-import keyring from '@polkadot/ui-keyring';
-import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
+import keyring from 'packages/glitch-keyring';
+import { accounts as accountsObservable } from 'packages/glitch-keyring/observable/accounts';
 import { assert, isNumber } from '@polkadot/util';
 
 import { GlitchController } from '../../controllers/GlitchController';
@@ -38,21 +38,24 @@ import RequestBytesSign from '../RequestBytesSign';
 import RequestExtrinsicSign from '../RequestExtrinsicSign';
 import State, { AuthUrls, AUTH_URLS_KEY } from './State';
 import { createSubscription, unsubscribe } from './subscriptions';
-import { PHISHING_PAGE_REDIRECT } from '../../../constants/messages';
-import { canDerive } from '../../../utils/canDerive';
-import { withErrorLog } from '../../../utils/withErrorLog';
+import { PHISHING_PAGE_REDIRECT } from 'constants/messages';
+import { canDerive } from 'utils/canDerive';
+import { withErrorLog } from 'utils/withErrorLog';
 import { ExtensionStore } from '../localStore';
 import { toGLCH } from 'utils/number';
+import browser from 'webextension-polyfill';
 
-function transformAccounts(
+async function transformAccounts(
   accounts: SubjectInfo,
   anyType = false,
   url: string
-): InjectedAccount[] {
+): Promise<InjectedAccount[]> {
   const splitUrl = url?.split('/');
   const dappUrl = splitUrl?.length ? `${splitUrl[2]}` : '';
-  const authString = localStorage.getItem(AUTH_URLS_KEY);
-  const authUrls = JSON.parse(authString) as AuthUrls;
+  const authString = await browser.storage.local.get([AUTH_URLS_KEY]);
+  const authUrls = authString?.[AUTH_URLS_KEY]
+    ? (JSON.parse(authString[AUTH_URLS_KEY]) as AuthUrls)
+    : {};
 
   return Object.values(accounts)
     .filter(
@@ -99,11 +102,11 @@ export default class Tabs {
     return this.state.authorizeUrl(url, request);
   }
 
-  private accountsList(
+  private async accountsList(
     url: string,
     { anyType }: RequestAccountList
-  ): InjectedAccount[] {
-    return transformAccounts(
+  ): Promise<InjectedAccount[]> {
+    return await transformAccounts(
       accountsObservable.subject.getValue(),
       anyType,
       url
@@ -117,8 +120,8 @@ export default class Tabs {
   ): boolean {
     const cb = createSubscription<'pub(accounts.subscribe)'>(id, port);
     const subscription = accountsObservable.subject.subscribe(
-      (accounts: SubjectInfo): void =>
-        cb(transformAccounts(accounts, null, url))
+      async (accounts: SubjectInfo): Promise<void> =>
+        cb(await transformAccounts(accounts, null, url))
     );
 
     port.onDisconnect.addListener((): void => {
@@ -309,7 +312,7 @@ export default class Tabs {
   private redirectPhishingLanding(phishingWebsite: string): void {
     const nonFragment = phishingWebsite.split('#')[0];
     const encodedWebsite = encodeURIComponent(nonFragment);
-    const url = `${chrome.extension.getURL(
+    const url = `${browser.runtime.getURL(
       'index.html'
     )}#${PHISHING_PAGE_REDIRECT}/${encodedWebsite}`;
 

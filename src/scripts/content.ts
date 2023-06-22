@@ -5,29 +5,46 @@ import {
   MESSAGE_ORIGIN_PAGE,
 } from '../constants/messages';
 import { Message } from './lib/page/types';
+import browser from 'webextension-polyfill';
 
-// connect to the extension
-const port = chrome.runtime.connect({ name: PORT_CONTENT });
+let port: chrome.runtime.Port = null;
 
-// send any messages from the extension back to the page
-port.onMessage.addListener((data): void => {
-  window.postMessage({ ...data, origin: MESSAGE_ORIGIN_CONTENT }, '*');
-});
+init();
 
-// all messages from the page, pass them to the extension
-window.addEventListener('message', ({ data, source }: Message): void => {
-  // only allow messages from our window, by the inject
-  if (source !== window || data.origin !== MESSAGE_ORIGIN_PAGE) {
-    return;
-  }
+function init() {
+  // connect to the extension
+  port = chrome.runtime.connect({ name: PORT_CONTENT });
 
-  port.postMessage(data);
-});
+  port.onDisconnect.addListener(() => {
+    port.onMessage.removeListener(windowPostMessage);
+    window.removeEventListener('message', portPostMessage);
+    init();
+  });
+
+  const windowPostMessage = (data: any): void => {
+    window.postMessage({ ...data, origin: MESSAGE_ORIGIN_CONTENT }, '*');
+  };
+
+  // send any messages from the extension back to the page
+  port.onMessage.addListener(windowPostMessage);
+
+  const portPostMessage = ({ data, source }: Message) => {
+    // only allow messages from our window, by the inject
+    if (source !== window || data.origin !== MESSAGE_ORIGIN_PAGE) {
+      return;
+    }
+
+    if (port) port.postMessage(data);
+  };
+
+  // all messages from the page, pass them to the extension
+  window.addEventListener('message', portPostMessage);
+}
 
 // inject our data injector
 const script = document.createElement('script');
 
-script.src = chrome.extension.getURL('page.bundle.js');
+script.src = browser.runtime.getURL('page.bundle.js');
 
 script.onload = (): void => {
   // remove the injecting tag when loaded

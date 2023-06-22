@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { colors } from '../../../../theme/colors';
+import { colors } from 'theme/colors';
 
 import { Box, BoxProps } from '../../Box';
 import { Text } from '../../Text';

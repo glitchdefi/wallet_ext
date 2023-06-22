@@ -15,13 +15,13 @@ import type {
   SignerPayloadJSON,
   SignerPayloadRaw,
 } from '@polkadot/types/types';
-import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
+import type { KeyringPairs$Json } from 'packages/glitch-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { TypeRegistry } from '@polkadot/types';
 
-import { ALLOWED_PATH } from '../../constants/messages';
+import { ALLOWED_PATH } from 'constants/messages';
 import { AuthUrls } from './handler/State';
 
 type KeysWithDefinedValues<T> = {

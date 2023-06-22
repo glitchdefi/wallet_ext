@@ -1,6 +1,5 @@
-import log from 'loglevel';
-import axios from 'axios';
-import keyring from '@polkadot/ui-keyring';
+import { log } from 'utils/log-config';
+import keyring from 'packages/glitch-keyring';
 
 import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
@@ -19,20 +18,16 @@ import {
   RequestIsEvmClaimed,
   RequestNetworkSet,
   RequestPrivatekeyValidate,
-  RequestTokenPriceGet,
-  RequestTransactionsGet,
+  RequestUpdateAccountAvatar,
   RequestUpdateWalletStorage,
   RequestWalletCreate,
   RequestWalletValidate,
   ResponseAppStore,
   ResponseSettings,
-  ResponseTransactionsGet,
   ResponseWallet,
 } from '../types';
-import { GlitchNetwork } from 'constants/networks';
 import { DEFAULT_TYPE } from 'constants/values';
 
-log.setDefaultLevel('debug');
 export class GlitchController {
   glitchWeb3: GlitchWeb3;
   appStateController: AppStateController;
@@ -54,7 +49,6 @@ export class GlitchController {
       address: string;
       meta?: {
         name: string;
-        avatar: string;
         whenCreated: number;
       };
     };
@@ -74,7 +68,7 @@ export class GlitchController {
           address,
           evmAddress: evmAccount.address,
           name: meta.name,
-          avatar: meta.avatar,
+          avatar: null,
           whenCreated: meta.whenCreated,
           balance: { reservedBalance: '0', freeBalance: '0' },
           seed: mnemonicEncrypted,
@@ -102,46 +96,49 @@ export class GlitchController {
   }
 
   async restoreWallet(request: RequestWalletCreate): Promise<ResponseWallet> {
-    const data = await this.glitchWeb3.createAccount(request);
-    const { mnemonicEncrypted, json, evmAccount } = data;
-    const { address, meta } = json as unknown as {
-      address: string;
-      meta?: {
-        name: string;
-        avatar: string;
-        whenCreated: number;
+    try {
+      const data = await this.glitchWeb3.createAccount(request);
+      const { mnemonicEncrypted, json, evmAccount } = data;
+      const { address, meta } = json as unknown as {
+        address: string;
+        meta?: {
+          name: string;
+          whenCreated: number;
+        };
       };
-    };
 
-    this.glitchWeb3.unlockAccount(request.password, address);
+      this.glitchWeb3.unlockAccount(request.password, address);
 
-    await this.setAutoLockTimer({
-      openTime: new Date().getTime(),
-      duration: 60000,
-    });
+      await this.setAutoLockTimer({
+        openTime: new Date().getTime(),
+        duration: 60000,
+      });
 
-    return await this.appStateController.updateState('wallet', {
-      isInitialized: 'completed',
-      isLocked: false,
-      isBackup: true,
-      selectedAddress: address,
-      parentAddress: address,
-      parentEvmAddress: evmAccount.address,
-      seed: null,
-      accounts: {
-        [address]: {
-          address: address,
-          evmAddress: evmAccount.address,
-          balance: { reservedBalance: '0', freeBalance: '0' },
-          name: meta.name,
-          avatar: meta.avatar,
-          whenCreated: meta.whenCreated,
-          encryptedPk: evmAccount.encryptedPk,
-          seed: mnemonicEncrypted,
-          allowedUrls: [],
+      return await this.appStateController.updateState('wallet', {
+        isInitialized: 'completed',
+        isLocked: false,
+        isBackup: true,
+        selectedAddress: address,
+        parentAddress: address,
+        parentEvmAddress: evmAccount.address,
+        seed: null,
+        accounts: {
+          [address]: {
+            address: address,
+            evmAddress: evmAccount.address,
+            balance: { reservedBalance: '0', freeBalance: '0' },
+            name: meta.name,
+            avatar: null,
+            whenCreated: meta.whenCreated,
+            encryptedPk: evmAccount.encryptedPk,
+            seed: mnemonicEncrypted,
+            allowedUrls: [],
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      log.error('restoreWalletError', error);
+    }
   }
 
   async lockWallet(): Promise<ResponseWallet> {
@@ -196,41 +193,44 @@ export class GlitchController {
   //=============================================================================
 
   async createAccount({ name }: RequestAccountCreate): Promise<ResponseWallet> {
-    const data = await this.glitchWeb3.createAccount({
-      seed: null,
-      name,
-      password: null,
-    });
-    const { mnemonicEncrypted, json, evmAccount } = data;
-    const { address, meta } = json as unknown as {
-      address: string;
-      meta?: {
-        name: string;
-        avatar: string;
-        whenCreated: number;
+    try {
+      const data = await this.glitchWeb3.createAccount({
+        seed: null,
+        name,
+        password: null,
+      });
+      const { mnemonicEncrypted, json, evmAccount } = data;
+      const { address, meta } = json as unknown as {
+        address: string;
+        meta?: {
+          name: string;
+          whenCreated: number;
+        };
       };
-    };
-    const oldAccounts = await this.appStateController.getAccounts();
+      const oldAccounts = await this.appStateController.getAccounts();
 
-    const wallet = await this.appStateController.updateState('wallet', {
-      selectedAddress: address,
-      accounts: {
-        [address]: {
-          name: meta.name,
-          address: address,
-          evmAddress: evmAccount.address,
-          avatar: meta.avatar,
-          balance: { reservedBalance: '0', freeBalance: '0' },
-          seed: mnemonicEncrypted,
-          whenCreated: meta.whenCreated,
-          encryptedPk: evmAccount.encryptedPk,
-          allowedUrls: [],
+      const wallet = await this.appStateController.updateState('wallet', {
+        selectedAddress: address,
+        accounts: {
+          [address]: {
+            name: meta.name,
+            address: address,
+            evmAddress: evmAccount.address,
+            avatar: null,
+            balance: { reservedBalance: '0', freeBalance: '0' },
+            seed: mnemonicEncrypted,
+            whenCreated: meta.whenCreated,
+            encryptedPk: evmAccount.encryptedPk,
+            allowedUrls: [],
+          },
+          ...oldAccounts,
         },
-        ...oldAccounts,
-      },
-    });
+      });
 
-    return wallet;
+      return wallet;
+    } catch (error) {
+      log.error('createAccountError', error);
+    }
   }
 
   async importAccount({
@@ -247,7 +247,6 @@ export class GlitchController {
       address: string;
       meta?: {
         name: string;
-        avatar: string;
         whenCreated: number;
       };
     };
@@ -260,7 +259,7 @@ export class GlitchController {
           name: meta.name,
           address: address,
           evmAddress: evmAccount.address,
-          avatar: meta.avatar,
+          avatar: null,
           balance: { freeBalance: '0', reservedBalance: '0' },
           seed: mnemonicEncrypted,
           whenCreated: meta.whenCreated,
@@ -312,8 +311,23 @@ export class GlitchController {
     const oldAccounts = await this.appStateController.getAccounts();
     const address = await this.appStateController.getSelectedAddress();
 
-    this.glitchWeb3.editAccount(name, address);
+    await this.glitchWeb3.editAccount(name, address);
     oldAccounts[address].name = name;
+
+    return await this.appStateController.updateState('wallet', {
+      accounts: {
+        ...oldAccounts,
+      },
+    });
+  }
+
+  async updateAccountAvatar({
+    avatar,
+  }: RequestUpdateAccountAvatar): Promise<ResponseWallet> {
+    const oldAccounts = await this.appStateController.getAccounts();
+    const address = await this.appStateController.getSelectedAddress();
+
+    oldAccounts[address].avatar = avatar;
 
     return await this.appStateController.updateState('wallet', {
       accounts: {
@@ -334,7 +348,7 @@ export class GlitchController {
 
   async isEvmClaimed(request: RequestIsEvmClaimed): Promise<boolean> {
     return await this.glitchWeb3.isEvmClaimed(
-      request.substareAddress,
+      request.substrateAddress,
       request.evmAddress
     );
   }
@@ -356,7 +370,7 @@ export class GlitchController {
         onSuccessCb
       );
     } catch (e: any) {
-      log.info('Transfer error: ', e);
+      log.error('Transfer error: ', e);
       const msg =
         e.message ===
         '1010: Invalid Transaction: Inability to pay some fees , e.g. account balance too low'
@@ -378,51 +392,23 @@ export class GlitchController {
     );
   }
 
-  async getTokenPrice({
-    name,
-    currency,
-  }: RequestTokenPriceGet): Promise<string | number> {
-    const res = await axios.get(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${name}&vs_currencies=${currency}`
-    );
-    return res?.data[name]?.usd;
-  }
-
   async getBalance(): Promise<ResponseWallet> {
     const oldAccounts = await this.appStateController.getAccounts();
     const addressSelected = await this.appStateController.getSelectedAddress();
-    const { freeBalance, reservedBalance } = await this.glitchWeb3.getBalance(
-      addressSelected
-    );
 
-    oldAccounts[addressSelected].balance = { freeBalance, reservedBalance };
+    if (addressSelected) {
+      const { freeBalance, reservedBalance } = await this.glitchWeb3.getBalance(
+        addressSelected
+      );
+
+      oldAccounts[addressSelected].balance = { freeBalance, reservedBalance };
+    }
 
     return await this.appStateController.updateState('wallet', {
       accounts: {
         ...oldAccounts,
       },
     });
-  }
-
-  async getTransactions(
-    request: RequestTransactionsGet
-  ): Promise<ResponseTransactionsGet> {
-    const { pageIndex, pageSize, txStatus, txType, startTime, endTime } =
-      request || {};
-    const network = await this.appStateController.getNetwork();
-    const apiUrl = GlitchNetwork.find((n) => n.key === network).baseApiUrl;
-    const address = await this.appStateController.getSelectedAddress();
-
-    const dateParams =
-      startTime && endTime
-        ? `&start_time=${startTime}&end_time=${endTime}`
-        : '';
-
-    const res = await axios.get(
-      `${apiUrl}/address/${address}/tx?page_index=${pageIndex}&page_size=${pageSize}&txStatus=${txStatus}&txType=${txType}${dateParams}`
-    );
-
-    return res?.data;
   }
 
   //=============================================================================
@@ -442,7 +428,7 @@ export class GlitchController {
       network,
     });
     await this.glitchWeb3.createApi();
-    this.glitchWeb3.updateAccountGenesisHash();
+    await this.glitchWeb3.updateAccountGenesisHash();
 
     return settings;
   }

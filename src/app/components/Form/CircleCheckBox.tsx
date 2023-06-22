@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { SpaceProps } from 'styled-system';
-import { colors } from '../../../theme/colors';
+import { colors } from 'theme/colors';
 import { Box } from '../Box';
 
 interface Props extends SpaceProps {

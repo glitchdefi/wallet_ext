@@ -19,10 +19,7 @@ import type {
   RequestAutoLockSet,
   ResponseSettings,
   RequestAccountEdit,
-  RequestTransactionsGet,
-  ResponseTransactionsGet,
   RequestEstimateFeeGet,
-  RequestTokenPriceGet,
   RequestAccountTransfer,
   ResponseAccountTransfer,
   ResponseAuthorizeList,
@@ -34,11 +31,12 @@ import type {
   RequestNetworkSet,
   RequestAccountClaimEvmBalance,
   RequestIsEvmClaimed,
+  RequestUpdateAccountAvatar,
 } from '../types';
 import type { Message } from '../types/Message';
 
-import { PORT_EXTENSION } from '../../constants/messages';
-import { getId } from '../../utils/getId';
+import { PORT_EXTENSION } from 'constants/messages';
+import { getId } from 'utils/getId';
 import { HexString } from '@polkadot/util/types';
 
 interface Handler {
@@ -49,31 +47,45 @@ interface Handler {
 
 type Handlers = Record<string, Handler>;
 
-const port = chrome.runtime.connect({ name: PORT_EXTENSION });
+let port: chrome.runtime.Port = null;
 const handlers: Handlers = {};
 
-// setup a listener for messages, any incoming resolves the promise
-port.onMessage.addListener((data: Message['data']): void => {
-  const handler = handlers[data.id];
+init();
 
-  if (!handler) {
-    console.error(`Unknown response: ${JSON.stringify(data)}`);
+function init() {
+  // connect to the extension
+  port = chrome.runtime.connect({ name: PORT_EXTENSION });
 
-    return;
-  }
+  port.onDisconnect.addListener(() => {
+    port.onMessage.removeListener(handleData);
+    init();
+  });
 
-  if (!handler.subscriber) {
-    delete handlers[data.id];
-  }
+  const handleData = (data: Message['data']): void => {
+    const handler = handlers[data.id];
 
-  if (data.subscription) {
-    (handler.subscriber as Function)(data.subscription);
-  } else if (data.error) {
-    handler.reject(new Error(data.error));
-  } else {
-    handler.resolve(data.response);
-  }
-});
+    if (!handler) {
+      console.error(`Unknown response: ${JSON.stringify(data)}`);
+
+      return;
+    }
+
+    if (!handler.subscriber) {
+      delete handlers[data.id];
+    }
+
+    if (data.subscription) {
+      (handler.subscriber as Function)(data.subscription);
+    } else if (data.error) {
+      handler.reject(new Error(data.error));
+    } else {
+      handler.resolve(data.response);
+    }
+  };
+
+  // setup a listener for messages, any incoming resolves the promise
+  port.onMessage.addListener(handleData);
+}
 
 function sendMessage<TMessageType extends MessageTypesWithNullRequest>(
   message: TMessageType
@@ -227,6 +239,12 @@ export async function editAccount(
   return sendMessage('pri(wallet.account.edit)', request);
 }
 
+export async function updateAccountAvatar(
+  request: RequestUpdateAccountAvatar
+): Promise<ResponseWallet> {
+  return sendMessage('pri(wallet.account.updateAvatar)', request);
+}
+
 export async function getAccountBalance(): Promise<ResponseWallet> {
   return sendMessage('pri(wallet.account.balance.get)');
 }
@@ -272,23 +290,10 @@ export async function setNetwork(
   return sendMessage('pri(settings.network.set)', request);
 }
 
-// Transactions
-export async function getTransactions(
-  request: RequestTransactionsGet
-): Promise<ResponseTransactionsGet> {
-  return sendMessage('pri(transactions.list.get)', request);
-}
-
 export async function getEstimateFee(
   request: RequestEstimateFeeGet
 ): Promise<string> {
   return sendMessage('pri(estimate.fee.get)', request);
-}
-
-export async function getTokenPrice(
-  request: RequestTokenPriceGet
-): Promise<string | number> {
-  return sendMessage('pri(token.price.get)', request);
 }
 
 export async function transfer(

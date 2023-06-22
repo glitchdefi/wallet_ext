@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { LayoutProps, SpaceProps, TypographyProps } from 'styled-system';
 import StyledButton from './StyledButton';
-import { colors } from '../../../theme/colors';
+import { colors } from 'theme/colors';
 
 interface Props extends LayoutProps, SpaceProps, TypographyProps {
   onClick?: () => void;

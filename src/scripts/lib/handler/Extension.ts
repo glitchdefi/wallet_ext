@@ -15,10 +15,7 @@ import type {
   RequestAutoLockSet,
   ResponseSettings,
   RequestAccountEdit,
-  RequestTransactionsGet,
-  ResponseTransactionsGet,
   RequestEstimateFeeGet,
-  RequestTokenPriceGet,
   RequestAccountTransfer,
   RequestAuthorizeApprove,
   RequestAuthorizeReject,
@@ -34,8 +31,9 @@ import type {
   RequestNetworkSet,
   RequestAccountClaimEvmBalance,
   RequestIsEvmClaimed,
+  RequestUpdateAccountAvatar,
 } from '../../types';
-import keyring from '@polkadot/ui-keyring';
+import keyring from 'packages/glitch-keyring';
 import { TypeRegistry } from '@polkadot/types';
 import type {
   SignerPayloadJSON,
@@ -47,6 +45,7 @@ import { createSubscription, unsubscribe } from './subscriptions';
 import { assert } from '@polkadot/util';
 import { MetadataDef } from '@polkadot/extension-inject/types';
 import { withErrorLog } from 'utils/withErrorLog';
+import browser from 'webextension-polyfill';
 
 function isJsonPayload(
   value: SignerPayloadJSON | SignerPayloadRaw
@@ -103,8 +102,11 @@ export default class Extension {
     return { list: await this.state.toggleAuthorization(request) };
   }
 
-  private removeAuthorization(url: string): ResponseAuthorizeList {
-    return { list: this.state.removeAuthorization(url) };
+  private async removeAuthorization(
+    url: string
+  ): Promise<ResponseAuthorizeList> {
+    const authUrls = await this.state.removeAuthorization(url);
+    return { list: authUrls };
   }
 
   private authorizeSubscribe(id: string, port: chrome.runtime.Port): boolean {
@@ -256,14 +258,21 @@ export default class Extension {
     return this.controller.changeAccount(request);
   }
 
-  private accountsForget({ address }: RequestAccountForget): boolean {
-    keyring.forgetAccount(address);
-
+  private async accountsForget({
+    address,
+  }: RequestAccountForget): Promise<boolean> {
+    await keyring.forgetAccount(address);
     return true;
   }
 
   private editAccount(request: RequestAccountEdit): Promise<ResponseWallet> {
     return this.controller.editAccount(request);
+  }
+
+  private updateAccountAvatar(
+    request: RequestUpdateAccountAvatar
+  ): Promise<ResponseWallet> {
+    return this.controller.updateAccountAvatar(request);
   }
 
   private getAccountBalance(): Promise<ResponseWallet> {
@@ -298,12 +307,6 @@ export default class Extension {
     return this.controller.setNetwork(request);
   }
 
-  private getTransactions(
-    request: RequestTransactionsGet
-  ): Promise<ResponseTransactionsGet> {
-    return this.controller.getTransactions(request);
-  }
-
   private getEstimateFee(request: RequestEstimateFeeGet): Promise<string> {
     return this.controller.getEstimateFee(request);
   }
@@ -329,7 +332,7 @@ export default class Extension {
   }
 
   private windowOpen(path: AllowedPath): boolean {
-    const url = `${chrome.extension.getURL('popup.html')}#${path}`;
+    const url = `${browser.runtime.getURL('popup.html')}#${path}`;
 
     // if (!ALLOWED_PATH.includes(path)) {
     //   console.error('Not allowed to open the url:', url);
@@ -340,12 +343,6 @@ export default class Extension {
     withErrorLog(() => chrome.tabs.create({ url }));
 
     return true;
-  }
-
-  private getTokenPrice(
-    request: RequestTokenPriceGet
-  ): Promise<string | number> {
-    return this.controller.getTokenPrice(request);
   }
 
   private resetAppState(): Promise<ResponseWallet> {
@@ -423,6 +420,9 @@ export default class Extension {
       case 'pri(wallet.account.edit)':
         return this.editAccount(request as RequestAccountEdit);
 
+      case 'pri(wallet.account.updateAvatar)':
+        return this.updateAccountAvatar(request as RequestUpdateAccountAvatar);
+
       case 'pri(wallet.account.balance.get)':
         return this.getAccountBalance();
 
@@ -450,14 +450,8 @@ export default class Extension {
       case 'pri(settings.network.set)':
         return this.setNetwork(request as RequestNetworkSet);
 
-      case 'pri(transactions.list.get)':
-        return this.getTransactions(request as RequestTransactionsGet);
-
       case 'pri(estimate.fee.get)':
         return this.getEstimateFee(request as RequestEstimateFeeGet);
-
-      case 'pri(token.price.get)':
-        return this.getTokenPrice(request as RequestTokenPriceGet);
 
       case 'pri(reset.app.state)':
         return this.resetAppState();

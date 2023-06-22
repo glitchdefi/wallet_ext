@@ -12,14 +12,12 @@ import type {
 import type {
   AccountJson,
   AuthorizeRequest,
-  MessageTypes,
   MetadataRequest,
   RequestAuthorizeTab,
   RequestRpcSend,
   RequestRpcSubscribe,
   RequestRpcUnsubscribe,
   RequestSign,
-  RequestTypes,
   ResponseRpcListProviders,
   ResponseSigning,
   SigningRequest,
@@ -33,14 +31,15 @@ import settings from '@polkadot/ui-settings';
 import { assert } from '@polkadot/util';
 
 import { MetadataStore } from '../../stores';
-import { withErrorLog } from '../../../utils/withErrorLog';
-import { getId } from '../../../utils/getId';
+import { withErrorLog } from 'utils/withErrorLog';
+import { getId } from 'utils/getId';
 import { ExtensionStore } from '../localStore';
 import {
   AccountTypes,
   RequestAuthorizeToggle,
   ResponseWallet,
 } from 'scripts/types';
+import browser from 'webextension-polyfill';
 
 interface Resolver<T> {
   reject: (error: Error) => void;
@@ -91,7 +90,7 @@ interface SignRequest extends Resolver<ResponseSigning> {
   url: string;
 }
 
-const NOTIFICATION_URL = chrome.extension.getURL('notification.html');
+const NOTIFICATION_URL = browser.runtime.getURL('notification.html');
 
 const POPUP_WINDOW_OPTS: chrome.windows.CreateData = {
   focused: true,
@@ -157,7 +156,7 @@ function extractMetadata(store: MetadataStore): void {
 }
 
 export default class State {
-  readonly _authUrls: AuthUrls = {};
+  _authUrls: AuthUrls = {};
 
   readonly authRequests: Record<string, AuthRequest> = {};
 
@@ -193,15 +192,15 @@ export default class State {
 
   constructor(providers: Providers = {}) {
     this._providers = providers;
-
     extractMetadata(this.metaStore);
-
-    // retrieve previously set authorizations
-    const authString = localStorage.getItem(AUTH_URLS_KEY) || '{}';
-    const previousAuth = JSON.parse(authString) as AuthUrls;
-
-    this._authUrls = previousAuth;
     this.localStore = new ExtensionStore();
+  }
+
+  public async getPreviousAuthorizations() {
+    // retrieve previously set authorizations
+    const result = await browser.storage.local.get([AUTH_URLS_KEY]);
+    const authString = result?.[AUTH_URLS_KEY];
+    this._authUrls = authString ? (JSON.parse(authString) as AuthUrls) : {};
   }
 
   public get knownMetadata(): MetadataDef[] {
@@ -300,7 +299,7 @@ export default class State {
           url,
         };
 
-        this.saveCurrentAuthList();
+        await this.saveCurrentAuthList();
       }
 
       delete this.authRequests[id];
@@ -319,8 +318,10 @@ export default class State {
     };
   };
 
-  private saveCurrentAuthList() {
-    localStorage.setItem(AUTH_URLS_KEY, JSON.stringify(this._authUrls));
+  private async saveCurrentAuthList(): Promise<void> {
+    await browser.storage.local.set({
+      [AUTH_URLS_KEY]: JSON.stringify(this._authUrls),
+    });
   }
 
   private metaComplete = (
@@ -394,7 +395,7 @@ export default class State {
       ? `${signCount}`
       : '';
 
-    withErrorLog(() => chrome.browserAction.setBadgeText({ text }));
+    withErrorLog(() => chrome.action.setBadgeText({ text }));
 
     if (shouldClose && text === '') {
       this.popupClose();
@@ -417,18 +418,18 @@ export default class State {
       this._authUrls[url].isAllowed[address] = !entry.isAllowed[address];
     }
 
-    this.saveCurrentAuthList();
+    await this.saveCurrentAuthList();
 
     return this._authUrls;
   }
 
-  public removeAuthorization(url: string): AuthUrls {
+  public async removeAuthorization(url: string): Promise<AuthUrls> {
     const entry = this._authUrls[url];
 
     assert(entry, `The source ${url} is not known`);
 
     delete this._authUrls[url];
-    this.saveCurrentAuthList();
+    await this.saveCurrentAuthList();
 
     return this._authUrls;
   }

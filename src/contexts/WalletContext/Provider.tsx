@@ -31,11 +31,13 @@ import {
   setNetwork,
   claimEvmAccountBalance,
   isEvmClaimed,
+  updateAccountAvatar,
 } from 'scripts/ui/messaging';
 import { useToast } from 'hooks/useToast';
 import { useSettings } from 'contexts/SettingsContext/hooks';
 import { useApplication } from 'contexts/ApplicationContext/hooks';
 import { useAuthorizeReq } from 'contexts/AuthorizeReqContext/hooks';
+import { getAvatar } from 'utils/drawAvatar';
 
 export type WalletContextType = {
   walletCtx?: ResponseWallet | undefined;
@@ -67,7 +69,9 @@ export const WalletProvider: React.FC = ({ children }) => {
   const [wallet, setWallet] = useState<ResponseWallet>();
 
   const onCreateWallet = useCallback((request: RequestWalletCreate) => {
-    createWallet(request).then(setWallet);
+    createWallet(request).then(() => {
+      updateAccountAvatar({ avatar: getAvatar() }).then(setWallet);
+    });
   }, []);
 
   const onCreateWalletCompleted = useCallback((history: any) => {
@@ -87,25 +91,25 @@ export const WalletProvider: React.FC = ({ children }) => {
       setAppLoading(true);
 
       // Forget account
-      !isEmpty(wallet?.accounts) &&
-        (await Promise.all(
-          Object.entries(wallet.accounts).map(([key]) => {
-            return forgetAccount({ address: key as string });
-          })
-        ));
+      if (!isEmpty(wallet?.accounts)) {
+        for (const key of Object.keys(wallet.accounts)) {
+          await forgetAccount({ address: key });
+        }
+      }
 
       // Remove connected dapps
       getAuthList().then(async ({ list }) => {
-        list &&
-          (await Promise.all(
-            Object.entries(list).map(([url, _]: [string, any]) => {
-              return removeAuthorization(url);
-            })
-          ));
+        if (list) {
+          for (const key of Object.keys(list)) {
+            await removeAuthorization(list[key].url);
+          }
+        }
       });
 
       restoreWallet(request)
-        .then(setWallet)
+        .then(() => {
+          updateAccountAvatar({ avatar: getAvatar() }).then(setWallet);
+        })
         .finally(() => {
           toastSuccess(
             null,
@@ -155,20 +159,19 @@ export const WalletProvider: React.FC = ({ children }) => {
       setAppLoading(true);
 
       // Forget account
-      await Promise.all(
-        Object.entries(wallet.accounts).map(([key]) => {
-          return forgetAccount({ address: key as string });
-        })
-      );
+      if (!isEmpty(wallet?.accounts)) {
+        for (const key of Object.keys(wallet.accounts)) {
+          await forgetAccount({ address: key });
+        }
+      }
 
       // Remove connected dapps
       getAuthList().then(async ({ list }) => {
-        list &&
-          (await Promise.all(
-            Object.entries(list).map(([url, _]: [string, any]) => {
-              return removeAuthorization(url);
-            })
-          ));
+        if (list) {
+          for (const key of Object.keys(list)) {
+            await removeAuthorization(list[key].url);
+          }
+        }
       });
 
       // Remove data store
@@ -194,7 +197,9 @@ export const WalletProvider: React.FC = ({ children }) => {
 
       setTimeout(() => {
         createAccount(request)
-          .then(setWallet)
+          .then(() => {
+            updateAccountAvatar({ avatar: getAvatar() }).then(setWallet);
+          })
           .finally(() => {
             setAppLoading(false);
             history.push('/');
@@ -210,7 +215,9 @@ export const WalletProvider: React.FC = ({ children }) => {
 
       setTimeout(() => {
         importAccount(request)
-          .then(setWallet)
+          .then(() => {
+            updateAccountAvatar({ avatar: getAvatar() }).then(setWallet);
+          })
           .finally(() => {
             setAppLoading(false);
             history.push('/');
