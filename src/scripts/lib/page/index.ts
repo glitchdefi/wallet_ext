@@ -57,7 +57,6 @@ export function handleResponse(data: any): void {
 
   if (!handler) {
     console.error(`Unknown response: ${JSON.stringify(data)}`);
-
     return;
   }
 

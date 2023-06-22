@@ -25,7 +25,7 @@ export const useTransactions = (request: RequestTransactionsGet) => {
         start_time: startTime,
         end_time: endTime,
       }).then((res) => {
-        setTransactions(res?.data);
+        setTransactions(res?.data?.data);
       });
     } else {
       setTransactions([]);

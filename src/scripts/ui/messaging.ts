@@ -47,31 +47,45 @@ interface Handler {
 
 type Handlers = Record<string, Handler>;
 
-const port = chrome.runtime.connect({ name: PORT_EXTENSION });
+let port: chrome.runtime.Port = null;
 const handlers: Handlers = {};
 
-// setup a listener for messages, any incoming resolves the promise
-port.onMessage.addListener((data: Message['data']): void => {
-  const handler = handlers[data.id];
+init();
 
-  if (!handler) {
-    console.error(`Unknown response: ${JSON.stringify(data)}`);
+function init() {
+  // connect to the extension
+  port = chrome.runtime.connect({ name: PORT_EXTENSION });
 
-    return;
-  }
+  port.onDisconnect.addListener(() => {
+    port.onMessage.removeListener(handleData);
+    init();
+  });
 
-  if (!handler.subscriber) {
-    delete handlers[data.id];
-  }
+  const handleData = (data: Message['data']): void => {
+    const handler = handlers[data.id];
 
-  if (data.subscription) {
-    (handler.subscriber as Function)(data.subscription);
-  } else if (data.error) {
-    handler.reject(new Error(data.error));
-  } else {
-    handler.resolve(data.response);
-  }
-});
+    if (!handler) {
+      console.error(`Unknown response: ${JSON.stringify(data)}`);
+
+      return;
+    }
+
+    if (!handler.subscriber) {
+      delete handlers[data.id];
+    }
+
+    if (data.subscription) {
+      (handler.subscriber as Function)(data.subscription);
+    } else if (data.error) {
+      handler.reject(new Error(data.error));
+    } else {
+      handler.resolve(data.response);
+    }
+  };
+
+  // setup a listener for messages, any incoming resolves the promise
+  port.onMessage.addListener(handleData);
+}
 
 function sendMessage<TMessageType extends MessageTypesWithNullRequest>(
   message: TMessageType
