@@ -5,7 +5,7 @@ import { AppStateController } from './AppStateController';
 import { GlitchWeb3 } from '../lib/web3/GlitchWeb3';
 
 // Types
-import { decryptMessage } from 'utils/strings';
+import { decryptMessage, formatPrivateKey } from 'utils/strings';
 import {
   RequestAccountChange,
   RequestAccountClaimEvmBalance,
@@ -276,7 +276,11 @@ export class GlitchController {
   async privateKeyValidate({
     privateKey,
   }: RequestPrivatekeyValidate): Promise<boolean> {
-    const address = keyring.createFromUri(privateKey, {}, DEFAULT_TYPE).address;
+    const address = keyring.createFromUri(
+      formatPrivateKey(privateKey),
+      {},
+      DEFAULT_TYPE
+    ).address;
     const oldAccounts = await this.appStateController.getAccounts();
     return !!oldAccounts[address];
   }

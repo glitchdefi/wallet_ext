@@ -5,6 +5,7 @@ import {
 } from '@polkadot/util-crypto';
 import { isHex, u8aToHex, hexToU8a } from '@polkadot/util';
 import { decrypt, encrypt } from '@metamask/browser-passworder';
+import { utils } from 'ethers';
 
 export const truncateAddress = (
   address: string,
@@ -24,12 +25,21 @@ export function capitalizeFirstLetter(string: string) {
 }
 
 export function isHexSeed(seed: string): boolean {
-  return isHex(seed) && seed.length === 66;
+  return (
+    (seed.length === 64 && isHex(`0x${seed}`)) ||
+    (seed.length === 66 && isHex(seed))
+  );
 }
 
-export function privateKeyValidate(privateKey: string): boolean {
-  return isHexSeed(privateKey);
-}
+export const formatPrivateKey = (pk: string) => {
+  if (utils.isHexString(pk)) {
+    return pk;
+  } else {
+    if (pk.length === 64) {
+      return `0x${pk}`;
+    }
+  }
+};
 
 export const isValidAddressPolkadotAddress = (toAddress: string): boolean => {
   try {

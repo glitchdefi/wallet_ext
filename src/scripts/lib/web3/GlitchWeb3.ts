@@ -1,16 +1,12 @@
 import { log } from 'utils/log-config';
 import keyring from 'packages/glitch-keyring';
-import {
-  cryptoWaitReady,
-  mnemonicGenerate,
-  mnemonicToMiniSecret,
-  naclKeypairFromSeed,
-} from '@polkadot/util-crypto';
+import { cryptoWaitReady, mnemonicGenerate } from '@polkadot/util-crypto';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { u8aToHex } from '@polkadot/util';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import web3Utils from 'web3-utils';
 import Web3Eth from 'web3-eth';
+import { Wallet } from 'ethers';
 
 import { AccountTypes, RequestWalletCreate } from 'scripts/types';
 import { AppStateController } from 'scripts/controllers/AppStateController';
@@ -19,11 +15,7 @@ import { DEFAULT_TYPE } from 'constants/values';
 import { GlitchToken } from 'constants/tokens';
 import { GlitchNetwork, GLITCH_EVM_TYPES } from 'constants/networks';
 
-import {
-  isHexSeed,
-  messageEncryption,
-  privateKeyValidate,
-} from 'utils/strings';
+import { isHexSeed, messageEncryption, formatPrivateKey } from 'utils/strings';
 
 export class GlitchWeb3 {
   web3: Web3Eth;
@@ -82,17 +74,21 @@ export class GlitchWeb3 {
     const mnemonic =
       seed?.trim() || mnemonicGenerate(GlitchToken.default_mnemonic_length);
 
-    const { json } = await keyring.addUri(mnemonic, password || undefined, {
-      name,
-      genesisHash: this.api.genesisHash.toHex(),
-    });
+    const { json } = await keyring.addUri(
+      isHexSeed(mnemonic) ? formatPrivateKey(mnemonic) : mnemonic,
+      password || undefined,
+      {
+        name,
+        genesisHash: this.api.genesisHash.toHex(),
+      }
+    );
 
     if (isHexSeed(mnemonic)) {
       evmAccount = this.web3.accounts.privateKeyToAccount(mnemonic);
       encryptedPk = this.web3.accounts.encrypt(mnemonic, evmAccount.address);
     } else {
-      const privateKey = this.getPrivateKeyFromSeed(mnemonic);
-      evmAccount = this.web3.accounts.privateKeyToAccount(privateKey);
+      const { address, privateKey } = Wallet.fromMnemonic(mnemonic);
+      evmAccount = { address };
       encryptedPk = this.web3.accounts.encrypt(privateKey, evmAccount.address);
     }
 
@@ -236,15 +232,11 @@ export class GlitchWeb3 {
   }
 
   getPrivateKeyFromSeed(seed: string) {
-    if (privateKeyValidate(seed)) {
+    if (isHexSeed(seed)) {
       return seed;
     }
 
-    // Create valid Substrate-compatible seed from mnemonic
-    const miniSecret = mnemonicToMiniSecret(seed);
-    const { secretKey } = naclKeypairFromSeed(miniSecret);
-
-    return u8aToHex(secretKey.subarray(0, 32));
+    return Wallet.fromMnemonic(seed).privateKey;
   }
 
   async claimEvmAccountBalance(account: AccountTypes): Promise<boolean> {
