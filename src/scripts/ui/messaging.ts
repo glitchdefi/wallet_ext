@@ -32,6 +32,7 @@ import type {
   RequestAccountClaimEvmBalance,
   RequestIsEvmClaimed,
   RequestUpdateAccountAvatar,
+  ResponsePrivatekeyGet,
 } from '../types';
 import type { Message } from '../types/Message';
 
@@ -255,7 +256,7 @@ export async function privateKeyValidate(
   return sendMessage('pri(wallet.account.privatekey.validate)', request);
 }
 
-export async function showAccountPrivateKey(): Promise<string> {
+export async function showAccountPrivateKey(): Promise<ResponsePrivatekeyGet> {
   return sendMessage('pri(wallet.account.privatekey.show)');
 }
 

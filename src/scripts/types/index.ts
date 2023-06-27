@@ -78,7 +78,7 @@ export interface RequestSignatures {
     RequestPrivatekeyValidate,
     boolean
   ];
-  'pri(wallet.account.privatekey.show)': [null, string];
+  'pri(wallet.account.privatekey.show)': [null, ResponsePrivatekeyGet];
   'pri(wallet.account.claimEvmBalance)': [
     RequestAccountClaimEvmBalance,
     boolean
@@ -152,6 +152,11 @@ export interface RequestUpdateAccountAvatar {
 }
 export interface RequestPrivatekeyValidate {
   privateKey: string;
+}
+
+export interface ResponsePrivatekeyGet {
+  evm: string;
+  substrate: string;
 }
 
 export interface RequestAccountClaimEvmBalance {

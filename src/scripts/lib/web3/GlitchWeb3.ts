@@ -1,6 +1,11 @@
 import { log } from 'utils/log-config';
 import keyring from 'packages/glitch-keyring';
-import { cryptoWaitReady, mnemonicGenerate } from '@polkadot/util-crypto';
+import {
+  cryptoWaitReady,
+  mnemonicGenerate,
+  mnemonicToMiniSecret,
+  naclKeypairFromSeed,
+} from '@polkadot/util-crypto';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { u8aToHex } from '@polkadot/util';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
@@ -231,12 +236,21 @@ export class GlitchWeb3 {
     }
   }
 
-  getPrivateKeyFromSeed(seed: string) {
-    if (isHexSeed(seed)) {
-      return seed;
+  getPrivateKeyFromSeed(mnemonic: string) {
+    if (isHexSeed(mnemonic)) {
+      return {
+        evm: mnemonic,
+        substrate: mnemonic,
+      };
     }
 
-    return Wallet.fromMnemonic(seed).privateKey;
+    const miniSecret = mnemonicToMiniSecret(mnemonic);
+    const { secretKey } = naclKeypairFromSeed(miniSecret);
+
+    return {
+      evm: Wallet.fromMnemonic(mnemonic).privateKey,
+      substrate: u8aToHex(secretKey.subarray(0, 32)),
+    };
   }
 
   async claimEvmAccountBalance(account: AccountTypes): Promise<boolean> {

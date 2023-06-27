@@ -32,6 +32,7 @@ import type {
   RequestAccountClaimEvmBalance,
   RequestIsEvmClaimed,
   RequestUpdateAccountAvatar,
+  ResponsePrivatekeyGet,
 } from '../../types';
 import keyring from 'packages/glitch-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -295,7 +296,7 @@ export default class Extension {
     return this.controller.privateKeyValidate(request);
   }
 
-  private showAccountPrivateKey(): Promise<string> {
+  private showAccountPrivateKey(): Promise<ResponsePrivatekeyGet> {
     return this.controller.showAccountPrivateKey();
   }
 

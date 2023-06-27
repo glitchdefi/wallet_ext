@@ -17,6 +17,7 @@ import {
   RequestEstimateFeeGet,
   RequestIsEvmClaimed,
   RequestNetworkSet,
+  ResponsePrivatekeyGet,
   RequestPrivatekeyValidate,
   RequestUpdateAccountAvatar,
   RequestUpdateWalletStorage,
@@ -276,13 +277,21 @@ export class GlitchController {
   async privateKeyValidate({
     privateKey,
   }: RequestPrivatekeyValidate): Promise<boolean> {
-    const address = keyring.createFromUri(
+    const subStrateAddress = keyring.createFromUri(
       formatPrivateKey(privateKey),
       {},
       DEFAULT_TYPE
     ).address;
+
+    const evmAccount =
+      this.glitchWeb3.web3.accounts.privateKeyToAccount(privateKey);
+
     const oldAccounts = await this.appStateController.getAccounts();
-    return !!oldAccounts[address];
+    const checkEvmAddressExists = Object.keys(oldAccounts)?.filter(
+      (k) => oldAccounts[k].evmAddress === evmAccount.address
+    );
+
+    return !!oldAccounts[subStrateAddress] || !!checkEvmAddressExists?.length;
   }
 
   async changeAccount({
@@ -298,7 +307,7 @@ export class GlitchController {
     });
   }
 
-  async showAccountPrivateKey(): Promise<string> {
+  async showAccountPrivateKey(): Promise<ResponsePrivatekeyGet> {
     const oldAccounts = await this.appStateController.getAccounts();
     const address = await this.appStateController.getSelectedAddress();
     const currentAccount = oldAccounts[address];
@@ -308,6 +317,7 @@ export class GlitchController {
       seed.encrypted,
       seed.secret
     )) as string;
+
     return this.glitchWeb3.getPrivateKeyFromSeed(decryptSeed);
   }
 

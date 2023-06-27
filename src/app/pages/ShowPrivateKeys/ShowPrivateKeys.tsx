@@ -20,6 +20,7 @@ import { CheckIcon, CloseIcon, CopyIcon } from 'app/components/Svg';
 import { Input, Label, PasswordInput } from 'app/components/Form';
 import { MessageBox } from 'app/components/MessageBox';
 import { Avatar } from 'app/components/Shared';
+import { ResponsePrivatekeyGet } from 'scripts/types';
 
 const ShowPrivateKeys: React.FC = () => {
   const history = useHistory();
@@ -28,22 +29,97 @@ const ShowPrivateKeys: React.FC = () => {
   const { setAppLoading } = useApplication();
   const { name, avatar, address, evmAddress } = useAccount();
 
-  const [copied, setCopied] = useState<boolean>(false);
+  const [copied, setCopied] = useState<string | null>(null);
   const [password, setPassword] = useState<string>('');
   const [validPassword, setValidPassword] = useState<boolean>(true);
-  const [privateKey, setPrivateKey] = useState<string>('');
+  const [privateKey, setPrivateKey] = useState<ResponsePrivatekeyGet>({
+    evm: '',
+    substrate: '',
+  });
 
   useEffect(() => {
     if (copied) {
       setTimeout(() => {
-        setCopied(false);
+        setCopied(null);
       }, 1500);
     }
   }, [copied]);
 
-  const onCopy = () => {
-    navigator.clipboard.writeText(privateKey);
-    setCopied(true);
+  const renderPrivateKeyView = () => {
+    if (privateKey.evm === privateKey.substrate) {
+      return (
+        <InputWrapper alignItems="center">
+          <StyledInput
+            disabled
+            hasBorder={false}
+            value={privateKey.substrate}
+            as={TextareaAutosize}
+          />
+          <Button
+            ml="12px"
+            p="0px"
+            onClick={() => onCopy(privateKey.substrate)}
+          >
+            {copied === privateKey.substrate ? (
+              <CheckIcon width="15px" color={colors.primary} />
+            ) : (
+              <CopyIcon width="15px" />
+            )}
+          </Button>
+        </InputWrapper>
+      );
+    }
+    return (
+      <>
+        <Box mb="16px">
+          <Text fontSize="12px" color={colors.gray6} mb="4px">
+            Substrate
+          </Text>
+          <InputWrapper alignItems="center">
+            <StyledInput
+              disabled
+              hasBorder={false}
+              value={privateKey.substrate}
+              as={TextareaAutosize}
+            />
+            <Button
+              ml="12px"
+              p="0px"
+              onClick={() => onCopy(privateKey.substrate)}
+            >
+              {copied === privateKey.substrate ? (
+                <CheckIcon width="15px" color={colors.primary} />
+              ) : (
+                <CopyIcon width="15px" />
+              )}
+            </Button>
+          </InputWrapper>
+        </Box>
+        <Text fontSize="12px" color={colors.gray6} mb="4px">
+          EVM
+        </Text>
+        <InputWrapper alignItems="center">
+          <StyledInput
+            disabled
+            hasBorder={false}
+            value={privateKey.evm}
+            as={TextareaAutosize}
+          />
+          <Button ml="12px" p="0px" onClick={() => onCopy(privateKey.evm)}>
+            {copied === privateKey.evm ? (
+              <CheckIcon width="15px" color={colors.primary} />
+            ) : (
+              <CopyIcon width="15px" />
+            )}
+          </Button>
+        </InputWrapper>
+      </>
+    );
+  };
+
+  const onCopy = (value: string) => {
+    navigator.clipboard.writeText(value);
+    setCopied(value);
   };
 
   const onConfirm = () => {
@@ -60,8 +136,8 @@ const ShowPrivateKeys: React.FC = () => {
   };
 
   return (
-    <PageLayout minHeight="600px">
-      <Flex flex={1} flexDirection="column" p="16px">
+    <PageLayout height="600px">
+      <Flex overflowY="hidden" flex={1} flexDirection="column" p="16px">
         <Flex
           background={colors.gray2}
           alignItems="center"
@@ -80,8 +156,10 @@ const ShowPrivateKeys: React.FC = () => {
         <Flex
           p="16px"
           flexDirection="column"
+          height="512px"
           flex={1}
           background={colors.gray1}
+          overflowY="auto"
         >
           <AccountWrapper>
             <Avatar src={avatar} />
@@ -100,22 +178,8 @@ const ShowPrivateKeys: React.FC = () => {
           </AccountWrapper>
 
           <Box mt="32px">
-            {privateKey ? (
-              <InputWrapper alignItems="center">
-                <StyledInput
-                  disabled
-                  hasBorder={false}
-                  value={privateKey}
-                  as={TextareaAutosize}
-                />
-                <Button ml="12px" p="0px" onClick={onCopy}>
-                  {copied ? (
-                    <CheckIcon width="15px" color={colors.primary} />
-                  ) : (
-                    <CopyIcon width="15px" />
-                  )}
-                </Button>
-              </InputWrapper>
+            {privateKey.evm && privateKey.substrate ? (
+              renderPrivateKeyView()
             ) : (
               <>
                 <Label>Glitch password</Label>
@@ -138,8 +202,8 @@ const ShowPrivateKeys: React.FC = () => {
             <MessageBox message={t(messages.warningMsg())} />
           </Box>
 
-          <Flex mt="auto">
-            {privateKey ? (
+          <Flex mt="auto" pt="24px">
+            {privateKey.evm && privateKey.substrate ? (
               <Button
                 width="100%"
                 variant="cancel"
@@ -148,7 +212,7 @@ const ShowPrivateKeys: React.FC = () => {
                 Close
               </Button>
             ) : (
-              <Flex width="100%">
+              <Flex mt="auto" width="100%">
                 <Button
                   width="50%"
                   variant="cancel"
