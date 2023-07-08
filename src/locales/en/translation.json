@@ -8,7 +8,7 @@
         "mnemonic_phrase": "Mnemonic phrase",
         "term_and_service": "Terms of Service",
         "or": "or",
-        "private_keys": "Private keys",
+        "private_keys": "Private keys for Substrate",
         "cancel": "Cancel",
         "create": "Create",
         "import": "Import",

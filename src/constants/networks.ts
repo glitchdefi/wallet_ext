@@ -22,7 +22,7 @@ export const GlitchNetwork = [
   {
     key: 'uat',
     label: 'Glitch UAT',
-    wsProvider: 'wss://wss-uat.glitch.finance',
+    wsProvider: 'ws://13.212.108.116:9944',
     baseApiUrl: 'https://api-uat-explorer.glitch.finance',
     explorerUrl: 'https://api-uat-explorer.glitch.finance',
     genesisHash:

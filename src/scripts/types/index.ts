@@ -76,7 +76,7 @@ export interface RequestSignatures {
   'pri(wallet.account.balance.get)': [null, ResponseWallet];
   'pri(wallet.account.privatekey.validate)': [
     RequestPrivatekeyValidate,
-    boolean
+    ResponsePrivatekeyValidate
   ];
   'pri(wallet.account.privatekey.show)': [null, ResponsePrivatekeyGet];
   'pri(wallet.account.claimEvmBalance)': [
@@ -122,8 +122,10 @@ export type MessageTypesWithNoSubscriptions = Exclude<
 
 export interface RequestWalletCreate {
   seed?: string;
+  evmPrivateKey?: string;
   name?: string;
   password?: string;
+  isImport?: boolean;
 }
 export interface RequestWalletRestore {
   seed: string;
@@ -141,7 +143,8 @@ export interface RequestAccountChange {
 }
 export interface RequestAccountImport {
   name: string;
-  privateKey: string;
+  substratePrivateKey: string;
+  evmPrivateKey: string;
 }
 export interface RequestAccountEdit {
   name: string;
@@ -151,7 +154,13 @@ export interface RequestUpdateAccountAvatar {
   avatar: string;
 }
 export interface RequestPrivatekeyValidate {
-  privateKey: string;
+  substratePrivateKey: string;
+  evmPrivateKey: string;
+}
+
+export interface ResponsePrivatekeyValidate {
+  substrateExists: boolean;
+  evmExists: boolean;
 }
 
 export interface ResponsePrivatekeyGet {
@@ -302,7 +311,8 @@ export interface AccountTypes {
   avatar?: string;
   whenCreated?: number;
   seed?: { encrypted: string; secret: string };
-  encryptedPk?: string;
+  encryptedSubstratePk?: string;
+  encryptedEvmPk?: string;
   isHidden?: boolean;
   allowedUrls?: string[];
   balance?: {

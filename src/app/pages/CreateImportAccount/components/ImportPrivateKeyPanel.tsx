@@ -27,16 +27,52 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
   const accountLength = Object.keys(accounts)?.length;
 
   const [name, setName] = useState<string>('');
-  const [privateKey, setPrivateKey] = useState<string>('');
-  const [isValidPK, setIsValidPK] = useState<boolean>(false);
-  const [privateKeyExist, setPrivateKeyExist] = useState<boolean>(false);
+
   const [isNameExist, setIsNameExist] = useState<boolean>(false);
-  const isError = privateKey && !isValidPK;
-  const isEnableImport = privateKey && isValidPK && !isNameExist;
+
+  const [validatePrivateKey, setValidatePrivateKey] = useState<{
+    substrate: { isValid: boolean; isExist: boolean };
+    evm: { isValid: boolean; isExist: boolean };
+  }>({
+    substrate: { isValid: false, isExist: false },
+    evm: { isValid: false, isExist: false },
+  });
+
+  const [privateKey, setPrivateKey] = useState<{
+    substrate: string;
+    evm: string;
+  }>({ substrate: '', evm: '' });
+
+  const isSubstratePrivateKeyValid = privateKey.substrate
+    ? validatePrivateKey.substrate.isValid
+    : true;
+
+  const isEVMPrivateKeyValid = privateKey.evm
+    ? validatePrivateKey.evm.isValid
+    : true;
+
+  const isEnableImport =
+    !isNameExist &&
+    (privateKey.substrate && !privateKey.evm
+      ? isSubstratePrivateKeyValid
+      : !privateKey.substrate && privateKey.evm
+      ? isEVMPrivateKeyValid
+      : privateKey.substrate && privateKey.evm
+      ? isSubstratePrivateKeyValid && isEVMPrivateKeyValid
+      : false);
 
   useEffect(() => {
-    setIsValidPK(isHexSeed(privateKey));
-  }, [privateKey]);
+    setValidatePrivateKey((prev) => ({
+      substrate: {
+        ...prev.substrate,
+        isValid: isHexSeed(privateKey.substrate),
+      },
+      evm: {
+        ...prev.evm,
+        isValid: isHexSeed(privateKey.evm),
+      },
+    }));
+  }, [privateKey.evm, privateKey.substrate]);
 
   useEffect(() => {
     // Reset validate
@@ -51,11 +87,38 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
 
   const _onImportAccount = () => {
     const accountName = name ? name : `Account ${accountLength + 1}`;
-    privateKeyValidate({ privateKey }).then((pkExist: boolean) => {
-      if (!pkExist) {
-        onImportAccount({ name: accountName, privateKey }, history);
+    privateKeyValidate({
+      substratePrivateKey: privateKey.substrate,
+      evmPrivateKey: privateKey.evm,
+    }).then(({ substrateExists, evmExists }) => {
+      if (!substrateExists && !evmExists) {
+        onImportAccount(
+          {
+            name: accountName,
+            substratePrivateKey: privateKey.substrate,
+            evmPrivateKey: privateKey.evm,
+          },
+          history
+        );
       }
-      setPrivateKeyExist(pkExist);
+      setValidatePrivateKey((prev) => ({
+        substrate: {
+          ...prev.substrate,
+          isExist:
+            (privateKey.substrate && substrateExists) ||
+            (privateKey.substrate && !privateKey.evm && evmExists)
+              ? true
+              : false,
+        },
+        evm: {
+          ...prev.evm,
+          isExist:
+            (privateKey.evm && evmExists) ||
+            (privateKey.evm && !privateKey.substrate && substrateExists)
+              ? true
+              : false,
+        },
+      }));
     });
   };
 
@@ -79,47 +142,121 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
           )}
         </Box>
 
+        {/* Substrate */}
         <Box mt="24px">
-          <Label>{t(messages.privateKeys())}</Label>
+          <Label>Substrate</Label>
           <InputWrapper
-            isError={isError || privateKeyExist}
+            isError={
+              !isSubstratePrivateKeyValid ||
+              validatePrivateKey.substrate.isExist
+            }
             alignItems="center"
           >
             <StyledInput
               hasBorder={false}
-              id="private-key-input"
-              value={privateKey}
+              id="substrate-private-key-input"
+              value={privateKey.substrate}
               as={TextareaAutosize}
               placeholder={t(messages.enterPrivateKeys())}
               onChange={(e: any) => {
                 const { value } = e.target;
-                setPrivateKey(value);
-                privateKeyExist && setPrivateKeyExist(false);
+                setPrivateKey((prev) => ({ ...prev, substrate: value }));
+                validatePrivateKey.substrate.isExist &&
+                  setValidatePrivateKey((prev) => ({
+                    ...prev,
+                    substrate: {
+                      ...prev.substrate,
+                      isExist: false,
+                    },
+                  }));
               }}
             />
             <Button
               p="0px"
               pl="12px"
               onClick={() => {
-                var pasteText = document.getElementById('private-key-input');
+                var pasteText = document.getElementById(
+                  'substrate-private-key-input'
+                );
                 pasteText.focus();
                 document.execCommand('paste');
 
                 pasteText.textContent &&
-                  setPrivateKey(
-                    `${privateKey}${pasteText.textContent?.trim()}`
-                  );
+                  setPrivateKey((prev) => ({
+                    ...prev,
+                    substrate: `${
+                      privateKey.substrate
+                    }${pasteText.textContent?.trim()}`,
+                  }));
               }}
             >
               <SnippetsIcon width="15px" />
             </Button>
           </InputWrapper>
-          {isError && (
+          {!isSubstratePrivateKeyValid && (
             <Text mt="2px" fontSize="12px" color={colors.error}>
               {t(messages.invalidPrivateKeys())}
             </Text>
           )}
-          {privateKeyExist && (
+          {validatePrivateKey.substrate.isExist && (
+            <Text mt="2px" fontSize="12px" color={colors.error}>
+              The account you're trying to import is a duplicate
+            </Text>
+          )}
+        </Box>
+
+        {/* EVM */}
+        <Box mt="24px">
+          <Label>EVM</Label>
+          <InputWrapper
+            isError={!isEVMPrivateKeyValid || validatePrivateKey.evm.isExist}
+            alignItems="center"
+          >
+            <StyledInput
+              hasBorder={false}
+              id="evm-private-key-input"
+              value={privateKey.evm}
+              as={TextareaAutosize}
+              placeholder={t(messages.enterPrivateKeys())}
+              onChange={(e: any) => {
+                const { value } = e.target;
+                setPrivateKey((prev) => ({ ...prev, evm: value }));
+                validatePrivateKey.evm.isExist &&
+                  setValidatePrivateKey((prev) => ({
+                    ...prev,
+                    evm: {
+                      ...prev.evm,
+                      isExist: false,
+                    },
+                  }));
+              }}
+            />
+            <Button
+              p="0px"
+              pl="12px"
+              onClick={() => {
+                var pasteText = document.getElementById(
+                  'evm-private-key-input'
+                );
+                pasteText.focus();
+                document.execCommand('paste');
+
+                pasteText.textContent &&
+                  setPrivateKey((prev) => ({
+                    ...prev,
+                    evm: `${privateKey.evm}${pasteText.textContent?.trim()}`,
+                  }));
+              }}
+            >
+              <SnippetsIcon width="15px" />
+            </Button>
+          </InputWrapper>
+          {!isEVMPrivateKeyValid && (
+            <Text mt="2px" fontSize="12px" color={colors.error}>
+              {t(messages.invalidPrivateKeys())}
+            </Text>
+          )}
+          {validatePrivateKey.evm.isExist && (
             <Text mt="2px" fontSize="12px" color={colors.error}>
               The account you're trying to import is a duplicate
             </Text>
@@ -132,7 +269,7 @@ export const ImportPrivateKeyPanel: React.FC = React.memo(() => {
           mr="8px"
           width="50%"
           variant="cancel"
-          onClick={() => history.push("/")}
+          onClick={() => history.push('/')}
         >
           {t(messages.cancel())}
         </Button>

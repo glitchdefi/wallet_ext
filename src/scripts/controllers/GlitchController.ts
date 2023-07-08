@@ -26,6 +26,7 @@ import {
   ResponseAppStore,
   ResponseSettings,
   ResponseWallet,
+  ResponsePrivatekeyValidate,
 } from '../types';
 import { DEFAULT_TYPE } from 'constants/values';
 
@@ -45,7 +46,13 @@ export class GlitchController {
 
   async createWallet(request: RequestWalletCreate): Promise<ResponseWallet> {
     const data = await this.glitchWeb3.createAccount(request);
-    const { mnemonicEncrypted, json, evmAccount } = data;
+    const {
+      json,
+      evmAddress,
+      mnemonicEncrypted,
+      encryptedSubstratePk,
+      encryptedEvmPk,
+    } = data;
     const { address, meta } = json as unknown as {
       address: string;
       meta?: {
@@ -62,18 +69,19 @@ export class GlitchController {
       isBackup: false,
       seed: null,
       parentAddress: address,
-      parentEvmAddress: evmAccount.address,
+      parentEvmAddress: evmAddress,
       selectedAddress: address,
       accounts: {
         [address]: {
           address,
-          evmAddress: evmAccount.address,
+          evmAddress,
           name: meta.name,
           avatar: null,
           whenCreated: meta.whenCreated,
           balance: { reservedBalance: '0', freeBalance: '0' },
           seed: mnemonicEncrypted,
-          encryptedPk: evmAccount.encryptedPk,
+          encryptedEvmPk,
+          encryptedSubstratePk,
           allowedUrls: [],
         },
       },
@@ -99,7 +107,13 @@ export class GlitchController {
   async restoreWallet(request: RequestWalletCreate): Promise<ResponseWallet> {
     try {
       const data = await this.glitchWeb3.createAccount(request);
-      const { mnemonicEncrypted, json, evmAccount } = data;
+      const {
+        json,
+        evmAddress,
+        mnemonicEncrypted,
+        encryptedSubstratePk,
+        encryptedEvmPk,
+      } = data;
       const { address, meta } = json as unknown as {
         address: string;
         meta?: {
@@ -121,17 +135,18 @@ export class GlitchController {
         isBackup: true,
         selectedAddress: address,
         parentAddress: address,
-        parentEvmAddress: evmAccount.address,
+        parentEvmAddress: evmAddress,
         seed: null,
         accounts: {
           [address]: {
             address: address,
-            evmAddress: evmAccount.address,
+            evmAddress,
             balance: { reservedBalance: '0', freeBalance: '0' },
             name: meta.name,
             avatar: null,
             whenCreated: meta.whenCreated,
-            encryptedPk: evmAccount.encryptedPk,
+            encryptedEvmPk,
+            encryptedSubstratePk,
             seed: mnemonicEncrypted,
             allowedUrls: [],
           },
@@ -200,7 +215,13 @@ export class GlitchController {
         name,
         password: null,
       });
-      const { mnemonicEncrypted, json, evmAccount } = data;
+      const {
+        json,
+        evmAddress,
+        mnemonicEncrypted,
+        encryptedSubstratePk,
+        encryptedEvmPk,
+      } = data;
       const { address, meta } = json as unknown as {
         address: string;
         meta?: {
@@ -216,12 +237,13 @@ export class GlitchController {
           [address]: {
             name: meta.name,
             address: address,
-            evmAddress: evmAccount.address,
+            evmAddress,
             avatar: null,
             balance: { reservedBalance: '0', freeBalance: '0' },
             seed: mnemonicEncrypted,
             whenCreated: meta.whenCreated,
-            encryptedPk: evmAccount.encryptedPk,
+            encryptedEvmPk,
+            encryptedSubstratePk,
             allowedUrls: [],
           },
           ...oldAccounts,
@@ -236,14 +258,23 @@ export class GlitchController {
 
   async importAccount({
     name,
-    privateKey,
+    substratePrivateKey,
+    evmPrivateKey,
   }: RequestAccountImport): Promise<ResponseWallet> {
     const data = await this.glitchWeb3.createAccount({
-      seed: privateKey,
+      seed: substratePrivateKey,
+      evmPrivateKey,
       name,
       password: null,
+      isImport: true,
     });
-    const { mnemonicEncrypted, json, evmAccount } = data;
+    const {
+      json,
+      evmAddress,
+      mnemonicEncrypted,
+      encryptedSubstratePk,
+      encryptedEvmPk,
+    } = data;
     const { address, meta } = json as unknown as {
       address: string;
       meta?: {
@@ -259,12 +290,13 @@ export class GlitchController {
         [address]: {
           name: meta.name,
           address: address,
-          evmAddress: evmAccount.address,
+          evmAddress,
           avatar: null,
           balance: { freeBalance: '0', reservedBalance: '0' },
           seed: mnemonicEncrypted,
           whenCreated: meta.whenCreated,
-          encryptedPk: evmAccount.encryptedPk,
+          encryptedSubstratePk,
+          encryptedEvmPk,
           allowedUrls: [],
         },
         ...oldAccounts,
@@ -275,23 +307,31 @@ export class GlitchController {
   }
 
   async privateKeyValidate({
-    privateKey,
-  }: RequestPrivatekeyValidate): Promise<boolean> {
-    const subStrateAddress = keyring.createFromUri(
-      formatPrivateKey(privateKey),
+    substratePrivateKey,
+    evmPrivateKey,
+  }: RequestPrivatekeyValidate): Promise<ResponsePrivatekeyValidate> {
+    const oldAccounts = await this.appStateController.getAccounts();
+
+    const substrateAddress = keyring.createFromUri(
+      substratePrivateKey
+        ? formatPrivateKey(substratePrivateKey)
+        : formatPrivateKey(evmPrivateKey),
       {},
       DEFAULT_TYPE
     ).address;
 
-    const evmAccount =
-      this.glitchWeb3.web3.accounts.privateKeyToAccount(privateKey);
+    const evmAddress = this.glitchWeb3.web3.accounts.privateKeyToAccount(
+      evmPrivateKey
+        ? formatPrivateKey(evmPrivateKey)
+        : formatPrivateKey(substratePrivateKey)
+    )?.address;
 
-    const oldAccounts = await this.appStateController.getAccounts();
-    const checkEvmAddressExists = Object.keys(oldAccounts)?.filter(
-      (k) => oldAccounts[k].evmAddress === evmAccount.address
-    );
-
-    return !!oldAccounts[subStrateAddress] || !!checkEvmAddressExists?.length;
+    return {
+      substrateExists: !!oldAccounts[substrateAddress],
+      evmExists: !!Object.keys(oldAccounts)?.filter(
+        (k) => oldAccounts[k].evmAddress === evmAddress
+      )?.length,
+    };
   }
 
   async changeAccount({
@@ -312,13 +352,32 @@ export class GlitchController {
     const address = await this.appStateController.getSelectedAddress();
     const currentAccount = oldAccounts[address];
 
-    const { seed } = currentAccount;
-    const decryptSeed = (await decryptMessage(
-      seed.encrypted,
-      seed.secret
-    )) as string;
+    const { seed, encryptedEvmPk, encryptedSubstratePk, evmAddress } =
+      currentAccount;
 
-    return this.glitchWeb3.getPrivateKeyFromSeed(decryptSeed);
+    if (seed) {
+      const decryptSeed = (await decryptMessage(
+        seed.encrypted,
+        seed.secret
+      )) as string;
+
+      return this.glitchWeb3.getPrivateKeyFromSeed(decryptSeed);
+    }
+
+    if (encryptedEvmPk && encryptedSubstratePk) {
+      const substratePrivateKey = this.glitchWeb3.web3.accounts.decrypt(
+        JSON.parse(encryptedSubstratePk),
+        address
+      )?.privateKey;
+      const evmPrivateKey = this.glitchWeb3.web3.accounts.decrypt(
+        JSON.parse(encryptedEvmPk),
+        evmAddress
+      )?.privateKey;
+
+      return { evm: evmPrivateKey, substrate: substratePrivateKey };
+    }
+
+    return { evm: null, substrate: null };
   }
 
   async editAccount({ name }: RequestAccountEdit): Promise<ResponseWallet> {
@@ -353,11 +412,30 @@ export class GlitchController {
   async claimEvmAccount(
     request: RequestAccountClaimEvmBalance
   ): Promise<boolean> {
+    let evmPrivateKey: string = null;
     const allAccounts = await this.appStateController.getAccounts();
     const currentAccount = allAccounts[request.address];
     this.glitchWeb3.unlockAccount('', request.address);
 
-    return await this.glitchWeb3.claimEvmAccountBalance(currentAccount);
+    if (currentAccount.encryptedEvmPk) {
+      evmPrivateKey = this.glitchWeb3.web3.accounts.decrypt(
+        JSON.parse(currentAccount.encryptedEvmPk),
+        currentAccount.evmAddress
+      )?.privateKey;
+    }
+
+    if (currentAccount.seed) {
+      const decryptSeed = (await decryptMessage(
+        currentAccount.seed.encrypted,
+        currentAccount.seed.secret
+      )) as string;
+      evmPrivateKey = this.glitchWeb3.getPrivateKeyFromSeed(decryptSeed).evm;
+    }
+
+    return await this.glitchWeb3.claimEvmAccountBalance(
+      currentAccount,
+      evmPrivateKey
+    );
   }
 
   async isEvmClaimed(request: RequestIsEvmClaimed): Promise<boolean> {

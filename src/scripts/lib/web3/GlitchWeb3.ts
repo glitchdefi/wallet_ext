@@ -67,20 +67,28 @@ export class GlitchWeb3 {
   }
 
   async createAccount(request: RequestWalletCreate): Promise<{
-    mnemonicEncrypted: { encrypted: string; secret: string };
     json: KeyringPair$Json;
-    evmAccount: { address: string; encryptedPk: string };
+    evmAddress: string;
+    mnemonicEncrypted: { encrypted: string; secret: string };
+    encryptedSubstratePk: string;
+    encryptedEvmPk: string;
   }> {
-    let evmAccount = {
-      address: null,
-    };
-    let encryptedPk = null;
-    const { seed, name, password } = request;
+    let evmAddress = null;
+    let encryptedSubstratePk = null;
+    let encryptedEvmPk = null;
+
+    const { seed, evmPrivateKey, name, password, isImport } = request;
+
     const mnemonic =
       seed?.trim() || mnemonicGenerate(GlitchToken.default_mnemonic_length);
 
+    // Generate substrate address
     const { json } = await keyring.addUri(
-      isHexSeed(mnemonic) ? formatPrivateKey(mnemonic) : mnemonic,
+      evmPrivateKey && !seed
+        ? evmPrivateKey
+        : isHexSeed(mnemonic)
+        ? formatPrivateKey(mnemonic)
+        : mnemonic,
       password || undefined,
       {
         name,
@@ -88,24 +96,46 @@ export class GlitchWeb3 {
       }
     );
 
-    if (isHexSeed(mnemonic)) {
-      evmAccount = this.web3.accounts.privateKeyToAccount(mnemonic);
-      encryptedPk = this.web3.accounts.encrypt(mnemonic, evmAccount.address);
+    // Generate evm address
+    if (isImport) {
+      // Create new account with private key
+      evmAddress = this.web3.accounts.privateKeyToAccount(
+        seed && !evmPrivateKey
+          ? formatPrivateKey(seed)
+          : formatPrivateKey(evmPrivateKey)
+      )?.address;
+      encryptedEvmPk = this.web3.accounts.encrypt(
+        seed && !evmPrivateKey
+          ? formatPrivateKey(seed)
+          : formatPrivateKey(evmPrivateKey),
+        evmAddress
+      );
     } else {
-      const { address, privateKey } = Wallet.fromMnemonic(mnemonic);
-      evmAccount = { address };
-      encryptedPk = this.web3.accounts.encrypt(privateKey, evmAccount.address);
+      // Create new account with mnemonic
+      evmAddress = Wallet.fromMnemonic(mnemonic)?.address;
     }
 
-    const mnemonicEncrypted = await messageEncryption(mnemonic);
+    const mnemonicEncrypted = isImport
+      ? null
+      : await messageEncryption(mnemonic);
+
+    encryptedSubstratePk = isImport
+      ? this.web3.accounts.encrypt(
+          seed && !evmPrivateKey
+            ? formatPrivateKey(seed)
+            : formatPrivateKey(evmPrivateKey),
+          json.address
+        )
+      : null;
 
     return {
-      mnemonicEncrypted: mnemonicEncrypted,
       json,
-      evmAccount: {
-        ...evmAccount,
-        encryptedPk: JSON.stringify(encryptedPk),
-      },
+      evmAddress,
+      mnemonicEncrypted,
+      encryptedEvmPk: encryptedEvmPk ? JSON.stringify(encryptedEvmPk) : null,
+      encryptedSubstratePk: encryptedSubstratePk
+        ? JSON.stringify(encryptedSubstratePk)
+        : null,
     };
   }
 
@@ -253,22 +283,21 @@ export class GlitchWeb3 {
     };
   }
 
-  async claimEvmAccountBalance(account: AccountTypes): Promise<boolean> {
+  async claimEvmAccountBalance(
+    account: AccountTypes,
+    evmPrivateKey: string
+  ): Promise<boolean> {
     try {
       if (account?.address) {
         const addressPair = keyring.getPair(account.address);
-
-        const privateKey = this.web3.accounts.decrypt(
-          JSON.parse(account.encryptedPk),
-          account.evmAddress
-        );
-        this.web3.accounts.wallet.add(privateKey);
+        this.web3.accounts.wallet.add(evmPrivateKey);
         const signature = await this.web3.sign(
           `glitch evm:${web3Utils
             .bytesToHex(web3Utils.hexToBytes(u8aToHex(addressPair.publicKey)))
             .slice(2)}`,
           account.evmAddress
         );
+
         return new Promise((resolve, reject) => {
           this.api.tx.evmAccounts
             .claimAccount(account.evmAddress, signature)

@@ -33,6 +33,7 @@ import type {
   RequestIsEvmClaimed,
   RequestUpdateAccountAvatar,
   ResponsePrivatekeyGet,
+  ResponsePrivatekeyValidate,
 } from '../../types';
 import keyring from 'packages/glitch-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -292,7 +293,7 @@ export default class Extension {
 
   private privateKeyValidate(
     request: RequestPrivatekeyValidate
-  ): Promise<boolean> {
+  ): Promise<ResponsePrivatekeyValidate> {
     return this.controller.privateKeyValidate(request);
   }
 
