@@ -256,13 +256,8 @@ export interface SigningRequest {
   request: RequestSign;
   url: string;
 }
-// export interface SignerPayloadJSON2 extends SignerPayloadJSON {
-//   amount: string | number;
-//   fee: string | number;
-// }
 export interface RequestSign {
   readonly payload: SignerPayloadJSON | SignerPayloadRaw;
-
   sign(registry: TypeRegistry, pair: KeyringPair): { signature: HexString };
 }
 
@@ -324,4 +319,54 @@ export interface AccountTypes {
 // Responses
 export type ResponseTypes = {
   [MessageType in keyof RequestSignatures]: RequestSignatures[MessageType][1];
+};
+
+export interface EnkryptWindow {
+  enkrypt: {
+    providers: {
+      [key: string]: any;
+    };
+  };
+  [key: string]: any;
+}
+
+// For EVM
+interface RPCRequestType {
+  method: string;
+  params?: Array<any>;
+}
+
+interface RPCResponseType {
+  result?: any;
+  error?: any;
+}
+
+interface ProviderError {
+  message: string;
+  code: number;
+  data?: unknown;
+}
+
+type CallbackFunction = (err: ProviderError | null, result?: any) => void;
+
+interface OnMessageResponse {
+  result?: string;
+  error?: string;
+}
+
+declare enum SignerType {
+  ecdsa = 'ecdsa',
+  ed25519 = 'ed25519',
+  sr25519 = 'sr25519',
+  secp256k1 = 'secp256k1',
+  secp256k1btc = 'secp256k1-btc',
+}
+
+export {
+  RPCRequestType,
+  RPCResponseType,
+  CallbackFunction,
+  OnMessageResponse,
+  ProviderError,
+  SignerType,
 };

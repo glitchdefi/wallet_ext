@@ -368,7 +368,7 @@ export default class State {
     };
   };
 
-  private stripUrl(url: string): string {
+  public stripUrl(url: string): string {
     assert(
       url &&
         (url.startsWith('http:') ||

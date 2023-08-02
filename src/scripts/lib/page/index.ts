@@ -26,6 +26,7 @@ export function sendMessage(
 ): Promise<any> {
   return new Promise((resolve, reject): void => {
     const id = getId();
+    console.log('enkrypt - sendMessage', { message, request });
 
     handlers[id] = { reject, resolve, subscriber };
 

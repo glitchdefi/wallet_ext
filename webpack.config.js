@@ -54,6 +54,7 @@ var options = {
     background: path.join(__dirname, 'src', 'scripts', 'background.ts'),
     contentScript: path.join(__dirname, 'src', 'scripts', 'content.ts'),
     page: path.join(__dirname, 'src', 'scripts', 'page.ts'),
+    evmPage: path.join(__dirname, 'src', 'scripts', 'evm-page.ts'),
   },
   chromeExtensionBoilerplate: {
     notHotReload: ['contentScript', 'devtools'],

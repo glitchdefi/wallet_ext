@@ -44,6 +44,7 @@ import { withErrorLog } from 'utils/withErrorLog';
 import { ExtensionStore } from '../localStore';
 import { toGLCH } from 'utils/number';
 import browser from 'webextension-polyfill';
+import { ResponseWallet } from 'scripts/types';
 
 async function transformAccounts(
   accounts: SubjectInfo,
@@ -336,6 +337,55 @@ export default class Tabs {
     return false;
   }
 
+  private async getEvmChainId(): Promise<number> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(2160);
+      }, 1000);
+    });
+  }
+
+  private async getEthAccounts(url: string): Promise<string[]> {
+    const origin = this.state.stripUrl(url);
+
+    await this.authorize(url, { origin });
+
+    const { accounts, selectedAddress }: ResponseWallet =
+      await this.localStore.get('wallet');
+
+    if (!accounts[selectedAddress].allowedUrls?.includes(origin)) {
+      throw new Error('Current account is not allowed');
+    }
+
+    return [accounts[selectedAddress].evmAddress];
+  }
+
+  private async requestEthAccounts(url: string): Promise<string[]> {
+    const origin = this.state.stripUrl(url);
+
+    await this.authorize(url, {
+      origin,
+    });
+
+    const { accounts, selectedAddress }: ResponseWallet =
+      await this.localStore.get('wallet');
+
+    if (!accounts[selectedAddress].allowedUrls?.includes(origin)) {
+      throw new Error('Current account is not allowed');
+    }
+
+    return [accounts[selectedAddress].evmAddress];
+  }
+
+  private async estimateGas(request): Promise<string> {
+    console.log('estimateGas', request);
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('0xb3ad');
+      }, 1000);
+    });
+  }
+
   public async handle<TMessageType extends MessageTypes>(
     id: string,
     type: TMessageType,
@@ -347,7 +397,7 @@ export default class Tabs {
       return this.redirectIfPhishing(url);
     }
 
-    if (type !== 'pub(authorize.tab)') {
+    if (type !== 'pub(authorize.tab)' && !type.includes('evm')) {
       this.state.ensureUrlAuthorized(url, request as { address?: string });
     }
 
@@ -391,16 +441,22 @@ export default class Tabs {
       case 'pub(rpc.unsubscribe)':
         return this.rpcUnsubscribe(request as RequestRpcUnsubscribe, port);
 
+      // Evm
+
+      case 'pub(evm.eth_chainId)':
+        return this.getEvmChainId();
+
+      case 'pub(evm.eth_accounts)':
+        return this.getEthAccounts(url);
+
+      case 'pub(evm.eth_requestAccounts)':
+        return this.requestEthAccounts(url);
+
+      case 'pub(evm.eth_estimateGas)':
+        return this.estimateGas(request);
+
       default:
         throw new Error(`Unable to handle message of type ${type}`);
     }
   }
-}
-function anyType(
-  accounts: any,
-  anyType: any,
-  url: string,
-  localStore: ExtensionStore
-) {
-  throw new Error('Function not implemented.');
 }

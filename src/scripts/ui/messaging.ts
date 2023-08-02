@@ -86,7 +86,10 @@ function init() {
   };
 
   // setup a listener for messages, any incoming resolves the promise
-  port.onMessage.addListener(handleData);
+  port.onMessage.addListener((data) => {
+    console.log('enkrypt - extension', data);
+    handleData(data);
+  });
 }
 
 function sendMessage<TMessageType extends MessageTypesWithNullRequest>(

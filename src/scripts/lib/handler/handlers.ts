@@ -48,7 +48,7 @@ export default function handler(
           // the tab, in which case port will be undefined
           assert(port, 'Port has been disconnected');
 
-          port.postMessage({ id, response });
+          port.postMessage({ id, message, response });
         }
       })
       .catch((error: Error): void => {

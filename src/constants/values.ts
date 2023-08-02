@@ -1,5 +1,6 @@
 import { KeypairType } from '@polkadot/util-crypto/types';
 import moment from 'moment';
+import secrets from 'secrets';
 
 export const CONNECTED_DAPP_KEY = 'CONNECTED_DAPP_KEY';
 
@@ -25,6 +26,7 @@ export const LOCK_TIME_LIST = [
   },
 ];
 
+export const EXTENSION_VERSION: string = secrets.walletVersion;
 export const DEFAULT_TYPE: KeypairType = 'sr25519';
 export const UPDATE_TIME = 5000;
 export const PAGE_SIZE = 1000;

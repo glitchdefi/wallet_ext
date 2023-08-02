@@ -35,7 +35,9 @@ function handleChromePortListener(controller: GlitchController) {
   // listen to all messages and handle appropriately
   chrome.runtime.onConnect.addListener((port): void => {
     // message and disconnect handlers
-    port.onMessage.addListener((data: any) => handlers(data, port, controller));
+    port.onMessage.addListener((data: any) => {
+      handlers(data, port, controller);
+    });
     port.onDisconnect.addListener(() =>
       log.info(`Disconnected from ${port.name}`)
     );

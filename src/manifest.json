@@ -33,7 +33,8 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "page.bundle.js"
+        "page.bundle.js",
+        "evmPage.bundle.js"
       ],
       "use_dynamic_url": false,
       "matches": [
