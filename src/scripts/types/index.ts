@@ -102,6 +102,7 @@ export interface RequestSignatures {
 
   // EVM
   'pri(evm.signing.approve)': [RequestEvmSigningApprove, boolean];
+  'pri(evm.sign.typedData)': [RequestEvmSigningApprove, boolean];
 }
 
 export type MessageTypes = keyof RequestSignatures;
@@ -255,6 +256,10 @@ export interface RequestAuthorizeToggle {
 
 // EVM
 export interface RequestEvmSigningApprove {
+  id: string;
+}
+
+export interface RequestEvmSignTypedData {
   id: string;
 }
 

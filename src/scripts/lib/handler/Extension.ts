@@ -35,6 +35,7 @@ import type {
   ResponsePrivatekeyGet,
   ResponsePrivatekeyValidate,
   RequestEvmSigningApprove,
+  RequestEvmSignTypedData,
 } from '../../types';
 import keyring from 'packages/glitch-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -56,6 +57,11 @@ import { bufferToHex, decryptMessage, hexToBuffer } from 'utils/strings';
 import { ecsign, fromRpcSig, toRpcSig } from 'ethereumjs-util';
 import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
 import { getCustomError } from 'scripts/providers/ethereum/libs/getError';
+import {
+  SignTypedDataVersion,
+  TypedDataUtils,
+  typedSignatureHash,
+} from '@metamask/eth-sig-util';
 
 function isJsonPayload(
   value: SignerPayloadJSON | SignerPayloadRaw
@@ -437,6 +443,64 @@ export default class Extension {
     });
   }
 
+  private async evmSignTypedData({
+    id,
+  }: RequestEvmSignTypedData): Promise<any> {
+    const queued = this.state.getSignRequest(id);
+
+    assert(queued, 'Unable to find request');
+
+    const { request, resolve, reject } = queued;
+    const pair = keyring.getPair(queued.account.address);
+    pair?.isLocked && pair.unlock();
+
+    let privateKey: string = null;
+    const oldAccounts = await this.controller.appStateController.getAccounts();
+    const currentAccount = oldAccounts[pair.address];
+
+    const { seed, encryptedEvmPk, encryptedSubstratePk, evmAddress } =
+      currentAccount;
+
+    if (seed) {
+      const decryptSeed = (await decryptMessage(
+        seed.encrypted,
+        seed.secret
+      )) as string;
+
+      privateKey =
+        this.controller.glitchWeb3.getPrivateKeyFromSeed(decryptSeed)?.evm;
+    }
+
+    if (encryptedEvmPk && encryptedSubstratePk) {
+      privateKey = this.controller.glitchWeb3.web3.accounts.decrypt(
+        JSON.parse(encryptedEvmPk),
+        evmAddress
+      )?.privateKey;
+    }
+
+    const {
+      payload: { typedDataJSON, version },
+    } = request as any;
+
+    let msgHash: string = '';
+
+    if (version === SignTypedDataVersion.V1) {
+      msgHash = typedSignatureHash(typedDataJSON);
+    } else {
+      msgHash = bufferToHex(TypedDataUtils.eip712Hash(typedDataJSON, version));
+    }
+
+    const msgHashBuffer = hexToBuffer(msgHash);
+    const privateKeyBuffer = hexToBuffer(privateKey);
+    const signature = ecsign(msgHashBuffer, privateKeyBuffer);
+    const rpcSig = toRpcSig(signature.v, signature.r, signature.s);
+
+    return new Promise<boolean>(async (_resolve, _reject) => {
+      resolve(rpcSig as string);
+      _resolve(true);
+    });
+  }
+
   // Weird thought, the eslint override is not needed in Tabs
   public async handle<TMessageType extends MessageTypes>(
     id: string,
@@ -560,6 +624,9 @@ export default class Extension {
 
       case 'pri(evm.signing.approve)':
         return this.evmSigningApprove(request as RequestEvmSigningApprove);
+
+      case 'pri(evm.sign.typedData)':
+        return this.evmSignTypedData(request as RequestEvmSignTypedData);
 
       default:
         throw new Error(`Unable to handle message of type ${type}`);

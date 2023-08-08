@@ -1,6 +1,6 @@
 {
   "name": "glitch-wallet-extension",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Glitch Wallet Extension",
   "license": "MIT",
   "scripts": {
@@ -14,6 +14,7 @@
     "@ethereumjs/tx": "^4.2.0",
     "@hot-loader/react-dom": "^17.0.1",
     "@metamask/browser-passworder": "^3.0.0",
+    "@metamask/eth-sig-util": "^6.0.0",
     "@polkadot/api": "6.3.1",
     "@polkadot/extension-chains": "^0.42.9",
     "@polkadot/extension-dapp": "^0.42.9",

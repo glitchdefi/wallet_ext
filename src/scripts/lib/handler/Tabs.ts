@@ -11,7 +11,7 @@ import type {
   SignerPayloadRaw,
 } from '@polkadot/types/types';
 import { ApiPromise } from '@polkadot/api';
-import Web3Utils, { numberToHex } from 'web3-utils';
+import Web3Utils, { numberToHex, toBN } from 'web3-utils';
 import isNaN from 'lodash/isNaN';
 import type { SubjectInfo } from 'packages/glitch-keyring/observable/types';
 import type {
@@ -366,7 +366,11 @@ export default class Tabs {
   private async evmClientRequest(request): Promise<number> {
     const { method, params } = request || {};
     return new Promise((resolve, reject) => {
-      this.client.request(method, params).then(resolve, reject);
+      try {
+        this.client.request(method, params).then(resolve, resolve);
+      } catch (error) {
+        // TODO
+      }
     });
   }
 
@@ -441,6 +445,57 @@ export default class Tabs {
     ) as Promise<string>;
   }
 
+  private async evmSignTypedData(url: string, request: any): Promise<string> {
+    const { method, params } = request || {};
+
+    const supportedMethods: Record<string, string> = {
+      eth_signTypedData: 'V1',
+      eth_signTypedData_v1: 'V1',
+      eth_signTypedData_v3: 'V3',
+      eth_signTypedData_v4: 'V4',
+    };
+
+    if (!Object.keys(supportedMethods).includes(method)) return;
+
+    if (!params || params.length < 2) {
+      throw new Error('eth_signTypedData: invalid params');
+    }
+
+    const version = supportedMethods[method as string];
+    const typedData = version === 'V1' ? params[0] : params[1];
+    const address = version === 'V1' ? params[1] : params[0];
+    const typedDataJSON = version !== 'V1' ? JSON.parse(typedData) : typedData;
+
+    if (
+      typedDataJSON.domain &&
+      typedDataJSON.domain.chainId &&
+      !toBN(typedDataJSON.domain.chainId).eq(toBN(2160))
+    )
+      throw new Error(
+        `eth_signTypedData: Provided chainId ${
+          typedDataJSON.domain.chainId
+        } must match the active chainId ${toBN(2160).toString()}`
+      );
+
+    const { selectedAddress }: ResponseWallet = await this.localStore.get(
+      'wallet'
+    );
+
+    const pair = this.getSigningPair(selectedAddress);
+
+    return this.state.sign(
+      url,
+      new RequestExtrinsicSign({
+        typedDataJSON,
+        version,
+      } as any),
+      {
+        address: pair.address,
+        ...pair.meta,
+      }
+    ) as Promise<string>;
+  }
+
   public async handle<TMessageType extends MessageTypes>(
     id: string,
     type: TMessageType,
@@ -506,6 +561,9 @@ export default class Tabs {
 
       case 'pub(evm.eth_sendTransaction)':
         return this.evmSignTransaction(url, request);
+
+      case 'pub(evm.eth_signTypedData)':
+        return this.evmSignTypedData(url, request);
 
       case 'pub(evm.eth_clientRequest)':
         return this.evmClientRequest(request);

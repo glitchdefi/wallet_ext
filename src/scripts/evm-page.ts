@@ -5,8 +5,6 @@ import { ProviderName, ProviderType } from './types/provider';
 import { Message } from './types/Message';
 import { log } from 'utils/log-config';
 
-// import { windowOnMessage, providerSendMessage } from '@/libs/messenger/window';
-
 (window as Window).enkrypt = {
   providers: {},
 };
@@ -22,7 +20,7 @@ EthereumProvider(window, {
     provider: ProviderName,
     message: string
   ): Promise<any> => {
-    log.info('enkrypt - providerSendMessage', {
+    log.info('enkrypt - sendMessageHandler', {
       provider,
       message,
     });
@@ -36,9 +34,19 @@ EthereumProvider(window, {
         ? 'pub(evm.eth_requestAccounts)'
         : method === 'eth_sendTransaction'
         ? 'pub(evm.eth_sendTransaction)'
+        : method?.includes('eth_signTypedData')
+        ? 'pub(evm.eth_signTypedData)'
         : 'pub(evm.eth_clientRequest)';
 
-    return await sendMessage(_message, { method, params });
+    return new Promise(async (resolve) => {
+      sendMessage(_message, { method, params }).then((res) => {
+        log.info('enkrypt - sendMessageHandler (res)', {
+          res,
+        });
+
+        resolve(res);
+      });
+    });
   },
 });
 

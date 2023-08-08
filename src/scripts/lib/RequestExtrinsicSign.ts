@@ -7,6 +7,7 @@ interface Payload extends SignerPayloadJSON {
   amount: string | number;
   fee: string | number;
   decodedData?: any;
+  typedDataJSON?: any;
 }
 export default class RequestExtrinsicSign implements RequestSign {
   public readonly payload: Payload;

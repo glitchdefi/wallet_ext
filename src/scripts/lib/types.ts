@@ -159,6 +159,7 @@ export interface RequestSignatures {
   'pub(evm.eth_requestAccounts)': [null, string[]];
   'pub(evm.eth_sendTransaction)': [any, any];
   'pub(evm.eth_clientRequest)': [any, any];
+  'pub(evm.eth_signTypedData)': [any, any];
 }
 
 export type MessageTypes = keyof RequestSignatures;

@@ -326,3 +326,9 @@ export async function approveEvmRequest(id: string): Promise<boolean> {
     id,
   });
 }
+
+export async function evmSignTypedData(id: string): Promise<boolean> {
+  return sendMessage('pri(evm.sign.typedData)', {
+    id,
+  });
+}
