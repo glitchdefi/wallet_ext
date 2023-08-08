@@ -6,6 +6,7 @@ import type {
 import type { HexString } from '@polkadot/util/types';
 import { TypeRegistry } from '@polkadot/types';
 import { AuthUrls } from '../lib/handler/State';
+import { DataDecodeResponse } from 'scripts/providers/ethereum/types';
 
 export interface AccountJson extends KeyringPair$Meta {
   address: string;
@@ -98,6 +99,9 @@ export interface RequestSignatures {
 
   // public/external requests, i.e. from a page
   'pub(authorize.tab)': [RequestAuthorizeTab, null];
+
+  // EVM
+  'pri(evm.signing.approve)': [RequestEvmSigningApprove, boolean];
 }
 
 export type MessageTypes = keyof RequestSignatures;
@@ -249,6 +253,11 @@ export interface RequestAuthorizeToggle {
   address: string;
 }
 
+// EVM
+export interface RequestEvmSigningApprove {
+  id: string;
+}
+
 export type AllowedPath = string;
 export interface SigningRequest {
   account: AccountJson;
@@ -261,6 +270,15 @@ export interface RequestSign {
   sign(registry: TypeRegistry, pair: KeyringPair): { signature: HexString };
 }
 
+// amount?: string | number;
+// fee?: string | number;
+// decodedData?: DataDecodeResponse;
+// data?: string;
+// from?: string;
+// gas?: string;
+// gasPrice?: string;
+// to?: string;
+// genesisHash?: string;
 export interface ResponseAccountTransfer {
   success: boolean;
   message: string;

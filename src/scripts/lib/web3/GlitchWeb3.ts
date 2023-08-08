@@ -26,6 +26,15 @@ export class GlitchWeb3 {
   web3: Web3Eth;
   api: ApiPromise;
   appStateController: AppStateController;
+  networkInfo: {
+    key: string;
+    label: string;
+    wsProvider: string;
+    evmProvider: string;
+    baseApiUrl: string;
+    explorerUrl: string;
+    genesisHash: string;
+  };
 
   /**
    * The Singleton's constructor should always be private to prevent direct
@@ -46,10 +55,12 @@ export class GlitchWeb3 {
   async createApi() {
     try {
       const networkName = await this.appStateController.getNetwork();
-      const networkInfo = GlitchNetwork.find((n) => n.key === networkName);
+      this.networkInfo = GlitchNetwork.find(
+        (n) => n.key === networkName
+      ) as any;
 
       // Initialise the provider to connect to the local node
-      const provider = new WsProvider(networkInfo.wsProvider);
+      const provider = new WsProvider(this.networkInfo.wsProvider);
 
       // Create the API and wait until ready
       const api = await ApiPromise.create({
@@ -57,7 +68,7 @@ export class GlitchWeb3 {
         types: GLITCH_EVM_TYPES,
       });
 
-      this.web3 = new Web3Eth(networkInfo.evmProvider);
+      this.web3 = new Web3Eth(this.networkInfo.evmProvider);
       this.api = api;
 
       log.info('Glitch Wallet initialization complete.');

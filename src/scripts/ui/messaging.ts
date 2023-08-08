@@ -87,7 +87,6 @@ function init() {
 
   // setup a listener for messages, any incoming resolves the promise
   port.onMessage.addListener((data) => {
-    console.log('enkrypt - extension', data);
     handleData(data);
   });
 }
@@ -319,4 +318,11 @@ export async function updateWalletStorage(
 
 export async function windowOpen(path: AllowedPath): Promise<boolean> {
   return sendMessage('pri(window.open)', path);
+}
+
+// EVM
+export async function approveEvmRequest(id: string): Promise<boolean> {
+  return sendMessage('pri(evm.signing.approve)', {
+    id,
+  });
 }

@@ -75,4 +75,15 @@ export interface JsonRpcResponse {
   result?: unknown;
   error?: Error;
 }
+
+export interface DataDecodeResponse {
+  decoded: boolean;
+  values: string[];
+  function?: string;
+  tokenValue?: string;
+  tokenTo?: string;
+  isToken: boolean;
+  amountToApprove?: string;
+}
+
 export { InjectedProvider };

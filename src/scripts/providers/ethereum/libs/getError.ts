@@ -1,6 +1,6 @@
 import log from 'loglevel';
 import { ProviderError } from 'scripts/types';
-import { ErrorCodes } from '../types';
+import { ErrorCodes, JSONError } from '../types';
 
 const errors: Record<number, any> = {
   4001: {
@@ -34,4 +34,18 @@ export const getError = (code: ErrorCodes, data?: unknown): ProviderError => {
   };
   if (data) ret.data = data;
   return ret;
+};
+
+export const getCustomError = (msg: string, code = 8546): ProviderError => {
+  const ret: ProviderError = {
+    code,
+    message: `${code}: ${msg}`,
+  };
+  return ret;
+};
+
+export const getJSONError = (code: ErrorCodes, data?: unknown): JSONError => {
+  return {
+    error: getError(code, data),
+  };
 };

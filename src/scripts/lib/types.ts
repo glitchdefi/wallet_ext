@@ -155,10 +155,10 @@ export interface RequestSignatures {
   'pub(rpc.subscribeConnected)': [null, boolean, boolean];
   'pub(rpc.unsubscribe)': [RequestRpcUnsubscribe, boolean];
   // EVM
-  'pub(evm.eth_chainId)': [null, number];
   'pub(evm.eth_accounts)': [null, string[]];
   'pub(evm.eth_requestAccounts)': [null, string[]];
-  'pub(evm.eth_estimateGas)': [any, any];
+  'pub(evm.eth_sendTransaction)': [any, any];
+  'pub(evm.eth_clientRequest)': [any, any];
 }
 
 export type MessageTypes = keyof RequestSignatures;

@@ -34,6 +34,7 @@ import type {
   RequestUpdateAccountAvatar,
   ResponsePrivatekeyGet,
   ResponsePrivatekeyValidate,
+  RequestEvmSigningApprove,
 } from '../../types';
 import keyring from 'packages/glitch-keyring';
 import { TypeRegistry } from '@polkadot/types';
@@ -48,6 +49,13 @@ import { assert } from '@polkadot/util';
 import { MetadataDef } from '@polkadot/extension-inject/types';
 import { withErrorLog } from 'utils/withErrorLog';
 import browser from 'webextension-polyfill';
+import Transaction from 'scripts/providers/ethereum/libs/transaction';
+import { EthereumTransaction } from 'scripts/providers/ethereum/libs/transaction/types';
+import { GasPriceTypes } from 'scripts/providers/common/types';
+import { bufferToHex, decryptMessage, hexToBuffer } from 'utils/strings';
+import { ecsign, fromRpcSig, toRpcSig } from 'ethereumjs-util';
+import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
+import { getCustomError } from 'scripts/providers/ethereum/libs/getError';
 
 function isJsonPayload(
   value: SignerPayloadJSON | SignerPayloadRaw
@@ -357,6 +365,78 @@ export default class Extension {
     return this.controller.updateWalletStorage(request);
   }
 
+  // EVM
+  private async evmSigningApprove({
+    id,
+  }: RequestEvmSigningApprove): Promise<boolean> {
+    const queued = this.state.getSignRequest(id);
+
+    assert(queued, 'Unable to find request');
+
+    const { request, resolve, reject } = queued;
+    const pair = keyring.getPair(queued.account.address);
+    pair?.isLocked && pair.unlock();
+
+    let privateKey: string = null;
+    const oldAccounts = await this.controller.appStateController.getAccounts();
+    const currentAccount = oldAccounts[pair.address];
+
+    const { seed, encryptedEvmPk, encryptedSubstratePk, evmAddress } =
+      currentAccount;
+
+    if (seed) {
+      const decryptSeed = (await decryptMessage(
+        seed.encrypted,
+        seed.secret
+      )) as string;
+
+      privateKey =
+        this.controller.glitchWeb3.getPrivateKeyFromSeed(decryptSeed)?.evm;
+    }
+
+    if (encryptedEvmPk && encryptedSubstratePk) {
+      privateKey = this.controller.glitchWeb3.web3.accounts.decrypt(
+        JSON.parse(encryptedEvmPk),
+        evmAddress
+      )?.privateKey;
+    }
+
+    const { payload } = request;
+
+    const tx = new Transaction(
+      payload as unknown as EthereumTransaction,
+      this.controller.glitchWeb3.web3
+    );
+
+    const finalizedTx = await tx.getFinalizedTransaction({
+      gasPriceType: GasPriceTypes.REGULAR,
+    });
+
+    const msgHash = bufferToHex(finalizedTx.getMessageToSign(true));
+    const msgHashBuffer = hexToBuffer(msgHash);
+    const privateKeyBuffer = hexToBuffer(privateKey);
+    const signature = ecsign(msgHashBuffer, privateKeyBuffer);
+    const rpcSig = fromRpcSig(toRpcSig(signature.v, signature.r, signature.s));
+    const signedTx = (
+      finalizedTx as FeeMarketEIP1559Transaction
+    )._processSignature(BigInt(rpcSig.v), rpcSig.r, rpcSig.s);
+
+    const signedTxToHex = '0x' + signedTx.serialize().toString('hex');
+
+    return new Promise<boolean>(async (_resolve, _reject) => {
+      await this.controller.glitchWeb3.web3
+        .sendSignedTransaction(signedTxToHex)
+        .on('transactionHash', (hash) => {
+          resolve(hash as string);
+          _resolve(true);
+        })
+        .on('error', (error) => {
+          _reject(false);
+          reject(getCustomError(error.message) as any);
+        });
+    });
+  }
+
   // Weird thought, the eslint override is not needed in Tabs
   public async handle<TMessageType extends MessageTypes>(
     id: string,
@@ -477,6 +557,9 @@ export default class Extension {
 
       case 'pri(window.open)':
         return this.windowOpen(request as AllowedPath);
+
+      case 'pri(evm.signing.approve)':
+        return this.evmSigningApprove(request as RequestEvmSigningApprove);
 
       default:
         throw new Error(`Unable to handle message of type ${type}`);

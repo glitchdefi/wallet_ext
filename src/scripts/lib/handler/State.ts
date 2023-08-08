@@ -83,7 +83,7 @@ type Providers = Record<
   }
 >;
 
-interface SignRequest extends Resolver<ResponseSigning> {
+interface SignRequest extends Resolver<ResponseSigning | string> {
   account: AccountJson;
   id: string;
   request: RequestSign;
@@ -348,9 +348,9 @@ export default class State {
 
   private signComplete = (
     id: string,
-    resolve: (result: ResponseSigning) => void,
+    resolve: (result: ResponseSigning | string) => void,
     reject: (error: Error) => void
-  ): Resolver<ResponseSigning> => {
+  ): Resolver<ResponseSigning | string> => {
     const complete = (): void => {
       delete this.signRequests[id];
       this.updateIconSign(true);
@@ -361,7 +361,7 @@ export default class State {
         complete();
         reject(error);
       },
-      resolve: (result: ResponseSigning): void => {
+      resolve: (result: ResponseSigning | string): void => {
         complete();
         resolve(result);
       },
@@ -677,7 +677,7 @@ export default class State {
     url: string,
     request: RequestSign,
     account: AccountJson
-  ): Promise<ResponseSigning> {
+  ): Promise<ResponseSigning | string> {
     const id = getId();
 
     return new Promise((resolve, reject): void => {

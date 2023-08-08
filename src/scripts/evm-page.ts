@@ -3,6 +3,7 @@ import { handleResponse, sendMessage } from './lib/page';
 import EthereumProvider from './providers/ethereum/inject';
 import { ProviderName, ProviderType } from './types/provider';
 import { Message } from './types/Message';
+import { log } from 'utils/log-config';
 
 // import { windowOnMessage, providerSendMessage } from '@/libs/messenger/window';
 
@@ -10,7 +11,7 @@ import { Message } from './types/Message';
   providers: {},
 };
 
-console.log('enkrypt - window', window);
+log.info('enkrypt - window', window);
 
 // Khởi tạo ethereum provider - để có thể tương tác với ethereum api
 // Nhận vào một func sendMessage tới background và nhận response từ background
@@ -21,7 +22,7 @@ EthereumProvider(window, {
     provider: ProviderName,
     message: string
   ): Promise<any> => {
-    console.log('enkrypt - providerSendMessage', {
+    log.info('enkrypt - providerSendMessage', {
       provider,
       message,
     });
@@ -31,17 +32,13 @@ EthereumProvider(window, {
     const _message =
       method === 'eth_accounts'
         ? 'pub(evm.eth_accounts)'
-        : method === 'eth_chainId'
-        ? 'pub(evm.eth_chainId)'
         : method === 'eth_requestAccounts'
         ? 'pub(evm.eth_requestAccounts)'
-        : method === 'net_version'
-        ? 'pub(evm.net_version)'
-        : method === 'eth_estimateGas'
-        ? 'pub(evm.eth_estimateGas)'
-        : '';
+        : method === 'eth_sendTransaction'
+        ? 'pub(evm.eth_sendTransaction)'
+        : 'pub(evm.eth_clientRequest)';
 
-    return await sendMessage(_message, { params });
+    return await sendMessage(_message, { method, params });
   },
 });
 

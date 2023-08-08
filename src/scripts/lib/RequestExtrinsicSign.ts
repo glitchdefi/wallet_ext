@@ -6,6 +6,7 @@ import { TypeRegistry } from '@polkadot/types';
 interface Payload extends SignerPayloadJSON {
   amount: string | number;
   fee: string | number;
+  decodedData?: any;
 }
 export default class RequestExtrinsicSign implements RequestSign {
   public readonly payload: Payload;

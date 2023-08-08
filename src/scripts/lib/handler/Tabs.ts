@@ -11,7 +11,7 @@ import type {
   SignerPayloadRaw,
 } from '@polkadot/types/types';
 import { ApiPromise } from '@polkadot/api';
-import Web3Utils from 'web3-utils';
+import Web3Utils, { numberToHex } from 'web3-utils';
 import isNaN from 'lodash/isNaN';
 import type { SubjectInfo } from 'packages/glitch-keyring/observable/types';
 import type {
@@ -45,6 +45,12 @@ import { ExtensionStore } from '../localStore';
 import { toGLCH } from 'utils/number';
 import browser from 'webextension-polyfill';
 import { ResponseWallet } from 'scripts/types';
+import { decodeData } from 'utils/decodeData';
+import Transaction from 'scripts/providers/ethereum/libs/transaction';
+import { EthereumTransaction } from 'scripts/providers/ethereum/libs/transaction/types';
+import { fromBase } from 'utils/strings';
+import { GasPriceTypes } from 'scripts/providers/common/types';
+import { JSONRPCClient } from 'json-rpc-2.0';
 
 async function transformAccounts(
   accounts: SubjectInfo,
@@ -86,10 +92,30 @@ export default class Tabs {
   readonly state: State;
   readonly localStore: ExtensionStore;
   controller: GlitchController;
+  client: JSONRPCClient;
 
   constructor(state: State) {
     this.state = state;
     this.localStore = new ExtensionStore();
+    this.client = new JSONRPCClient((jsonRPCRequest) =>
+      fetch(this.controller.glitchWeb3.networkInfo.evmProvider, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(jsonRPCRequest),
+      }).then((response) => {
+        if (response.status === 200) {
+          return response
+            .json()
+            .then((jsonRPCResponse) => this.client.receive(jsonRPCResponse));
+        }
+        if (jsonRPCRequest.id !== undefined) {
+          return Promise.reject(new Error(response.statusText));
+        }
+        return Promise.reject(new Error(`unknown error: ${response.status}`));
+      })
+    );
   }
 
   public initController(controller: GlitchController) {
@@ -151,7 +177,7 @@ export default class Tabs {
     return this.state.sign(url, new RequestBytesSign(request), {
       address,
       ...pair.meta,
-    });
+    }) as Promise<ResponseSigning>;
   }
 
   private async extrinsicSign(
@@ -229,7 +255,7 @@ export default class Tabs {
         address,
         ...pair.meta,
       }
-    );
+    ) as Promise<ResponseSigning>;
   }
 
   private metadataProvide(url: string, request: MetadataDef): Promise<boolean> {
@@ -337,11 +363,10 @@ export default class Tabs {
     return false;
   }
 
-  private async getEvmChainId(): Promise<number> {
+  private async evmClientRequest(request): Promise<number> {
+    const { method, params } = request || {};
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(2160);
-      }, 1000);
+      this.client.request(method, params).then(resolve, reject);
     });
   }
 
@@ -377,13 +402,43 @@ export default class Tabs {
     return [accounts[selectedAddress].evmAddress];
   }
 
-  private async estimateGas(request): Promise<string> {
-    console.log('estimateGas', request);
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve('0xb3ad');
-      }, 1000);
-    });
+  private async evmSignTransaction(url: string, request: any): Promise<string> {
+    const { params } = request || {};
+
+    if (!params?.length) {
+      throw new Error('An error has occurred');
+    }
+
+    const { selectedAddress }: ResponseWallet = await this.localStore.get(
+      'wallet'
+    );
+
+    const pair = this.getSigningPair(selectedAddress);
+    const decodedData = decodeData(
+      this.controller.glitchWeb3.web3,
+      params[0].data
+    );
+    const tx = new Transaction(
+      params[0] as EthereumTransaction,
+      this.controller.glitchWeb3.web3
+    );
+
+    const gasVals = await tx.getGasCosts();
+    const estimatedFee = fromBase(gasVals[GasPriceTypes.REGULAR], 18);
+
+    return this.state.sign(
+      url,
+      new RequestExtrinsicSign({
+        ...params[0],
+        chainId: numberToHex(2160),
+        decodedData,
+        estimatedFee,
+      }),
+      {
+        address: selectedAddress,
+        ...pair.meta,
+      }
+    ) as Promise<string>;
   }
 
   public async handle<TMessageType extends MessageTypes>(
@@ -443,17 +498,17 @@ export default class Tabs {
 
       // Evm
 
-      case 'pub(evm.eth_chainId)':
-        return this.getEvmChainId();
-
       case 'pub(evm.eth_accounts)':
         return this.getEthAccounts(url);
 
       case 'pub(evm.eth_requestAccounts)':
         return this.requestEthAccounts(url);
 
-      case 'pub(evm.eth_estimateGas)':
-        return this.estimateGas(request);
+      case 'pub(evm.eth_sendTransaction)':
+        return this.evmSignTransaction(url, request);
+
+      case 'pub(evm.eth_clientRequest)':
+        return this.evmClientRequest(request);
 
       default:
         throw new Error(`Unable to handle message of type ${type}`);
